@@ -1,13 +1,7 @@
 /* Shared Eduvize administration skin. Scope: .ev-admin only.
    Does not style app output, preview iframe content or Design System editor. */
-:root{
- --ev-bg:var(--edu-admin-bg);--ev-text:var(--edu-admin-ink);--ev-muted:var(--edu-admin-muted);
- --ev-surface:var(--edu-admin-surface);--ev-primary:var(--edu-admin-primary);
- --ev-primary-text:var(--edu-admin-primary-text);--ev-secondary:var(--edu-admin-secondary);
- --ev-secondary-text:var(--edu-admin-secondary-text);--ev-accent:var(--edu-admin-accent);
- --ev-border:var(--edu-admin-border);--ev-control-radius:var(--edu-admin-control-radius);
- --ev-card-radius:var(--edu-admin-card-radius);--ev-control-height:var(--edu-admin-control-height);
-}
+/* Defaults are supplied by admin-tokens.css; active-theme.js owns --ev-* on :root. */
+
 .ev-admin{
  color:var(--ev-text);background:var(--ev-bg);font-family:var(--edu-admin-font)
 }
