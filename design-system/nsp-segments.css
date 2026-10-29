@@ -13,3 +13,21 @@
 #ev-segments #ev-cards .ev-mini{aspect-ratio:16/9;max-height:none;width:100%;margin-top:10px;border-radius:3px}
 #ev-segments #ev-cards .ev-mini.portrait{aspect-ratio:9/16;width:70px;max-height:125px;margin:10px auto 0}
 #ev-segments #ev-cards .ev-box{background:linear-gradient(135deg,var(--ev-primary),var(--ev-accent));color:var(--ev-primary-text);font-size:13px}
+
+/* Shared NSP layout selector aliases used by Kiosk and other modules. */
+.layout-tabs{display:flex;gap:8px;margin:12px 0;flex-wrap:wrap}
+.layout-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px}
+.layout-card{border:2px solid var(--ev-border);border-radius:var(--ev-control-radius);background:var(--ev-surface);padding:12px;cursor:pointer;color:var(--ev-text);text-align:left;font-weight:700}
+.layout-card.active,.layout-tab.active{border-color:var(--ev-accent);background:var(--ev-secondary)}
+.layout-mini{position:relative;aspect-ratio:16/9;background:var(--ev-secondary);border:2px solid var(--ev-border);border-radius:var(--ev-control-radius);margin-top:10px;overflow:hidden}
+.layout-mini.portrait{aspect-ratio:9/16;width:75px;margin:10px auto}
+.layout-mini span,.template-preview span{position:absolute;background:linear-gradient(135deg,var(--ev-primary),var(--ev-accent));color:var(--ev-primary-text);border:1px solid var(--ev-surface);display:grid;place-items:center;font-size:13px;font-weight:800;cursor:pointer}
+.layout-mini span.active,.template-preview span.active{outline:3px solid var(--ev-accent);outline-offset:-3px}
+.layout-mini span.disabled,.template-preview span.disabled{background:var(--ev-muted);cursor:not-allowed;opacity:.7}
+.layout-blocks{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}
+.layout-dimension,.layout-tab{border:2px solid var(--ev-border);border-radius:var(--ev-control-radius);padding:9px 12px;background:var(--ev-surface);color:var(--ev-text);cursor:pointer;font-weight:700}
+.layout-dimension.active{border-color:var(--ev-accent);background:var(--ev-primary);color:var(--ev-primary-text)}
+.layout-dimension:disabled{opacity:.5;cursor:not-allowed}
+.template-preview{position:relative;width:100%;max-width:900px;aspect-ratio:16/9;background:var(--ev-secondary);border:2px solid var(--ev-border);margin:auto;overflow:hidden}
+.template-preview.portrait{max-width:350px;aspect-ratio:9/16}
+.layout-card:focus-visible,.layout-mini span:focus-visible{outline:3px solid var(--ev-accent)}
