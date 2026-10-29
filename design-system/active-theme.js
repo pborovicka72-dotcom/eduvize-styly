@@ -1,6 +1,6 @@
 /* Shared Eduvize active theme loader. No local theme definitions. */
 (function(){
- const endpoint='https://eduvize-dokumenty-api.onrender.com/api/design-system/themes';
+ const endpoint='https://eduvize-design-system-api.onrender.com/api/design-system/themes';
  const names={background:'--ev-bg',text:'--ev-text',surface:'--ev-surface',muted:'--ev-muted',primary:'--ev-primary',primaryText:'--ev-primary-text',secondary:'--ev-secondary',secondaryText:'--ev-secondary-text',accent:'--ev-accent',border:'--ev-border'};
  async function refresh(){
   try{
