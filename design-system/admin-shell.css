@@ -5,9 +5,6 @@
 .ev-admin{
  color:var(--ev-text);background:var(--ev-bg);font-family:var(--edu-admin-font)
 }
-.ev-admin .ev-admin-header{color:var(--ev-text)}
-.ev-admin .ev-admin-header .eyebrow{color:var(--ev-primary)}
-.ev-admin .ev-admin-header .brandmark{background:var(--ev-primary);color:var(--ev-primary-text);border-radius:var(--ev-card-radius);box-shadow:none}
 .ev-admin .ev-admin-form{background:var(--ev-surface);border:1px solid var(--ev-border);border-radius:var(--ev-card-radius);color:var(--ev-text)}
 .ev-admin .ev-admin-form label{color:var(--ev-text)}
 .ev-admin .ev-admin-form :is(input:not([type=checkbox]):not([type=radio]),select,textarea){background:var(--ev-surface);color:var(--ev-text);border:1px solid var(--ev-border);border-radius:var(--ev-control-radius);min-height:var(--ev-control-height)}
@@ -41,16 +38,12 @@
 .ev-admin .ev-admin-form .edu-checkbox-options input[type=checkbox]{flex:0 0 auto;width:17px;height:17px;min-height:0;margin:0;accent-color:var(--ev-accent)}
 @media(max-width:680px){.ev-admin .ev-admin-form .edu-checkbox-options{flex-direction:column;align-items:flex-start;gap:12px}}
 
-/* Canonical application header: icon, application identity and title only. */
-.ev-admin .ev-admin-header{display:flex;align-items:center;justify-content:flex-start;gap:15px;flex-wrap:wrap;margin:4px 0 18px;padding:0;color:var(--ev-text)}
-.ev-admin .ev-admin-header .brand{display:flex;align-items:center;gap:15px;min-width:0}
-.ev-admin .ev-admin-header .brandmark{width:52px;height:52px;flex:0 0 52px;display:grid;place-items:center;border-radius:var(--ev-card-radius);background:linear-gradient(135deg,var(--ev-primary),var(--ev-accent));color:var(--ev-primary-text);box-shadow:none}
-.ev-admin .ev-admin-header .brandmark svg{width:29px;height:29px}
-.ev-admin .ev-admin-header .eyebrow{font-size:13px;font-weight:800;letter-spacing:.13em;text-transform:uppercase;color:var(--ev-accent)}
-.ev-admin .ev-admin-header h1{font-size:clamp(25px,2.4vw,40px);line-height:1.12;letter-spacing:normal;margin:3px 0 0;color:var(--ev-text)}
-
-/* Shared administration description immediately below the identity header. */
-.ev-admin .ev-admin-description{margin:-6px 0 18px;max-width:100%;font-size:14px;line-height:1.55;font-weight:400;color:var(--ev-muted);overflow-wrap:break-word}
-
-/* Header description also works in the Design System editor without .ev-admin page skin. */
-.ev-admin-description{margin:0 0 18px;max-width:100%;font-size:14px;line-height:1.55;font-weight:400;color:var(--ev-muted,#638098);overflow-wrap:break-word}
+/* Canonical header module: the same markup and rules on every page. */
+.edu-page-header{display:flex;flex-direction:column;gap:10px;margin:0 0 18px;padding:0;min-width:0;color:var(--ev-text,var(--edu-admin-ink,#142c46));font-family:var(--edu-admin-font,system-ui,sans-serif)}
+.edu-page-header__identity{display:flex;align-items:center;gap:15px;min-width:0}
+.edu-page-header__icon{width:52px;height:52px;flex:0 0 52px;display:grid;place-items:center;border-radius:var(--ev-card-radius,var(--edu-admin-card-radius,16px));background:linear-gradient(135deg,var(--ev-primary,var(--edu-admin-primary,#087c91)),var(--ev-accent,var(--edu-admin-accent,#00a995)));color:var(--ev-primary-text,var(--edu-admin-primary-text,#fff));font-size:27px;font-weight:800;line-height:1}
+.edu-page-header__icon svg{width:29px;height:29px}
+.edu-page-header__titles{min-width:0}
+.edu-page-header__eyebrow{margin:0;font-size:13px;line-height:1.3;font-weight:800;letter-spacing:.13em;text-transform:uppercase;color:var(--ev-accent,var(--edu-admin-accent,#00a995))}
+.edu-page-header__title{margin:3px 0 0;font-size:clamp(25px,2.4vw,40px);font-weight:700;line-height:1.12;letter-spacing:normal;color:inherit}
+.edu-page-header__description{margin:0;max-width:100%;font-size:14px;line-height:1.55;font-weight:400;color:var(--ev-muted,var(--edu-admin-muted,#638098));overflow-wrap:break-word}
