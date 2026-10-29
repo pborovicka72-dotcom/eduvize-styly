@@ -41,3 +41,17 @@ body.tiles-home #tiles .ev-app-tile,
  border-radius:var(--ev-control-radius)!important;
 }
 #tiles .ev-app-tile .app-icon svg{stroke:currentColor!important}
+
+/* Selected menu card and its icon must share the light active-state palette. */
+body.menu-layout #tiles .ev-app-tile.active,
+body.tiles-home #tiles .ev-app-tile.active{
+ background:var(--ev-secondary)!important;
+ color:var(--ev-secondary-text)!important;
+ border:2px solid var(--ev-accent)!important;
+}
+#tiles .ev-app-tile.active strong{color:var(--ev-secondary-text)!important}
+#tiles .ev-app-tile.active .app-icon{background:var(--ev-accent)!important;color:var(--ev-primary-text)!important}
+#tiles .ev-app-tile.active .app-icon svg{stroke:currentColor!important}
+/* Shared icon token for configuration editors, not kiosk-specific styling. */
+.ev-editor-app-icon{display:grid;place-items:center;background:var(--ev-secondary);color:var(--ev-secondary-text);border:1px solid var(--ev-border);border-radius:var(--ev-card-radius);box-shadow:none}
+.ev-editor-app-icon svg{stroke:currentColor}
