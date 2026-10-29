@@ -18,7 +18,7 @@ def health():return {"status":"ok","database_configured":bool(DATABASE_URL),"adm
 @app.get("/")
 @app.get("/design-system")
 @app.get("/design-system/")
-def editor():return FileResponse(ROOT/"design-system"/"index.html")
+def editor():return FileResponse(ROOT/"editor.html")
 @app.get("/design-system/{asset_name}")
 def asset(asset_name:str):
     allowed={"admin-theme.json":"application/json","admin-tokens.css":"text/css","admin-components.css":"text/css","admin-shell.css":"text/css","nsp-geometry.js":"application/javascript","nsp-segments.js":"application/javascript","nsp-segments.css":"text/css"}
