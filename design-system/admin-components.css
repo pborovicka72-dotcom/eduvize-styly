@@ -16,3 +16,28 @@
 .ev-app-tile .app-icon{background:var(--ev-secondary)!important;color:var(--ev-secondary-text)!important;border-radius:var(--ev-control-radius)!important;box-shadow:none!important}
 .ev-app-tile small{color:var(--ev-muted)!important}
 .ev-app-tile:focus-visible{outline:3px solid var(--ev-accent)!important}
+
+/* Central kiosk menu skin: overrides legacy menu-specific selectors without local CSS. */
+body.menu-layout #tiles .ev-app-tile,
+body.tiles-home #tiles .ev-app-tile,
+#tiles .ev-app-tile{
+ background:var(--ev-primary)!important;
+ background-image:none!important;
+ color:var(--ev-primary-text)!important;
+ border:1px solid var(--ev-border)!important;
+ border-radius:var(--ev-card-radius)!important;
+ box-shadow:none!important;
+}
+#tiles .ev-app-tile.active{
+ background:var(--ev-secondary)!important;
+ background-image:none!important;
+ color:var(--ev-secondary-text)!important;
+ border:2px solid var(--ev-accent)!important;
+}
+#tiles .ev-app-tile .app-icon{
+ background:var(--ev-secondary)!important;
+ background-image:none!important;
+ color:var(--ev-secondary-text)!important;
+ border-radius:var(--ev-control-radius)!important;
+}
+#tiles .ev-app-tile .app-icon svg{stroke:currentColor!important}
