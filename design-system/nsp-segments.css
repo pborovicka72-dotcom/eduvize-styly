@@ -45,3 +45,13 @@
 .layout-blocks .layout-dimension{font:inherit;font-size:13px;font-weight:700;min-height:var(--ev-control-height,40px);padding:10px 12px;border:2px solid var(--ev-border);border-radius:var(--ev-control-radius,10px);background:var(--ev-surface);color:var(--ev-text);cursor:pointer}
 .layout-blocks .layout-dimension.active{background:var(--ev-primary);color:var(--ev-primary-text);border-color:var(--ev-accent)}
 .layout-blocks .layout-dimension:disabled{opacity:.45;cursor:not-allowed}
+
+/* Live embedded app preview must not inherit the NSP selection outline. */
+.template-preview>span.active:has(iframe),
+#ev-preview>.ev-box.active:has(iframe){
+ outline:none!important;
+ border:0!important;
+ box-shadow:none!important;
+}
+.template-preview>span:has(iframe),
+#ev-preview>.ev-box:has(iframe){padding:0!important;overflow:hidden}
