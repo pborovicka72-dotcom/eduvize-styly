@@ -78,3 +78,9 @@ body.tiles-home #tiles .ev-app-tile.active{
 .ev-option-group label{display:inline-flex;align-items:center;gap:9px;margin:0;font-size:14px;white-space:nowrap}
 .ev-option-group input[type=checkbox]{accent-color:var(--ev-primary);width:17px;height:17px;flex:none}
 @media(max-width:850px){.ev-option-group{flex-direction:column;align-items:flex-start}.ev-option-group label{white-space:normal}}
+
+/* Reusable full-row option group inside a CSS grid form. */
+form .ev-option-group{grid-column:1/-1;justify-self:start;align-self:start;width:max-content;max-width:100%;display:flex;flex-direction:row;flex-wrap:wrap;gap:10px 24px}
+form .ev-option-group label{display:inline-flex!important;flex-direction:row!important;align-items:center!important;justify-content:flex-start!important;gap:9px!important;width:auto!important;white-space:nowrap!important;margin:0!important;padding:0!important;line-height:1.4!important}
+form .ev-option-group input[type=checkbox]{display:block!important;appearance:auto!important;width:17px!important;min-width:17px!important;height:17px!important;flex:0 0 17px!important;margin:0!important;padding:0!important}
+@media(max-width:850px){form .ev-option-group{flex-direction:column;align-items:flex-start}form .ev-option-group label{white-space:normal!important}}
