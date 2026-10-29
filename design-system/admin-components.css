@@ -55,3 +55,13 @@ body.tiles-home #tiles .ev-app-tile.active{
 /* Shared icon token for configuration editors, not kiosk-specific styling. */
 .ev-editor-app-icon{display:grid;place-items:center;background:var(--ev-secondary);color:var(--ev-secondary-text);border:1px solid var(--ev-border);border-radius:var(--ev-card-radius);box-shadow:none}
 .ev-editor-app-icon svg{stroke:currentColor}
+
+/* Editor icon must win against old local .app-icon !important rules. */
+.app-icon.ev-editor-app-icon{
+ border-radius:var(--ev-card-radius)!important;
+ background:var(--ev-primary)!important;
+ color:var(--ev-primary-text)!important;
+ border:1px solid var(--ev-border)!important;
+ box-shadow:none!important;
+}
+.app-icon.ev-editor-app-icon svg{stroke:currentColor!important}
