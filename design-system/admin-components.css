@@ -11,8 +11,8 @@
 .edu-admin__nsp{width:100%;min-width:0}
 
 /* Shared application tile component. Central theme variables are authoritative. */
-.ev-app-tile{background:var(--ev-surface)!important;color:var(--ev-text)!important;border:1px solid var(--ev-border)!important;border-radius:var(--ev-card-radius)!important;box-shadow:none!important}
-.ev-app-tile.active{background:var(--ev-secondary)!important;border-color:var(--ev-accent)!important;box-shadow:inset 0 0 0 2px var(--ev-accent)!important}
-.ev-app-tile .app-icon{background:var(--ev-primary)!important;color:var(--ev-primary-text)!important;border-radius:var(--ev-control-radius)!important;box-shadow:none!important}
+.ev-app-tile{background:var(--ev-primary)!important;color:var(--ev-primary-text)!important;border:1px solid var(--ev-border)!important;border-radius:var(--ev-card-radius)!important;box-shadow:none!important}
+.ev-app-tile.active{background:var(--ev-accent)!important;color:var(--ev-primary-text)!important;border-color:var(--ev-accent)!important;box-shadow:inset 0 0 0 2px var(--ev-surface)!important}
+.ev-app-tile .app-icon{background:var(--ev-secondary)!important;color:var(--ev-secondary-text)!important;border-radius:var(--ev-control-radius)!important;box-shadow:none!important}
 .ev-app-tile small{color:var(--ev-muted)!important}
 .ev-app-tile:focus-visible{outline:3px solid var(--ev-accent)!important}
