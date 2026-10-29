@@ -47,3 +47,11 @@
 .edu-page-header__eyebrow{margin:0;font-size:13px;line-height:1.3;font-weight:800;letter-spacing:.13em;text-transform:uppercase;color:var(--ev-accent,var(--edu-admin-accent,#00a995))}
 .edu-page-header__title{margin:3px 0 0;font-size:clamp(25px,2.4vw,40px);font-weight:700;line-height:1.12;letter-spacing:normal;color:inherit}
 .edu-page-header__description{margin:0;max-width:100%;font-size:14px;line-height:1.55;font-weight:400;color:var(--ev-muted,var(--edu-admin-muted,#638098));overflow-wrap:break-word}
+
+/* Canonical administration page geometry. Header spacing and outer gutters
+   belong here, not in individual applications. */
+.edu-admin-page{box-sizing:border-box;width:100%;max-width:100%;min-width:0;margin:0 auto;padding:clamp(16px,2.2vw,36px);display:flex;flex-direction:column;gap:20px}
+.edu-admin-page>.edu-page-header{flex:0 0 auto;margin:0}
+.edu-admin-page>:not(.edu-page-header){min-width:0;margin-top:0;margin-bottom:0}
+.edu-admin-page>.edu-admin-page__section{margin:0}
+@media(max-width:600px){.edu-admin-page{padding:16px;gap:16px}}
