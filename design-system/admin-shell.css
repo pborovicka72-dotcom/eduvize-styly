@@ -1,0 +1,26 @@
+/* Shared Eduvize administration skin. Scope: .ev-admin only.
+   Does not style app output, preview iframe content or Design System editor. */
+.ev-admin{
+ --ev-bg:var(--edu-admin-bg);--ev-text:var(--edu-admin-ink);--ev-muted:var(--edu-admin-muted);
+ --ev-surface:var(--edu-admin-surface);--ev-primary:var(--edu-admin-primary);
+ --ev-primary-text:var(--edu-admin-primary-text);--ev-secondary:var(--edu-admin-secondary);
+ --ev-secondary-text:var(--edu-admin-secondary-text);--ev-accent:var(--edu-admin-accent);
+ --ev-border:var(--edu-admin-border);--ev-control-radius:var(--edu-admin-control-radius);
+ --ev-card-radius:var(--edu-admin-card-radius);--ev-control-height:var(--edu-admin-control-height);
+ color:var(--ev-text);background:var(--ev-bg);font-family:var(--edu-admin-font)
+}
+.ev-admin .ev-admin-header{color:var(--ev-text)}
+.ev-admin .ev-admin-header .eyebrow{color:var(--ev-primary)}
+.ev-admin .ev-admin-header .brandmark{background:var(--ev-primary);color:var(--ev-primary-text);border-radius:var(--ev-card-radius);box-shadow:none}
+.ev-admin .ev-admin-form{background:var(--ev-surface);border:1px solid var(--ev-border);border-radius:var(--ev-card-radius);color:var(--ev-text)}
+.ev-admin .ev-admin-form label{color:var(--ev-text)}
+.ev-admin .ev-admin-form :is(input:not([type=checkbox]):not([type=radio]),select,textarea){background:var(--ev-surface);color:var(--ev-text);border:1px solid var(--ev-border);border-radius:var(--ev-control-radius);min-height:var(--ev-control-height)}
+.ev-admin .ev-admin-form :is(input,select,textarea):focus-visible{outline:2px solid var(--ev-accent);outline-offset:1px}
+.ev-admin .ev-admin-form input[type=checkbox]{accent-color:var(--ev-primary)}
+.ev-admin .ev-admin-form button{border-radius:var(--ev-control-radius);min-height:var(--ev-control-height);border:1px solid var(--ev-border);background:var(--ev-secondary);color:var(--ev-secondary-text)}
+.ev-admin .ev-admin-form button[type=submit]{background:var(--ev-primary);color:var(--ev-primary-text);border-color:var(--ev-primary)}
+.ev-admin .ev-admin-form :is(.weather-forecast-settings,.school-group,.school-place,.address-result){border-color:var(--ev-border);border-radius:var(--ev-card-radius)}
+.ev-admin .ev-admin-form .weather-forecast-settings{background:var(--ev-secondary);color:var(--ev-secondary-text)}
+.ev-admin .ev-admin-form :is(.school-group,.school-place,.address-result){background:var(--ev-surface);color:var(--ev-text)}
+.ev-admin .ev-admin-form :is(.school-group-title,.school-place-title){color:var(--ev-text)}
+.ev-admin .ev-admin-form :is(.school-group-subtitle,.school-place-subtitle){color:var(--ev-muted)}
