@@ -16,3 +16,20 @@
   --edu-admin-gap: 16px;
   --edu-admin-font: system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
 }
+
+/* Safe baseline before asynchronous active theme loading. */
+:root {
+  --ev-bg: var(--edu-admin-background);
+  --ev-text: var(--edu-admin-ink);
+  --ev-muted: var(--edu-admin-muted);
+  --ev-surface: var(--edu-admin-surface);
+  --ev-primary: var(--edu-admin-primary);
+  --ev-primary-text: var(--edu-admin-primary-text);
+  --ev-secondary: var(--edu-admin-secondary);
+  --ev-secondary-text: var(--edu-admin-secondary-text);
+  --ev-accent: var(--edu-admin-accent);
+  --ev-border: var(--edu-admin-border);
+  --ev-control-height: var(--edu-admin-control-height);
+  --ev-control-radius: var(--edu-admin-control-radius);
+  --ev-card-radius: var(--edu-admin-card-radius);
+}
