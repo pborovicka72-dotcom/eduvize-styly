@@ -7,6 +7,10 @@
 }
 .ev-admin .ev-admin-form{background:var(--ev-surface);border:1px solid var(--ev-border);border-radius:var(--ev-card-radius);color:var(--ev-text)}
 .ev-admin .ev-admin-form label{color:var(--ev-text)}
+/* Shared form fields: presentation belongs to Design System, not applications. */
+.ev-admin .ev-admin-form :is(input:not([type=checkbox]):not([type=radio]),select,textarea){box-sizing:border-box;width:100%;min-width:0;height:var(--ev-control-height);min-height:var(--ev-control-height);padding:7px 12px;font:inherit}
+.ev-admin .ev-admin-form :is(button:not(.school-place):not(.address-result)){min-height:var(--ev-control-height)}
+
 .ev-admin .ev-admin-form :is(input:not([type=checkbox]):not([type=radio]),select,textarea){background:var(--ev-surface);color:var(--ev-text);border:1px solid var(--ev-border);border-radius:var(--ev-control-radius);min-height:var(--ev-control-height)}
 .ev-admin .ev-admin-form :is(input,select,textarea):focus-visible{outline:2px solid var(--ev-accent);outline-offset:1px}
 .ev-admin .ev-admin-form input[type=checkbox]{accent-color:var(--ev-primary)}
