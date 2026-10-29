@@ -51,3 +51,6 @@
 
 /* Shared administration description immediately below the identity header. */
 .ev-admin .ev-admin-description{margin:-6px 0 18px;max-width:100%;font-size:14px;line-height:1.55;font-weight:400;color:var(--ev-muted);overflow-wrap:break-word}
+
+/* Header description also works in the Design System editor without .ev-admin page skin. */
+.ev-admin-description{margin:0 0 18px;max-width:100%;font-size:14px;line-height:1.55;font-weight:400;color:var(--ev-muted,#638098);overflow-wrap:break-word}
