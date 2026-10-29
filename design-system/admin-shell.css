@@ -8,11 +8,8 @@
 .ev-admin .ev-admin-form{background:var(--ev-surface);border:1px solid var(--ev-border);border-radius:var(--ev-card-radius);color:var(--ev-text)}
 .ev-admin .ev-admin-form label{color:var(--ev-text)}
 /* Shared form fields: presentation belongs to Design System, not applications. */
-.ev-admin .ev-admin-form :is(input:not([type=checkbox]):not([type=radio]),select,textarea){box-sizing:border-box;width:100%;min-width:0;height:var(--ev-control-height);min-height:var(--ev-control-height);padding:7px 12px;font:inherit}
 .ev-admin .ev-admin-form :is(button:not(.school-place):not(.address-result)){min-height:var(--ev-control-height)}
 
-.ev-admin .ev-admin-form :is(input:not([type=checkbox]):not([type=radio]),select,textarea){background:var(--ev-surface);color:var(--ev-text);border:1px solid var(--ev-border);border-radius:var(--ev-control-radius);min-height:var(--ev-control-height)}
-.ev-admin .ev-admin-form :is(input,select,textarea):focus-visible{outline:2px solid var(--ev-accent);outline-offset:1px}
 .ev-admin .ev-admin-form input[type=checkbox]{accent-color:var(--ev-primary)}
 .ev-admin .ev-admin-form button{border-radius:var(--ev-control-radius);min-height:var(--ev-control-height);border:1px solid var(--ev-border);background:var(--ev-secondary);color:var(--ev-secondary-text)}
 .ev-admin .ev-admin-form button[type=submit]{background:var(--ev-primary);color:var(--ev-primary-text);border-color:var(--ev-primary)}
@@ -26,9 +23,6 @@
 .ev-admin .edu-output-section{border:1px solid var(--ev-border);background:var(--ev-surface);border-radius:var(--ev-panel-radius,20px);padding:22px}
 .ev-admin .edu-output-section .edu-output-mode-row{display:block}
 
-.ev-admin .edu-output-section .edu-output-type{display:flex;flex-direction:column;gap:7px;max-width:340px;font-weight:700;color:var(--ev-text)}
-.ev-admin .edu-output-section .edu-output-type select{box-sizing:border-box;display:block;width:100%;max-width:340px;height:var(--ev-control-height);min-height:var(--ev-control-height);padding:7px 11px;border:1px solid var(--ev-border);border-radius:var(--ev-control-radius);background:var(--ev-surface);color:var(--ev-text);font:inherit;appearance:auto}
-.ev-admin .edu-output-section .edu-output-type select:focus-visible{outline:2px solid var(--ev-accent);outline-offset:2px}
 .ev-admin .edu-output-section .edu-output-actions button{min-height:var(--ev-control-height);border-radius:var(--ev-control-radius);padding:8px 14px;font:700 13px system-ui;cursor:pointer}
 .ev-admin .edu-output-section .edu-output-actions button:first-child{background:var(--ev-primary);color:var(--ev-primary-text);border-color:var(--ev-primary)}
 .ev-admin .edu-output-section .edu-output-actions button.secondary{background:var(--ev-secondary);color:var(--ev-secondary-text);border-color:var(--ev-border)}
@@ -66,8 +60,8 @@
 .ev-admin .shell.edu-admin-page,.ev-admin .wrap.edu-admin-page,.edu-admin .edu-admin-page{width:100%;max-width:100%;margin:0 auto;padding:clamp(16px,2.2vw,36px);display:flex;flex-direction:column;gap:20px}
 @media(max-width:600px){.ev-admin .shell.edu-admin-page,.ev-admin .wrap.edu-admin-page,.edu-admin .edu-admin-page{padding:16px;gap:16px}}
 
-/* Canonical field contract for standalone admin controls (outside .ev-admin-form). */
-.ev-admin .edu-admin-field{display:flex;flex-direction:column;gap:7px;min-width:0;color:var(--ev-text);font-weight:700}
-.ev-admin .edu-admin-field :is(input:not([type=checkbox]):not([type=radio]),select,textarea){box-sizing:border-box;display:block;width:100%;min-width:0;height:var(--ev-control-height);min-height:var(--ev-control-height);padding:7px 11px;border:1px solid var(--ev-border);border-radius:var(--ev-control-radius);background:var(--ev-surface);color:var(--ev-text);font:inherit;appearance:auto}
-.ev-admin .edu-admin-field :is(input,select,textarea):focus-visible{outline:2px solid var(--ev-accent);outline-offset:2px}
-.ev-admin .edu-output-section .edu-output-type{max-width:340px}
+/* One canonical field contract for all admin labels and controls. */
+.ev-admin :is(.ev-admin-form label,.edu-admin-field,.edu-output-type){display:flex;flex-direction:column;gap:7px;min-width:0;color:var(--ev-text);font-weight:700}
+.ev-admin :is(.ev-admin-form,.edu-admin-field,.edu-output-type) :is(input:not([type=checkbox]):not([type=radio]),select,textarea){box-sizing:border-box;display:block;width:100%;min-width:0;height:var(--ev-control-height);min-height:var(--ev-control-height);padding:7px 11px;border:1px solid var(--ev-border);border-radius:var(--ev-control-radius);background:var(--ev-surface);color:var(--ev-text);font:inherit;appearance:auto}
+.ev-admin :is(.ev-admin-form,.edu-admin-field,.edu-output-type) :is(input,select,textarea):focus-visible{outline:2px solid var(--ev-accent);outline-offset:2px}
+.ev-admin .edu-output-type{max-width:340px}
