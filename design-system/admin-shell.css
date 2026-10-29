@@ -28,3 +28,15 @@
 .ev-admin .edu-output-section .edu-output-actions button{min-height:var(--ev-control-height);border-radius:var(--ev-control-radius);padding:8px 14px;font:700 13px system-ui;cursor:pointer}
 .ev-admin .edu-output-section .edu-output-actions button:first-child{background:var(--ev-primary);color:var(--ev-primary-text);border-color:var(--ev-primary)}
 .ev-admin .edu-output-section .edu-output-actions button.secondary{background:var(--ev-secondary);color:var(--ev-secondary-text);border-color:var(--ev-border)}
+
+/* Shared responsive page frame and grouped checkbox controls. */
+.ev-admin,.ev-admin *{box-sizing:border-box}
+.ev-admin{width:100%;min-width:0;max-width:100%;overflow-x:clip}
+.ev-admin .shell{width:100%;max-width:100%;min-width:0;margin:0;padding:clamp(14px,2.2vw,36px)}
+.ev-admin .ev-admin-form{min-width:0;max-width:100%}
+.ev-admin .ev-admin-form .edu-checkbox-group{grid-column:1/-1;display:flex;flex-direction:column;align-items:flex-start;gap:12px;min-width:0;max-width:100%;margin:0;padding:0;border:0;background:transparent}
+.ev-admin .ev-admin-form .edu-checkbox-group-title{font-size:14px;font-weight:700;line-height:1.4;color:var(--ev-text);margin:0}
+.ev-admin .ev-admin-form .edu-checkbox-options{display:flex;align-items:center;flex-wrap:wrap;gap:12px 22px;max-width:100%;min-width:0}
+.ev-admin .ev-admin-form .edu-checkbox-options label{display:inline-flex;flex-direction:row;align-items:center;gap:8px;width:auto;min-width:0;max-width:100%;margin:0;font-size:13px;font-weight:600;line-height:1.4;white-space:normal}
+.ev-admin .ev-admin-form .edu-checkbox-options input[type=checkbox]{flex:0 0 auto;width:17px;height:17px;min-height:0;margin:0;accent-color:var(--ev-accent)}
+@media(max-width:680px){.ev-admin .ev-admin-form .edu-checkbox-options{flex-direction:column;align-items:flex-start;gap:12px}}
