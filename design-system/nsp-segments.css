@@ -6,3 +6,10 @@
 #ev-segments #ev-cards button.active{background:var(--ev-secondary);color:var(--ev-text);border-color:var(--ev-accent)}
 #ev-segments .ev-mini{display:block;width:100%}
 #ev-segments .ev-box{color:var(--ev-primary-text)}
+
+/* Canonical visual template cards shared with Design System preview */
+#ev-segments #ev-cards{grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px}
+#ev-segments #ev-cards>button{padding:12px;min-height:0;text-align:left;border:2px solid var(--ev-border);border-radius:var(--ev-control-radius);font-weight:700}
+#ev-segments #ev-cards .ev-mini{aspect-ratio:16/9;max-height:none;width:100%;margin-top:10px;border-radius:3px}
+#ev-segments #ev-cards .ev-mini.portrait{aspect-ratio:9/16;width:70px;max-height:125px;margin:10px auto 0}
+#ev-segments #ev-cards .ev-box{background:linear-gradient(135deg,var(--ev-primary),var(--ev-accent));color:var(--ev-primary-text);font-size:13px}
