@@ -48,3 +48,6 @@
 .ev-admin .ev-admin-header .brandmark svg{width:29px;height:29px}
 .ev-admin .ev-admin-header .eyebrow{font-size:13px;font-weight:800;letter-spacing:.13em;text-transform:uppercase;color:var(--ev-accent)}
 .ev-admin .ev-admin-header h1{font-size:clamp(25px,2.4vw,40px);line-height:1.12;letter-spacing:normal;margin:3px 0 0;color:var(--ev-text)}
+
+/* Shared administration description immediately below the identity header. */
+.ev-admin .ev-admin-description{margin:-6px 0 18px;max-width:100%;font-size:14px;line-height:1.55;font-weight:400;color:var(--ev-muted);overflow-wrap:break-word}
