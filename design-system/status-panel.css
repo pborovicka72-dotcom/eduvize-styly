@@ -1,8 +1,9 @@
 /* Shared kiosk chrome: the same primary surface and icon badge as the menu. */
-.edu-status-panel{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:8px 12px;min-width:0;background:var(--ev-primary);color:var(--ev-primary-text);border:1px solid var(--ev-border);border-radius:var(--ev-control-radius)}
+.edu-status-panel{display:flex;align-items:center;justify-content:flex-end;gap:14px;padding:8px 12px;min-width:0;background:var(--ev-primary);color:var(--ev-primary-text);border:1px solid var(--ev-border);border-radius:var(--ev-control-radius)}
 .edu-status-panel[hidden]{display:none}
 .edu-status-panel__logo{display:block;flex:none;box-sizing:border-box;width:clamp(72px,11vw,128px);height:38px;padding:6px 10px;background:var(--ev-secondary);border-radius:var(--ev-control-radius);object-fit:contain}
-.edu-status-panel__details{display:flex;align-items:center;justify-content:flex-start;gap:14px;min-width:0;text-align:left}
-.edu-status-panel__date{font-size:clamp(10px,1.2vw,15px);line-height:1.25;opacity:.9}
-.edu-status-panel__clock{font-size:clamp(20px,2.3vw,30px);font-weight:550;line-height:1;white-space:nowrap;font-variant-numeric:tabular-nums}
-@media(max-width:700px){.edu-status-panel__details{align-items:flex-start;flex-direction:column;gap:4px}.edu-status-panel{gap:10px;padding:6px 10px}.edu-status-panel__logo{height:32px;padding:5px 8px}}
+.edu-status-panel__details{display:flex;align-items:center;justify-content:flex-end;gap:16px;min-width:0;margin-left:auto;text-align:right}
+.edu-status-panel__item{display:inline-flex;align-items:center;gap:7px;min-width:0}
+.edu-status-panel__item svg{flex:none;width:19px;height:19px}
+.edu-status-panel__date,.edu-status-panel__clock{font-size:clamp(12px,1.3vw,18px);font-weight:550;line-height:1.25;white-space:nowrap;font-variant-numeric:tabular-nums}
+@media(max-width:700px){.edu-status-panel__details{align-items:flex-end;flex-direction:column;gap:4px}.edu-status-panel{gap:10px;padding:6px 10px}.edu-status-panel__logo{height:32px;padding:5px 8px}}
