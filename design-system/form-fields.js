@@ -36,7 +36,7 @@
   }
   function start() {
     refresh();
-    new MutationObserver(schedule).observe(document.body, {childList: true, subtree: true});
+    new MutationObserver(schedule).observe(document.documentElement, {childList: true, subtree: true});
     document.addEventListener('input', event => { if (event.target.tagName === 'TEXTAREA') fit(event.target); });
     document.addEventListener('change', schedule);
     document.addEventListener('reset', schedule);
