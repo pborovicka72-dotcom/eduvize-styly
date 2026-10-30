@@ -3,7 +3,7 @@ import os,json,uuid,secrets
 from pathlib import Path
 import psycopg
 from fastapi import FastAPI,Header,HTTPException,Request
-from fastapi.responses import FileResponse,RedirectResponse
+from fastapi.responses import FileResponse
 from fastapi.middleware.cors import CORSMiddleware
 ROOT=Path(__file__).resolve().parent
 DATABASE_URL=os.getenv("DATABASE_URL","")
