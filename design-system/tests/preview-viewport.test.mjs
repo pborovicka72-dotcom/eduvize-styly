@@ -1,0 +1,12 @@
+import fs from 'node:fs';
+import vm from 'node:vm';
+import assert from 'node:assert/strict';
+let resize;const styles={};const host={clientWidth:1200,clientHeight:675,style:{},dataset:{},classList:{add(){}}};const frame={style:{setProperty:(k,v)=>styles[k]=v},classList:{add(){}},setAttribute(){},addEventListener(){}};
+const scope={window:{},getComputedStyle:()=>({position:'relative'}),ResizeObserver:class{constructor(fn){resize=fn;}observe(){}disconnect(){}}};
+vm.runInNewContext(fs.readFileSync(new URL('../preview-viewport.js',import.meta.url),'utf8'),scope);
+const view=scope.window.EduvizePreviewViewport.mount(frame,{host,width:3840,height:2160});
+assert.equal(styles.width,'3840px');assert.equal(styles.height,'2160px');assert.equal(styles.transform,'scale(0.3125)');
+host.clientWidth=600;host.clientHeight=337.5;resize();assert.equal(styles.width,'3840px');assert.equal(styles.height,'2160px');assert.equal(styles.transform,'scale(0.15625)');
+view.setSize(2160,3840);assert.equal(styles.width,'2160px');assert.equal(styles.height,'3840px');
+view.setSize(1200,2160);assert.equal(styles.width,'1200px');assert.equal(styles.height,'2160px');
+assert.throws(()=>view.setSize(0,2160));console.log('Physical preview resolution remains fixed across resize, portrait and exact segment dimensions.');
