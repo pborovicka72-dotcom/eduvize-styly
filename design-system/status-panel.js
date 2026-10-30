@@ -9,7 +9,7 @@
     const dates=new Intl.DateTimeFormat('cs-CZ',{weekday:'long',day:'numeric',month:'long',year:'numeric'}),shortDates=new Intl.DateTimeFormat('cs-CZ',{day:'numeric',month:'numeric',year:'numeric'}),times=new Intl.DateTimeFormat('cs-CZ',{hour:'2-digit',minute:'2-digit'});
     function update(){const now=new Date();date.dateTime=now.toISOString();clock.dateTime=now.toISOString();compact.dateTime=now.toISOString();compact.textContent=shortDates.format(now);date.textContent=dates.format(now);clock.textContent=times.format(now);}
     update();const interval=setInterval(update,15000);
-    return {refresh:update,setLogo:show=>{logo.hidden=!show;},destroy:()=>clearInterval(interval)};
+    return {refresh:update,setLogo:(show,url)=>{logo.hidden=!show;let src='https://pborovicka72-dotcom.github.io/eduvize-svatky/assets/eduvize-logo.svg';try{const custom=new URL(url);if(['https:','http:'].includes(custom.protocol))src=custom.href}catch{}logo.src=src;logo.alt=url?'Logo':'Eduvize';},destroy:()=>clearInterval(interval)};
   }
   root.EduvizeStatusPanel=Object.freeze({mount});
 })(window);

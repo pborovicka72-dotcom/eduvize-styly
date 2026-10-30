@@ -16,32 +16,38 @@ body{background:var(--ev-bg)}
 #contentFrame{flex:1;width:100%;min-height:0;border:0;border-radius:0;outline:0;box-shadow:none;background:transparent}
 .hidden{display:none!important}
 body.frame-open:not(.menu-layout) .hero,body.frame-open:not(.menu-layout) #tiles{display:none}
-/* Home layouts share aligned heading/status tracks and stable tile metrics. */
-body:is(.menu-layout,.tiles-home) .wrap{display:grid;grid-template-columns:minmax(0,var(--menu-side,240px)) minmax(0,1fr);grid-template-rows:auto minmax(0,1fr)}
-body:is(.menu-layout,.tiles-home) header{grid-column:1;grid-row:1;align-items:stretch}
-body.menu-layout header>.toolbar{display:none}
-body:is(.menu-layout,.tiles-home) #navigationHeading{width:100%;max-width:none;display:flex;flex-direction:column;justify-content:center}
-#statusPanel{flex:none;align-self:stretch}
-body:is(.menu-layout,.tiles-home) #statusPanel{grid-column:2;grid-row:1}
-body.menu-layout #tiles{grid-column:1;grid-row:2;grid-template-columns:repeat(var(--menu-cols,2),minmax(0,1fr));grid-template-rows:repeat(var(--menu-rows,4),minmax(0,1fr));padding:0}
+/* Home chrome has no heading card. The menu and status use one tile unit. */
+body:is(.menu-layout,.tiles-home) .wrap{display:grid;gap:clamp(4px,1vmin,12px);grid-template-columns:minmax(0,var(--menu-side,240px)) minmax(0,1fr);grid-template-rows:var(--menu-band,100px) minmax(0,1fr)}
+body:is(.menu-layout,.tiles-home) .wrap>header{display:none}
+#statusPanel{flex:none;align-self:stretch;--edu-status-logo-height:calc(var(--menu-band,80px) - 20px)}
+body.menu-layout #statusPanel{grid-column:2;grid-row:1}
+body.menu-layout #tiles{grid-column:1;grid-row:1/-1;grid-template-columns:repeat(var(--menu-cols,2),minmax(0,1fr));grid-template-rows:repeat(var(--menu-rows,5),minmax(0,1fr));padding:0;overflow:hidden}
 body.menu-layout #contentFrame{grid-column:2;grid-row:2;width:100%;height:100%}
-body:is(.menu-layout,.tiles-home) #tiles .tile{container-type:size;display:grid;grid-template-rows:minmax(0,1fr) auto;justify-items:center;gap:clamp(1px,calc(var(--menu-cell-height,100px)*.02),3px);padding:clamp(2px,calc(var(--menu-cell-height,100px)*.04),6px) clamp(3px,calc(var(--menu-cell-width,100px)*.05),7px) clamp(3px,calc(var(--menu-cell-height,100px)*.07),10px);overflow:hidden}
-body:is(.menu-layout,.tiles-home) #tiles .tile .app-icon{width:auto;height:100%;max-height:min(60cqw,44cqh);max-width:100%;aspect-ratio:1;padding:3px;align-self:center}
-body:is(.menu-layout,.tiles-home) #tiles .tile strong{width:100%;justify-self:center;font-size:clamp(5px,min(10cqw,11cqh),14px);line-height:1.15;font-weight:400}
+body:is(.menu-layout,.tiles-home) #tiles .tile{container-type:size;display:grid;grid-template-rows:minmax(0,1fr) auto;justify-items:center;gap:clamp(1px,calc(var(--menu-cell-height,100px)*.02),3px);padding:clamp(2px,calc(var(--menu-cell-height,100px)*.04),6px) clamp(3px,calc(var(--menu-cell-width,100px)*.07),10px) clamp(3px,calc(var(--menu-cell-height,100px)*.09),12px);overflow:hidden}
+body:is(.menu-layout,.tiles-home) #tiles .tile .app-icon{width:auto;height:100%;max-height:min(60cqw,48cqh);max-width:100%;aspect-ratio:1;padding:3px;align-self:center}
+body:is(.menu-layout,.tiles-home) #tiles .tile strong{width:100%;justify-self:center;font-size:clamp(5px,min(9cqw,10cqh),14px);line-height:1.15;font-weight:400}
 body.menu-layout.menu-right .wrap{grid-template-columns:minmax(0,1fr) minmax(0,var(--menu-side,240px))}
-body.menu-layout.menu-right header,body.menu-right #tiles{grid-column:2}
-body.menu-layout.menu-right #statusPanel,body.menu-right #contentFrame{grid-column:1}
-body.menu-layout:is(.menu-top,.menu-bottom) .wrap,body.tiles-home .wrap{grid-template-columns:minmax(0,var(--navigation-heading-width,240px)) minmax(0,1fr)}
-body.menu-layout.menu-top .wrap{grid-template-rows:auto minmax(0,var(--menu-band,120px)) minmax(0,1fr)}
-body.menu-layout.menu-bottom .wrap{grid-template-rows:auto minmax(0,1fr) minmax(0,var(--menu-band,120px))}
-body.menu-layout:is(.menu-top,.menu-bottom) :is(#tiles,#contentFrame){grid-column:1/-1}
-body.menu-top #tiles{grid-row:2}body.menu-top #contentFrame{grid-row:3}
-body.menu-bottom #tiles{grid-row:3}body.menu-bottom #contentFrame{grid-row:2}
-body.tiles-home #tiles{grid-column:1/-1;grid-row:2;grid-template-columns:repeat(var(--home-cols,4),minmax(0,1fr));grid-template-rows:repeat(var(--home-rows,2),minmax(0,1fr))}
-body.tiles-home #contentFrame{grid-column:1/-1;grid-row:2;height:100%}
-body.tiles-home.single-column .wrap{grid-template-columns:minmax(0,1fr);grid-template-rows:auto auto minmax(0,1fr)}
-body.tiles-home.single-column #statusPanel{grid-column:1;grid-row:2}
-body.tiles-home.single-column :is(#tiles,#contentFrame){grid-row:3}
+body.menu-layout.menu-right #tiles{grid-column:2}
+body.menu-layout.menu-right :is(#statusPanel,#contentFrame){grid-column:1}
+body.menu-layout:is(.menu-top,.menu-bottom) .wrap{grid-template-columns:repeat(10,minmax(0,1fr));grid-template-rows:var(--menu-band,100px) minmax(0,1fr)}
+body.menu-layout:is(.menu-top,.menu-bottom) #tiles{grid-column:1/8;grid-row:1}
+body.menu-layout:is(.menu-top,.menu-bottom) #statusPanel{grid-column:8/11;grid-row:1}
+body.menu-layout:is(.menu-top,.menu-bottom) #contentFrame{grid-column:1/-1;grid-row:2}
+body.menu-layout.menu-bottom .wrap{grid-template-rows:minmax(0,1fr) var(--menu-band,100px)}
+body.menu-layout.menu-bottom :is(#tiles,#statusPanel){grid-row:2}
+body.menu-layout.menu-bottom #contentFrame{grid-row:1}
+body.tiles-home .wrap{grid-template-columns:1fr;grid-template-rows:var(--menu-band,80px) minmax(0,1fr)}
+body.tiles-home #statusPanel{grid-column:1;grid-row:1}
+body.tiles-home #tiles{width:var(--home-grid-width,100%);height:var(--home-grid-height,100%);align-self:center;justify-self:center;grid-column:1;grid-row:2;grid-template-columns:repeat(var(--home-cols,4),minmax(0,1fr));grid-template-rows:repeat(var(--home-rows,2),minmax(0,1fr))}
+body.tiles-home #contentFrame{grid-column:1;grid-row:2;height:100%}
+@media(orientation:portrait){
+ body.menu-layout .wrap,body.menu-layout:is(.menu-top,.menu-bottom,.menu-right) .wrap{grid-template-columns:1fr;grid-template-rows:var(--menu-band,100px) calc(var(--menu-band,100px)*var(--menu-rows,3) + (var(--menu-rows,3) - 1)*clamp(4px,1vmin,12px)) minmax(0,1fr)}
+ body.menu-layout #statusPanel,body.menu-layout:is(.menu-top,.menu-bottom,.menu-right) #statusPanel{grid-column:1;grid-row:1}
+ body.menu-layout #tiles,body.menu-layout:is(.menu-top,.menu-bottom,.menu-right) #tiles{grid-column:1;grid-row:2}
+ body.menu-layout #contentFrame,body.menu-layout:is(.menu-top,.menu-bottom,.menu-right) #contentFrame{grid-column:1;grid-row:3}
+ body.menu-layout.menu-bottom .wrap{grid-template-rows:minmax(0,1fr) var(--menu-band,100px) calc(var(--menu-band,100px)*2 + clamp(4px,1vmin,12px))}
+ body.menu-layout.menu-bottom #tiles{grid-row:3}body.menu-layout.menu-bottom #statusPanel{grid-row:2}body.menu-layout.menu-bottom #contentFrame{grid-row:1}
+}
 @media(max-width:600px){body:not(.menu-layout):not(.tiles-home) .grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 
 /* Eduvize touch keyboard v20261027-6 */#touchKeyboard{position:fixed;left:50%;bottom:max(8px,env(safe-area-inset-bottom));transform:translateX(-50%);width:min(96vw,940px);z-index:9999;background:var(--ev-secondary);border:1px solid var(--ev-border);border-radius:18px;padding:12px;box-shadow:0 12px 40px #0003;display:none;touch-action:manipulation}#touchKeyboard.visible{display:block}#touchKeyboard .kb-row{display:flex;justify-content:center;gap:clamp(3px,.6vw,8px);margin:5px 0}#touchKeyboard button{min-width:0;flex:1;min-height:clamp(34px,5.5vh,55px);border:1px solid var(--ev-border);border-radius:8px;background:var(--ev-surface);color:var(--ev-text);font-size:clamp(14px,2vw,23px);font-weight:700;cursor:pointer}#touchKeyboard button.kb-special{background:var(--ev-secondary)}#touchKeyboard button.kb-wide{flex:4}body.keyboard-open .wrap{padding-bottom:clamp(190px,33vh,330px)}body.keyboard-open #contentFrame{min-height:0}body.segment-mode.keyboard-open .wrap{padding-bottom:clamp(150px,35cqh,320px)}@media(max-height:550px){#touchKeyboard{padding:5px}#touchKeyboard button{min-height:30px}#touchKeyboard .kb-row{margin:2px 0}}
