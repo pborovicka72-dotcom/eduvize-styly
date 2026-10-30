@@ -48,7 +48,8 @@
     const style=document.documentElement.style,portrait=root.innerHeight>root.innerWidth,gap=parseFloat(getComputedStyle(nav).gap)||0;
     const padding=parseFloat(getComputedStyle(wrap).paddingLeft)||0,width=wrap.clientWidth-padding*2,height=wrap.clientHeight-padding*2;
     const uiScale=Math.max(1,Math.min(width/1280,height/720));style.setProperty('--kiosk-ui-scale',String(uiScale));
-    const status=Math.max(64*uiScale,Math.min(128*uiScale,height*.12,width*.22));style.setProperty('--status-band',status+'px');
+    // Use one physical proportion for every menu placement and both orientations.
+    const status=Math.max(64,Math.min(width,height)*.16);style.setProperty('--status-band',status+'px');
     let setup=layout(position,portrait);
     if(mode==='tiles'){
       const packed=pack(nav.children.length,width,Math.max(1,height-status-gap),gap);
