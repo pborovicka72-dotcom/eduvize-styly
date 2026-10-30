@@ -1,0 +1,13 @@
+/* Shared school/address search components. Form fields use admin-shell.css. */
+.edu-search-results{display:grid;gap:10px;min-width:0}
+.edu-search-results:empty{display:none}
+.edu-search-results label{margin-top:8px}
+.edu-search-results p{margin:4px 0;color:var(--ev-muted);font-size:13px;line-height:1.5}
+.edu-search-results .edu-search-results__heading{color:var(--ev-text);font-size:14px;font-weight:700}
+.edu-search-group{display:flex;flex-direction:column;gap:8px;min-width:0;padding:12px;border:1px solid var(--ev-border);border-radius:var(--ev-card-radius);background:var(--ev-surface)}
+.edu-search-group__title{color:var(--ev-text);font-size:14px;line-height:1.4;overflow-wrap:anywhere}
+.edu-search-group>small{color:var(--ev-muted);font-size:12px}
+.edu-search-choice{display:flex;flex-direction:column;align-items:flex-start;gap:4px;width:100%;min-width:0;text-align:left;white-space:normal;padding:10px 13px;border:1px solid var(--ev-border);border-radius:var(--ev-control-radius);background:var(--ev-secondary);color:var(--ev-secondary-text);font:400 13px/1.5 var(--edu-admin-font);cursor:pointer}
+.edu-search-choice strong{font-weight:600}.edu-search-choice small{color:var(--ev-muted);font-size:13px}
+.edu-search-choice:hover{border-color:var(--ev-accent)}.edu-search-choice:focus-visible{outline:2px solid var(--ev-accent);outline-offset:2px}
+.edu-admin-search .search-progress{color:var(--ev-muted);font-size:13px;line-height:1.5}

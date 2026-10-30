@@ -1,3 +1,4 @@
+html.ev-theme-pending body{visibility:hidden}
 /* Shared Eduvize administration skin. Scope: .ev-admin only.
    Does not style app output, preview iframe content or Design System editor. */
 /* Defaults are supplied by admin-tokens.css; active-theme.js owns --ev-* on :root. */
@@ -9,17 +10,11 @@
 .ev-admin .edu-admin__card{background:var(--ev-surface);border:1px solid var(--ev-border);border-radius:var(--ev-card-radius);color:var(--ev-text)}
 .ev-admin .edu-admin__card label{color:var(--ev-text)}
 /* Shared form fields: presentation belongs to Design System, not applications. */
-.ev-admin .edu-admin__card :is(button:not(.school-place):not(.address-result)){min-height:var(--ev-control-height)}
+.ev-admin .edu-admin__card :is(button:not(.edu-search-choice)){min-height:var(--ev-control-height)}
 
 .ev-admin .edu-admin__card input[type=checkbox]{accent-color:var(--ev-primary)}
-.ev-admin .edu-admin__card button{border-radius:var(--ev-control-radius);min-height:var(--ev-control-height);border:1px solid var(--ev-border);background:var(--ev-secondary);color:var(--ev-secondary-text)}
-.ev-admin .edu-admin__card button[type=submit]{background:var(--ev-primary);color:var(--ev-primary-text);border-color:var(--ev-primary)}
-.ev-admin .edu-admin__card :is(.weather-forecast-settings,.school-group,.school-place,.address-result){border-color:var(--ev-border);border-radius:var(--ev-card-radius)}
-.ev-admin .edu-admin__card .weather-forecast-settings{background:var(--ev-secondary);color:var(--ev-secondary-text)}
-.ev-admin .edu-admin__card :is(.school-group,.school-place,.address-result){background:var(--ev-surface);color:var(--ev-text)}
-.ev-admin .edu-admin__card :is(.school-group-title,.school-place-title){color:var(--ev-text)}
-.ev-admin .edu-admin__card :is(.school-group-subtitle,.school-place-subtitle){color:var(--ev-muted)}
-
+.ev-admin .edu-admin__card button:not(.edu-admin__button):not(.edu-search-choice){border-radius:var(--ev-control-radius);min-height:var(--ev-control-height);border:1px solid var(--ev-border);background:var(--ev-secondary);color:var(--ev-secondary-text)}
+.ev-admin .edu-admin__card button[type=submit]:not(.edu-admin__button){background:var(--ev-primary);color:var(--ev-primary-text);border-color:var(--ev-primary)}
 /* Canonical output section: identical form controls across applications. */
 .ev-admin .edu-output-section{border:1px solid var(--ev-border);background:var(--ev-surface);border-radius:var(--ev-panel-radius,20px);padding:22px}
 .ev-admin .edu-output-section .edu-output-mode-row{display:block}
@@ -73,5 +68,5 @@
 .ev-admin .edu-admin__field textarea,.ev-admin .edu-admin__card textarea{height:auto;min-height:calc(var(--ev-control-height)*2);resize:vertical}
 /* One checkbox treatment across all admin cards and standalone groups. */
 .ev-admin .edu-checkbox-options{display:flex;align-items:center;flex-wrap:wrap;gap:12px 22px}
-.ev-admin .edu-checkbox-options label{display:inline-flex;flex-direction:row;align-items:center;gap:8px;width:auto;font-size:13px;font-weight:600}
-.ev-admin .edu-checkbox-options input[type=checkbox]{width:17px;height:17px;min-height:0;accent-color:var(--ev-accent)}
+.ev-admin .edu-checkbox-options label,.ev-admin label.edu-admin__checkbox{display:inline-flex;flex-direction:row;align-items:center;gap:8px;width:auto;font-size:13px;font-weight:600}
+.ev-admin .edu-checkbox-options input[type=checkbox],.ev-admin .edu-admin__checkbox input[type=checkbox]{width:17px;height:17px;min-height:0;accent-color:var(--ev-accent)}
