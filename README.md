@@ -1,23 +1,41 @@
-# Eduvize – Styly
+# Eduvize – centrální správa aplikací a stylů
 
-Samostatný modul pro centrální správu vizuálních stylů Eduvize.
+Tento repozitář je **jediným zdrojem** společného administračního design systému a geometrie šablon Newline Signage Pro. Obsahové aplikace (Počasí, Dokumenty, Kiosek a další) mají vlastní repozitáře a používají zde publikované komponenty.
 
-## Hranice odpovědnosti
-Tento repozitář vlastní definice barev, typografie, okrajů, zaoblení, náhledů, chráněného výchozího stylu a uživatelských předvoleb. Neobsahuje data ani obchodní logiku počasí, svátků, jízdních řádů, dokumentů, aktualit nebo kiosku.
+## Veřejné adresy
 
-## Požadované chování
-- Uložený styl má barevnou miniaturu generovanou ze skutečných hodnot.
-- Výběr stylu načte všechny hodnoty do editoru a obnoví náhled.
-- Úpravy jsou označeny jako neuložené; při přepnutí se zobrazí varování.
-- Výchozí styl je neměnný a nelze jej odstranit; lze jej kopírovat.
-- Verze schématu a stylů jsou explicitní.
-- Klientské aplikace pouze načítají styly; nespravují je.
+- [Správa aplikací](https://pborovicka72-dotcom.github.io/eduvize-styly/aplikace.html) – rozcestník aplikací.
+- [Správa stylů](https://eduvize-design-system-api.onrender.com/) – skutečný editor s databázovým ukládáním.
+- [Zdraví API](https://eduvize-design-system-api.onrender.com/health) – stav backendu.
 
-## Migrační pravidla
-1. Inventarizovat implementace a závislosti v ostatních repozitářích.
-2. Přenést pouze funkce správy vzhledu a jejich testy.
-3. Napojit konzumenty na centrální API a ověřit shodné vykreslení.
-4. Teprve po ověření odstranit původní implementace. Neodstraňovat lokální vykreslovací CSS, pokud je stále nezbytné pro chod aplikace.
-5. Zachovat stávající uložené uživatelské styly a možnost návratu.
+Kořenový `index.html` a `design-system/index.html` jsou **pouze přesměrování** kvůli starším odkazům. Neobsahují další editory.
 
-**Stav:** Připraveno jako cílový repozitář. Migrace existujícího kódu a odstranění duplicit dosud nebyly dokončeny.
+## Vlastnictví zdrojů
+
+| Soubor / část | Odpovědnost |
+| --- | --- |
+| `app.py`, `render.yaml`, `requirements.txt` | Samostatné API pro správu stylů a nasazení |
+| `editor.html` | Jediný editor stylů |
+| `design-system/admin-theme.json` | Základní výchozí styl a schéma |
+| `design-system/admin-tokens.css` | Výchozí designové proměnné |
+| `design-system/admin-shell.css` | Sdílené vzhledové komponenty administrací |
+| `design-system/admin-components.css` | Společné komponenty editoru a administrací |
+| `design-system/active-theme.js` | Načtení a použití aktivního stylu |
+| `design-system/nsp-geometry.js` | Kanonické rozměry a polohy segmentů |
+| `design-system/nsp-segments.js`, `nsp-segments.css` | Společný výběr šablon a segmentů |
+| `aplikace.html` | Centrální rozcestník aplikací |
+
+## Pravidla údržby
+
+1. Definice vzhledu a geometrie Newline se upravují **zde**, nikoliv kopírováním do jednotlivých aplikací.
+2. Aplikační repozitáře vlastní pouze své funkce, konfiguraci obsahu, lokální rozložení a nezbytné integrační adaptéry.
+3. Nové CSS přepisy se nepřidávají jako další historická vrstva; existující pravidlo se opravuje u zdroje.
+4. Před odstraněním souboru se ověřují všechny odkazy, importy, nasazení a automatizované testy. Staré veřejné adresy lze zachovat malým přesměrováním.
+5. Změny aktivního stylu se ověřují v administraci Dokumentů (referenční aplikace), Počasí a Kiosku. Zobrazovací stránky se nesmějí neúmyslně změnit.
+6. Seznam stylů je veřejně čitelný; vytváření, úpravy, aktivace a mazání vyžadují `DESIGN_SYSTEM_ADMIN_TOKEN`.
+
+## Provoz
+
+Render používá `uvicorn app:app`. Vyžaduje `DATABASE_URL` a `DESIGN_SYSTEM_ADMIN_TOKEN`; hodnoty se nikdy neukládají do GitHubu. GitHub Pages publikuje statický rozcestník a sdílené CSS/JS.
+
+Tento dokument popisuje cílové vlastnictví kódu. Samostatné moduly mohou stále obsahovat historické lokální styly; ty se odstraňují pouze po kontrole skutečných závislostí a regresních testech.
