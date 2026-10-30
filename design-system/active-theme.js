@@ -4,7 +4,7 @@
  const base=new URL('.',document.currentScript.src);
  const css=document.createElement('link');css.rel='stylesheet';css.href=new URL('form-fields.css?v=1',base);document.head.append(css);
  const script=document.createElement('script');script.src=new URL('form-fields.js?v=2',base);script.dataset.eduFormFields='';document.head.append(script);
- const fit=document.createElement('script');fit.src=new URL('fit-panel.js?v=1',base);document.head.append(fit);
+ const fit=document.createElement('script');fit.src=new URL('fit-panel.js?v=2',base);document.head.append(fit);
 })();
 /* Shared Eduvize active theme loader. No local theme definitions. */
 (function(){

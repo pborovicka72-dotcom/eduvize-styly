@@ -6,12 +6,24 @@
   function fit(host) {
     const sheet = host.firstElementChild;
     if (!sheet || !host.clientWidth || !host.clientHeight) return;
-    const width = Math.max(640, host.clientWidth);
-    sheet.style.width = width + 'px';
     sheet.style.transformOrigin = 'top left';
-    const scale = Math.min(1, host.clientWidth / width, host.clientHeight / sheet.scrollHeight);
+    sheet.style.marginLeft = '0px';
+    // Keep the visual width equal to the host even when fitting its height.
+    function fits(scale) {
+      sheet.style.width = host.clientWidth / scale + 'px';
+      return sheet.scrollHeight * scale <= host.clientHeight;
+    }
+    let scale = 1;
+    if (!fits(1)) {
+      let low = 0.01, high = 1;
+      for (let i = 0; i < 14; i++) {
+        const middle = (low + high) / 2;
+        if (fits(middle)) low = middle; else high = middle;
+      }
+      scale = low;
+    }
+    sheet.style.width = host.clientWidth / scale + 'px';
     sheet.style.transform = 'scale(' + scale + ')';
-    sheet.style.marginLeft = Math.max(0, (host.clientWidth - width * scale) / 2) + 'px';
     host.style.overflow = 'hidden';
   }
   const resize = new ResizeObserver(() => schedule());
