@@ -12,6 +12,7 @@
   function bind(options){
     const {form,file,category,button,progress,bar,message,getToken,onSuccess,onError}=options;
     form.classList.add('edu-document-upload');file.accept=accept;
+    category.closest('label')?.classList.add('edu-admin__field');
     progress.classList.add('edu-upload-progress');message.classList.add('edu-upload-status');
     let busy=false;
     form.onsubmit=event=>{
