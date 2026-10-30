@@ -55,3 +55,16 @@
 }
 .template-preview>span:has(iframe),
 #ev-preview>.ev-box:has(iframe){padding:0!important;overflow:hidden}
+
+/* Unavailable Newline segments stay visibly grey in every template and preview. */
+#ev-segments .ev-mini .ev-box.disabled,
+#ev-segments #ev-cards .ev-mini .ev-box.disabled,
+#ev-segments #ev-preview .ev-box.disabled,
+#ev-segments .layout-mini span.disabled,
+#ev-segments .template-preview span.disabled{
+ background:#aeb8c2!important;
+ color:#44515d!important;
+ opacity:1!important;
+ cursor:not-allowed!important;
+}
+#ev-segments .ev-box.disabled.active{outline:none!important}
