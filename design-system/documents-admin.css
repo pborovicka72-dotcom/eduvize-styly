@@ -32,6 +32,5 @@
 @media(max-width:550px){#items .document-fields{grid-template-columns:minmax(0,1fr)}#items article{grid-template-columns:32px minmax(0,1fr);gap:10px}#items .drag-handle{width:32px;font-size:22px}#items .document-actions{grid-column:1/-1}}
 
 .edu-admin-preview{display:flex;flex-direction:column;gap:14px}
-.edu-admin-preview iframe{display:block;width:100%;height:clamp(300px,55vw,650px);border:1px solid var(--ev-border);border-radius:var(--ev-control-radius);background:var(--ev-surface)}
 .edu-admin-preview__heading{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
 .edu-admin-preview__heading h2{margin:0}

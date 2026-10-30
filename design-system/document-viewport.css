@@ -1,8 +1,9 @@
+@import url("navigation.css?v=1");
 .edu-document-tools{display:flex;flex:none;flex-wrap:wrap;align-items:center;justify-content:center;gap:7px;padding:6px;background:var(--ev-surface,#fff);color:var(--ev-text,#153a53)}
 .edu-document-tools[hidden],.edu-document-tool[hidden]{display:none}
-.edu-document-tool{min-height:34px;padding:6px 10px;border:1px solid var(--ev-border,#d9e7ef);border-radius:var(--ev-control-radius,10px);font:500 13px/1.2 system-ui,sans-serif;background:var(--ev-secondary,#dff2f6);color:var(--ev-secondary-text,#096579);cursor:pointer}
-.edu-document-tool[aria-pressed=true]{background:var(--ev-primary,#087c91);color:var(--ev-primary-text,#fff)}
-.edu-document-tool:focus-visible{outline:2px solid var(--ev-accent,#087c91);outline-offset:2px}
+
+
+
 .edu-document-zoom{min-width:48px;text-align:center;font:500 13px/1.2 system-ui,sans-serif;font-variant-numeric:tabular-nums}
 .edu-document-fullscreen .edu-document-canvas.is-zoomed{display:block;overflow:auto;align-content:normal;touch-action:pan-x pan-y}
 .edu-document-fullscreen .edu-document-canvas.is-zoomed canvas{max-width:none;margin:0 auto;cursor:zoom-in}

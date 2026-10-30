@@ -1,3 +1,4 @@
+@import url("navigation.css?v=1");
 /* Eduvize Admin UI — component baseline derived from Documents.
    Namespaced classes prevent unintended changes to application-specific controls. */
 .edu-admin {font-family:var(--edu-admin-font);color:var(--edu-admin-ink);background:var(--edu-admin-bg)}
@@ -6,9 +7,9 @@
 /* Field control appearance is shared with admin-shell.css. */
 .edu-admin__actions{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
 .edu-admin__field-grid+.edu-admin__actions{margin-top:20px}
-.edu-navigation-button{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:36px;padding:6px 10px;border:1px solid var(--ev-border);border-radius:var(--ev-control-radius);background:var(--ev-secondary);color:var(--ev-secondary-text);font:550 13px/1.2 system-ui,sans-serif;cursor:pointer;text-decoration:none}
-.edu-navigation-button span{width:20px;text-align:center;font-size:18px}
-.edu-navigation-button:focus-visible{outline:2px solid var(--ev-accent);outline-offset:2px}
+
+
+
 .edu-admin__button{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:var(--edu-admin-control-height);padding:10px 14px;border:0;border-radius:var(--edu-admin-control-radius);background:var(--edu-admin-primary);color:var(--edu-admin-primary-text);font:700 13px var(--edu-admin-font);cursor:pointer}
 .edu-admin__button--secondary{background:var(--edu-admin-secondary);color:var(--edu-admin-secondary-text)}
 .edu-admin__button:focus-visible,.edu-admin__field :is(input,select):focus-visible{outline:2px solid var(--edu-admin-accent);outline-offset:2px}
@@ -34,7 +35,7 @@
 @media(max-width:680px){.edu-admin__field-grid{grid-template-columns:1fr}}
 
 /* Reusable navigation heading and introductory content surface. */
-.edu-navigation-heading{padding:8px 12px;border-radius:var(--ev-control-radius,10px);background:var(--ev-primary);color:var(--ev-primary-text)}
-.edu-navigation-title{font:600 clamp(13px,1.8vmin,20px)/1.2 system-ui,sans-serif;margin:0;overflow-wrap:anywhere}
-.edu-navigation-subtitle{font:400 clamp(10px,1.4vmin,15px)/1.3 system-ui,sans-serif;margin:4px 0 0;overflow-wrap:anywhere}
+
+
+
 .edu-content-intro{margin:0;padding:14px 16px;background:var(--ev-surface);color:var(--ev-text);border:1px solid var(--ev-border);border-left:4px solid var(--ev-primary);border-radius:var(--ev-card-radius,16px);font-size:clamp(15px,1.6vw,20px);line-height:1.5}
