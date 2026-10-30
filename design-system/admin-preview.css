@@ -1,7 +1,7 @@
 /* Shared administration viewport; orientation does not change saved output settings. */
 .edu-admin-preview__controls{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-bottom:12px}
 .edu-admin-preview__controls button{font:550 13px/1.2 system-ui,sans-serif;padding:8px 12px;border:1px solid var(--ev-border);border-radius:var(--ev-control-radius);background:var(--ev-secondary);color:var(--ev-secondary-text);min-height:36px;cursor:pointer}
-.edu-admin-preview__controls button[aria-pressed=true]{background:var(--ev-primary);color:var(--ev-primary-text);border-color:var(--ev-primary)}
+.edu-admin-preview__controls button[aria-pressed=true],.ev-admin .edu-admin-preview__controls button[aria-pressed=true]{background:var(--ev-primary);color:var(--ev-primary-text);border-color:var(--ev-primary)}
 .edu-admin-preview__viewport{position:relative;width:100%;aspect-ratio:16/9;overflow:hidden;border:1px solid var(--ev-border);border-radius:var(--ev-control-radius);background:var(--ev-bg);margin-inline:auto}
 .edu-admin-preview__viewport.is-portrait{width:min(100%,380px);aspect-ratio:9/16}
 .edu-admin-preview__viewport iframe{display:block;width:100%;height:100%;border:0;background:var(--ev-bg)}
