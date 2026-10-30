@@ -1,5 +1,6 @@
 /* Shared pager controls and viewport. Theme colors remain centrally defined. */
-.edu-paged-panel{display:flex;flex-direction:column;gap:10px;min-height:0;min-width:0;overflow:hidden}
+.edu-paged-panel{position:relative;display:flex;flex-direction:column;gap:10px;min-height:0;min-width:0;overflow:hidden}
+.edu-flow-measure{position:absolute;left:0;top:0;visibility:hidden;pointer-events:none;box-sizing:border-box}
 .edu-paged-stage{flex:1;min-height:0;min-width:0;position:relative;overflow:hidden}
 .edu-paged-content{box-sizing:border-box;min-width:0}
 .edu-pagination{flex:none;display:flex;align-items:center;justify-content:center;gap:12px}

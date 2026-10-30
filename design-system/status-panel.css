@@ -1,0 +1,7 @@
+.edu-status-panel{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:8px 14px;min-width:0;background:var(--ev-surface);color:var(--ev-text);border:1px solid var(--ev-border);border-radius:var(--ev-card-radius)}
+.edu-status-panel[hidden]{display:none}
+.edu-status-panel__logo{display:block;width:clamp(40px,9vw,110px);max-height:34px;object-fit:contain}
+.edu-status-panel__details{display:flex;align-items:center;justify-content:flex-end;gap:14px;min-width:0;text-align:right}
+.edu-status-panel__date{font-size:clamp(10px,1.2vw,16px);line-height:1.25}
+.edu-status-panel__clock{font-size:clamp(18px,2.3vw,30px);font-weight:600;line-height:1;white-space:nowrap;font-variant-numeric:tabular-nums}
+@media(max-width:700px){.edu-status-panel__details{flex-direction:column;gap:4px}.edu-status-panel{gap:8px;padding:6px 8px}}
