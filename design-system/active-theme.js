@@ -9,6 +9,11 @@
   for(const [key,variable] of Object.entries(names)){const value=theme.colors[key];if(typeof value==='string'&&/^#[0-9a-fA-F]{6}$/.test(value))root.setProperty(variable,value)}
   if(theme.controls){if(Number.isFinite(theme.controls.heightPx))root.setProperty('--ev-control-height',theme.controls.heightPx+'px');if(Number.isFinite(theme.controls.radiusPx))root.setProperty('--ev-control-radius',theme.controls.radiusPx+'px')}
   if(Number.isFinite(theme.cards?.radiusPx))root.setProperty('--ev-card-radius',theme.cards.radiusPx+'px');
+  const legacy={background:'bg',text:'ink',muted:'muted',surface:'surface',primary:'primary',primaryText:'primary-text',secondary:'secondary',secondaryText:'secondary-text',accent:'accent',border:'border'};
+  for(const [key,suffix] of Object.entries(legacy)){const value=theme.colors[key];if(typeof value==='string'&&/^#[0-9a-fA-F]{6}$/.test(value))root.setProperty('--edu-admin-'+suffix,value)}
+  if(typeof theme.colors.border==='string')root.setProperty('--edu-admin-input-border',theme.colors.border);
+  if(theme.controls){if(Number.isFinite(theme.controls.heightPx))root.setProperty('--edu-admin-control-height',theme.controls.heightPx+'px');if(Number.isFinite(theme.controls.radiusPx))root.setProperty('--edu-admin-control-radius',theme.controls.radiusPx+'px')}
+  if(Number.isFinite(theme.cards?.radiusPx))root.setProperty('--edu-admin-card-radius',theme.cards.radiusPx+'px');
   document.documentElement.dataset.eduvizeTheme='active';return true;
  }
  try{const cached=JSON.parse(localStorage.getItem(cacheKey)||'null');if(cached)apply(cached)}catch(_){}
