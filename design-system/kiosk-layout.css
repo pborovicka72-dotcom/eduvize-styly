@@ -19,7 +19,7 @@ body.frame-open:not(.menu-layout) .hero,body.frame-open:not(.menu-layout) #tiles
 /* Home chrome has no heading card. The menu and status use one tile unit. */
 body:is(.menu-layout,.tiles-home) .wrap{display:grid;gap:clamp(4px,1vmin,12px);grid-template-columns:minmax(0,var(--menu-side,240px)) minmax(0,1fr);grid-template-rows:var(--menu-band,100px) minmax(0,1fr)}
 body:is(.menu-layout,.tiles-home) .wrap>header{display:none}
-#statusPanel{flex:none;align-self:stretch;--edu-status-logo-height:calc(var(--menu-band,80px) - 20px)}
+#statusPanel{flex:none;align-self:stretch;--edu-status-height:var(--menu-band,80px)}
 body.menu-layout #statusPanel{grid-column:2;grid-row:1}
 body.menu-layout #tiles{grid-column:1;grid-row:1/-1;grid-template-columns:repeat(var(--menu-cols,2),minmax(0,1fr));grid-template-rows:repeat(var(--menu-rows,5),minmax(0,1fr));padding:0;overflow:hidden}
 body.menu-layout #contentFrame{grid-column:2;grid-row:2;width:100%;height:100%}
@@ -33,12 +33,13 @@ body.menu-layout:is(.menu-top,.menu-bottom) .wrap{grid-template-columns:repeat(1
 body.menu-layout:is(.menu-top,.menu-bottom) #tiles{grid-column:1/8;grid-row:1}
 body.menu-layout:is(.menu-top,.menu-bottom) #statusPanel{grid-column:8/11;grid-row:1}
 body.menu-layout:is(.menu-top,.menu-bottom) #contentFrame{grid-column:1/-1;grid-row:2}
-body.menu-layout.menu-bottom .wrap{grid-template-rows:minmax(0,1fr) var(--menu-band,100px)}
-body.menu-layout.menu-bottom :is(#tiles,#statusPanel){grid-row:2}
-body.menu-layout.menu-bottom #contentFrame{grid-row:1}
+body.menu-layout.menu-bottom .wrap{grid-template-rows:var(--menu-band,100px) minmax(0,1fr) var(--menu-band,100px)}
+body.menu-layout.menu-bottom #statusPanel{grid-column:1/-1;grid-row:1}
+body.menu-layout.menu-bottom #tiles{grid-column:1/-1;grid-row:3}
+body.menu-layout.menu-bottom #contentFrame{grid-row:2}
 body.tiles-home .wrap{grid-template-columns:1fr;grid-template-rows:var(--menu-band,80px) minmax(0,1fr)}
 body.tiles-home #statusPanel{grid-column:1;grid-row:1}
-body.tiles-home #tiles{width:var(--home-grid-width,100%);height:var(--home-grid-height,100%);align-self:center;justify-self:center;grid-column:1;grid-row:2;grid-template-columns:repeat(var(--home-cols,4),minmax(0,1fr));grid-template-rows:repeat(var(--home-rows,2),minmax(0,1fr))}
+body.tiles-home #tiles{width:100%;height:100%;grid-column:1;grid-row:2;grid-template-columns:repeat(var(--home-cols,4),minmax(0,1fr));grid-template-rows:repeat(var(--home-rows,2),minmax(0,1fr))}
 body.tiles-home #contentFrame{grid-column:1;grid-row:2;height:100%}
 body.tiles-home.frame-open .wrap{grid-template-rows:auto minmax(0,1fr)}
 body.tiles-home.frame-open .wrap>header{display:flex;grid-column:1;grid-row:1}
@@ -48,8 +49,8 @@ body.tiles-home.frame-open #navigationHeading{display:none}
  body.menu-layout #statusPanel,body.menu-layout:is(.menu-top,.menu-bottom,.menu-right) #statusPanel{grid-column:1;grid-row:1}
  body.menu-layout #tiles,body.menu-layout:is(.menu-top,.menu-bottom,.menu-right) #tiles{grid-column:1;grid-row:2}
  body.menu-layout #contentFrame,body.menu-layout:is(.menu-top,.menu-bottom,.menu-right) #contentFrame{grid-column:1;grid-row:3}
- body.menu-layout.menu-bottom .wrap{grid-template-rows:minmax(0,1fr) var(--menu-band,100px) calc(var(--menu-band,100px)*2 + clamp(4px,1vmin,12px))}
- body.menu-layout.menu-bottom #tiles{grid-row:3}body.menu-layout.menu-bottom #statusPanel{grid-row:2}body.menu-layout.menu-bottom #contentFrame{grid-row:1}
+ body.menu-layout.menu-bottom .wrap{grid-template-rows:var(--menu-band,100px) minmax(0,1fr) calc(var(--menu-band,100px)*2 + clamp(4px,1vmin,12px))}
+ body.menu-layout.menu-bottom #tiles{grid-row:3}body.menu-layout.menu-bottom #statusPanel{grid-row:1}body.menu-layout.menu-bottom #contentFrame{grid-row:2}
 }
 @media(max-width:600px){body:not(.menu-layout):not(.tiles-home) .grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 

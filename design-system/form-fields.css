@@ -9,3 +9,6 @@ textarea[data-edu-autogrow="on"] {
 }
 
 [hidden]:not([hidden="until-found"]){display:none!important}
+
+/* Native disabled state must also be visible on application administration buttons. */
+.ev-admin button:disabled,.edu-admin__button:disabled{opacity:.4;filter:grayscale(.8);cursor:not-allowed;box-shadow:none;transform:none}

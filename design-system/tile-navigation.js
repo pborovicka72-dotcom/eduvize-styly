@@ -15,7 +15,18 @@
   }
   function indexFor(items,index,capacity=8){const item=items[index];return Math.max(0,groups(items,capacity).findIndex(group=>group.includes(item)));}
   function grid(columns,rows){columns=Math.max(1,Math.min(8,Math.round(Number(columns)||4)));rows=Math.max(Math.ceil(3/columns),Math.min(8,Math.round(Number(rows)||2)));return {columns,rows,capacity:columns*rows};}
-  function area(count=10,portrait=false){count=Math.max(3,Math.min(25,Math.round(Number(count)||10)));const long=Math.ceil(Math.sqrt(count)),short=Math.ceil(count/long);return {columns:portrait?short:long,rows:portrait?long:short,capacity:count};}
+  function area(count=10,portrait=false,width,height,gap=0){
+    count=Math.max(3,Math.min(25,Math.round(Number(count)||10)));
+    const long=Math.ceil(Math.sqrt(count)),short=Math.ceil(count/long);
+    let best={columns:portrait?short:long,rows:portrait?long:short,capacity:count},score=Infinity;
+    if(width>0&&height>0)for(let columns=1;columns<=count;columns++){
+      const rows=Math.ceil(count/columns),w=(width-gap*(columns-1))/columns,h=(height-gap*(rows-1))/rows;
+      if(w<=0||h<=0)continue;
+      const candidate=Math.abs(Math.log(w/h))+(columns*rows-count)*.001;
+      if(candidate<score){score=candidate;best={columns,rows,capacity:count};}
+    }
+    return best;
+  }
   function count(config){return area(config.tileCount??(config.tileColumns!==undefined||config.tileRows!==undefined?(config.tileColumns||4)*(config.tileRows||2):10)).capacity;}
   function layout(position='left',portrait=false){
     const band=['top','bottom'].includes(position);
@@ -24,16 +35,17 @@
   function fit(nav,{mode='menu',position='left',columns,rows:requestedRows,tileCount,wrap}={}){
     if(!nav.clientWidth||!nav.clientHeight)return;
     const style=document.documentElement.style,portrait=root.innerHeight>root.innerWidth,gap=parseFloat(getComputedStyle(nav).gap)||0;
-    const setup=mode==='tiles'?area(tileCount??((columns||4)*(requestedRows||2)),portrait):layout(position,portrait),cols=setup.columns,rows=setup.rows;
-    style.setProperty('--menu-cols',cols);style.setProperty('--menu-rows',rows);
+    let setup=layout(position,portrait);
     if(mode==='tiles'){
-      style.setProperty('--home-cols',cols);style.setProperty('--home-rows',rows);
       const padding=parseFloat(getComputedStyle(wrap).paddingLeft)||0,width=wrap.clientWidth-padding*2,height=wrap.clientHeight-padding*2;
-      const cell=Math.max(1,Math.min((width-gap*(cols-1))/cols,(height-gap*rows)/(rows+1)));
-      style.setProperty('--menu-band',cell+'px');style.setProperty('--home-grid-width',(cell*cols+gap*(cols-1))+'px');style.setProperty('--home-grid-height',(cell*rows+gap*(rows-1))+'px');
+      const base=area(tileCount??((columns||4)*(requestedRows||2)),portrait);
+      const band=Math.max(1,(height-gap*base.rows)/(base.rows+1));
+      setup=area(base.capacity,portrait,width,Math.max(1,height-band-gap),gap);
+      style.setProperty('--home-cols',setup.columns);style.setProperty('--home-rows',setup.rows);style.setProperty('--menu-band',band+'px');
     }
     else if(!portrait&&!setup.band){const height=wrap.clientHeight-2*(parseFloat(getComputedStyle(wrap).paddingTop)||0);const cell=(height-gap*4)/5;style.setProperty('--menu-side',Math.min(root.innerWidth*.42,cell*2+gap)+'px');style.setProperty('--menu-band',cell+'px');}
-    else{const width=wrap.clientWidth-2*(parseFloat(getComputedStyle(wrap).paddingLeft)||0);const cells=portrait?cols:10;const cell=(width-gap*(cells-1))/cells;style.setProperty('--menu-band',cell+'px');}
+    else{const width=wrap.clientWidth-2*(parseFloat(getComputedStyle(wrap).paddingLeft)||0);const cells=portrait||position==='bottom'?setup.columns:10;const cell=(width-gap*(cells-1))/cells;style.setProperty('--menu-band',cell+'px');}
+    const cols=setup.columns,rows=setup.rows;style.setProperty('--menu-cols',cols);style.setProperty('--menu-rows',rows);
     style.setProperty('--menu-cell-width',Math.max(1,(nav.clientWidth-gap*(cols-1))/cols)+'px');style.setProperty('--menu-cell-height',Math.max(1,(nav.clientHeight-gap*(rows-1))/rows)+'px');
   }
   root.EduvizeTileNavigation=Object.freeze({page,indexFor,grid,area,count,layout,fit});

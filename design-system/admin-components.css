@@ -17,7 +17,7 @@
 /* Shared application tile, active state and editor icon. */
 .ev-app-tile,#tiles .ev-app-tile,body.menu-layout #tiles .ev-app-tile,body.tiles-home #tiles .ev-app-tile{background:var(--ev-primary)!important;color:var(--ev-primary-text)!important;border:1px solid var(--ev-border)!important;border-radius:var(--ev-control-radius)!important;box-shadow:none!important}
 .ev-app-tile.active,#tiles .ev-app-tile.active,body.menu-layout #tiles .ev-app-tile.active,body.tiles-home #tiles .ev-app-tile.active{background:var(--ev-secondary)!important;color:var(--ev-secondary-text)!important;border:2px solid var(--ev-accent)!important}
-.ev-app-tile .app-icon,#tiles .ev-app-tile .app-icon{background:var(--ev-secondary)!important;color:var(--ev-secondary-text)!important;border-radius:var(--ev-control-radius)!important;box-shadow:none!important}
+.ev-app-tile .app-icon,#tiles .ev-app-tile .app-icon{background:var(--ev-secondary)!important;color:var(--ev-secondary-text)!important;border-radius:min(calc(var(--ev-control-radius)*.45),12%)!important;box-shadow:none!important}
 .ev-app-tile.active .app-icon,#tiles .ev-app-tile.active .app-icon{background:var(--ev-accent)!important;color:var(--ev-primary-text)!important}
 .ev-app-tile strong{font-weight:400}
 .ev-app-tile .app-icon svg{stroke:currentColor}
