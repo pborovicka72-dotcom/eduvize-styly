@@ -28,3 +28,9 @@
 .edu-admin__control-row>.edu-admin__actions{flex:0 0 auto}
 .edu-admin__field-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px 22px;align-items:end}
 @media(max-width:680px){.edu-admin__field-grid{grid-template-columns:1fr}}
+
+/* Reusable navigation heading and introductory content surface. */
+.edu-navigation-heading{padding:8px 12px;border-radius:var(--ev-control-radius,10px);background:var(--ev-primary);color:var(--ev-primary-text)}
+.edu-navigation-title{font:600 clamp(13px,1.8vmin,20px)/1.2 system-ui,sans-serif;margin:0;overflow-wrap:anywhere}
+.edu-navigation-subtitle{font:400 clamp(10px,1.4vmin,15px)/1.3 system-ui,sans-serif;margin:4px 0 0;overflow-wrap:anywhere}
+.edu-content-intro{margin:0;padding:14px 16px;background:var(--ev-surface);color:var(--ev-text);border:1px solid var(--ev-border);border-left:4px solid var(--ev-primary);border-radius:var(--ev-card-radius,16px);font-size:clamp(15px,1.6vw,20px);line-height:1.5}
