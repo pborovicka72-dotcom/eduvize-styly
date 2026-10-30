@@ -40,6 +40,9 @@ body.tiles-home .wrap{grid-template-columns:1fr;grid-template-rows:var(--menu-ba
 body.tiles-home #statusPanel{grid-column:1;grid-row:1}
 body.tiles-home #tiles{width:var(--home-grid-width,100%);height:var(--home-grid-height,100%);align-self:center;justify-self:center;grid-column:1;grid-row:2;grid-template-columns:repeat(var(--home-cols,4),minmax(0,1fr));grid-template-rows:repeat(var(--home-rows,2),minmax(0,1fr))}
 body.tiles-home #contentFrame{grid-column:1;grid-row:2;height:100%}
+body.tiles-home.frame-open .wrap{grid-template-rows:auto minmax(0,1fr)}
+body.tiles-home.frame-open .wrap>header{display:flex;grid-column:1;grid-row:1}
+body.tiles-home.frame-open #navigationHeading{display:none}
 @media(orientation:portrait){
  body.menu-layout .wrap,body.menu-layout:is(.menu-top,.menu-bottom,.menu-right) .wrap{grid-template-columns:1fr;grid-template-rows:var(--menu-band,100px) calc(var(--menu-band,100px)*var(--menu-rows,3) + (var(--menu-rows,3) - 1)*clamp(4px,1vmin,12px)) minmax(0,1fr)}
  body.menu-layout #statusPanel,body.menu-layout:is(.menu-top,.menu-bottom,.menu-right) #statusPanel{grid-column:1;grid-row:1}
