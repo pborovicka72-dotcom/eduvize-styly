@@ -21,7 +21,7 @@
       const fail=text=>{message.textContent=text;progress.hidden=false;onError?.(text);};
       if(error){fail(error);return;}
       if(!token){fail('Zadejte administrační klíč Dokumentů.');return;}
-      const data=new FormData();data.append('file',selected);data.append('category',category.value);
+      const data=new FormData();data.append('file',selected);data.append('category',category.value);data.append('scope',options.scope||'documents');
       const xhr=new XMLHttpRequest();xhr.open('POST',options.endpoint||'/api/admin/documents');
       xhr.setRequestHeader('Authorization','Bearer '+token);
       busy=true;button.disabled=true;progress.hidden=false;bar.value=0;message.textContent='Odesílání souboru: 0 %';
