@@ -2,7 +2,7 @@
 (function(){
  if(document.querySelector('script[data-edu-form-fields]'))return;
  const base=new URL('.',document.currentScript.src);
- const css=document.createElement('link');css.rel='stylesheet';css.href=new URL('form-fields.css?v=1',base);document.head.append(css);
+ const css=document.createElement('link');css.rel='stylesheet';css.href=new URL('form-fields.css?v=2',base);document.head.append(css);
  const script=document.createElement('script');script.src=new URL('form-fields.js?v=2',base);script.dataset.eduFormFields='';document.head.append(script);
  const typographyCss=document.createElement('link');typographyCss.rel='stylesheet';typographyCss.href=new URL('typography.css?v=1',base);document.head.append(typographyCss);
  const typography=document.createElement('script');typography.src=new URL('typography.js?v=2',base);document.head.append(typography);

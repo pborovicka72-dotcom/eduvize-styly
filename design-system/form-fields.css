@@ -7,3 +7,5 @@ textarea[data-edu-autogrow="on"] {
   resize: none;
   white-space: pre-wrap;
 }
+
+[hidden]:not([hidden="until-found"]){display:none!important}
