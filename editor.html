@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="cs"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Eduvize | Design System – Administrace</title>
-<link rel="stylesheet" href="/design-system/admin-tokens.css"><link rel="stylesheet" href="/design-system/admin-shell.css?v=24"><link rel="stylesheet" href="/design-system/admin-components.css?v=3"><link rel="stylesheet" href="/design-system/nsp-segments.css?v=3">
+<link rel="stylesheet" href="/design-system/admin-tokens.css"><link rel="stylesheet" href="/design-system/admin-shell.css?v=25"><link rel="stylesheet" href="/design-system/admin-components.css?v=3"><link rel="stylesheet" href="/design-system/nsp-segments.css?v=3">
 <style>
 *{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 90% 0%,#d7f6ef 0%,transparent 34%),linear-gradient(135deg,#eef5fb,#e7f2f6);color:#142c46;font-family:system-ui,-apple-system,"Segoe UI",Arial,sans-serif}h2{margin:0 0 16px;font-size:21px}.cols{display:grid;grid-template-columns:minmax(300px,440px) minmax(300px,1fr);gap:20px;align-items:start}.panel{background:white;border:1px solid #dce6ed;border-radius:20px;padding:24px;box-shadow:0 10px 28px #16435b0b}.fields{display:grid;grid-template-columns:1fr 1fr;gap:14px}.field{display:flex;flex-direction:column;gap:7px;font-weight:650;font-size:14px}.field input[type=color]{height:40px;width:100%;border:1px solid #bed8e3;border-radius:10px;padding:3px;background:#fff}.field input[type=number]{height:40px;border:1px solid #bed8e3;border-radius:10px;padding:7px 11px;font:inherit}.actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:20px}.btn{border:0;border-radius:10px;padding:10px 14px;min-height:40px;background:#087c91;color:white;font-weight:700;cursor:pointer}.btn.secondary{background:#e7f0f4;color:#35536a}.note{font-size:13px;color:var(--ev-muted,#638098);line-height:1.5}.preview{padding:25px;border-radius:18px;background:var(--p-bg);color:var(--p-text);min-height:430px}.preview-form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.preview-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px}.preview-actions button{padding:8px 14px;font-weight:700;cursor:pointer}.preview-actions button.danger{background:#ae3951;color:#fff}.preview-actions button:disabled{opacity:.45}.preview-surface{padding:24px}.segment{margin:16px 0;padding:16px;background:var(--ev-secondary);color:var(--ev-secondary-text);border:1px solid var(--ev-border);border-radius:var(--ev-card-radius)}.segment-card{display:inline-block;padding:14px;border:2px solid var(--ev-accent);border-radius:var(--ev-card-radius);background:var(--ev-surface);color:var(--ev-text);font-weight:700}
 @media(max-width:850px){.cols{grid-template-columns:1fr}}@media(max-width:460px){.fields,.preview-form-grid{grid-template-columns:1fr}}
@@ -15,7 +15,7 @@
 .preview{--p-muted:var(--p-text);padding:clamp(12px,2vw,25px)}
 
 .preview .preview-muted{color:var(--p-text);opacity:.7;font-size:13px;line-height:1.5}
-.preview .preview-section{border-top:1px solid var(--p-border);padding:18px 0;margin-top:15px}
+.preview .preview-section:not(.edu-output-section){border-top:1px solid var(--ev-border);padding:18px 0;margin-top:15px}
 .preview .preview-section h3{font-size:17px;margin:0 0 12px;color:var(--p-text)}
 
 
@@ -23,13 +23,13 @@
 
 
 .preview .preview-tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
-.preview .template-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px;align-items:start}
-.preview .template-choice{border:2px solid var(--p-border);border-radius:var(--p-radius);padding:10px;background:var(--p-surface);color:var(--p-text);font:700 13px system-ui;text-align:left;cursor:pointer}
-.preview .template-choice.active{border-color:var(--p-accent);background:var(--p-secondary)}
-.preview .template-screen{position:relative;aspect-ratio:16/9;margin-top:8px;border:1px solid var(--p-border);border-radius:5px;background:var(--p-bg);overflow:hidden}
-.preview .template-screen.portrait{aspect-ratio:9/16;max-height:125px;width:70px;margin:8px auto 0}
-.preview .template-screen span{position:absolute;display:grid;place-items:center;background:linear-gradient(135deg,var(--p-primary),var(--p-accent));color:var(--p-primary-text);border:1px solid var(--p-surface);font-weight:800;font-size:13px}
-.preview .template-screen span.active{outline:3px solid var(--p-accent);outline-offset:-4px;z-index:2}
+
+
+
+
+
+
+
 
 
 
@@ -51,7 +51,7 @@
 .preview .preview-gallery-tiles .ev-app-tile{display:flex;flex-direction:column;gap:8px;min-width:130px;padding:16px;cursor:pointer}
 .preview .preview-gallery-icon{width:56px;height:56px;font-size:28px;font-weight:800}
 .preview .preview-gallery-nsp{margin-top:14px}
-.preview .preview-template-area{padding:0;margin-top:18px}
+.preview .preview-template-area{padding:0;margin-top:18px} .preview .edu-output-section{box-sizing:border-box;padding:22px} .preview .edu-output-section #ev-segments{box-sizing:border-box;width:100%;margin:18px 0 0}
 @media(max-width:950px){.preview .preview-gallery-grid{grid-template-columns:1fr}}
 </style></head><body><main class="shell edu-admin-page"><header class="edu-page-header"><div class="edu-page-header__identity"><div class="edu-page-header__icon" aria-hidden="true">E</div><div class="edu-page-header__titles"><div class="edu-page-header__eyebrow">EDUVIZE · DESIGN SYSTEM</div><h1 class="edu-page-header__title">Správa stylů</h1></div></div><p class="edu-page-header__description">Návrhový editor společného administračního stylu. Změny se projeví v živém náhledu. Styly se ukládají do databáze. Výchozí styl EDUVIZE Standard je chráněný proti úpravám a smazání.</p></header><div class="cols"><section class="panel"><h2>Základní parametry</h2><div class="field" style="margin-bottom:16px"><label for="admin-token">Admin token (pouze pro ukládání a správu stylů)</label><input id="admin-token" type="password" autocomplete="off" style="height:40px;border:1px solid #bed8e3;border-radius:10px;padding:8px"></div><div class="field" style="margin-bottom:16px"><label for="theme-select">Uložené styly</label><select id="theme-select" style="height:40px;border:1px solid #bed8e3;border-radius:10px;padding:8px"></select></div><div id="theme-list" style="margin:0 0 18px;padding:12px;background:#f5f9fc;border:1px solid #dce6ed;border-radius:12px"><strong>Uložené styly</strong><div id="theme-list-items" style="margin-top:8px;color:#638098">Načítání…</div></div><div class="field" style="margin-bottom:16px"><label for="theme-name">Název stylu</label><input id="theme-name" type="text" maxlength="80" style="height:40px;border:1px solid #bed8e3;border-radius:10px;padding:8px"></div><h2 style="margin-top:18px">Doporučené barevné palety</h2><p class="palette-hint">Výběr palety změní pouze rozpracovaný náhled. Miniatury uložených stylů zůstávají beze změny až do uložení.</p><div id="palette-grid" class="palette-grid"></div><div class="fields" id="fields"></div><div class="actions"><button class="btn secondary" id="unlock" type="button">Odemknout úpravy výchozího stylu</button></div><p class="note" id="state" role="status">Uložené styly se načítají automaticky. Pro ukládání změn je potřeba administrační token.</p></section><section class="panel"><h2>Živý náhled</h2><div class="preview ev-admin" id="preview"><div class="edu-admin__card preview-surface">
 <header class="edu-page-header"><div class="edu-page-header__identity"><div class="edu-page-header__icon" aria-hidden="true">E</div><div class="edu-page-header__titles"><div class="edu-page-header__eyebrow">EDUVIZE · DOKUMENTY</div><h1 class="edu-page-header__title">Administrace dokumentů</h1></div></div><p class="edu-page-header__description">Kompletní ukázka společného vzhledu administrace</p></header>
