@@ -1,3 +1,10 @@
+/* Bootstrap shared controls for all consumers of the design system. */
+(function(){
+ if(document.querySelector('script[data-edu-form-fields]'))return;
+ const base=new URL('.',document.currentScript.src);
+ const css=document.createElement('link');css.rel='stylesheet';css.href=new URL('form-fields.css?v=1',base);document.head.append(css);
+ const script=document.createElement('script');script.src=new URL('form-fields.js?v=1',base);script.dataset.eduFormFields='';document.head.append(script);
+})();
 /* Shared Eduvize active theme loader. No local theme definitions. */
 (function(){
  const endpoint='https://eduvize-design-system-api.onrender.com/api/design-system/themes';

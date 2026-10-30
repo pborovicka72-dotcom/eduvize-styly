@@ -39,3 +39,6 @@ Kořenový `index.html` a `design-system/index.html` jsou **pouze přesměrován
 Render používá `uvicorn app:app`. Vyžaduje `DATABASE_URL` a `DESIGN_SYSTEM_ADMIN_TOKEN`; hodnoty se nikdy neukládají do GitHubu. GitHub Pages publikuje statický rozcestník a sdílené CSS/JS.
 
 Tento dokument popisuje cílové vlastnictví kódu. Samostatné moduly mohou stále obsahovat historické lokální styly; ty se odstraňují pouze po kontrole skutečných závislostí a regresních testech.
+
+## Automatická výška víceřádkových polí
+`active-theme.js` načítá společné `form-fields.js` a `form-fields.css`. Všechny editovatelné textarea se zvětšují i zmenšují podle obsahu, dostupné šířky a fontu. Dynamicky přidaná pole se registrují automaticky. Vědomá výjimka: `data-edu-autogrow="off"`. Po programatické změně hodnot lze zavolat `window.EduvizeForms?.refresh()`. Aplikace nesmějí udržovat vlastní kopii tohoto chování ani přepisovat jeho výšku/minimum.

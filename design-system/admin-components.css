@@ -10,61 +10,16 @@
 .edu-admin__button:focus-visible,.edu-admin__field :is(input,select):focus-visible{outline:2px solid var(--edu-admin-accent);outline-offset:2px}
 .edu-admin__nsp{width:100%;min-width:0}
 
-/* Shared application tile component. Central theme variables are authoritative. */
-.ev-app-tile{background:var(--ev-primary)!important;color:var(--ev-primary-text)!important;border:1px solid var(--ev-border)!important;border-radius:var(--ev-card-radius)!important;box-shadow:none!important}
-.ev-app-tile.active{background:var(--ev-accent)!important;color:var(--ev-primary-text)!important;border-color:var(--ev-accent)!important;box-shadow:inset 0 0 0 2px var(--ev-surface)!important}
-.ev-app-tile .app-icon{background:var(--ev-secondary)!important;color:var(--ev-secondary-text)!important;border-radius:var(--ev-control-radius)!important;box-shadow:none!important}
+/* Shared application tile, active state and editor icon. */
+.ev-app-tile,#tiles .ev-app-tile,body.menu-layout #tiles .ev-app-tile,body.tiles-home #tiles .ev-app-tile{background:var(--ev-primary)!important;color:var(--ev-primary-text)!important;border:1px solid var(--ev-border)!important;border-radius:var(--ev-card-radius)!important;box-shadow:none!important}
+.ev-app-tile.active,#tiles .ev-app-tile.active,body.menu-layout #tiles .ev-app-tile.active,body.tiles-home #tiles .ev-app-tile.active{background:var(--ev-secondary)!important;color:var(--ev-secondary-text)!important;border:2px solid var(--ev-accent)!important}
+.ev-app-tile .app-icon,#tiles .ev-app-tile .app-icon{background:var(--ev-secondary)!important;color:var(--ev-secondary-text)!important;border-radius:var(--ev-control-radius)!important;box-shadow:none!important}
+.ev-app-tile.active .app-icon,#tiles .ev-app-tile.active .app-icon{background:var(--ev-accent)!important;color:var(--ev-primary-text)!important}
+.ev-app-tile .app-icon svg{stroke:currentColor}
 .ev-app-tile small{color:var(--ev-muted)!important}
 .ev-app-tile:focus-visible{outline:3px solid var(--ev-accent)!important}
-
-/* Central kiosk menu skin: overrides legacy menu-specific selectors without local CSS. */
-body.menu-layout #tiles .ev-app-tile,
-body.tiles-home #tiles .ev-app-tile,
-#tiles .ev-app-tile{
- background:var(--ev-primary)!important;
- background-image:none!important;
- color:var(--ev-primary-text)!important;
- border:1px solid var(--ev-border)!important;
- border-radius:var(--ev-card-radius)!important;
- box-shadow:none!important;
-}
-#tiles .ev-app-tile.active{
- background:var(--ev-secondary)!important;
- background-image:none!important;
- color:var(--ev-secondary-text)!important;
- border:2px solid var(--ev-accent)!important;
-}
-#tiles .ev-app-tile .app-icon{
- background:var(--ev-secondary)!important;
- background-image:none!important;
- color:var(--ev-secondary-text)!important;
- border-radius:var(--ev-control-radius)!important;
-}
-#tiles .ev-app-tile .app-icon svg{stroke:currentColor!important}
-
-/* Selected menu card and its icon must share the light active-state palette. */
-body.menu-layout #tiles .ev-app-tile.active,
-body.tiles-home #tiles .ev-app-tile.active{
- background:var(--ev-secondary)!important;
- color:var(--ev-secondary-text)!important;
- border:2px solid var(--ev-accent)!important;
-}
-#tiles .ev-app-tile.active strong{color:var(--ev-secondary-text)!important}
-#tiles .ev-app-tile.active .app-icon{background:var(--ev-accent)!important;color:var(--ev-primary-text)!important}
-#tiles .ev-app-tile.active .app-icon svg{stroke:currentColor!important}
-/* Shared icon token for configuration editors, not kiosk-specific styling. */
-.ev-editor-app-icon{display:grid;place-items:center;background:var(--ev-secondary);color:var(--ev-secondary-text);border:1px solid var(--ev-border);border-radius:var(--ev-card-radius);box-shadow:none}
+.app-icon.ev-editor-app-icon{display:grid;place-items:center;background:var(--ev-primary)!important;color:var(--ev-primary-text)!important;border:1px solid var(--ev-border)!important;border-radius:var(--ev-card-radius)!important;box-shadow:none!important}
 .ev-editor-app-icon svg{stroke:currentColor}
-
-/* Editor icon must win against old local .app-icon !important rules. */
-.app-icon.ev-editor-app-icon{
- border-radius:var(--ev-card-radius)!important;
- background:var(--ev-primary)!important;
- color:var(--ev-primary-text)!important;
- border:1px solid var(--ev-border)!important;
- box-shadow:none!important;
-}
-.app-icon.ev-editor-app-icon svg{stroke:currentColor!important}
 
 /* Shared layouts: align adjacent fields and actions on their control baseline. */
 .edu-admin__control-row{display:flex;align-items:flex-end;gap:10px;flex-wrap:wrap;margin:10px 0}

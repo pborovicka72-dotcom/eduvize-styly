@@ -1,0 +1,9 @@
+/* Only fields managed by form-fields.js; explicit opt-out remains available. */
+textarea[data-edu-autogrow="on"] {
+  box-sizing: border-box;
+  min-height: var(--edu-admin-control-height, 44px) !important;
+  max-height: none !important;
+  overflow-y: hidden;
+  resize: none;
+  white-space: pre-wrap;
+}
