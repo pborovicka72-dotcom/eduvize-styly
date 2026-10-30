@@ -65,3 +65,10 @@ body.tiles-home #tiles .ev-app-tile.active{
  box-shadow:none!important;
 }
 .app-icon.ev-editor-app-icon svg{stroke:currentColor!important}
+
+/* Shared layouts: align adjacent fields and actions on their control baseline. */
+.edu-admin__control-row{display:flex;align-items:flex-end;gap:10px;flex-wrap:wrap;margin:10px 0}
+.edu-admin__control-row>.edu-admin__field{flex:1 1 240px;min-width:0}
+.edu-admin__control-row>.edu-admin__actions{flex:0 0 auto}
+.edu-admin__field-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px 22px;align-items:end}
+@media(max-width:680px){.edu-admin__field-grid{grid-template-columns:1fr}}
