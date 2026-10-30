@@ -1,5 +1,5 @@
 /* Shared kiosk chrome: the same primary surface and icon badge as the menu. */
-.edu-status-panel{display:flex;align-items:center;justify-content:flex-end;gap:14px;padding:8px 12px;min-width:0;background:var(--ev-primary);color:var(--ev-primary-text);border:1px solid var(--ev-border);border-radius:var(--ev-control-radius)}
+.edu-status-panel{container-type:inline-size;display:flex;align-items:center;justify-content:flex-end;gap:14px;padding:8px 12px;min-width:0;background:var(--ev-primary);color:var(--ev-primary-text);border:1px solid var(--ev-border);border-radius:var(--ev-control-radius)}
 .edu-status-panel[hidden]{display:none}
 .edu-status-panel__logo{display:block;flex:none;box-sizing:border-box;width:clamp(72px,11vw,128px);height:38px;padding:6px 10px;background:var(--ev-secondary);border-radius:var(--ev-control-radius);object-fit:contain}
 .edu-status-panel__details{display:flex;align-items:center;justify-content:flex-end;gap:16px;min-width:0;margin-left:auto;text-align:right}
@@ -7,3 +7,6 @@
 .edu-status-panel__item svg{flex:none;width:19px;height:19px}
 .edu-status-panel__date,.edu-status-panel__clock{font-size:clamp(12px,1.3vw,18px);font-weight:550;line-height:1.25;white-space:nowrap;font-variant-numeric:tabular-nums}
 @media(max-width:700px){.edu-status-panel__details{align-items:flex-end;flex-direction:column;gap:4px}.edu-status-panel{gap:10px;padding:6px 10px}.edu-status-panel__logo{height:32px;padding:5px 8px}}
+
+.edu-status-panel__date--compact{display:none}
+@container (max-width:300px){.edu-status-panel__date:not(.edu-status-panel__date--compact){display:none}.edu-status-panel__date--compact{display:inline}.edu-status-panel__details{flex-direction:column;align-items:flex-end;gap:4px}.edu-status-panel__logo{width:64px;height:32px;padding:4px 6px}.edu-status-panel__item{gap:5px}.edu-status-panel__item svg{width:16px;height:16px}}
