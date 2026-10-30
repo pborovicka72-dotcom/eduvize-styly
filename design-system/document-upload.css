@@ -1,0 +1,12 @@
+/* Shared upload form layout and status presentation for Documents and Kiosk. */
+.edu-document-upload{display:grid;gap:16px;min-width:0;margin-top:16px}
+.edu-document-upload label{display:flex;flex-direction:column;gap:7px;min-width:0}
+.edu-document-upload input[type=file]{width:100%;height:auto;padding:12px;border:1px dashed var(--ev-border);border-radius:var(--ev-control-radius);background:var(--ev-surface);color:var(--ev-text)}
+.edu-document-upload input[type=file]::file-selector-button{margin-right:12px;border:0;padding:8px 12px;border-radius:var(--ev-control-radius);background:var(--ev-secondary);color:var(--ev-secondary-text);cursor:pointer}
+.edu-document-upload .edu-admin__field-grid{grid-template-columns:minmax(0,1fr) minmax(180px,280px);align-items:start}
+.edu-upload-progress[hidden]{display:none}
+.edu-upload-progress progress{display:block;width:100%;height:18px;accent-color:var(--ev-primary)}
+.edu-upload-status{margin-top:6px;color:var(--ev-text);font-weight:550;overflow-wrap:anywhere}
+@media(max-width:720px){.edu-document-upload .edu-admin__field-grid{grid-template-columns:minmax(0,1fr)}}
+
+.edu-document-version{position:fixed;right:5px;bottom:4px;padding:2px 5px;font:10px/1.2 system-ui,sans-serif;background:var(--ev-surface);color:var(--ev-muted);border:1px solid var(--ev-border);border-radius:3px;pointer-events:none}
