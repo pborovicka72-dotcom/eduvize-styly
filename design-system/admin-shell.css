@@ -3,6 +3,7 @@
 /* Defaults are supplied by admin-tokens.css; active-theme.js owns --ev-* on :root. */
 
 .ev-admin{
+ margin:0;
  color:var(--ev-text);background:var(--ev-bg);font-family:var(--edu-admin-font)
 }
 .ev-admin .edu-admin__card{background:var(--ev-surface);border:1px solid var(--ev-border);border-radius:var(--ev-card-radius);color:var(--ev-text)}
@@ -22,6 +23,12 @@
 /* Canonical output section: identical form controls across applications. */
 .ev-admin .edu-output-section{border:1px solid var(--ev-border);background:var(--ev-surface);border-radius:var(--ev-panel-radius,20px);padding:22px}
 .ev-admin .edu-output-section .edu-output-mode-row{display:block}
+.ev-admin .edu-output-actions{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-top:20px}
+.ev-admin .edu-admin__card h2{font-size:clamp(19px,1.6vw,26px);line-height:1.25;margin:0 0 17px}
+.ev-admin .edu-admin__stack>h2{margin:0}
+.ev-admin .edu-admin__field-grid>.edu-checkbox-options{grid-column:1/-1}
+.ev-admin .edu-admin__stack{display:flex;flex-direction:column;gap:20px}
+.ev-admin .edu-admin__hint{margin:0;color:var(--ev-muted);font-size:13px;line-height:1.5}
 
 .ev-admin .edu-output-section .edu-output-actions button{min-height:var(--ev-control-height);border-radius:var(--ev-control-radius);padding:8px 14px;font:700 13px system-ui;cursor:pointer}
 .ev-admin .edu-output-section .edu-output-actions button:first-child{background:var(--ev-primary);color:var(--ev-primary-text);border-color:var(--ev-primary)}
