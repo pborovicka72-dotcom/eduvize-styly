@@ -9,3 +9,5 @@
 .edu-document-fullscreen:fullscreen{display:flex;flex-direction:column;width:100vw;height:100dvh;padding:0;background:var(--ev-surface,#fff)}
 .edu-document-fullscreen:fullscreen .viewer{flex:1;min-height:0}
 .edu-document-fullscreen:fullscreen .viewer-top{display:none}
+
+.edu-document-tool:disabled{opacity:.4;cursor:default}
