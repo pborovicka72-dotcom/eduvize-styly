@@ -40,8 +40,8 @@ html.ev-theme-pending body{visibility:hidden}
 /* Canonical header module: the same markup and rules on every page. */
 .edu-page-header{display:flex;flex-direction:column;gap:10px;margin:0 0 18px;padding:0;min-width:0;color:var(--ev-text,var(--edu-admin-ink,#142c46));font-family:var(--edu-admin-font,system-ui,sans-serif)}
 .edu-page-header__identity{display:flex;align-items:center;gap:15px;min-width:0}
-.edu-page-header__icon{width:52px;height:52px;flex:0 0 52px;display:grid;place-items:center;border-radius:var(--ev-card-radius,var(--edu-admin-card-radius,16px));background:linear-gradient(135deg,var(--ev-primary,var(--edu-admin-primary,#087c91)),var(--ev-accent,var(--edu-admin-accent,#00a995)));color:var(--ev-primary-text,var(--edu-admin-primary-text,#fff));font-size:27px;font-weight:800;line-height:1}
-.edu-page-header__icon svg{width:29px;height:29px}
+
+
 .edu-page-header__titles{min-width:0}
 .edu-page-header__eyebrow{margin:0;font-size:13px;line-height:1.3;font-weight:800;letter-spacing:.13em;text-transform:uppercase;color:var(--ev-accent,var(--edu-admin-accent,#00a995))}
 .edu-page-header__title{margin:3px 0 0;font-size:clamp(25px,2.4vw,40px);font-weight:700;line-height:1.12;letter-spacing:normal;color:inherit}

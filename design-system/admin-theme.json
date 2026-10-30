@@ -32,5 +32,8 @@
       "output-actions"
     ]
   },
-  "displayThemeEnabled": false
+  "displayThemeEnabled": false,
+  "icons": {
+    "radiusPx": 10
+  }
 }

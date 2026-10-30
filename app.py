@@ -47,10 +47,13 @@ def theme_validate(value):
     for group,key in [("controls","heightPx"),("controls","radiusPx"),("cards","radiusPx")]:
         v=value.get(group,{}).get(key)
         if type(v) is not int or not 0<=v<=80:raise HTTPException(422,"Neplatná hodnota: "+key)
+    icon_radius=value.get("icons",{}).get("radiusPx",reference["icons"]["radiusPx"])
+    if type(icon_radius) is not int or not 0<=icon_radius<=24:raise HTTPException(422,"Neplatné zaoblení ikon")
     safe=reference.copy()
     safe["colors"]={k:value["colors"][k] for k in reference["colors"]}
     safe["controls"]={k:value["controls"][k] for k in reference["controls"]}
     safe["cards"]={k:value["cards"][k] for k in reference["cards"]}
+    safe["icons"]={"radiusPx":icon_radius}
     return safe
 
 @app.get("/api/design-system/themes")
