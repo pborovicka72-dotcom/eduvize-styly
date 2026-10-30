@@ -5,19 +5,19 @@
 .ev-admin{
  color:var(--ev-text);background:var(--ev-bg);font-family:var(--edu-admin-font)
 }
-.ev-admin .ev-admin-form{background:var(--ev-surface);border:1px solid var(--ev-border);border-radius:var(--ev-card-radius);color:var(--ev-text)}
-.ev-admin .ev-admin-form label{color:var(--ev-text)}
+.ev-admin .edu-admin__card{background:var(--ev-surface);border:1px solid var(--ev-border);border-radius:var(--ev-card-radius);color:var(--ev-text)}
+.ev-admin .edu-admin__card label{color:var(--ev-text)}
 /* Shared form fields: presentation belongs to Design System, not applications. */
-.ev-admin .ev-admin-form :is(button:not(.school-place):not(.address-result)){min-height:var(--ev-control-height)}
+.ev-admin .edu-admin__card :is(button:not(.school-place):not(.address-result)){min-height:var(--ev-control-height)}
 
-.ev-admin .ev-admin-form input[type=checkbox]{accent-color:var(--ev-primary)}
-.ev-admin .ev-admin-form button{border-radius:var(--ev-control-radius);min-height:var(--ev-control-height);border:1px solid var(--ev-border);background:var(--ev-secondary);color:var(--ev-secondary-text)}
-.ev-admin .ev-admin-form button[type=submit]{background:var(--ev-primary);color:var(--ev-primary-text);border-color:var(--ev-primary)}
-.ev-admin .ev-admin-form :is(.weather-forecast-settings,.school-group,.school-place,.address-result){border-color:var(--ev-border);border-radius:var(--ev-card-radius)}
-.ev-admin .ev-admin-form .weather-forecast-settings{background:var(--ev-secondary);color:var(--ev-secondary-text)}
-.ev-admin .ev-admin-form :is(.school-group,.school-place,.address-result){background:var(--ev-surface);color:var(--ev-text)}
-.ev-admin .ev-admin-form :is(.school-group-title,.school-place-title){color:var(--ev-text)}
-.ev-admin .ev-admin-form :is(.school-group-subtitle,.school-place-subtitle){color:var(--ev-muted)}
+.ev-admin .edu-admin__card input[type=checkbox]{accent-color:var(--ev-primary)}
+.ev-admin .edu-admin__card button{border-radius:var(--ev-control-radius);min-height:var(--ev-control-height);border:1px solid var(--ev-border);background:var(--ev-secondary);color:var(--ev-secondary-text)}
+.ev-admin .edu-admin__card button[type=submit]{background:var(--ev-primary);color:var(--ev-primary-text);border-color:var(--ev-primary)}
+.ev-admin .edu-admin__card :is(.weather-forecast-settings,.school-group,.school-place,.address-result){border-color:var(--ev-border);border-radius:var(--ev-card-radius)}
+.ev-admin .edu-admin__card .weather-forecast-settings{background:var(--ev-secondary);color:var(--ev-secondary-text)}
+.ev-admin .edu-admin__card :is(.school-group,.school-place,.address-result){background:var(--ev-surface);color:var(--ev-text)}
+.ev-admin .edu-admin__card :is(.school-group-title,.school-place-title){color:var(--ev-text)}
+.ev-admin .edu-admin__card :is(.school-group-subtitle,.school-place-subtitle){color:var(--ev-muted)}
 
 /* Canonical output section: identical form controls across applications. */
 .ev-admin .edu-output-section{border:1px solid var(--ev-border);background:var(--ev-surface);border-radius:var(--ev-panel-radius,20px);padding:22px}
@@ -31,13 +31,13 @@
 .ev-admin,.ev-admin *{box-sizing:border-box}
 .ev-admin{width:100%;min-width:0;max-width:100%;overflow-x:clip}
 .ev-admin .shell{width:100%;max-width:100%;min-width:0;margin:0;padding:clamp(14px,2.2vw,36px)}
-.ev-admin .ev-admin-form{min-width:0;max-width:100%}
-.ev-admin .ev-admin-form .edu-checkbox-group{grid-column:1/-1;display:flex;flex-direction:column;align-items:flex-start;gap:12px;min-width:0;max-width:100%;margin:0;padding:0;border:0;background:transparent}
-.ev-admin .ev-admin-form .edu-checkbox-group-title{font-size:14px;font-weight:700;line-height:1.4;color:var(--ev-text);margin:0}
-.ev-admin .ev-admin-form .edu-checkbox-options{display:flex;align-items:center;flex-wrap:wrap;gap:12px 22px;max-width:100%;min-width:0}
-.ev-admin .ev-admin-form .edu-checkbox-options label{display:inline-flex;flex-direction:row;align-items:center;gap:8px;width:auto;min-width:0;max-width:100%;margin:0;font-size:13px;font-weight:600;line-height:1.4;white-space:normal}
-.ev-admin .ev-admin-form .edu-checkbox-options input[type=checkbox]{flex:0 0 auto;width:17px;height:17px;min-height:0;margin:0;accent-color:var(--ev-accent)}
-@media(max-width:680px){.ev-admin .ev-admin-form .edu-checkbox-options{flex-direction:column;align-items:flex-start;gap:12px}}
+.ev-admin .edu-admin__card{min-width:0;max-width:100%}
+.ev-admin .edu-admin__card .edu-checkbox-group{grid-column:1/-1;display:flex;flex-direction:column;align-items:flex-start;gap:12px;min-width:0;max-width:100%;margin:0;padding:0;border:0;background:transparent}
+.ev-admin .edu-admin__card .edu-checkbox-group-title{font-size:14px;font-weight:700;line-height:1.4;color:var(--ev-text);margin:0}
+.ev-admin .edu-admin__card .edu-checkbox-options{display:flex;align-items:center;flex-wrap:wrap;gap:12px 22px;max-width:100%;min-width:0}
+.ev-admin .edu-admin__card .edu-checkbox-options label{display:inline-flex;flex-direction:row;align-items:center;gap:8px;width:auto;min-width:0;max-width:100%;margin:0;font-size:13px;font-weight:600;line-height:1.4;white-space:normal}
+.ev-admin .edu-admin__card .edu-checkbox-options input[type=checkbox]{flex:0 0 auto;width:17px;height:17px;min-height:0;margin:0;accent-color:var(--ev-accent)}
+@media(max-width:680px){.ev-admin .edu-admin__card .edu-checkbox-options{flex-direction:column;align-items:flex-start;gap:12px}}
 
 /* Canonical header module: the same markup and rules on every page. */
 .edu-page-header{display:flex;flex-direction:column;gap:10px;margin:0 0 18px;padding:0;min-width:0;color:var(--ev-text,var(--edu-admin-ink,#142c46));font-family:var(--edu-admin-font,system-ui,sans-serif)}
@@ -61,7 +61,14 @@
 @media(max-width:600px){.ev-admin .shell.edu-admin-page,.ev-admin .wrap.edu-admin-page,.edu-admin .edu-admin-page{padding:16px;gap:16px}}
 
 /* One canonical field contract for all admin labels and controls. */
-.ev-admin :is(.ev-admin-form label,.edu-admin-field,.edu-output-type){display:flex;flex-direction:column;gap:7px;min-width:0;color:var(--ev-text);font-weight:700}
-.ev-admin :is(.ev-admin-form,.edu-admin-field,.edu-output-type,.edu-admin__field) :is(input:not([type=checkbox]):not([type=radio]),select,textarea){box-sizing:border-box;display:block;width:100%;min-width:0;height:var(--ev-control-height);min-height:var(--ev-control-height);padding:7px 11px;border:1px solid var(--ev-border);border-radius:var(--ev-control-radius);background:var(--ev-surface);color:var(--ev-text);font:inherit;appearance:auto}
-.ev-admin :is(.ev-admin-form,.edu-admin-field,.edu-output-type,.edu-admin__field) :is(input,select,textarea):focus-visible{outline:2px solid var(--ev-accent);outline-offset:2px}
+.ev-admin :is(.edu-admin__card label,.edu-admin__field,.edu-output-type){display:flex;flex-direction:column;gap:7px;min-width:0;color:var(--ev-text);font-weight:700}
+.ev-admin :is(.edu-admin__card,.edu-admin__field,.edu-output-type) :is(input:not([type=checkbox]):not([type=radio]),select,textarea){box-sizing:border-box;display:block;width:100%;min-width:0;height:var(--ev-control-height);min-height:var(--ev-control-height);padding:7px 11px;border:1px solid var(--ev-border);border-radius:var(--ev-control-radius);background:var(--ev-surface);color:var(--ev-text);font:inherit;appearance:auto}
+.ev-admin :is(.edu-admin__card,.edu-admin__field,.edu-output-type) :is(input,select,textarea):focus-visible{outline:2px solid var(--ev-accent);outline-offset:2px}
 .ev-admin .edu-output-type{max-width:340px}
+
+/* Textarea is the multiline variant of the canonical text field. */
+.ev-admin .edu-admin__field textarea,.ev-admin .edu-admin__card textarea{height:auto;min-height:calc(var(--ev-control-height)*2);resize:vertical}
+/* One checkbox treatment across all admin cards and standalone groups. */
+.ev-admin .edu-checkbox-options{display:flex;align-items:center;flex-wrap:wrap;gap:12px 22px}
+.ev-admin .edu-checkbox-options label{display:inline-flex;flex-direction:row;align-items:center;gap:8px;width:auto;font-size:13px;font-weight:600}
+.ev-admin .edu-checkbox-options input[type=checkbox]{width:17px;height:17px;min-height:0;accent-color:var(--ev-accent)}
