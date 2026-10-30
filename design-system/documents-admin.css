@@ -3,7 +3,12 @@
 /* Primary actions outside the output section use its canonical primary button palette. */
 .edu-document-auth{display:flex;flex-direction:column;align-items:flex-start;gap:10px}
 .edu-document-auth>label{width:100%;max-width:520px}
-#items article{position:relative;display:grid;grid-template-columns:46px minmax(170px,1.2fr) minmax(190px,1.5fr) minmax(140px,1fr) 86px auto auto;gap:12px;align-items:center;padding:14px 10px;border-bottom:1px solid var(--ev-border);border-radius:var(--ev-control-radius);transition:background .12s}
+#items article{position:relative;display:grid;grid-template-columns:42px minmax(0,1fr);gap:12px;align-items:start;padding:16px 0;border-bottom:1px solid var(--ev-border);border-radius:var(--ev-control-radius);transition:background .12s}
+#items .document-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;min-width:0}
+#items .document-fields>input:first-child{grid-column:1/-1}
+#items .document-actions{grid-column:2;display:flex;flex-wrap:wrap;align-items:center;gap:10px}
+#items .document-actions button{flex:0 0 auto;width:auto;white-space:nowrap}
+
 #items .document-group{display:grid;gap:4px}
 #items article:hover{background:var(--ev-secondary)}
 #items .drag-handle{width:42px;height:44px;display:grid;place-items:center;font-size:28px;font-weight:800;line-height:1;color:var(--ev-primary);background:var(--ev-secondary);border:1px solid var(--ev-border);border-radius:var(--ev-control-radius);cursor:grab;user-select:none;touch-action:none}
@@ -11,9 +16,8 @@
 #items article.dragging{opacity:.42}
 #items article.drop-before:before,#items article.drop-after:after{content:"";position:absolute;left:4px;right:4px;height:5px;background:var(--ev-accent);border-radius:4px;z-index:2;pointer-events:none}
 #items article.drop-before:before{top:-5px}#items article.drop-after:after{bottom:-5px}
-#items article .document-visible{margin:0;display:flex;flex-direction:column;align-items:center;gap:5px;font-size:12px}
+#items article .document-visible{margin:0;display:flex;flex-direction:row;align-items:center;gap:8px;font-size:13px}
 #items article .document-visible input{width:18px;height:18px}
-#items article>button{white-space:nowrap}
 #items article input:not([type=checkbox]){width:100%;min-width:0}
 #category-visibility{margin:0 0 22px;border:1px solid var(--ev-border);border-radius:var(--ev-control-radius);background:var(--ev-secondary);padding:0 16px}
 #category-visibility summary{cursor:pointer;padding:13px 0;font-weight:700;color:var(--ev-text)}
@@ -25,8 +29,7 @@
 #auth-status{font-weight:700}#auth-status.success{color:#16805d}#auth-status.error{color:#ae3951}
 .edu-settings-hint{grid-column:1/-1;margin:0}
 .edu-output-section #ev-segments{width:100%;max-width:none}
-@media(max-width:1050px){#items article{grid-template-columns:repeat(2,minmax(0,1fr))}}
-@media(max-width:550px){#items article{grid-template-columns:1fr}}
+@media(max-width:550px){#items .document-fields{grid-template-columns:minmax(0,1fr)}#items article{grid-template-columns:32px minmax(0,1fr);gap:10px}#items .drag-handle{width:32px;font-size:22px}#items .document-actions{grid-column:1/-1}}
 
 .edu-admin-preview{display:flex;flex-direction:column;gap:14px}
 .edu-admin-preview iframe{display:block;width:100%;height:clamp(300px,55vw,650px);border:1px solid var(--ev-border);border-radius:var(--ev-control-radius);background:var(--ev-surface)}
