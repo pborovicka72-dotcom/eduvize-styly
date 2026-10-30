@@ -1,4 +1,4 @@
-(()=>{'use strict';window.EduvizeNSPSelectorText=Object.freeze({title:'Šablona Newline Signage Pro',hint:'Vyberte orientaci a klikněte přímo na požadovaný segment ve vizuálu šablony, případně jej zvolte pod náhledy. Výsledný odkaz bude jednoznačný.'});const {layouts:L,positions:P}=window.EduvizeNSPLayouts;window.EduvizeNSPPicker={mount(host,options){
+(()=>{'use strict';window.EduvizeNSPSelectorText=Object.freeze({title:'Šablona Newline Signage Pro',hint:'Vyberte orientaci a klikněte přímo na požadovaný segment ve vizuálu šablony, případně jej zvolte pod náhledy. Výsledný odkaz bude jednoznačný.'});window.EduvizeNSPPicker={mount(host,options){
 const {layouts:L,positions:P}=window.EduvizeNSPLayouts;
 host.id='ev-segments';
 host.innerHTML='<strong class="ev-picker-title"></strong><p class="ev-picker-hint"></p><div id="ev-tabs"><button type="button" data-o="landscape">Na šířku · 8 šablon</button><button type="button" data-o="portrait">Na výšku · 5 šablon</button></div><div id="ev-cards"></div><p id="ev-block-title"></p><div id="ev-blocks"></div><h3>Náhled celé obrazovky</h3><div id="ev-preview-wrap"><div id="ev-preview"></div></div>';
