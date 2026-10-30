@@ -140,22 +140,6 @@ document.getElementById('activate').onclick=()=>run(async()=>{await api('themes/
 document.getElementById('remove').onclick=()=>run(async()=>{if(selected==='standard')throw Error('Výchozí styl nelze smazat');if(!confirm('Opravdu smazat vybraný styl?'))return;await api('themes/'+selected,'DELETE');await loadThemes('standard');msg('Styl smazán.')});
 document.getElementById('reset').onclick=()=>{if(!original)return;theme=deep(original);fields();msg('Náhled obnoven na výchozí hodnoty; uložené styly beze změny.')};
 document.getElementById('unlock').onclick=()=>{standardUnlocked=!standardUnlocked;updateEditLock();msg(standardUnlocked?'Výchozí styl je odemčený pro úpravy.':'Výchozí styl je zamčený.')};renderPalettes();init().then(()=>{loadThemes()});
-</script><script id="eduvize-real-template-preview">
-/* Exact geometry copied from the shared Newline segment selector (segments.js). */
-(function(){
-const {layouts:L,positions:P}=window.EduvizeNSPLayouts;
-let orientation='landscape',style=1,block=1;
-function draw(){
-const grid=document.getElementById('preview-real-templates'),segments=document.getElementById('preview-real-segments');if(!grid||!segments)return;
-grid.replaceChildren();segments.replaceChildren();
-document.querySelectorAll('[data-preview-orientation]').forEach(b=>{const on=b.dataset.previewOrientation===orientation;b.classList.toggle('secondary',!on);b.onclick=()=>{orientation=b.dataset.previewOrientation;style=1;block=1;draw()}});
-const sw=orientation==='landscape'?3840:2160,sh=orientation==='landscape'?2160:3840;
-for(const st of Object.keys(L[orientation])){const card=document.createElement('button');card.type='button';card.className='template-choice'+(+st===style?' active':'');card.textContent='Styl '+st;const screen=document.createElement('div');screen.className='template-screen'+(orientation==='portrait'?' portrait':'');
-L[orientation][st].forEach(([w,h],i)=>{const [x,y]=P[orientation][st][i];const cell=document.createElement('span');cell.style.cssText='left:'+(x/sw*100)+'%;top:'+(y/sh*100)+'%;width:'+(w/sw*100)+'%;height:'+(h/sh*100)+'%';cell.className=+st===style&&i+1===block?'active':'';cell.textContent=i+1;cell.onclick=e=>{e.stopPropagation();style=+st;block=i+1;draw()};screen.append(cell)});
-card.append(screen);card.onclick=()=>{style=+st;block=1;draw()};grid.append(card)}
-L[orientation][style].forEach(([w,h],i)=>{const b=document.createElement('button');b.type='button';b.className=i+1===block?'':'secondary';b.textContent='Segment '+(i+1)+': '+w+' × '+h+' px';b.onclick=()=>{block=i+1;draw()};segments.append(b)});
-}
-if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',draw,{once:true});else draw();
-})();
-</script></body></html(function(){function init(){const host=document.getElementById('preview-nsp-picker');if(host&&window.EduvizeNSPPicker)window.EduvizeNSPPicker.mount(host,{initial:{orientation:'landscape',style:1,block:1}})}if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});else init()})();
+</script><script>
+(function(){function init(){const host=document.getElementById('preview-nsp-picker');if(host&&window.EduvizeNSPPicker)window.EduvizeNSPPicker.mount(host,{initial:{orientation:'landscape',style:1,block:1}});else console.error('Shared NSP picker unavailable')}if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});else init()})();
 </script></body></html>
