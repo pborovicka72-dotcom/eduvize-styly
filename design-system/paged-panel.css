@@ -1,0 +1,9 @@
+/* Shared pager controls and viewport. Theme colors remain centrally defined. */
+.edu-paged-panel{display:flex;flex-direction:column;gap:10px;min-height:0;min-width:0;overflow:hidden}
+.edu-paged-stage{flex:1;min-height:0;min-width:0;position:relative;overflow:hidden}
+.edu-paged-content{box-sizing:border-box;min-width:0}
+.edu-pagination{flex:none;display:flex;align-items:center;justify-content:center;gap:12px}
+.edu-pagination[hidden]{display:none}
+.edu-pagination-button{border:1px solid var(--ev-border);border-radius:var(--ev-control-radius,10px);padding:7px 12px;min-height:34px;background:var(--ev-secondary);color:var(--ev-secondary-text);font:550 13px/1.2 system-ui,sans-serif;cursor:pointer}
+.edu-pagination-button:disabled{opacity:.4;cursor:default}
+.edu-pagination-status{font:500 12px/1.2 system-ui,sans-serif;color:var(--ev-muted);min-width:42px;text-align:center}
