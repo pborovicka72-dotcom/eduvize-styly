@@ -30,23 +30,39 @@
   function count(config){return area(config.tileCount??(config.tileColumns!==undefined||config.tileRows!==undefined?(config.tileColumns||4)*(config.tileRows||2):10)).capacity;}
   function layout(position='left',portrait=false){
     const band=['top','bottom'].includes(position);
-    return portrait?(band?{columns:5,rows:2,capacity:10,band:true}:{columns:3,rows:3,capacity:9,band:false}):(band?{columns:7,rows:1,capacity:7,band:true}:{columns:2,rows:5,capacity:10,band:false});
+    return portrait?(band?{columns:5,rows:2,capacity:10,band:true}:{columns:1,rows:9,capacity:9,band:false}):(band?{columns:7,rows:1,capacity:7,band:true}:{columns:2,rows:5,capacity:10,band:false});
+  }
+  // Balanced rows fill every row; the last row never leaves empty grid slots.
+  function pack(total,width,height,gap=0){
+    total=Math.max(1,Math.min(25,Math.floor(total)||1));let best,score=Infinity;
+    for(let rows=1;rows<=total;rows++){
+      const base=Math.floor(total/rows),extra=total%rows,counts=Array.from({length:rows},(_,i)=>base+(i<extra?1:0)),h=(height-gap*(rows-1))/rows;
+      if(h<=0)continue;
+      const candidate=counts.reduce((sum,n)=>sum+n*Math.abs(Math.log(Math.max(1,(width-gap*(n-1))/n)/h)),0)/total;
+      if(candidate<score){score=candidate;best={rows,counts};}
+    }
+    return best||{rows:1,counts:[total]};
   }
   function fit(nav,{mode='menu',position='left',columns,rows:requestedRows,tileCount,wrap}={}){
-    if(!nav.clientWidth||!nav.clientHeight)return;
+    if(!nav.children.length||!nav.clientWidth||!nav.clientHeight)return;
     const style=document.documentElement.style,portrait=root.innerHeight>root.innerWidth,gap=parseFloat(getComputedStyle(nav).gap)||0;
+    const padding=parseFloat(getComputedStyle(wrap).paddingLeft)||0,width=wrap.clientWidth-padding*2,height=wrap.clientHeight-padding*2;
+    const status=Math.max(64,Math.min(128,height*.12,width*.22));style.setProperty('--status-band',status+'px');
     let setup=layout(position,portrait);
     if(mode==='tiles'){
-      const padding=parseFloat(getComputedStyle(wrap).paddingLeft)||0,width=wrap.clientWidth-padding*2,height=wrap.clientHeight-padding*2;
-      const base=area(tileCount??((columns||4)*(requestedRows||2)),portrait);
-      const band=Math.max(1,(height-gap*base.rows)/(base.rows+1));
-      setup=area(base.capacity,portrait,width,Math.max(1,height-band-gap),gap);
-      style.setProperty('--home-cols',setup.columns);style.setProperty('--home-rows',setup.rows);style.setProperty('--menu-band',band+'px');
-    }
-    else if(!portrait&&!setup.band){const height=wrap.clientHeight-2*(parseFloat(getComputedStyle(wrap).paddingTop)||0);const cell=(height-gap*4)/5;style.setProperty('--menu-side',Math.min(root.innerWidth*.42,cell*2+gap)+'px');style.setProperty('--menu-band',cell+'px');}
-    else{const width=wrap.clientWidth-2*(parseFloat(getComputedStyle(wrap).paddingLeft)||0);const cells=portrait||position==='bottom'?setup.columns:10;const cell=(width-gap*(cells-1))/cells;style.setProperty('--menu-band',cell+'px');}
+      const packed=pack(nav.children.length,width,Math.max(1,height-status-gap),gap);
+      const gcd=(a,b)=>b?gcd(b,a%b):a,tracks=packed.counts.reduce((a,b)=>a*b/gcd(a,b),1);
+      style.setProperty('--home-cols',tracks);style.setProperty('--home-rows',packed.rows);
+      let i=0;for(let row=0;row<packed.rows;row++)for(let col=0;col<packed.counts[row];col++){
+        const button=nav.children[i++],span=tracks/packed.counts[row];button.style.gridRow=String(row+1);button.style.gridColumn=(col*span+1)+' / span '+span;
+      }
+      setup={columns:Math.max(...packed.counts),rows:packed.rows};
+    }else if(!setup.band){
+      const available=portrait?height-status-gap:height,cell=(available-gap*(setup.rows-1))/setup.rows;
+      style.setProperty('--menu-side',Math.min(width*.42,cell*setup.columns+gap*(setup.columns-1))+'px');
+    }else{style.setProperty('--menu-band',Math.max(1,(width-gap*(setup.columns-1))/setup.columns)+'px');}
     const cols=setup.columns,rows=setup.rows;style.setProperty('--menu-cols',cols);style.setProperty('--menu-rows',rows);
     style.setProperty('--menu-cell-width',Math.max(1,(nav.clientWidth-gap*(cols-1))/cols)+'px');style.setProperty('--menu-cell-height',Math.max(1,(nav.clientHeight-gap*(rows-1))/rows)+'px');
   }
-  root.EduvizeTileNavigation=Object.freeze({page,indexFor,grid,area,count,layout,fit});
+  root.EduvizeTileNavigation=Object.freeze({page,indexFor,grid,area,count,layout,pack,fit});
 })(window);

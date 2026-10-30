@@ -20,7 +20,7 @@
 .ev-app-tile .app-icon,#tiles .ev-app-tile .app-icon{background:var(--ev-secondary)!important;color:var(--ev-secondary-text)!important;border-radius:min(calc(var(--ev-control-radius)*.45),12%)!important;box-shadow:none!important}
 .ev-app-tile.active .app-icon,#tiles .ev-app-tile.active .app-icon{background:var(--ev-accent)!important;color:var(--ev-primary-text)!important}
 .ev-app-tile strong{font-weight:400}
-.ev-app-tile .app-icon svg{stroke:currentColor}
+.ev-app-tile .app-icon svg{width:74%;height:74%;stroke:currentColor;stroke-width:1.35}
 .ev-app-tile small{color:var(--ev-muted)!important}
 .ev-app-tile:focus-visible{outline:3px solid var(--ev-accent)!important}
 .app-icon.ev-editor-app-icon{display:grid;place-items:center;background:var(--ev-primary)!important;color:var(--ev-primary-text)!important;border:1px solid var(--ev-border)!important;border-radius:var(--ev-control-radius)!important;box-shadow:none!important}

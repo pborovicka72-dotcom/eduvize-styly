@@ -16,10 +16,10 @@ body{background:var(--ev-bg)}
 #contentFrame{flex:1;width:100%;min-height:0;border:0;border-radius:0;outline:0;box-shadow:none;background:transparent}
 .hidden{display:none!important}
 body.frame-open:not(.menu-layout) .hero,body.frame-open:not(.menu-layout) #tiles{display:none}
-/* Home chrome has no heading card. The menu and status use one tile unit. */
-body:is(.menu-layout,.tiles-home) .wrap{display:grid;gap:clamp(4px,1vmin,12px);grid-template-columns:minmax(0,var(--menu-side,240px)) minmax(0,1fr);grid-template-rows:var(--menu-band,100px) minmax(0,1fr)}
+/* Home tracks: status height is independent of tile height. */
+body:is(.menu-layout,.tiles-home) .wrap{display:grid;gap:clamp(4px,1vmin,12px);grid-template-columns:minmax(0,var(--menu-side,240px)) minmax(0,1fr);grid-template-rows:var(--status-band,90px) minmax(0,1fr)}
 body:is(.menu-layout,.tiles-home) .wrap>header{display:none}
-#statusPanel{flex:none;align-self:stretch;--edu-status-height:var(--menu-band,80px)}
+#statusPanel{flex:none;align-self:stretch;--edu-status-height:var(--status-band,90px)}
 body.menu-layout #statusPanel{grid-column:2;grid-row:1}
 body.menu-layout #tiles{grid-column:1;grid-row:1/-1;grid-template-columns:repeat(var(--menu-cols,2),minmax(0,1fr));grid-template-rows:repeat(var(--menu-rows,5),minmax(0,1fr));padding:0;overflow:hidden}
 body.menu-layout #contentFrame{grid-column:2;grid-row:2;width:100%;height:100%}
@@ -29,15 +29,15 @@ body:is(.menu-layout,.tiles-home) #tiles .tile strong{width:100%;justify-self:ce
 body.menu-layout.menu-right .wrap{grid-template-columns:minmax(0,1fr) minmax(0,var(--menu-side,240px))}
 body.menu-layout.menu-right #tiles{grid-column:2}
 body.menu-layout.menu-right :is(#statusPanel,#contentFrame){grid-column:1}
-body.menu-layout:is(.menu-top,.menu-bottom) .wrap{grid-template-columns:repeat(10,minmax(0,1fr));grid-template-rows:var(--menu-band,100px) minmax(0,1fr)}
-body.menu-layout:is(.menu-top,.menu-bottom) #tiles{grid-column:1/8;grid-row:1}
-body.menu-layout:is(.menu-top,.menu-bottom) #statusPanel{grid-column:8/11;grid-row:1}
-body.menu-layout:is(.menu-top,.menu-bottom) #contentFrame{grid-column:1/-1;grid-row:2}
-body.menu-layout.menu-bottom .wrap{grid-template-rows:var(--menu-band,100px) minmax(0,1fr) var(--menu-band,100px)}
-body.menu-layout.menu-bottom #statusPanel{grid-column:1/-1;grid-row:1}
-body.menu-layout.menu-bottom #tiles{grid-column:1/-1;grid-row:3}
-body.menu-layout.menu-bottom #contentFrame{grid-row:2}
-body.tiles-home .wrap{grid-template-columns:1fr;grid-template-rows:var(--menu-band,80px) minmax(0,1fr)}
+body.menu-layout.menu-top .wrap{grid-template-columns:repeat(10,minmax(0,1fr));grid-template-rows:var(--status-band,90px) minmax(0,1fr)}
+body.menu-layout.menu-top #tiles{grid-column:1/8;grid-row:1}
+body.menu-layout.menu-top #statusPanel{grid-column:8/11;grid-row:1}
+body.menu-layout.menu-top #contentFrame{grid-column:1/-1;grid-row:2}
+body.menu-layout.menu-bottom .wrap{grid-template-columns:1fr;grid-template-rows:var(--status-band,90px) minmax(0,1fr) var(--menu-band,100px)}
+body.menu-layout.menu-bottom #statusPanel{grid-column:1;grid-row:1}
+body.menu-layout.menu-bottom #tiles{grid-column:1;grid-row:3}
+body.menu-layout.menu-bottom #contentFrame{grid-column:1;grid-row:2}
+body.tiles-home .wrap{grid-template-columns:1fr;grid-template-rows:var(--status-band,90px) minmax(0,1fr)}
 body.tiles-home #statusPanel{grid-column:1;grid-row:1}
 body.tiles-home #tiles{width:100%;height:100%;grid-column:1;grid-row:2;grid-template-columns:repeat(var(--home-cols,4),minmax(0,1fr));grid-template-rows:repeat(var(--home-rows,2),minmax(0,1fr))}
 body.tiles-home #contentFrame{grid-column:1;grid-row:2;height:100%}
@@ -45,12 +45,16 @@ body.tiles-home.frame-open .wrap{grid-template-rows:auto minmax(0,1fr)}
 body.tiles-home.frame-open .wrap>header{display:flex;grid-column:1;grid-row:1}
 body.tiles-home.frame-open #navigationHeading{display:none}
 @media(orientation:portrait){
- body.menu-layout .wrap,body.menu-layout:is(.menu-top,.menu-bottom,.menu-right) .wrap{grid-template-columns:1fr;grid-template-rows:var(--menu-band,100px) calc(var(--menu-band,100px)*var(--menu-rows,3) + (var(--menu-rows,3) - 1)*clamp(4px,1vmin,12px)) minmax(0,1fr)}
- body.menu-layout #statusPanel,body.menu-layout:is(.menu-top,.menu-bottom,.menu-right) #statusPanel{grid-column:1;grid-row:1}
- body.menu-layout #tiles,body.menu-layout:is(.menu-top,.menu-bottom,.menu-right) #tiles{grid-column:1;grid-row:2}
- body.menu-layout #contentFrame,body.menu-layout:is(.menu-top,.menu-bottom,.menu-right) #contentFrame{grid-column:1;grid-row:3}
- body.menu-layout.menu-bottom .wrap{grid-template-rows:var(--menu-band,100px) minmax(0,1fr) calc(var(--menu-band,100px)*2 + clamp(4px,1vmin,12px))}
- body.menu-layout.menu-bottom #tiles{grid-row:3}body.menu-layout.menu-bottom #statusPanel{grid-row:1}body.menu-layout.menu-bottom #contentFrame{grid-row:2}
+ body.menu-layout .wrap{grid-template-rows:var(--status-band,90px) minmax(0,1fr)}
+ body.menu-layout #statusPanel,body.menu-layout.menu-right #statusPanel{grid-column:1/-1;grid-row:1}
+ body.menu-layout #tiles,body.menu-layout.menu-right #tiles{grid-row:2}
+ body.menu-layout.menu-top .wrap{grid-template-columns:1fr;grid-template-rows:var(--status-band,90px) calc(var(--menu-band,80px)*2 + clamp(4px,1vmin,12px)) minmax(0,1fr)}
+ body.menu-layout.menu-top #statusPanel{grid-column:1;grid-row:1}
+ body.menu-layout.menu-top #tiles{grid-column:1;grid-row:2}
+ body.menu-layout.menu-top #contentFrame{grid-column:1;grid-row:3}
+ body.menu-layout.menu-bottom .wrap{grid-template-columns:1fr;grid-template-rows:var(--status-band,90px) minmax(0,1fr) calc(var(--menu-band,80px)*2 + clamp(4px,1vmin,12px))}
+ body.menu-layout.menu-bottom #statusPanel{grid-column:1;grid-row:1}
+ body.menu-layout.menu-bottom #tiles{grid-row:3}
 }
 @media(max-width:600px){body:not(.menu-layout):not(.tiles-home) .grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 
