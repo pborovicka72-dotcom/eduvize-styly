@@ -11,7 +11,7 @@
       .replace(namedDate,(_,d,m,y)=>d+'.'+nbsp+m+(y?nbsp+y:''))
       .replace(/\b(\d{4})-(\d{2})-(\d{2})\b/g,'$1‑$2‑$3');
     for(let i=0;i<2;i++)text=text.replace(/(^|[^\p{L}\p{N}])(\p{L})[ \t]+(?=\S|$)/gu,'$1$2'+nbsp);
-    return text.replace(/(\d)[ \t]+(?=%|Kč\b|km\b|cm\b|mm\b|kg\b|°C\b)/g,'$1'+nbsp);
+    return text.replace(/(\d)[ \t]+(?=%|(?:Kč|km|cm|mm|kg|°C)(?!\p{L}))/gu,'$1'+nbsp);
   }).join('');}
   const exclude='script,style,textarea,input,select,option,code,pre,[contenteditable]:not([contenteditable="false"]),[data-edu-typography="off"],.edu-typography-unit';
   function apply(node){
