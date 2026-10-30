@@ -34,10 +34,6 @@
 .ev-admin .edu-admin__card{min-width:0;max-width:100%}
 .ev-admin .edu-admin__card .edu-checkbox-group{grid-column:1/-1;display:flex;flex-direction:column;align-items:flex-start;gap:12px;min-width:0;max-width:100%;margin:0;padding:0;border:0;background:transparent}
 .ev-admin .edu-admin__card .edu-checkbox-group-title{font-size:14px;font-weight:700;line-height:1.4;color:var(--ev-text);margin:0}
-.ev-admin .edu-admin__card .edu-checkbox-options{display:flex;align-items:center;flex-wrap:wrap;gap:12px 22px;max-width:100%;min-width:0}
-.ev-admin .edu-admin__card .edu-checkbox-options label{display:inline-flex;flex-direction:row;align-items:center;gap:8px;width:auto;min-width:0;max-width:100%;margin:0;font-size:13px;font-weight:600;line-height:1.4;white-space:normal}
-.ev-admin .edu-admin__card .edu-checkbox-options input[type=checkbox]{flex:0 0 auto;width:17px;height:17px;min-height:0;margin:0;accent-color:var(--ev-accent)}
-@media(max-width:680px){.ev-admin .edu-admin__card .edu-checkbox-options{flex-direction:column;align-items:flex-start;gap:12px}}
 
 /* Canonical header module: the same markup and rules on every page. */
 .edu-page-header{display:flex;flex-direction:column;gap:10px;margin:0 0 18px;padding:0;min-width:0;color:var(--ev-text,var(--edu-admin-ink,#142c46));font-family:var(--edu-admin-font,system-ui,sans-serif)}
