@@ -5,7 +5,7 @@
  const css=document.createElement('link');css.rel='stylesheet';css.href=new URL('form-fields.css?v=3',base);document.head.append(css);
  const script=document.createElement('script');script.src=new URL('form-fields.js?v=2',base);script.dataset.eduFormFields='';document.head.append(script);
  const typographyCss=document.createElement('link');typographyCss.rel='stylesheet';typographyCss.href=new URL('typography.css?v=1',base);document.head.append(typographyCss);
- const typography=document.createElement('script');typography.src=new URL('typography.js?v=2',base);document.head.append(typography);
+ const typography=document.createElement('script');typography.src=new URL('typography.js?v=3',base);document.head.append(typography);
  const fit=document.createElement('script');fit.src=new URL('fit-panel.js?v=2',base);document.head.append(fit);
 })();
 /* Shared Eduvize active theme loader. No local theme definitions. */

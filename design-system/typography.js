@@ -29,9 +29,10 @@
     }
   }
   function start(){
+ if(!document.body)return;
     const pending=new Set();let queued=false;
     const observer=new MutationObserver(records=>{for(const record of records){if(record.type==='characterData')pending.add(record.target);else for(const node of record.addedNodes)pending.add(node);}if(!queued){queued=true;requestAnimationFrame(()=>{queued=false;observer.disconnect();for(const node of pending)apply(node);pending.clear();watch();root.EduvizeFitPanel?.refresh();});}});
-    function watch(){observer.observe(document.body,{subtree:true,childList:true,characterData:true});}
+    function watch(){if(!document.body)return;observer.observe(document.body,{subtree:true,childList:true,characterData:true});}
     apply(document.body);watch();
   }
   root.EduvizeTypography=Object.freeze({format,apply});
