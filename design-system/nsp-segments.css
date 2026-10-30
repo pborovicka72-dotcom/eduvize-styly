@@ -69,3 +69,6 @@
  cursor:not-allowed!important;
 }
 #ev-segments .ev-box.disabled.active{outline:none!important}
+
+/* Hidden selector controls must stay hidden even when their layout uses flex/grid. */
+#ev-segments [hidden]{display:none!important}
