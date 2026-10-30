@@ -44,7 +44,7 @@
     const height=host.clientHeight-reserve;
     for(let i=0;i<items.length;i++){
       const candidate=[...group,items[i]];
-      let fits=candidate.length<=2;
+      let fits=true;
       if(measurable){measure.replaceChildren();options.render(measure,candidate);fits=measure.scrollHeight<=(start===0&&i===items.length-1?host.clientHeight:height);}
       if(group.length&&!fits){groups.push({start,items:group});start=i;group=[];}
       group.push(items[i]);
