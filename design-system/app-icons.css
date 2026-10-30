@@ -1,5 +1,6 @@
 /* Square identity marks. Icon radius is independent of controls and cards. */
 .edu-app-icon{display:inline-grid;place-items:center;width:var(--edu-icon-size,52px);height:var(--edu-icon-size,52px);flex-shrink:0;aspect-ratio:1;padding:0;border:0;border-radius:min(var(--ev-icon-radius,10px),22%);background:var(--ev-primary);color:var(--ev-primary-text);line-height:1;overflow:hidden}
+.edu-app-icon>img{display:block;width:60%;height:60%;margin:auto;object-fit:contain}
 .edu-app-icon>svg{display:block;width:60%;height:60%;margin:auto;flex:none}
 .edu-app-heading{display:flex;align-items:center;gap:12px;min-width:0}.edu-app-heading>div{min-width:0}
 .edu-navigation-heading .edu-app-icon{--edu-icon-size:36px;background:var(--ev-secondary);color:var(--ev-secondary-text)}
@@ -7,5 +8,3 @@
 
 .hero .edu-app-icon{background:var(--ev-secondary);color:var(--ev-secondary-text)}
 
-/* Full brand wordmark for the application hub; distinct from application identity marks. */
-.edu-brand-logo{display:block;width:clamp(120px,22vw,176px);height:52px;object-fit:contain;flex-shrink:0}
