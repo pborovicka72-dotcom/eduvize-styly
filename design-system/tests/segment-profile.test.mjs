@@ -9,3 +9,8 @@ assert.equal(api.resolve(872,488).kind,'compact');assert.equal(api.holidays(api.
 assert.equal(api.resolve(960,2160).kind,'portrait');assert.equal(api.resolve(2160,2160).kind,'square');
 assert.equal(api.holidays(api.resolve(3840,2160),{days:6}).px.name/api.holidays(api.resolve(1920,1080),{days:6}).px.name,2);
 assert.throws(()=>api.resolve(0,100));console.log(count+' segment geometries: content priorities, configured limits and proportional typography passed.');
+
+for(const [w,h] of [[3840,2160],[2160,3840],[872,488],[2968,488]]){const g=api.resolve(w,h),header=api.header(g),p=api.holidays(g,{days:6});assert.equal(header.height,Math.min(w,h)*.16);assert.equal(header.icon/header.height,.6);assert.equal(p.px.head,header.height);assert.equal(p.px.icon,header.icon);assert.equal(p.px['date-size'],header.title);}
+assert.equal(api.holidays(api.resolve(3840,2160),{days:6}).columns,3);
+assert.equal(api.holidays(api.resolve(872,1672),{days:6}).upcomingDays,4);
+console.log('Common header dimensions and narrow segment readability priorities passed.');

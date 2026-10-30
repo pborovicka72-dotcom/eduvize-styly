@@ -1,28 +1,28 @@
 # Pravidla zobrazení v segmentech
 
-Verze 1, 31. 10. 2026. Geometrie je společná pro aplikace, obsahová politika je specifická pro modul. Barvy a zaoblení nadále určuje aktivní designová šablona.
+Verze 2, 31. 10. 2026. Geometrie je společná pro aplikace, obsahová politika je specifická pro modul. Barvy a zaoblení nadále určuje aktivní designová šablona.
 
 ## Společná smlouva
 
 `EduvizeSegmentProfile.resolve(width,height)` dostává skutečné CSS rozměry výstupu nebo segmentu, nikoli rozměr zmenšeného náhledu. Vrací tvar, poměr stran, kratší stranu a měřítko. Číslo šablony, pořadí segmentu ani velikost administrátorského okna nesmí rozhodovat o viditelnosti dat.
 
-Aplikace definuje priority obsahu, jeho maximální počet a typografické role. `holidays(geometry, options)` je první taková politika. Ostatní moduly mohou přidat vlastní politiku nad stejnou geometrií; automaticky nepřebírají pravidla Svátků. Počasí zatím změněno není.
+Aplikace definuje priority obsahu, jeho maximální počet a typografické role. `holidays(geometry, options)` je první taková politika. Ostatní moduly mohou přidat vlastní politiku nad stejnou geometrií; automaticky nepřebírají pravidla Svátků. Obsahová politika Počasí zůstává samostatná; rozměry hlavičky již sdílí s ostatními aplikacemi.
 
 ## Profily a priority Svátků
 
 | Profil | Podmínka (v tomto pořadí) | Dnešní údaje | Další dny | Sloupce přehledu |
 |---|---|---|---|---|
-| panoramic | poměr šířka/výška ≥ 2,7 | zachované, vedle data | nejvýše 3 | až 3 |
+| panoramic | poměr šířka/výška ≥ 2,7 | zachované pod společnou hlavičkou | nejvýše 3 | až 3 |
 | compact | kratší strana < 720 px | zachované pod datem | bez samostatného přehledu | – |
-| portrait | poměr < 0,8 | zachované | nejvýše 6 | 1 pod 900 px, jinak 2 |
+| portrait | poměr < 0,8 | zachované | nejvýše 6, pod 960 px šířky 4 | až 2 |
 | square | poměr < 1,4 | zachované | nejvýše 6 | až 3 |
-| landscape | ostatní | zachované | nejvýše 6 | až 6 |
+| landscape | ostatní | zachované | nejvýše 6 | až 3 |
 
 Počet dnů z konfigurace je vždy horní limit. Vypnuté státní svátky nebo významné dny se nikdy samy nezapnou. Chybějící dnešní data nezanechávají prázdné karty. Volba Zítra zůstává krátkou poznámkou u dnešních jmenin, pokud se samostatný přehled nezobrazuje. Dnešní události se kvůli zapnutí přehledu neschovávají.
 
-Datum je první orientační role, následují dnešní jmeniny a dnešní povolené události. Přehled dalších dnů je doplňkový. Běžná hlavička zabírá nejvýše 20 % výšky nebo 24 % kratší strany; karty dnešních údajů při zobrazeném přehledu nejvýše 30 % výšky. U pruhu jsou datum, dnešní údaje a další dny vedle sebe v poměru 24:32:44. Bez přehledu se plocha přerozdělí.
+Datum je první orientační role, následují dnešní jmeniny a dnešní povolené události. Přehled dalších dnů je doplňkový. Hlavička všech výstupních aplikací používá `header(geometry)`: výška 16 % kratší strany, box ikony 60 % výšky hlavičky, kresba 60 % boxu, hlavní text 32 % a doplňkový text 14 % výšky. Odsazení a mezera jsou 12 % výšky. Sdílené soubory `output-header.js/css` čtou tuto smlouvu; aplikace označuje `.edu-output-header`, `.edu-header-title` a `.edu-header-meta`. Výpočet probíhá z viewportu skutečného segmentu, nikdy ze zmenšeného administrátorského náhledu. Karty dnešních údajů mají při zobrazeném přehledu nejvýše 32 % výšky. U pruhu je hlavička nahoře přes celou šířku a pod ní dnešní údaje a další dny v poměru 35:65. Bez přehledu se plocha přerozdělí.
 
-Velikosti ikon, názvů, poznámek, mezer a vnitřního odsazení jsou pojmenované role odvozené od kratší strany. Pruhy mají vlastní čitelné minimum. Dlouhé texty se zalamují; následná kontrola skutečného prostoru zmenšuje písmo pouze do profilového minima. Obsah se neořezává na počet znaků. Nezavádí se automatické listování ani posouvání.
+Velikosti ikon, názvů, poznámek, mezer a vnitřního odsazení jsou pojmenované role odvozené od kratší strany. Přehled dalších dnů používá nejvýše tři sloupce (svisle dva), text dále roste podle vnitřní šířky a výšky své karty a jeho skupina je svisle vystředěná. Pruhy mají vlastní čitelné minimum. Dlouhé texty se zalamují; následná kontrola skutečného prostoru zmenšuje písmo pouze do profilového minima. Obsah se neořezává na počet znaků. Nezavádí se automatické listování ani posouvání.
 
 ## Mapa současných segmentů
 
@@ -41,7 +41,7 @@ Velikosti ikon, názvů, poznámek, mezer a vnitřního odsazení jsou pojmenova
 | landscape | 5 / 2 | 1920 × 1080 | landscape | 6 |
 | landscape | 5 / 3 | 1920 × 1080 | landscape | 6 |
 | landscape | 5 / 4 | 1920 × 1080 | landscape | 6 |
-| landscape | 6 / 1 | 872 × 1672 | portrait | 6 |
+| landscape | 6 / 1 | 872 × 1672 | portrait | 4 |
 | landscape | 6 / 2 | 2968 × 1672 | landscape | 6 |
 | landscape | 6 / 3 | 872 × 488 | compact | 0 |
 | landscape | 6 / 4 | 2968 × 488 | panoramic | 3 |

@@ -1,0 +1,10 @@
+/* Shared sizing only: colors, surfaces and corner radii continue to come from the active theme. */
+.edu-output-header{box-sizing:border-box;height:var(--edu-header-height,16vmin);min-height:var(--edu-header-height,16vmin);max-height:var(--edu-header-height,16vmin);flex:0 0 auto;padding:var(--edu-header-padding,1.92vmin);gap:var(--edu-header-gap,1.92vmin);align-items:center;overflow:hidden}
+.edu-output-header .edu-app-icon{--edu-icon-size:var(--edu-header-icon,9.6vmin);width:var(--edu-icon-size);height:var(--edu-icon-size);flex:0 0 var(--edu-icon-size);padding:0}
+.edu-output-header .edu-app-icon>svg{width:60%;height:60%;transform:none}
+.edu-output-header .edu-header-title{font-size:var(--edu-header-title,5.12vmin);line-height:1.12;margin:0;min-width:0}
+.edu-output-header .edu-header-meta{font-size:var(--edu-header-meta,2.24vmin);line-height:1.2;margin-block:0;min-width:0}
+.edu-output-header .edu-app-heading,.edu-output-header .edu-header-group{gap:var(--edu-header-gap,1.92vmin);min-width:0}
+.edu-output-header .edu-header-art{width:var(--edu-header-icon,9.6vmin);height:var(--edu-header-icon,9.6vmin);flex:0 0 var(--edu-header-icon,9.6vmin);margin:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.edu-output-header .edu-header-art>svg{width:60%;height:60%;flex:none}
+.edu-output-header .edu-header-art .condition-label{font-size:calc(var(--edu-header-height,16vmin)*.10);line-height:1.15;text-align:center}

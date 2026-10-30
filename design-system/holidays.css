@@ -1,12 +1,12 @@
 /* Holiday output: shared tokens, one component definition per role. */
 :root{font-family:var(--edu-admin-font,system-ui,sans-serif);color:var(--ev-text);background:var(--ev-bg)}*{box-sizing:border-box}html,body{margin:0;min-height:100%}.hidden,[hidden]{display:none!important}
 .shell{max-width:1800px;min-height:100dvh;margin:auto;padding:clamp(14px,2.2vw,36px);display:flex;flex-direction:column;gap:var(--ev-gap,20px)}
-.hero{display:flex;align-items:center;gap:var(--ev-head-gap,20px);min-width:0;flex:none;padding:var(--ev-head-pad,22px) var(--ev-head-side,32px);border-radius:var(--ev-control-radius);background:var(--ev-primary);color:var(--ev-primary-text)}
+.hero{display:flex;align-items:center;min-width:0;flex:none;border-radius:var(--ev-control-radius);background:var(--ev-primary);color:var(--ev-primary-text)}
 .hero>div:first-child{min-width:0;flex:1;display:flex;flex-direction:column;gap:5px}
-.calendar-weekday,.calendar-year{font-size:var(--ev-date-meta,24px);font-weight:500;line-height:1.15;white-space:nowrap}
-.calendar-date{font-size:var(--ev-date-size,48px);font-weight:650;line-height:1.1;margin:0;white-space:nowrap}
+.calendar-weekday,.calendar-year{font-weight:500;line-height:1.15;white-space:nowrap}
+.calendar-date{font-weight:650;line-height:1.1;margin:0;white-space:nowrap}
 .calendar-date-year{display:flex;flex-direction:column;gap:4px;min-width:0}
-.hero-art{order:-1;display:grid;place-items:center;flex:none;width:var(--ev-icon,72px);height:var(--ev-icon,72px);border-radius:var(--ev-control-radius);background:var(--ev-secondary);color:var(--ev-secondary-text)}.hero-art svg{width:58%;height:58%}
+.hero-art{order:-1;display:grid;place-items:center;flex:none;border-radius:var(--ev-control-radius);background:var(--ev-secondary);color:var(--ev-secondary-text)}
 .calendar-metrics{display:grid;grid-template-columns:repeat(var(--calendar-metrics-columns,2),minmax(0,1fr));gap:var(--ev-gap,20px)}
 .calendar-metrics:has(#names-card.hidden):has(#holiday-card.hidden){display:none}
 .calendar-card,.upcoming-day{min-width:0;padding:var(--ev-card-pad,24px);border:1px solid var(--ev-border);border-radius:var(--ev-card-radius);background:var(--ev-surface);color:var(--ev-text)}
@@ -15,33 +15,39 @@
 .metric-name{font-size:var(--ev-subtitle,20px);font-weight:500}.metric-value{font-size:var(--ev-name,54px);font-weight:650;line-height:1.15;margin:12px 0;overflow-wrap:anywhere}.metric-value.long{font-size:calc(var(--ev-name,54px)*.9)}.metric-note{font-size:var(--ev-note,16px);color:var(--ev-muted);line-height:1.4}
 .upcoming{display:flex;flex-direction:column;gap:var(--ev-gap,16px);min-width:0;min-height:0}.section-heading h2{font-size:var(--ev-subtitle,22px);margin:0}
 .upcoming-grid{display:grid;grid-template-columns:repeat(var(--calendar-columns,var(--ev-columns,3)),minmax(0,1fr));gap:var(--ev-gap,14px);align-items:stretch;min-width:0;min-height:0}
-.upcoming-day{display:flex;flex-direction:column;gap:var(--ev-name-gap,10px);overflow:hidden}.upcoming-date{font-size:var(--ev-day-label,16px);font-weight:600;color:var(--ev-primary)}.upcoming-name{font-size:var(--ev-day-name,26px);font-weight:600;line-height:1.2;overflow-wrap:anywhere}.upcoming-event{font-size:var(--ev-day-event,16px);line-height:1.4;padding:var(--ev-event-pad,10px);border-radius:var(--ev-control-radius);background:var(--ev-secondary);color:var(--ev-secondary-text);overflow-wrap:anywhere}
+.upcoming-day{display:flex;flex-direction:column;justify-content:safe center;gap:var(--ev-name-gap,10px);overflow:hidden}.upcoming-date{font-size:var(--ev-day-label,16px);font-weight:600;color:var(--ev-primary)}.upcoming-name{font-size:var(--ev-day-name,26px);font-weight:600;line-height:1.2;overflow-wrap:anywhere}.upcoming-event{font-size:var(--ev-day-event,16px);line-height:1.4;padding:var(--ev-event-pad,10px);border-radius:var(--ev-control-radius);background:var(--ev-secondary);color:var(--ev-secondary-text);overflow-wrap:anywhere}
 .calendar-status{margin:0;color:var(--ev-muted);font-size:16px;line-height:1.4}
 body.ev-modern{height:100dvh;overflow:hidden}.ev-modern .shell{width:100%;height:100dvh;min-height:0;max-width:none;overflow:hidden;padding:var(--ev-pad-top,16px) var(--ev-pad-right,16px) var(--ev-pad-bottom,16px) var(--ev-pad-left,16px)}
-.ev-modern .calendar-metrics{max-height:30%;min-height:0;grid-auto-rows:minmax(0,1fr)}
+.ev-modern .calendar-metrics{max-height:32%;min-height:0;grid-auto-rows:minmax(0,1fr)}
 .ev-modern .calendar-card{min-height:0;overflow:hidden}
 .ev-modern .metric-value{flex:none}
-.ev-modern .hero{height:var(--ev-head,180px);min-height:0}.ev-modern .upcoming-grid{grid-template-rows:repeat(var(--calendar-rows,var(--ev-rows,1)),minmax(0,1fr));grid-auto-rows:1fr}
+.ev-modern .upcoming-grid{grid-template-rows:repeat(var(--calendar-rows,var(--ev-rows,1)),minmax(0,1fr));grid-auto-rows:1fr}
 .ev-modern .upcoming,.ev-modern .upcoming-grid{flex:1;min-height:0}
+/* Each card owns its text scale; the fitter only reduces unusually long content. */
+.ev-modern .upcoming-day{container-type:size}
+.ev-modern .upcoming-date{font-size:clamp(var(--ev-day-label),min(6cqw,10cqh),calc(var(--ev-day-label)*1.8));line-height:1.2}
+.ev-modern .upcoming-name{font-size:clamp(var(--ev-day-name),min(13cqw,24cqh),calc(var(--ev-day-name)*1.8))}
+.ev-modern .upcoming-event{font-size:clamp(var(--ev-day-event),min(6cqw,9cqh),calc(var(--ev-day-event)*1.6))}
 .ev-modern .shell:has(>.upcoming.hidden) .calendar-metrics{flex:1;max-height:none;align-content:stretch}
 /* Geometry profiles express explicit content priorities, never segment IDs. */
-.ev-modern[data-segment-layout=panoramic] .shell{display:grid;grid-template-columns:minmax(0,24fr) minmax(0,32fr) minmax(0,44fr);align-items:stretch}
-.ev-modern[data-segment-layout=panoramic] .hero{height:auto;align-self:stretch}
+.ev-modern[data-segment-layout=panoramic] .shell{display:grid;grid-template-columns:minmax(0,35fr) minmax(0,65fr);grid-template-rows:var(--edu-header-height,16vmin) minmax(0,1fr);align-items:stretch}
+.ev-modern[data-segment-layout=panoramic] .hero{grid-column:1/-1}
+.ev-modern[data-segment-layout=panoramic] .hero>div:first-child{flex-direction:row;align-items:baseline;gap:var(--ev-head-gap)}
+.ev-modern[data-segment-layout=panoramic] .calendar-date-year{flex-direction:row;align-items:baseline;gap:var(--ev-head-gap)}
 .ev-modern[data-segment-layout=panoramic] .calendar-metrics{max-height:none;min-height:0;grid-auto-rows:minmax(0,1fr)}
 .ev-modern[data-segment-layout=panoramic] .calendar-card{min-height:0}
 .ev-modern[data-upcoming-heading=false] .section-heading{display:none}
 .ev-modern[data-show-upcoming=false] .upcoming{display:none}
-.ev-modern[data-segment-layout=panoramic][data-show-upcoming=false] .shell{grid-template-columns:minmax(0,1fr) minmax(0,2fr)}
+.ev-modern[data-segment-layout=panoramic][data-show-upcoming=false] .shell{grid-template-columns:1fr}
 .ev-modern[data-segment-layout=compact] .calendar-card{min-height:0}
 .ev-modern .calendar-metrics:has(#names-card.hidden):has(#holiday-card.hidden){display:none}
 html.kiosk-output .shell{max-width:none;width:100%;padding:clamp(8px,1.5vmin,22px)}
-html.kiosk-header-synced:not(:has(.ev-modern)) .hero{height:var(--kiosk-header-height);min-height:0;overflow:hidden}
 body.ev-segment-wrapper{height:100dvh;overflow:hidden}body.ev-segment-wrapper>.shell{display:none}#ev-segment-host{position:fixed;inset:0;overflow:hidden;background:var(--ev-bg)}
 @media(max-width:620px){body:not(.ev-modern){--ev-columns:2;--ev-icon:56px;--ev-name:38px;--ev-card-pad:16px}.calendar-date{white-space:normal}}
 
 .edu-calendar-debug{position:fixed;z-index:1000;right:4px;bottom:4px;max-width:96vw;padding:6px 8px;border:1px solid var(--ev-accent);border-radius:var(--ev-control-radius);background:var(--ev-text);color:var(--ev-surface);font:500 13px/1.35 monospace;white-space:pre-wrap;pointer-events:none}
 
-.ev-modern[data-segment-layout=panoramic] .shell:has(#names-card.hidden):has(#holiday-card.hidden){grid-template-columns:minmax(0,1fr) minmax(0,2fr)}
+.ev-modern[data-segment-layout=panoramic] .shell:has(#names-card.hidden):has(#holiday-card.hidden){grid-template-columns:1fr}
 .ev-modern[data-segment-layout=panoramic][data-show-upcoming=false] .shell:has(#names-card.hidden):has(#holiday-card.hidden){grid-template-columns:1fr}
 @media(max-width:620px){body:not(.ev-modern) .calendar-metrics{grid-template-columns:1fr}}
 
