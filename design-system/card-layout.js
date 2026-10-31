@@ -6,10 +6,10 @@
  let queued=false;const widths=new WeakMap(),watched=new WeakSet();
  function equalize(group){
   const display=getComputedStyle(group).display;if(!display.includes('grid'))return;
-  const items=[...group.children].filter(e=>e.matches(cards)&&e.getBoundingClientRect().height>0);
+  const items=[...group.children].filter(e=>e.matches(cards)&&e.offsetHeight>0);
   if(!items.length)return;
   for(const e of items)e.style.removeProperty('--edu-card-equal-height');
-  const height=Math.ceil(Math.max(...items.map(e=>e.getBoundingClientRect().height)));
+  const height=Math.ceil(Math.max(...items.map(e=>e.offsetHeight)));
   for(const e of items)e.style.setProperty('--edu-card-equal-height',height+'px');
  }
  function refresh(){queued=false;for(const group of document.querySelectorAll(groups)){
