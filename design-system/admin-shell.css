@@ -76,3 +76,7 @@ html.ev-theme-pending body{visibility:hidden}
 .ev-admin .edu-admin__card label>input:is([type=checkbox],[type=radio]){flex:0 0 auto;width:17px;height:17px;min-height:0;margin:0;accent-color:var(--ev-accent)}
 /* Native action buttons use the same bold typography as the button component. */
 .ev-admin .edu-admin__card button:not(.edu-search-choice):not(.edu-choice):not(.ev-app-tile){font-family:var(--edu-admin-font);font-size:13px;font-weight:700}
+
+/* Separate checkbox sections from preceding fields or explanatory text. */
+.ev-admin .edu-admin__card :is(.edu-admin__field-grid,.preview-form-grid,.edu-admin__field,p)+.edu-checkbox-options{margin-block-start:16px}
+.ev-admin .edu-admin__card :is(p,.edu-admin__hint,.edu-checkbox-group-title)+:is(.edu-checkbox-options,label.edu-admin__checkbox){margin-block-start:12px}
