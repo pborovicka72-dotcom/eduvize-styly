@@ -125,3 +125,10 @@ html.web-output .edu-media-viewport .edu-document-image{margin:0 auto!important;
 /* Web departure rows reserve enough width for the whole HH:MM value and line badge. */
 html.web-output[data-kiosk-app="transport"] :is(.table-header,.departure){grid-template-columns:5em 4.5em minmax(0,1fr) 4em!important;font-size:18px!important;column-gap:12px!important;padding:12px!important}
 html.web-output[data-kiosk-app="transport"] .time{font-size:22px!important;line-height:1.25!important}
+
+/* Shared source metadata policy: omit secondary provenance in long strips and narrow columns.
+   Author names and page/touch controls remain content, not source details. */
+@media(min-aspect-ratio:27/10),(max-width:1200px) and (max-aspect-ratio:4/5){
+ html:is(.nsp-output,.kiosk-output) :is([data-edu-source-details],.work,.source-link,#source){display:none!important}
+ html:is(.nsp-output,.kiosk-output) .footer:not(:has(nav,button,#page,[role="navigation"],.edu-kiosk-pagination)){display:none!important}
+}
