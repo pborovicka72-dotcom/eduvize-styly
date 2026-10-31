@@ -81,3 +81,8 @@ html.ev-theme-pending body{visibility:hidden}
 /* Separate checkbox sections from preceding fields or explanatory text. */
 .ev-admin .edu-admin__card :is(.edu-admin__field-grid,.preview-form-grid,.edu-admin__field,p)+.edu-checkbox-options{margin-block-start:16px}
 .ev-admin .edu-admin__card :is(p,.edu-admin__hint,.edu-checkbox-group-title)+:is(.edu-checkbox-options,label.edu-admin__checkbox){margin-block-start:12px}
+
+/* Shared section rhythm: explanations and status text stay clear of action rows. */
+.ev-admin :is(.edu-admin__card,.edu-output-section) :is(.edu-admin__actions,.edu-output-actions,.actions)+:is(p,.help,.edu-admin__hint){margin-block-start:16px}
+.ev-admin .edu-output-section>.edu-output-actions~:is(p,.edu-admin__hint):not(:empty){margin-block-start:16px;margin-block-end:0}
+.ev-admin .edu-output-section>.edu-admin__hint:empty{display:none}
