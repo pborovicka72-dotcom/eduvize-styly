@@ -34,3 +34,6 @@ html[data-kiosk-app][data-output-mode] .edu-output-header .edu-header-title{
 html[data-kiosk-app][data-output-mode] .edu-output-header :is(.brand,.edu-header-group,.edu-app-heading)>div{
  min-width:0;max-width:100%;
 }
+
+/* The visible kiosk menu tile already carries the application identity. */
+html[data-kiosk-app].kiosk-output.edu-menu-app-header .edu-output-header .edu-app-icon{display:none!important}
