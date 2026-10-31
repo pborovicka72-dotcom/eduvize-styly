@@ -38,7 +38,9 @@ html[data-kiosk-app="weather"] .edu-output-header~#weather-pages .hour-cell{back
 html[data-kiosk-app="weather"] :is(.hourly-panel,.daily-forecast-panel){background:transparent;border:0;padding:0}
 html[data-kiosk-app="weather"] .hourly-grid{gap:var(--weather-gap,16px)}
 
-/* Small segments reserve room for the complete section, not explanatory footer copy. */
-html[data-kiosk-app="weather"][data-weather-profile="compact"] .footer{gap:4px 12px}
-html[data-kiosk-app="weather"][data-weather-profile="compact"] .footer>span:nth-child(-n+2){display:none}
-html[data-kiosk-app="weather"][data-weather-profile="compact"] .edu-auto-pagination{min-height:24px;padding:0}
+/* Low horizontal strips reserve their complete area for weather content. */
+html[data-weather-strip] :is(.footer,.edu-auto-pagination,.page-indicator){display:none!important}
+html[data-weather-strip] #weather-pages .weather-page{min-height:100%}
+html[data-weather-strip] #weather-pages :is(.hourly-grid,.metrics,.forecast-grid){align-items:stretch}
+html[data-weather-header-only] :is(#weather-pages,.footer,.edu-kiosk-pagination,.page-indicator,.weather-alerts){display:none!important}
+html[data-weather-header-only] .shell{justify-content:center}
