@@ -1,0 +1,13 @@
+/* Shared content-card geometry: safe text insets and equal tracks across rows. */
+:root{--edu-card-safe-inset:16px}
+html body :is(.edu-admin__card,.calendar-card,.upcoming-day,.forecast-card,.hour-cell,.daily-hour-cell){
+ box-sizing:border-box;
+ padding:max(var(--edu-card-safe-inset),var(--ev-card-pad,16px),calc(var(--ev-card-radius,20px)*.4))!important;
+}
+html body :is(.app-grid,.system-grid,.preview-gallery-grid,.upcoming-grid,.forecast-grid,.hourly-grid,.daily-hourly-grid){
+ grid-auto-rows:minmax(min-content,1fr)!important;
+ align-items:stretch;
+}
+html body :is(.app-grid,.system-grid,.preview-gallery-grid,.upcoming-grid,.forecast-grid,.hourly-grid,.daily-hourly-grid)>:is(.card,.edu-admin__card,.upcoming-day,.forecast-card,.hour-cell,.daily-hour-cell){
+ align-self:stretch;box-sizing:border-box;min-width:0;
+}
