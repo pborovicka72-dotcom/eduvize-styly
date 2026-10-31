@@ -59,7 +59,7 @@ body.ev-segment-wrapper{height:100dvh;overflow:hidden}body.ev-segment-wrapper>.s
 
 /* Distinct vertical rhythm between the calendar header, today and the upcoming days. */
 html[data-kiosk-app="holidays"].kiosk-output body .shell{display:flex!important;flex-direction:column!important;gap:clamp(16px,2vmin,24px)!important}
-html[data-kiosk-app="holidays"].kiosk-output body .shell>:is(.hero,.calendar-metrics,.upcoming){flex:0 0 auto!important}
+html[data-kiosk-app="holidays"].kiosk-output body .shell>:is(.hero,.calendar-metrics){flex:0 0 auto!important}
 .upcoming{gap:max(16px,var(--ev-gap,16px))}
 .metric-icon.edu-app-icon{--edu-icon-size:var(--ev-small-icon,44px)}
 
@@ -82,14 +82,25 @@ html[data-kiosk-app="holidays"].kiosk-output body .shell>:is(.hero,.calendar-met
 #names-card>.metric-value{margin-top:max(18px,.18em)}
 
 /* Kiosk calendar: full-width tracks, balanced portrait rows, equal card heights. */
-html[data-kiosk-app="holidays"].kiosk-output body #upcoming{width:100%!important;align-self:stretch!important}
+html[data-kiosk-app="holidays"].kiosk-output body #upcoming{width:100%!important;align-self:stretch!important;flex:1 1 0%!important;min-height:0!important}
 html[data-kiosk-app="holidays"].kiosk-output body #upcoming-grid{
  display:grid!important;width:100%!important;max-width:none!important;
  grid-template-columns:repeat(var(--calendar-columns,6),minmax(0,1fr))!important;
- grid-template-rows:none!important;grid-auto-rows:minmax(min-content,1fr)!important;
+ grid-template-rows:repeat(var(--calendar-rows,1),minmax(0,1fr))!important;grid-auto-rows:minmax(0,1fr)!important;flex:1 1 0%!important;min-height:0!important;
  align-items:stretch!important;align-content:stretch!important;gap:12px!important;
 }
 html[data-kiosk-app="holidays"].kiosk-output body #upcoming-grid>.upcoming-day{
  width:auto!important;height:auto!important;max-height:none!important;
- min-height:max(120px,var(--edu-card-equal-height,0px))!important;align-self:stretch!important;
+ min-height:0!important;align-self:stretch!important;container-type:size!important;overflow:hidden!important;
 }
+
+/* Like the full segment profiles, today and the equal day tracks share the viewport. */
+html[data-kiosk-app="holidays"].kiosk-output body .calendar-metrics{
+ flex:0 0 23dvh!important;min-height:0!important;max-height:none!important;grid-auto-rows:minmax(0,1fr)!important;
+}
+html[data-kiosk-app="holidays"].kiosk-output body .calendar-card{min-height:0!important;overflow:hidden!important}
+html[data-kiosk-app="holidays"].kiosk-output body .calendar-metrics:has(#names-card.hidden):has(#holiday-card.hidden){display:none!important}
+html[data-kiosk-app="holidays"].kiosk-output body .shell:has(#upcoming.hidden) .calendar-metrics{flex:1 1 0%!important}
+html[data-kiosk-app="holidays"].kiosk-output body #names{font-size:clamp(40px,8vmin,120px)!important}
+html[data-kiosk-app="holidays"].kiosk-output body #upcoming-grid .upcoming-name{font-size:clamp(24px,min(14cqw,24cqh),90px)!important}
+html[data-kiosk-app="holidays"].kiosk-output body #upcoming-grid :is(.upcoming-date,.upcoming-event){font-size:clamp(18px,min(8cqw,12cqh),48px)!important}
