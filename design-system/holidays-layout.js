@@ -10,5 +10,14 @@
   if(date&&year&&!date.parentElement.classList.contains('calendar-date-year')){const row=document.createElement('div');row.className='calendar-date-year';date.before(row);row.append(date,year);}
   return policy;
  }
- root.EduvizeHolidaysLayout=Object.freeze({apply});
+ // Compare actual sizes after content fitting, including unusually long today's names.
+ function fitHierarchy(body){
+  const today=body.querySelector('#names');
+  if(!today||!today.getBoundingClientRect().height)return;
+  const ceiling=parseFloat(getComputedStyle(today).fontSize)*.8;
+  body.querySelectorAll('.upcoming-name,.upcoming-event,.upcoming-date').forEach(element=>{
+   if(parseFloat(getComputedStyle(element).fontSize)>ceiling)element.style.fontSize=ceiling+'px';
+  });
+ }
+ root.EduvizeHolidaysLayout=Object.freeze({apply,fitHierarchy});
 })(window);
