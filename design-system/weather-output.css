@@ -55,4 +55,15 @@ html[data-kiosk-app="weather"][data-output-mode][data-weather-header-only] .edu-
 html[data-weather-header-only] .edu-output-header .edu-header-art .condition-label{font-size:calc(var(--edu-header-meta)*.65);max-width:100%;overflow-wrap:break-word}
 
 /* Daily cards always share the entire section width, independently of hourly density. */
-html[data-kiosk-app="weather"][data-output-mode] #weather-pages .daily-hourly-grid{grid-template-columns:repeat(3,minmax(0,1fr))!important}
+html[data-kiosk-app="weather"][data-output-mode] #weather-pages .daily-hourly-grid{grid-template-columns:repeat(var(--weather-daily,3),minmax(0,1fr))!important}
+
+/* Tall weather panels reserve independent header cells and use vertical card tracks. */
+html[data-kiosk-app="weather"][data-weather-portrait] .hero.edu-output-header{display:grid!important;grid-template-columns:auto minmax(0,1fr) auto;grid-template-rows:1fr 1fr}
+html[data-weather-portrait] .weather-current{display:contents}
+html[data-weather-portrait] .hero>.edu-app-icon{grid-column:1;grid-row:1 / 3}
+html[data-weather-portrait] .temperature{grid-column:2;grid-row:1;align-self:end}
+html[data-weather-portrait] .hero-details{grid-column:2;grid-row:2;align-self:start}
+html[data-weather-portrait] .hero-art{grid-column:3;grid-row:1 / 3}
+html[data-weather-portrait] .feels-like{flex-wrap:wrap;white-space:normal}
+html[data-weather-portrait] .metric{display:flex;flex-direction:column;justify-content:center}
+html[data-weather-portrait] .hour-cell{justify-content:center}
