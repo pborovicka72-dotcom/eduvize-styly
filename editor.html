@@ -111,7 +111,16 @@ async function loadThemes(pick,created){
 document.getElementById('theme-select').addEventListener('change',e=>selectTheme(e.target.value));
 function feedback(message,state=''){const el=document.getElementById('save-feedback');el.className='save-feedback'+(state?' '+state:'');el.textContent=message}
 async function run(fn){try{await fn()}catch(e){feedback('✕ '+e.message,'error');msg('Chyba: '+e.message)}}
-document.getElementById('create').onclick=()=>run(async()=>{if(!tokenEl.value.trim())throw Error('Pro vytvoření stylu vyplňte administrační token.');const name=document.getElementById('theme-name').value.trim();const config=deep(theme);const t=await api('themes','POST',{name,config});await loadThemes(t.id,{...t,config,active:false,locked:false});msg('Styl „'+name+'“ byl uložen do databáze a zobrazen v seznamu výše.')});
+function themeNameKey(name){return name.normalize('NFKC').replace(/\s+/gu,' ').trim().toLowerCase()}
+function requireNewThemeName(){
+ const field=document.getElementById('theme-name'),name=field.value.replace(/\s+/gu,' ').trim();
+ if(!name||name.length>80){field.focus();throw Error('Název musí mít 1–80 znaků.');}
+ if(themes.some(item=>themeNameKey(item.name)===themeNameKey(name))||themeNameKey(name)===themeNameKey('EDUVIZE Standard')){
+  field.focus();throw Error('Styl s tímto názvem již existuje. Pro nový styl zadejte jiný název.');
+ }
+ return name;
+}
+document.getElementById('create').onclick=()=>run(async()=>{const name=requireNewThemeName();if(!tokenEl.value.trim())throw Error('Pro vytvoření stylu vyplňte administrační token.');const config=deep(theme);const t=await api('themes','POST',{name,config});await loadThemes(t.id,{...t,config,active:false,locked:false});msg('Styl „'+name+'“ byl uložen do databáze a zobrazen v seznamu výše.')});
 document.getElementById('save').onclick=()=>run(async()=>{if(!editable())throw Error('Nejprve odemkněte úpravy výchozího stylu');if(!tokenEl.value.trim()){feedback('Pro uložení vyplňte nahoře administrační token. Náhled změn zůstává zachován.','error');tokenEl.focus();return}const name=document.getElementById('theme-name').value.trim();const button=document.getElementById('save');button.disabled=true;feedback('Ukládám změny…','pending');try{await api('themes/'+selected,'PUT',{name,config:theme});await loadThemes(selected);feedback('✓ Změny stylu „'+name+'“ byly uloženy.');msg('Styl aktualizován.')}finally{button.disabled=!editable()}});
 document.getElementById('activate').onclick=()=>run(async()=>{await api('themes/'+selected+'/activate','POST');await loadThemes(selected);msg('Aktivní styl nastaven. Připojení dalších aplikací následuje.')});
 document.getElementById('remove').onclick=()=>run(async()=>{if(selected==='standard')throw Error('Výchozí styl nelze smazat');if(!confirm('Opravdu smazat vybraný styl?'))return;await api('themes/'+selected,'DELETE');await loadThemes('standard');msg('Styl smazán.')});
