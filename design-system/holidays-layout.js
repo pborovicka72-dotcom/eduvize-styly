@@ -43,7 +43,6 @@ function fit(body,minFont){
 }
 
 function fitWordColumns(body){
- if(body.ownerDocument.documentElement.classList.contains('kiosk-output'))return;
  const grid=body.querySelector('.upcoming-grid');if(!grid||!grid.clientWidth)return;
  grid.style.removeProperty('grid-template-columns');grid.style.removeProperty('grid-template-rows');
  const cards=[...grid.querySelectorAll('.upcoming-day')];if(!cards.length)return;
