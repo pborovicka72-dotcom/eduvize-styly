@@ -1,6 +1,7 @@
 """Short-lived Eduvize administration sessions; Microsoft credentials stay server-side."""
 import hashlib
 import json
+import re
 import secrets
 import time
 from contextlib import contextmanager
@@ -45,12 +46,23 @@ class SessionStore:
   with self.connect() as conn:
    conn.execute('CREATE TABLE IF NOT EXISTS eduvize_admin_sessions_v1 (token_hash TEXT PRIMARY KEY, scopes JSONB NOT NULL, expires DOUBLE PRECISION NOT NULL, parent_hash TEXT REFERENCES eduvize_admin_sessions_v1(token_hash) ON DELETE CASCADE)')
    conn.execute('CREATE TABLE IF NOT EXISTS eduvize_admin_handoffs_v1 (code_hash TEXT PRIMARY KEY, root_hash TEXT NOT NULL REFERENCES eduvize_admin_sessions_v1(token_hash) ON DELETE CASCADE, origin TEXT NOT NULL, scopes JSONB NOT NULL, expires DOUBLE PRECISION NOT NULL)')
+   conn.execute('CREATE TABLE IF NOT EXISTS eduvize_admin_profile_selection_v1 (root_hash TEXT PRIMARY KEY REFERENCES eduvize_admin_sessions_v1(token_hash) ON DELETE CASCADE, profile_id TEXT NOT NULL)')
    yield conn
  def read(self,token):
   with self.db() as conn:
    row=conn.execute('SELECT scopes,expires,parent_hash FROM eduvize_admin_sessions_v1 WHERE token_hash=%s',(digest(token),)).fetchone()
   if not row or row[1]<=time.time():raise HTTPException(401,'Přihlášení vypršelo. Obnovte je na rozcestníku Eduvize.')
-  return {'scopes':row[0], 'expiresAt':row[1], 'root':row[2] or digest(token)}
+  root=row[2] or digest(token)
+  with self.db() as conn:profile=conn.execute('SELECT profile_id FROM eduvize_admin_profile_selection_v1 WHERE root_hash=%s',(root,)).fetchone()
+  return {'scopes':row[0], 'expiresAt':row[1], 'root':root, 'profileId':profile[0] if profile else ''}
+ def select_profile(self,token,profile_id):
+  row=self.read(token)
+  if digest(token)!=row['root']:raise HTTPException(403,'Profil vyberte na stránce Účet a konfigurace.')
+  if not isinstance(profile_id,str) or (profile_id and not re.fullmatch(r'[a-f0-9]{32}',profile_id)):raise HTTPException(422,'Neplatný profil.')
+  with self.db() as conn:
+   if profile_id:conn.execute('INSERT INTO eduvize_admin_profile_selection_v1 (root_hash,profile_id) VALUES (%s,%s) ON CONFLICT (root_hash) DO UPDATE SET profile_id=EXCLUDED.profile_id',(row['root'],profile_id))
+   else:conn.execute('DELETE FROM eduvize_admin_profile_selection_v1 WHERE root_hash=%s',(row['root'],))
+  return profile_id
  def create(self,scopes):
   token='edu_'+secrets.token_urlsafe(32);expires=time.time()+TTL
   with self.db() as conn:
@@ -78,7 +90,7 @@ class SessionStore:
    if not parent or parent[0]<=time.time():raise HTTPException(401,'Přihlášení vypršelo.')
    token='edu_'+secrets.token_urlsafe(32)
    conn.execute('INSERT INTO eduvize_admin_sessions_v1 (token_hash,scopes,expires,parent_hash) VALUES (%s,%s::jsonb,%s,%s)',(digest(token),json.dumps(row[1]),parent[0],row[0]))
-  return {'token':token,'scopes':row[1],'expiresAt':parent[0]}
+  return {'token':token,'scopes':row[1],'expiresAt':parent[0],'profileId':self.read(token)['profileId']}
 
 def require_session(store,auth,scope=None):
  row=store.read(bearer(auth))
@@ -113,13 +125,19 @@ def session_router(store,styles_key,documents_url=DOCUMENTS):
    if not r.is_success:raise HTTPException(503,'Nelze ověřit připojení Dokumentů. Zkuste to později.')
    scopes.add('documents')
   result=store.create(scopes)
+  if old and old.get('profileId'):
+   store.select_profile(result['token'],old['profileId']);result['profileId']=old['profileId']
   if old:
    try:store.revoke(bearer(authorization))
    except HTTPException:pass
   return result
  @router.get('/api/admin-session')
  def status(authorization:str=Header(default='')):
-  row=require_session(store,authorization);return {'scopes':row['scopes'],'expiresAt':row['expiresAt']}
+  row=require_session(store,authorization);return {'scopes':row['scopes'],'expiresAt':row['expiresAt'],'profileId':row['profileId']}
+ @router.put('/api/admin-session/profile')
+ async def select_profile(request:Request,authorization:str=Header(default='')):
+  hub_origin(request);data=await request.json()
+  return {'profileId':store.select_profile(bearer(authorization),data.get('profileId'))}
  @router.get('/api/admin-session/validate')
  def validate(scope:str='',authorization:str=Header(default='')):
   if scope not in ('styles','documents','configurations'):raise HTTPException(422,'Neplatná administrace.')

@@ -68,6 +68,27 @@ class SessionTests(unittest.TestCase):
    self.assertEqual(self.client.get('/api/admin-session/validate?scope=configurations',headers=self.auth(child['token'])).status_code,200)
    self.assertEqual(self.client.get('/api/admin-session/validate?scope=documents',headers=self.auth(child['token'])).status_code,403)
   self.assertEqual(self.client.get('/api/admin-session/validate?scope=configurations',headers=self.auth()).status_code,200)
+ def test_active_profile_is_shared_with_existing_children(self):
+  child=self.store.redeem(self.store.handoff(self.root['token'],'https://eduvize-weather.onrender.com/config'),'https://eduvize-weather.onrender.com')
+  one='a'*32;two='b'*32
+  response=self.client.put('/api/admin-session/profile',json={'profileId':one},headers={**self.auth(),'Origin':sessions.HUB_ORIGIN})
+  self.assertEqual(response.status_code,200)
+  self.assertEqual(self.client.get('/api/admin-session',headers=self.auth(child['token'])).json()['profileId'],one)
+  fresh_child=self.store.redeem(self.store.handoff(self.root['token'],'https://eduvize-weather.onrender.com/config'),'https://eduvize-weather.onrender.com')
+  self.assertEqual(fresh_child['profileId'],one)
+  self.store.select_profile(self.root['token'],two)
+  self.assertEqual(self.store.read(child['token'])['profileId'],two)
+  self.assertEqual(self.client.put('/api/admin-session/profile',json={'profileId':one},headers={**self.auth(child['token']),'Origin':sessions.HUB_ORIGIN}).status_code,403)
+ def test_profile_selection_validates_origin_id_and_session(self):
+  self.assertEqual(self.client.put('/api/admin-session/profile',json={'profileId':'a'*32},headers={'Origin':sessions.HUB_ORIGIN}).status_code,401)
+  self.assertEqual(self.client.put('/api/admin-session/profile',json={'profileId':'a'*32},headers={**self.auth(),'Origin':'https://evil.example'}).status_code,403)
+  self.assertEqual(self.client.put('/api/admin-session/profile',json={'profileId':'../other'},headers={**self.auth(),'Origin':sessions.HUB_ORIGIN}).status_code,422)
+  self.store.select_profile(self.root['token'],'a'*32);self.store.select_profile(self.root['token'],'');self.assertEqual(self.store.read(self.root['token'])['profileId'],'')
+ def test_profile_survives_login_renewal(self):
+  self.store.select_profile(self.root['token'],'a'*32)
+  response=self.client.post('/api/admin-session',json={'stylesKey':'test-only-styles-key'},headers={**self.auth(),'Origin':sessions.HUB_ORIGIN})
+  self.assertEqual(response.status_code,200);self.assertEqual(response.json()['profileId'],'a'*32)
+  self.assertEqual(self.store.read(response.json()['token'])['profileId'],'a'*32)
  def test_concurrent_redeem_only_one_succeeds(self):
   code=self.store.handoff(self.root['token'],sessions.DOCUMENTS+'/config');results=[]
   def redeem():
