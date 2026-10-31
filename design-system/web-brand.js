@@ -1,4 +1,4 @@
-/* Shared animated Eduvize identity for ordinary pages and administration. */
+/* Shared animated Eduvize identity for ordinary output pages; administration retains its application logo. */
 (function(root){
  'use strict';
  const source=new URL('assets/eduvize-logo-compact-animated.svg?v=1',document.currentScript.src).href;
@@ -6,7 +6,7 @@
  function mount(){
   const html=document.documentElement,app=html.dataset.kioskApp;
   const admin=/\/(?:config(?:\.html)?|editor\.html|aplikace\.html)\/?$/.test(location.pathname)||(!app&&!!document.querySelector('.edu-admin-page'));
-  if(admin){const header=document.querySelector('.edu-page-header,header');if(!header||header.querySelector('.edu-brand-logo'))return;const identity=header.querySelector('.edu-page-header__identity')||header;const icon=identity.querySelector('.edu-page-header__icon,.edu-app-icon,.brandmark,.mark');if(icon){icon.replaceChildren(logo());icon.classList.add('edu-brand-identity');icon.removeAttribute('data-edu-app-icon');}else{identity.prepend(logo());}return;}
+  if(admin)return;
   if(!app||app==='kiosk'||root.EduvizeOutputModes?.mode()!=='web')return;
   let header=document.querySelector('.edu-web-header,.web-header,.site-header');
   if(!header){header=document.createElement('header');document.body.prepend(header);}
