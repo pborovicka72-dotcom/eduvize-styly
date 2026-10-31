@@ -58,7 +58,7 @@ body.ev-segment-wrapper{height:100dvh;overflow:hidden}body.ev-segment-wrapper>.s
 .upcoming-day{padding:max(16px,var(--ev-card-pad,24px),calc(var(--ev-card-radius,20px)*.4))!important}
 
 /* Distinct vertical rhythm between the calendar header, today and the upcoming days. */
-html[data-kiosk-app="holidays"].kiosk-output .shell{display:flex!important;flex-direction:column!important;gap:clamp(16px,2vmin,24px)!important}
-html[data-kiosk-app="holidays"].kiosk-output .shell>:is(.hero,.calendar-metrics,.upcoming){flex:0 0 auto!important}
+html[data-kiosk-app="holidays"].kiosk-output body .shell{display:flex!important;flex-direction:column!important;gap:clamp(16px,2vmin,24px)!important}
+html[data-kiosk-app="holidays"].kiosk-output body .shell>:is(.hero,.calendar-metrics,.upcoming){flex:0 0 auto!important}
 .upcoming{gap:max(16px,var(--ev-gap,16px))}
 .metric-icon.edu-app-icon{--edu-icon-size:var(--ev-small-icon,44px)}
