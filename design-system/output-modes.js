@@ -14,7 +14,7 @@
  }
  return u;
  }
- function install(select){if(!select)return;select.dataset.eduOutputMode='';if(!Array.from(select.options).some(o=>o.value==='kiosk'))select.add(new Option('Kiosek','kiosk'));}
+ function install(select){if(!select)return;select.dataset.eduOutputMode='';if(!Array.from(select.options).some(o=>o.value==='kiosk'))select.add(new Option('Kiosek','kiosk'));if(isKiosk()&&select.value!=='kiosk'){select.value='kiosk';select.dispatchEvent(new Event('change',{bubbles:true}));}}
  root.EduvizeOutputModes=Object.freeze({modes,isKiosk,url,install,segmentKeys});
  if(isKiosk())document.documentElement.classList.add('kiosk-output');
  function start(){document.querySelectorAll('#setting-output,#viewMode,#layout,#outputType,#kiosk-output-type').forEach(s=>{if(s.tagName==='SELECT'&&Array.from(s.options).some(o=>/Newline Signage Pro/.test(o.text)))install(s);});}
