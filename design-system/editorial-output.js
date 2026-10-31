@@ -1,5 +1,32 @@
-/* Fit quotes to their actual text box, including narrow and panoramic segments. */
-(()=>{function fit(){if((window.EduvizeOutputModes?.mode?.()||(window.EduvizeOutputModes?.isKiosk?.()?'kiosk':'nsp'))!=='nsp')return;const q=document.querySelector('.edu-wisdom-output .quote');if(!q)return;const content=q.closest('.content');q.style.removeProperty('font-size');let size=parseFloat(getComputedStyle(q).fontSize);const other=Array.from(content.children).filter(e=>e!==q&&!e.hidden).reduce((n,e)=>n+e.getBoundingClientRect().height,0);const cs=getComputedStyle(content),available=content.clientHeight-parseFloat(cs.paddingTop)-parseFloat(cs.paddingBottom)-other-parseFloat(cs.gap||0);while(size>12&&(q.scrollHeight>available||q.scrollWidth>q.clientWidth)){size-=1;q.style.fontSize=size+'px'}}window.addEventListener('resize',fit);document.addEventListener('DOMContentLoaded',()=>{const q=document.getElementById('quote');if(q)new MutationObserver(fit).observe(q,{childList:true,characterData:true,subtree:true});new ResizeObserver(fit).observe(document.body);document.fonts?.ready.then(fit);fit()})})();
+/* Fit complete quotations to the actual content box in both NSP and kiosk. */
+(function(root){
+ let queued=false;
+ function fit(){
+  queued=false;
+  if(root.EduvizeOutputModes?.mode?.()==='web')return;
+  const quote=document.querySelector('.edu-wisdom-output .quote');if(!quote)return;
+  const content=quote.closest('.content');if(!content||!content.clientHeight||!content.clientWidth)return;
+  quote.style.removeProperty('font-size');
+  const cs=getComputedStyle(content),visible=[...content.children].filter(e=>e.getBoundingClientRect().height>0);
+  const other=visible.filter(e=>e!==quote).reduce((sum,e)=>sum+e.getBoundingClientRect().height,0);
+  const available=content.clientHeight-(parseFloat(cs.paddingTop)||0)-(parseFloat(cs.paddingBottom)||0)-other-(parseFloat(cs.rowGap)||0)*Math.max(0,visible.length-1);
+  const base=parseFloat(getComputedStyle(quote).fontSize);if(available<=0)return;
+  function fits(size){quote.style.setProperty('font-size',size+'px','important');return quote.scrollHeight<=available+1&&quote.scrollWidth<=quote.clientWidth+1;}
+  if(fits(base))return;
+  let low=Math.min(12,base),high=base;
+  for(let step=0;step<12;step++){const mid=(low+high)/2;if(fits(mid))low=mid;else high=mid;}
+  fits(low);
+ }
+ function schedule(){if(!queued){queued=true;requestAnimationFrame(fit);}}
+ function start(){
+  const content=document.querySelector('.edu-wisdom-output .content');if(!content)return;
+  new MutationObserver(schedule).observe(content,{childList:true,characterData:true,subtree:true});
+  const observer=new ResizeObserver(schedule);observer.observe(content);
+  const header=document.querySelector('.edu-output-header');if(header)observer.observe(header);
+  document.fonts?.ready.then(schedule);root.addEventListener('load',schedule);root.addEventListener('resize',schedule);schedule();
+ }
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});else start();
+})(window);
 
 /* News cards adapt to their available content area; shared headers keep their geometry. */
 (function(root){
