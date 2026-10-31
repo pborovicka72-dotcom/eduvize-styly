@@ -11,3 +11,6 @@
 .edu-search-choice strong{font-weight:600}.edu-search-choice small{color:var(--ev-muted);font-size:13px}
 .edu-search-choice:hover{border-color:var(--ev-accent)}.edu-search-choice:focus-visible{outline:2px solid var(--ev-accent);outline-offset:2px}
 .edu-admin-search .search-progress{color:var(--ev-muted);font-size:13px;line-height:1.5}
+
+/* Separate the query field from the results it produces in every administration. */
+.edu-admin__field+.edu-search-results,.edu-admin-search>input+.edu-search-results,.edu-admin-search>label+.edu-search-results{margin-block-start:16px}
