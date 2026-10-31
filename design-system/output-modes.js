@@ -2,6 +2,8 @@
 (function(root){
  'use strict';
  const modes=Object.freeze([{id:'web',label:'Běžná stránka'},{id:'nsp',label:'Newline Signage Pro'},{id:'kiosk',label:'Kiosek'}]);
+ const defaultMode='nsp';
+ function initialMode(value=root.location.href){const u=value instanceof URL?value:new URL(value,root.location.href);return ['viewMode','output','layout','segment_style','segment_block'].some(key=>u.searchParams.has(key))?mode(u):defaultMode;}
  const segmentKeys=['segment_orientation','segment_style','segment_block','orientation','style','block','ev_inner'];
  function isKiosk(value=root.location.search){const p=value instanceof URL?value.searchParams:new URLSearchParams(value);return p.get('viewMode')==='kiosk'||p.get('output')==='kiosk';}
  function mode(value=root.location.href){
@@ -23,8 +25,8 @@
  }
  return u;
  }
- function install(select){if(!select)return;select.dataset.eduOutputMode='';if(!Array.from(select.options).some(o=>o.value==='kiosk'))select.add(new Option('Kiosek','kiosk'));if(isKiosk()&&select.value!=='kiosk'){select.value='kiosk';select.dispatchEvent(new Event('change',{bubbles:true}));}}
- root.EduvizeOutputModes=Object.freeze({modes,mode,isKiosk,url,install,segmentKeys});
+ function install(select){if(!select||select.dataset.eduOutputMode!==undefined)return;select.dataset.eduOutputMode='';if(!Array.from(select.options).some(o=>o.value==='kiosk'))select.add(new Option('Kiosek','kiosk'));const initial=initialMode();const option=Array.from(select.options).find(o=>o.value===initial||(initial==='nsp'&&/Newline Signage Pro/.test(o.text)));if(option&&select.value!==option.value){select.value=option.value;select.dispatchEvent(new Event('change',{bubbles:true}));}}
+ root.EduvizeOutputModes=Object.freeze({modes,mode,isKiosk,url,install,segmentKeys,defaultMode,initialMode});
  if(isKiosk())document.documentElement.classList.add('kiosk-output');
  function start(){document.querySelectorAll('#setting-output,#viewMode,#layout,#outputType,#kiosk-output-type').forEach(s=>{if(s.tagName==='SELECT'&&Array.from(s.options).some(o=>/Newline Signage Pro/.test(o.text)))install(s);});}
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});else start();
