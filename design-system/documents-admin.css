@@ -9,8 +9,7 @@
 .category-visibility-grid{display:flex;flex-wrap:wrap;gap:9px;padding-bottom:15px}
 #category-visibility .category-visibility-item{display:inline-flex;flex-direction:row;align-items:center;gap:7px;margin:0;padding:8px 12px;background:var(--ev-surface);border:1px solid var(--ev-border);border-radius:var(--ev-control-radius);font-size:13px;font-weight:600;cursor:pointer}
 .category-visibility-item input{margin:0;accent-color:var(--ev-accent)}
-#status{min-height:24px;color:var(--ev-accent);font-weight:650}
-#auth-status{font-weight:700}#auth-status.success{color:var(--ev-primary)}#auth-status.error{color:var(--ev-text)}
+#auth-status{font-weight:600}
 .edu-settings-hint{grid-column:1/-1;margin:0}
 .edu-output-section #ev-segments{width:100%;max-width:none}
 
