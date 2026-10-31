@@ -55,3 +55,9 @@ html[data-kiosk-app][data-output-mode] :is(.metric,.calendar-card,.forecast-card
 
 /* Ordinary pages always keep the complete document in the normal scrolling flow. */
 html.web-output .edu-kiosk-stage{height:auto!important;max-height:none!important;overflow:visible!important;flex:none!important}
+
+/* A custom kiosk page in ordinary-page mode has no viewport-sized content area. */
+html.web-output :is(.wrap,#pageContent,#schoolContent,.edu-paged-panel,.edu-paged-stage,.edu-paged-content,.page-content-sheet){height:auto!important;max-height:none!important;min-height:0!important;overflow:visible!important;flex:none!important}
+html.web-output .wrap{display:flex!important;flex-direction:column!important}
+html.web-output :is(#pageContent,#schoolContent){grid-area:auto!important;width:100%!important}
+html.web-output .edu-paged-content{position:static!important;transform:none!important;width:100%!important}
