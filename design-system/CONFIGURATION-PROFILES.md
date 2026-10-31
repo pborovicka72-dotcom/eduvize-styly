@@ -15,3 +15,11 @@ Profiles reuse the server's existing OneDrive connection. Central handoff grants
 Loading a stored style changes its editor draft/preview only. Saving or activating the global style still requires the normal style-management action. Document files and server catalog metadata remain on their existing OneDrive paths; a profile carries document output preferences, not duplicate document files.
 
 Validation: `python -m unittest discover -s tests -v` in the Styles and Documents repositories. Browser fixture in the development workspace tests create → cross-origin administration → save → dirty state → reload → central status, without a real Microsoft account.
+
+## Simplified active profile flow
+
+The account page selects the single active profile for the root administration session. The session database stores only that opaque profile ID, shared by all child sessions; credentials and display settings are not added to session metadata. Re-authentication preserves the selection and logout revokes it with the root session. Only the root session on the account origin may change the selection.
+
+Administrations show a read-only profile name and one shared **Uložit na OneDrive** action immediately before their native local-save button. They load the selected module settings on opening and save only on an explicit click. A save refreshes the session first; a different active profile or a stale module revision requires an explicit reload of settings before saving. The reload/undo controls appear only for recovery. The existing nonce-bound session draft preserves work across sign-in and OneDrive reconnection.
+
+The account manager has profile selection, a collapsed new-profile form and a link to applications. Copying and backup restoration are under **Další možnosti**; backup selection is hidden when none exist. The legacy kiosk importer is removed from ordinary UI; old files and backend import endpoints remain intact.

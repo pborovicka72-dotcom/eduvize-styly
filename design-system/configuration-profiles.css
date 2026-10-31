@@ -1,24 +1,16 @@
-/* Layout only: profile controls use the canonical administration components. */
+/* Layout only. Buttons, fields, colors and corners come from shared admin components. */
 .edu-profile-panel{display:flex;flex-direction:column;gap:12px}
-.edu-profile-panel h2,.edu-profile-panel p{margin:0}
+.edu-profile-panel h2,.edu-profile-panel p,.edu-profile-current p{margin:0}
 .edu-profile-panel__row{display:flex;align-items:end;flex-wrap:wrap;gap:12px}
 .edu-profile-panel__row>label{flex:1 1 240px;min-width:0}
 .edu-profile-panel__row>.edu-admin__actions{margin:0;display:flex;flex-wrap:wrap;gap:8px}
 .edu-profile-panel__status{font-size:14px;line-height:1.4;color:var(--ev-muted)}
-.edu-profile-panel__status[data-state=dirty]{color:var(--ev-text);font-weight:600}
-.edu-profile-apps{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,250px),1fr));gap:12px}
-.edu-profile-app{padding:16px;border:1px solid var(--ev-border);border-radius:var(--ev-card-radius);background:var(--ev-surface);display:flex;flex-direction:column;gap:8px;min-width:0}
-.edu-profile-app h3,.edu-profile-app p{margin:0}
-.edu-profile-app a{align-self:flex-start;margin-top:auto}
-.edu-profile-history{display:flex;align-items:end;flex-wrap:wrap;gap:12px;margin-top:20px}
-.edu-profile-history>label{flex:1 1 260px}
-.edu-profile-panel[hidden],.edu-profile-history[hidden]{display:none}
-
-.edu-profile-panel [hidden]{display:none!important}
+.edu-profile-panel__status[data-state=dirty],.edu-profile-panel__status[data-state=error]{color:var(--ev-text);font-weight:600}
+.edu-profile-current{display:flex;flex-direction:column;gap:4px;min-width:0;margin-top:12px;font-size:14px;line-height:1.4}
+.edu-profile-current__name{font-weight:600}
+.edu-profile-current>.edu-admin__actions{margin:8px 0 0}
+.edu-profile-advanced>summary,.edu-profile-backup>summary{cursor:pointer;padding:8px 0;font-weight:600}
+.edu-profile-advanced[open]>.edu-profile-panel__row,.edu-profile-backup[open]>.edu-profile-panel__row{margin-top:12px}
+.edu-profile-backup{margin-top:12px}
+.edu-profile-panel [hidden],.edu-profile-current [hidden],.edu-profile-current[hidden]{display:none!important}
 #edu-profile-save{scroll-margin-top:24px}
-#edu-profile-save .edu-admin__hint{font-size:16px;line-height:1.5}
-
-.edu-profile-feedback{padding:16px;border:1px solid var(--edu-admin-input-border);border-radius:var(--edu-admin-control-radius);background:var(--edu-admin-bg);color:var(--edu-admin-ink);line-height:1.5}
-.edu-profile-feedback[data-state=success]{font-weight:600}
-.edu-profile-app-details>summary{cursor:pointer;font-weight:700;padding:12px 0}
-.edu-profile-app-details[open]>.edu-profile-apps{margin-top:12px}
