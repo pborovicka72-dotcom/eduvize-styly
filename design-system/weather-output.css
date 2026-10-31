@@ -44,3 +44,5 @@ html[data-weather-strip] #weather-pages .weather-page{min-height:100%}
 html[data-weather-strip] #weather-pages :is(.hourly-grid,.metrics,.forecast-grid){align-items:stretch}
 html[data-weather-header-only] :is(#weather-pages,.footer,.edu-kiosk-pagination,.page-indicator,.weather-alerts){display:none!important}
 html[data-weather-header-only] .shell{justify-content:center}
+
+html[data-weather-header-only] .condition-label{font-size:calc(var(--edu-header-meta)*.65);max-width:100%;overflow-wrap:break-word}
