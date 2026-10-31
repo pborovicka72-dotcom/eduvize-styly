@@ -112,10 +112,11 @@ html.web-output .head.edu-output-header{display:grid!important;grid-template-col
 html.web-output .head.edu-output-header>.head-icon{grid-column:1;grid-row:1 / span 2;width:48px!important;height:48px!important}
 html.web-output .head.edu-output-header>.edu-header-title{grid-column:2;grid-row:1}
 html.web-output .head.edu-output-header>.topic{grid-column:2;grid-row:2;margin:0!important}
-html.web-output :is(.hourly-grid,.daily-hourly-grid,.forecast-grid,.metrics){display:grid!important;gap:16px!important}
-html.web-output .metrics{grid-template-columns:repeat(var(--weather-metrics,3),minmax(0,1fr))!important}
-html.web-output :is(.hourly-grid,.daily-hourly-grid){grid-template-columns:repeat(var(--weather-hours,3),minmax(0,1fr))!important}
-html.web-output .forecast-grid{grid-template-columns:repeat(var(--weather-forecast,3),minmax(0,1fr))!important}
+html.web-output:not([data-kiosk-app="weather"]) :is(.hourly-grid,.daily-hourly-grid,.forecast-grid,.metrics){display:grid!important;grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr))!important;gap:16px!important}
+html.web-output[data-kiosk-app="weather"] :is(.hourly-grid,.daily-hourly-grid,.forecast-grid,.metrics){display:grid!important;gap:16px!important}
+html.web-output[data-kiosk-app="weather"] .metrics{grid-template-columns:repeat(var(--weather-metrics,3),minmax(0,1fr))!important}
+html.web-output[data-kiosk-app="weather"] :is(.hourly-grid,.daily-hourly-grid){grid-template-columns:repeat(var(--weather-hours,3),minmax(0,1fr))!important}
+html.web-output[data-kiosk-app="weather"] .forecast-grid{grid-template-columns:repeat(var(--weather-forecast,3),minmax(0,1fr))!important}
 html.web-output :is(.hour-cell,.daily-hour-cell){padding:20px!important;gap:12px!important;justify-content:flex-start!important}
 html.web-output :is(.edu-media-viewer,.edu-media-viewport,#viewer){height:auto!important;min-height:0!important;max-height:none!important;flex:none!important;overflow:visible!important}
 html.web-output .edu-media-viewport .edu-document-image{margin:0 auto!important;max-width:100%!important;height:auto!important}
