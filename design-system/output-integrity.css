@@ -1,3 +1,4 @@
+@import url('https://pborovicka72-dotcom.github.io/eduvize-styly/design-system/card-layout.css?v=1');
 @import url('./web-brand.css?v=20261031-integrity-1');
 /* Shared roles, applied after app components: identical viewport = identical typography. */
 html[data-kiosk-app][data-output-mode]{font-family:var(--edu-admin-font,system-ui);font-size:var(--edu-text-body,18px);color:var(--ev-text);background:var(--ev-bg)}
