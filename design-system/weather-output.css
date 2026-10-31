@@ -39,6 +39,6 @@ html[data-kiosk-app="weather"] :is(.hourly-panel,.daily-forecast-panel){backgrou
 html[data-kiosk-app="weather"] .hourly-grid{gap:var(--weather-gap,16px)}
 
 /* Small segments reserve room for the complete section, not explanatory footer copy. */
-html[data-kiosk-app="weather"][data-weather-profile="compact"] .footer{font-size:16px!important;line-height:1.2!important;gap:4px 12px}
+html[data-kiosk-app="weather"][data-weather-profile="compact"] .footer{gap:4px 12px}
 html[data-kiosk-app="weather"][data-weather-profile="compact"] .footer>span:nth-child(-n+2){display:none}
-html[data-kiosk-app="weather"][data-weather-profile="compact"] .edu-auto-pagination{min-height:24px;padding:0;font-size:16px}
+html[data-kiosk-app="weather"][data-weather-profile="compact"] .edu-auto-pagination{min-height:24px;padding:0}
