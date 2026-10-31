@@ -28,13 +28,18 @@ function fit(body,minFont){
   const longest=Math.max(0,...words.map(w=>ctx.measureText(w).width));
   if(available>0&&longest>available){
    const target=Math.max(min,Math.floor(base*available/longest*0.96));
-   el.style.fontSize=target+"px";
+   el.style.setProperty("font-size",target+"px","important");
   }
   // Extremely narrow containers: prevent painting into neighboring cards.
 
  });
  fitCardText(body,minFont);
  fitHierarchy(body);
+ for(const role of ['.upcoming-date','.upcoming-name','.upcoming-event']){
+  const elements=[...body.querySelectorAll(role)];if(!elements.length)continue;
+  const size=Math.min(...elements.map(e=>parseFloat(getComputedStyle(e).fontSize)));
+  elements.forEach(e=>e.style.setProperty('font-size',size+'px','important'));
+ }
 }
 
 function fitWordColumns(body){
@@ -63,7 +68,7 @@ function fitCardText(body,minFont){
   const elements=[...card.querySelectorAll('.upcoming-date,.upcoming-name,.upcoming-event,.metric-name,.metric-value,.metric-note')].filter(el=>el.getBoundingClientRect().height>0);
   for(let attempt=0;attempt<24&&card.scrollHeight>card.clientHeight+1;attempt++){
    let changed=false;
-   for(const el of elements){const size=parseFloat(getComputedStyle(el).fontSize),next=Math.max(minFont,size*.9);if(next<size-.1){el.style.fontSize=next+'px';changed=true;}}
+   for(const el of elements){const size=parseFloat(getComputedStyle(el).fontSize),next=Math.max(minFont,size*.9);if(next<size-.1){el.style.setProperty('font-size',next+'px','important');changed=true;}}
    if(!changed)break;
   }
  });
@@ -85,7 +90,7 @@ function fitCardText(body,minFont){
   if(!today||!today.getBoundingClientRect().height)return;
   const ceiling=parseFloat(getComputedStyle(today).fontSize)*.8;
   body.querySelectorAll('.upcoming-name,.upcoming-event,.upcoming-date').forEach(element=>{
-   if(parseFloat(getComputedStyle(element).fontSize)>ceiling)element.style.fontSize=ceiling+'px';
+   if(parseFloat(getComputedStyle(element).fontSize)>ceiling)element.style.setProperty('font-size',ceiling+'px','important');
   });
  }
  root.EduvizeHolidaysLayout=Object.freeze({apply,fit,observe,fitHierarchy});
