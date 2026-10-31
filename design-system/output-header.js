@@ -3,11 +3,12 @@
  let parentHeight=null,queued=false;
  function fitTitles(header){
   for(const node of header.querySelectorAll('.edu-header-title')){
-   const available=node.clientWidth;
+   let available=node.clientWidth;
    if(!available)continue;
    let size=parseFloat(getComputedStyle(node).fontSize);
    // Measure the unwrapped label after flex/grid has reserved the icon and other content.
-   for(let attempt=0;attempt<4&&node.scrollWidth>available+1;attempt++){
+   for(let attempt=0;attempt<12&&node.scrollWidth>node.clientWidth+1;attempt++){
+    available=node.clientWidth;
     size*=available/node.scrollWidth;
     node.style.setProperty('font-size',Math.max(1,size-.2)+'px','important');
    }
