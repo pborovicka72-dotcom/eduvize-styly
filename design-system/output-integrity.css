@@ -7,9 +7,9 @@ html[data-kiosk-app][data-output-mode] .edu-output-header .edu-header-title{font
 html[data-kiosk-app][data-output-mode] .edu-output-header .edu-header-meta{font-size:var(--edu-header-meta)!important;line-height:1.2!important;margin:0!important}
 html[data-kiosk-app][data-output-mode] .edu-output-header :is(.edu-app-icon,.edu-header-art){width:var(--edu-header-icon)!important;height:var(--edu-header-icon)!important;min-width:var(--edu-header-icon)!important;flex:0 0 var(--edu-header-icon)!important;padding:0!important;margin:0!important}
 html[data-kiosk-app][data-output-mode] .edu-output-header :is(.edu-app-icon,.edu-header-art)>svg{width:60%!important;height:60%!important;max-height:60%!important;transform:none!important}
-html[data-kiosk-app][data-output-mode] :is(.summary,.forecast-card p,.destination,.doc-title,.quote){font-size:var(--edu-text-body)!important;line-height:1.4!important}
-html[data-kiosk-app][data-output-mode] :is(.title,.section-heading h2,.tile-title,.upcoming-name){font-size:var(--edu-text-title)!important;line-height:1.25!important}
-html[data-kiosk-app][data-output-mode] :is(.metric-name,.upcoming-date,.hour-time,.date,.doc-type,.metric-note,.upcoming-event,.work,.source-link){font-size:var(--edu-text-label)!important;line-height:1.3!important}
+html[data-kiosk-app][data-output-mode] :is(.summary,.forecast-card p,.destination,.route,.route-number,.quote){font-size:var(--edu-text-body)!important;line-height:1.4!important}
+html[data-kiosk-app][data-output-mode] :is(.title,.section-heading h2,.tile-title,.doc-title,.upcoming-name){font-size:var(--edu-text-title)!important;line-height:1.25!important}
+html[data-kiosk-app][data-output-mode] :is(.metric-name,.upcoming-date,.hour-time,.date,.doc-type,.metric-note,.upcoming-event,.work,.source-link,.author,.stop,.countdown,.table-header span,.tile-foot,.detail){font-size:var(--edu-text-label)!important;line-height:1.3!important}
 html[data-kiosk-app][data-output-mode] :is(.metric-value,.hour-temp,.time){font-size:var(--edu-text-value)!important;line-height:1.15!important}
 html[data-kiosk-app][data-output-mode] :is(.footer,.section-heading>span,.hour-rain,.hour-detail){font-size:var(--edu-text-caption)!important;line-height:1.3!important}
 html[data-kiosk-app][data-output-mode] :is(.metric,.calendar-card,.forecast-card,.hourly-panel,.daily-forecast-panel,.hour-cell,.daily-hour-cell){background:var(--ev-surface);color:var(--ev-text);border-color:var(--ev-border)}
