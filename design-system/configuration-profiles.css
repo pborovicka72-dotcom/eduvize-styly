@@ -13,3 +13,7 @@
 .edu-profile-history{display:flex;align-items:end;flex-wrap:wrap;gap:12px;margin-top:20px}
 .edu-profile-history>label{flex:1 1 260px}
 .edu-profile-panel[hidden],.edu-profile-history[hidden]{display:none}
+
+.edu-profile-panel [hidden]{display:none!important}
+#edu-profile-save{scroll-margin-top:24px}
+#edu-profile-save .edu-admin__hint{font-size:16px;line-height:1.5}
