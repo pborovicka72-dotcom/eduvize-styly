@@ -8,3 +8,11 @@
 
 .hero .edu-app-icon{background:var(--ev-secondary);color:var(--ev-secondary-text)}
 
+
+/* Nameday identity is identical in preview, signage and kiosk outputs. */
+.edu-app-icon[data-edu-app-icon="nameday"]{
+ --edu-icon-size:max(36px,calc(var(--edu-text-label,24px)*1.5))!important;
+ width:var(--edu-icon-size)!important;height:var(--edu-icon-size)!important;min-width:var(--edu-icon-size)!important;flex:0 0 var(--edu-icon-size)!important;
+ background:var(--ev-secondary)!important;color:var(--ev-secondary-text)!important;
+}
+.edu-app-icon[data-edu-app-icon="nameday"]>svg{width:70%!important;height:70%!important}
