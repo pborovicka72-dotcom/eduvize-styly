@@ -25,3 +25,6 @@ html.nsp-output #weather-pages{flex:1;min-height:0;overflow:hidden}
 html.nsp-output .weather-page{display:block;height:auto!important;overflow:visible}
 @media(max-width:620px){.weather-current{flex-direction:column;align-items:flex-start;gap:4px}.hero-meta{flex-wrap:nowrap}.section-heading{align-items:flex-start}}
 
+
+/* Ordinary pages use document flow rather than the signage shell gap. */
+html.web-output[data-kiosk-app="weather"] .hero{margin-bottom:24px}
