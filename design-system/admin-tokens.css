@@ -12,6 +12,8 @@
   --edu-admin-input-border: #bed8e3;
   --edu-admin-control-height: 40px;
   --edu-admin-control-radius: 10px;
+  /* Field shape is independent of the theme button radius. */
+  --edu-admin-field-radius: 10px;
   --edu-admin-card-radius: 20px;
   --edu-admin-gap: 16px;
   --edu-admin-font: system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
@@ -31,5 +33,6 @@
   --ev-border: var(--edu-admin-border);
   --ev-control-height: var(--edu-admin-control-height);
   --ev-control-radius: var(--edu-admin-control-radius);
+  --ev-field-radius: var(--edu-admin-field-radius);
   --ev-card-radius: var(--edu-admin-card-radius);
 }
