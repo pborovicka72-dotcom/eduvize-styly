@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="cs"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Eduvize | Účet a konfigurace</title>
+<link rel="stylesheet" href="./design-system/admin-tokens.css">
+<link rel="stylesheet" href="./design-system/admin-components.css">
+<link rel="stylesheet" href="./design-system/admin-shell.css?v=20261031-header-home-5">
+<link rel="stylesheet" href="./design-system/admin-account.css?v=20261031-scroll-offset-2">
+<link rel="stylesheet" href="./design-system/app-icons.css?v=20261031-identity-gap-1">
+<link rel="icon" type="image/svg+xml" href="./design-system/assets/eduvize-favicon.svg?v=20261031-unified-1">
+<script src="./design-system/theme-first-paint.js?v=2"></script>
+<script src="./design-system/admin-auth.js?v=account-20261031-1"></script>
+<script defer src="./design-system/active-theme.js?v=account-20261031-1"></script>
+<script defer src="./design-system/admin-header.js?v=6"></script>
+<script defer src="./design-system/admin-navigation.js?v=1"></script>
+</head><body class="ev-admin"><main class="edu-admin-page">
+<header class="edu-page-header"><div class="edu-page-header__identity"><span class="edu-app-icon"><img src="./design-system/assets/eduvize-symbol-white.svg" alt="Eduvize" width="32" height="32"></span><div class="edu-page-header__titles"><div class="edu-page-header__eyebrow">EDUVIZE · SPRÁVA</div><h1 class="edu-page-header__title">Účet a konfigurace</h1></div></div><p class="edu-page-header__description">Společné přihlášení, připojení OneDrive a profily nastavení všech aplikací.</p></header>
+<nav class="edu-admin__actions" aria-label="Části správy účtu"><a class="edu-admin__button edu-admin__button--secondary" href="#account">Účet a připojení</a><a class="edu-admin__button edu-admin__button--secondary" href="#configurations">Správa konfigurací</a></nav>
+<section id="edu-account-panel" class="edu-admin__card edu-account-panel" aria-labelledby="account"><h2 id="account">Účet a připojení</h2>
+<div class="edu-account-status"><strong id="account-session" role="status">Ověřuji přihlášení…</strong><span id="account-onedrive" role="status">Ověřuji připojení OneDrive…</span></div>
+<p>Přihlaste se jednou pro všechny administrace. Společný klíč zpřístupní Dokumenty, OneDrive i správu stylů. Přihlášení platí osm hodin.</p>
+<form id="account-form"><div class="edu-account-fields"><label>Společný klíč Eduvize<input id="account-key" type="password" autocomplete="off" required></label></div>
+<div class="edu-admin__actions"><button id="account-login" type="submit" class="edu-admin__button">Přihlásit správu Eduvize</button><button id="account-logout" type="button" class="edu-admin__button edu-admin__button--secondary" disabled>Odhlásit administrace</button><button id="account-microsoft" type="button" class="edu-admin__button edu-admin__button--secondary" disabled>Připojit / obnovit OneDrive</button><button id="account-return" type="button" class="edu-admin__button edu-admin__button--secondary" hidden>Vrátit se do administrace</button><button id="account-check" type="button" class="edu-admin__button edu-admin__button--secondary" disabled>Ověřit připojení</button></div></form>
+<p id="account-message" role="status" aria-live="polite"></p><p class="note">Klíče se neukládají do prohlížeče. Připojení Microsoftu zůstává na serveru pro běžící aplikace i po odhlášení administrace.</p></section>
+<section id="configurations" class="edu-admin__card" aria-label="Správa konfigurací"></section>
+</main><script src="./design-system/admin-account.js?v=account-20261031-1"></script></body></html>

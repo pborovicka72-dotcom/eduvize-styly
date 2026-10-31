@@ -2,7 +2,7 @@
 (function(root){
   'use strict';
   if(root.EduvizeProfiles)return;
-  const HUB='https://pborovicka72-dotcom.github.io/eduvize-styly/aplikace.html';
+  const ACCOUNT='https://pborovicka72-dotcom.github.io/eduvize-styly/ucet.html';
   const DOCS='https://eduvize-dokumenty-api.onrender.com';
   const API=DOCS+'/api/admin/configuration-profiles',SELECTION='eduvize-profile-selection-v1';
   const apps=Object.freeze([
@@ -21,11 +21,11 @@
   const fingerprint=value=>JSON.stringify(value,(_,v)=>v&&typeof v==='object'&&!Array.isArray(v)?Object.fromEntries(Object.entries(v).sort(([a],[b])=>a.localeCompare(b))):v);
   function selection(){const query=new URL(location.href).searchParams.get('edu-profile');if(query&&/^[a-f0-9]{32}$/.test(query))return query;try{const id=localStorage.getItem(SELECTION);return /^[a-f0-9]{32}$/.test(id||'')?id:'';}catch{return '';}}
   function select(id){try{if(id)localStorage.setItem(SELECTION,id);else localStorage.removeItem(SELECTION);}catch{}const u=new URL(location.href);if(id)u.searchParams.set('edu-profile',id);else u.searchParams.delete('edu-profile');history.replaceState(null,'',u.href);}
-  function manageUrl(id){const u=new URL(HUB);if(id)u.searchParams.set('edu-profile',id);u.hash='configurations';return u.href;}
+  function manageUrl(id){const u=new URL(ACCOUNT);if(id)u.searchParams.set('edu-profile',id);u.hash='configurations';return u.href;}
   async function request(path='',options={}){
     const auth=root.EduvizeAdminAuth;if(!auth)throw Error('Společné přihlášení se nepodařilo načíst.');await auth.ready;
     const scope=auth.getToken('configurations')?'configurations':'documents';
-    if(!auth.getToken(scope))throw Error('Přihlaste se na rozcestníku Eduvize pro přístup k profilům na OneDrive.');
+    if(!auth.getToken(scope))throw Error('Přihlaste se na stránce Účet a konfigurace pro přístup k profilům na OneDrive.');
     const response=await auth.fetch(API+path,{...options,headers:{...(options.body?{'Content-Type':'application/json'}:{}),...options.headers}},scope);
     const data=await response.json().catch(()=>({}));
     if(!response.ok){const e=Error(typeof data.detail==='string'?data.detail:'OneDrive není dostupný ('+response.status+').');e.status=response.status;throw e;}return data;
@@ -86,7 +86,7 @@
     const grid=make('div',null,'edu-profile-apps');host.append(grid);
     const history=make('div',null,'edu-profile-history'),historyLabel=make('label','Předchozí verze celého profilu'),historySelect=make('select'),restore=button('Obnovit vybranou verzi');historyLabel.append(historySelect);history.append(historyLabel,restore);history.hidden=true;host.append(history);
     const legacy=document.createElement('details');legacy.className='edu-profile-history';const legacyTitle=make('summary','Starší konfigurace kiosku');const legacySelect=make('select');legacySelect.setAttribute('aria-label','Starší konfigurace kiosku');const legacyList=button('Načíst starší konfigurace'),legacyImport=button('Převést do vybraného profilu');legacy.append(legacyTitle,legacySelect,legacyList,legacyImport);host.append(legacy);
-    async function legacyRequest(path=''){const auth=root.EduvizeAdminAuth;await auth.ready;if(!auth.getToken('documents'))throw Error('Starší konfigurace vyžadují přihlášení Dokumentů na rozcestníku.');const response=await auth.fetch(DOCS+'/api/admin/kiosk-configurations'+path,{},'documents'),data=await response.json();if(!response.ok)throw Error(data.detail||'Starší konfigurace nejsou dostupné.');return data;}
+    async function legacyRequest(path=''){const auth=root.EduvizeAdminAuth;await auth.ready;if(!auth.getToken('documents'))throw Error('Starší konfigurace vyžadují přihlášení Dokumentů na stránce Účet a konfigurace.');const response=await auth.fetch(DOCS+'/api/admin/kiosk-configurations'+path,{},'documents'),data=await response.json();if(!response.ok)throw Error(data.detail||'Starší konfigurace nejsou dostupné.');return data;}
     let id=selection(),current=null,busy=false;
     async function work(text,fn){if(busy)return;busy=true;for(const e of [ui.select,ui.reload,create,copy,restore,legacyList,legacyImport])e.disabled=true;ui.status.textContent=text;try{await fn();}catch(e){ui.status.textContent=e.message;}finally{busy=false;for(const e of [ui.select,ui.reload,create,copy,legacyList,legacyImport])e.disabled=false;restore.disabled=!historySelect.options.length;}}
     async function draw(){grid.replaceChildren();history.hidden=!id;if(!id){current=null;ui.status.textContent='Vytvořte profil školy nebo vyberte existující.';return;}select(id);current=await request('/'+id);const versions=await request('/'+id+'/history');historySelect.replaceChildren();for(const v of versions.items)historySelect.add(new Option('Verze '+v.revision+' · '+new Date(v.updatedAt).toLocaleString('cs-CZ'),v.revision));restore.disabled=!versions.items.length;

@@ -1,7 +1,7 @@
 /* The only place where administrators enter credentials or connect Microsoft. */
 (function(root){
  const auth=root.EduvizeAdminAuth,host=document.getElementById('edu-account-panel');if(!auth||!host)return;
- if(root.top!==root.self){const link=document.createElement('a');link.href=auth.HUB;link.target='_top';link.rel='noopener';link.textContent='Otevřít účet a připojení';host.replaceChildren(link);return;}
+ if(root.top!==root.self){const link=document.createElement('a');link.href=auth.ACCOUNT;link.target='_top';link.rel='noopener';link.textContent='Otevřít účet a připojení';host.replaceChildren(link);return;}
  function revealAccount(event){
   if(performance.getEntriesByType('navigation')[0]?.type==='reload'&&event?.type!=='hashchange')return;
   if(location.hash!=='#account'&&location.hash!=='#edu-account-panel')return;
@@ -14,7 +14,7 @@
  const $=id=>host.querySelector('#'+id),message=$('account-message');let busy=false,driveConnected=false;
  const pageParams=new URL(location.href).searchParams;
  let requested=pageParams.get('returnTo'),manage=pageParams.get('manage')==='1';
- try{if(requested)sessionStorage.setItem('eduvize-account-return',requested);else{requested=sessionStorage.getItem('eduvize-account-return');manage=!!requested;}}catch{}
+ try{if(requested)sessionStorage.setItem('eduvize-account-return',requested);else if(pageParams.get('onedrive')==='connected'){requested=sessionStorage.getItem('eduvize-account-return');manage=!!requested;}}catch{}
  function needsDrive(){try{const u=new URL(requested);return u.searchParams.has('edu-profile')||u.origin===auth.DOCS||/\/eduvize-(?:kiosek|dokumenty)\/config.html$/.test(u.pathname);}catch{return true;}}
  async function returnToApp(){const url=await auth.handoff(requested);try{sessionStorage.removeItem('eduvize-account-return');}catch{}location.replace(url);}
 
@@ -29,5 +29,4 @@
  $('account-return').onclick=()=>work(returnToApp);
  root.addEventListener('eduvize-admin-auth-change',status);
  auth.ready.then(async()=>{status();await connection();revealAccount();if(requested&&!manage&&auth.status().connected&&(!needsDrive()||driveConnected)){try{await returnToApp();}catch(e){say(e.message);}}});
- document.querySelectorAll('a[href]').forEach(link=>{const u=new URL(link.href);const admin=(u.origin===auth.CENTRAL&&['/','/design-system','/design-system/'].includes(u.pathname))||(/\/config(?:\.html)?$/.test(u.pathname)&&['https://pborovicka72-dotcom.github.io',auth.DOCS,'https://eduvize-weather.onrender.com','https://eduvize-aktuality.onrender.com'].includes(u.origin));if(!admin)return;link.addEventListener('click',async event=>{if(!auth.status().connected||event.ctrlKey||event.metaKey||event.shiftKey||event.altKey)return;event.preventDefault();try{const url=await auth.handoff(link.href);location.assign(url);}catch(e){say(e.message);host.scrollIntoView({behavior:'smooth',block:'start'});}});});
 })(window);
