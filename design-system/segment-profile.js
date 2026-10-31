@@ -12,9 +12,9 @@
  }
  function text(geometry,mode='nsp'){
   const stripBoost=geometry.ratio>=3&&geometry.short<=600?48:40;
-  const body=mode==='web'?18:mode==='kiosk'?Math.max(20,Math.min(56,geometry.short*.028)):Math.max(stripBoost,Math.min(112,geometry.short*.052));
+  const body=mode==='web'?18:Math.max(stripBoost,Math.min(112,geometry.short*.052));
   const footnote=mode==='web'?14:Math.max(16,Math.min(40,geometry.short*.02));
-  return Object.freeze({footnote,body,title:body*1.35,label:mode==='web'?17:mode==='kiosk'?body*.95:Math.max(32,body*.95),caption:mode==='web'?16:mode==='kiosk'?body*.85:Math.max(28,body*.85),value:body*1.65});
+  return Object.freeze({footnote,body,title:body*1.35,label:mode==='web'?17:Math.max(32,body*.95),caption:mode==='web'?16:Math.max(28,body*.85),value:body*1.65});
  }
  function holidays(geometry,options={}){
   const g=geometry,s=g.short,strip=g.kind==='panoramic',compact=g.kind==='compact';
