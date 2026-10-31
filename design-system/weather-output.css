@@ -44,7 +44,7 @@ html[data-weather-strip] #weather-pages .weather-page{min-height:100%}
 html[data-weather-strip] #weather-pages :is(.hourly-grid,.metrics,.forecast-grid){align-items:stretch}
 html[data-weather-header-only] :is(#weather-pages,.footer,.edu-kiosk-pagination,.page-indicator,.weather-alerts){display:none!important}
 html[data-weather-header-only] .shell{justify-content:center}
-html[data-weather-header-only] .hero.edu-output-header{display:grid!important;grid-template-columns:auto minmax(0,1fr) 25%;grid-template-rows:1fr 1fr;align-content:center}
+html[data-kiosk-app="weather"][data-output-mode][data-weather-header-only] .hero.edu-output-header{display:grid!important;grid-template-columns:auto minmax(0,1fr) 25%;grid-template-rows:1fr 1fr;align-content:center}
 html[data-weather-header-only] .hero>.edu-app-icon{grid-column:1;grid-row:1;align-self:end}
 html[data-weather-header-only] .weather-current{display:contents}
 html[data-weather-header-only] .temperature{grid-column:2;grid-row:1;align-self:end}
