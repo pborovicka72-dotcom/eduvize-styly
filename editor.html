@@ -43,7 +43,13 @@ const palettePresets=[
 {name:'Bordó a růžová',background:'#FAF0F3',text:'#502E3B',surface:'#FFFFFF',primary:'#8D3E5A',primaryText:'#FFFFFF',secondary:'#F3DEE6',secondaryText:'#673247',accent:'#C77C92',border:'#E8CCD6'},
 {name:'Antracit a tyrkys',background:'#EDF2F3',text:'#263940',surface:'#FFFFFF',primary:'#2C4A55',primaryText:'#FFFFFF',secondary:'#DCE9E9',secondaryText:'#2D5055',accent:'#17A6A0',border:'#C4D7DA'},
 {name:'Slunečný jantar',background:'#FBF6E8',text:'#4C3C25',surface:'#FFFFFF',primary:'#A66A22',primaryText:'#FFFFFF',secondary:'#F4E6C4',secondaryText:'#6C4B22',accent:'#D9A72C',border:'#E8D9B8'},
-{name:'Petrolej a korál',background:'#ECF5F4',text:'#193E45',surface:'#FFFFFF',primary:'#146D76',primaryText:'#FFFFFF',secondary:'#D9EBE9',secondaryText:'#21565A',accent:'#DF816F',border:'#BFD9D8'}
+{name:'Petrolej a korál',background:'#ECF5F4',text:'#193E45',surface:'#FFFFFF',primary:'#146D76',primaryText:'#FFFFFF',secondary:'#D9EBE9',secondaryText:'#21565A',accent:'#DF816F',border:'#BFD9D8'},
+{"name":"Elektrická modrá","background":"#DCEBFF","text":"#102B54","muted":"#34527A","surface":"#F0F6FF","primary":"#164BCC","primaryText":"#FFFFFF","secondary":"#A9E8F2","secondaryText":"#103B58","accent":"#007D78","border":"#7FA7E5"},
+{"name":"Fialová energie","background":"#EADFFF","text":"#342052","muted":"#62467F","surface":"#F6EDFF","primary":"#7131BE","primaryText":"#FFFFFF","secondary":"#FFD180","secondaryText":"#57370A","accent":"#AA2369","border":"#B18BDC"},
+{"name":"Korál a indigo","background":"#FFE1D8","text":"#472C40","muted":"#765168","surface":"#FFF1E8","primary":"#B52D46","primaryText":"#FFFFFF","secondary":"#B9C9FF","secondaryText":"#273B75","accent":"#454AC5","border":"#DD9E9D"},
+{"name":"Tropická zelená","background":"#D2F5E5","text":"#163F3A","muted":"#39685C","surface":"#EDFFF3","primary":"#00754F","primaryText":"#FFFFFF","secondary":"#FFE783","secondaryText":"#54420B","accent":"#006BB4","border":"#68BCA2"},
+{"name":"Sluneční oranžová","background":"#FFE9BA","text":"#4A3119","muted":"#745734","surface":"#FFF5D8","primary":"#B9430C","primaryText":"#FFFFFF","secondary":"#9FDEEE","secondaryText":"#143F59","accent":"#265EB5","border":"#DBA95E"},
+{"name":"Malina a tyrkys","background":"#FFDDEB","text":"#4A2544","muted":"#754564","surface":"#FFF0F8","primary":"#AC1C62","primaryText":"#FFFFFF","secondary":"#96E5DD","secondaryText":"#144945","accent":"#007A78","border":"#D78CB6"}
 ];
 function swatchGradient(colors){return 'linear-gradient(90deg,'+colors.primary+' 0 34%,'+colors.secondary+' 34% 56%,'+colors.background+' 56% 78%,'+colors.accent+' 78% 100%)'}
 function updateThemeSwatches(){for(const button of document.querySelectorAll('#theme-list-items button[data-theme-id]')){const t=themes.find(item=>item.id===button.dataset.themeId);if(t){const swatch=button.querySelector('.theme-swatch');if(swatch){swatch.style.background=swatchGradient(t.config.colors);swatch.style.color=t.config.colors.text;swatch.textContent='T'}}}}
@@ -88,8 +94,8 @@ async function loadThemes(pick){
    const label=document.createElement('span');label.textContent=t.name+(t.active?' · aktivní':'')+(t.locked?' · výchozí':'');
    button.append(swatch,label);button.addEventListener('click',()=>selectTheme(t.id));list.append(button);
   }
-  // Start with the active theme in the preview; the administration shell stays standard.
-  const requested=pick||themes.find(t=>t.active)?.id||'standard';
+  // Start with the standard preview; subsequent selections remain local to the preview.
+  const requested=pick||'standard';
   selectTheme(themes.some(t=>t.id===requested)?requested:'standard');
  }catch(e){document.getElementById('theme-list-items').textContent='Styly se nepodařilo načíst: '+e.message;msg('Nelze načíst uložené styly: '+e.message);console.error('Eduvize theme loading failed',e)}
 }
