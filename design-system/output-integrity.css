@@ -10,10 +10,11 @@ html[data-kiosk-app][data-output-mode] .edu-output-header :is(.edu-app-icon,.edu
 html[data-kiosk-app][data-output-mode] .edu-output-header :is(.edu-app-icon,.edu-header-art)>svg{width:60%!important;height:60%!important;max-height:60%!important;transform:none!important}
 html[data-kiosk-app][data-output-mode] :is(.summary,.forecast-card p,.destination,.route,.route-number,.quote){font-size:var(--edu-text-body)!important;line-height:1.4!important}
 html[data-kiosk-app][data-output-mode] :is(.title,.section-heading h2,.tile-title,.doc-title,.upcoming-name){font-size:var(--edu-text-title)!important;line-height:1.25!important}
-html[data-kiosk-app][data-output-mode] :is(.metric-name,.upcoming-date,.hour-time,.date,.doc-type,.metric-note,.upcoming-event,.work,.source-link,.author,.stop,.countdown,.table-header span,.tile-foot,.detail){font-size:var(--edu-text-label)!important;line-height:1.3!important}
+html[data-kiosk-app][data-output-mode] :is(.metric-name,.upcoming-date,.hour-time,.date,.doc-type,.metric-note,.upcoming-event,.author,.stop,.countdown,.table-header span,.tile-foot,.detail){font-size:var(--edu-text-label)!important;line-height:1.3!important}
 html[data-kiosk-app][data-output-mode] :is(.metric-value,.hour-temp,.time){font-size:var(--edu-text-value)!important;line-height:1.15!important}
-html[data-kiosk-app][data-output-mode] :is(.footer,.section-heading>span,.hour-rain,.hour-detail){font-size:var(--edu-text-caption)!important;line-height:1.3!important}
+html[data-kiosk-app][data-output-mode] :is(.section-heading>span,.hour-rain,.hour-detail){font-size:var(--edu-text-caption)!important;line-height:1.3!important}
 html[data-kiosk-app][data-output-mode] :is(.metric,.calendar-card,.forecast-card,.hourly-panel,.daily-forecast-panel,.hour-cell,.daily-hour-cell){background:var(--ev-surface);color:var(--ev-text);border-color:var(--ev-border)}
+html[data-kiosk-app][data-output-mode] :is(.footer,.work,.source-link,.edu-kiosk-pagination,.edu-auto-pagination,.page-indicator){font-size:var(--edu-text-footnote,16px)!important;line-height:1.3!important}
 /* The standard website never clips content into a viewport or rotates pages. */
 html.web-output,html.web-output body{height:auto!important;min-height:100%!important;overflow:visible!important;overscroll-behavior:auto}
 html.web-output :is(.shell,.web-shell,.page){box-sizing:border-box;display:block!important;width:100%!important;max-width:1440px!important;height:auto!important;min-height:0!important;margin:0 auto!important;padding:clamp(16px,3vw,36px)!important;overflow:visible!important}
@@ -47,7 +48,7 @@ body.edu-segment-wrapper>:not(#edu-segment-host){display:none!important}
 #edu-segment-host iframe{position:absolute;left:50%;top:50%;border:0;transform-origin:center;background:var(--ev-bg)}
 
 html.nsp-output .edu-kiosk-stage{flex:1 1 0%;min-height:0;overflow:hidden;scrollbar-width:none}
-.edu-auto-pagination{min-height:24px;padding:2px 0;background:transparent;font-size:var(--edu-text-caption)}
+.edu-auto-pagination{min-height:24px;padding:2px 0;background:transparent;font-size:var(--edu-text-footnote,16px)}
 .edu-auto-pagination button{display:none}
 
 /* All output surfaces use the theme card radius, without kiosk-only scaling. */
