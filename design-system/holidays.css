@@ -52,3 +52,7 @@ body.ev-segment-wrapper{height:100dvh;overflow:hidden}body.ev-segment-wrapper>.s
 @media(max-width:620px){body:not(.ev-modern) .calendar-metrics{grid-template-columns:1fr}}
 
 .calendar-metrics:has(>#names-card.hidden),.calendar-metrics:has(>#holiday-card.hidden){grid-template-columns:minmax(0,1fr)}
+
+/* Repeat cards keep the same height on every row, including the final partial row. */
+.upcoming-grid{grid-auto-rows:minmax(min-content,1fr)!important;align-items:stretch}
+.upcoming-day{padding:max(16px,var(--ev-card-pad,24px),calc(var(--ev-card-radius,20px)*.4))!important}
