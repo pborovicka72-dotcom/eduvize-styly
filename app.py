@@ -10,7 +10,7 @@ ROOT=Path(__file__).resolve().parent
 DATABASE_URL=os.getenv("DATABASE_URL","")
 ADMIN=os.getenv("DESIGN_SYSTEM_ADMIN_TOKEN","")
 app=FastAPI(title="Eduvize Design System")
-app.add_middleware(CORSMiddleware,allow_origins=["https://pborovicka72-dotcom.github.io","https://eduvize-weather.onrender.com","https://eduvize-dokumenty-api.onrender.com","https://eduvize-aktuality.onrender.com"],allow_methods=["GET","POST","PUT","DELETE"],allow_headers=["Authorization","Content-Type"])
+app.add_middleware(CORSMiddleware,allow_origins=["https://pborovicka72-dotcom.github.io","https://eduvize-weather.onrender.com","https://eduvize-dokumenty-api.onrender.com","https://eduvize-aktuality.onrender.com","http://127.0.0.1:8789"],allow_methods=["GET","POST","PUT","DELETE"],allow_headers=["Authorization","Content-Type"])
 def check_admin(auth):
     if auth and auth.startswith("Bearer edu_"):
         require_session(admin_sessions,auth,"styles");return

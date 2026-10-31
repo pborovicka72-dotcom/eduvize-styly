@@ -19,6 +19,7 @@ TARGETS={
  (DOCUMENTS,'/config'):'documents',
  ('https://eduvize-weather.onrender.com','/config'):None,
  ('https://eduvize-aktuality.onrender.com','/config'):None,
+ ('http://127.0.0.1:8789','/config.html'):None,
 }
 for repo in ['eduvize-kiosek','eduvize-svatky','eduvize-moudrost-dne','eduvize-jizdni-rady','eduvize-dokumenty']:
  TARGETS[('https://pborovicka72-dotcom.github.io',f'/{repo}/config.html')]='documents' if repo in ['eduvize-kiosek','eduvize-dokumenty'] else None
@@ -64,6 +65,7 @@ class SessionStore:
   row=self.read(token);origin,scope=target(return_to)
   if scope and scope not in row['scopes']:raise HTTPException(403,'Pro tuto administraci doplňte přihlášení na rozcestníku.')
   code=secrets.token_urlsafe(32);scopes=[scope] if scope else []
+  if 'documents' in row['scopes'] or 'configurations' in row['scopes']:scopes.append('configurations')
   with self.db() as conn:
    conn.execute('INSERT INTO eduvize_admin_handoffs_v1 (code_hash,root_hash,origin,scopes,expires) VALUES (%s,%s,%s,%s::jsonb,%s)',(digest(code),row['root'],origin,json.dumps(scopes),time.time()+60))
   return code
@@ -120,8 +122,10 @@ def session_router(store,styles_key,documents_url=DOCUMENTS):
   row=require_session(store,authorization);return {'scopes':row['scopes'],'expiresAt':row['expiresAt']}
  @router.get('/api/admin-session/validate')
  def validate(scope:str='',authorization:str=Header(default='')):
-  if scope not in ('styles','documents'):raise HTTPException(422,'Neplatná administrace.')
-  row=require_session(store,authorization,scope);return {'valid':True,'scope':scope,'expiresAt':row['expiresAt']}
+  if scope not in ('styles','documents','configurations'):raise HTTPException(422,'Neplatná administrace.')
+  row=require_session(store,authorization)
+  if scope not in row['scopes'] and not (scope=='configurations' and 'documents' in row['scopes']):raise HTTPException(403,'Pro tuto administraci doplňte přihlášení na rozcestníku.')
+  return {'valid':True,'scope':scope,'expiresAt':row['expiresAt']}
  @router.delete('/api/admin-session')
  def logout(authorization:str=Header(default='')):
   try:store.revoke(bearer(authorization))

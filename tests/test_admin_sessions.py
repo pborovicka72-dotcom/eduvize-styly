@@ -57,9 +57,17 @@ class SessionTests(unittest.TestCase):
   self.assertNotIn(self.root['token'],code)
   with self.assertRaises(HTTPException):self.store.redeem(code,'https://eduvize-weather.onrender.com')
   child=self.store.redeem(code,sessions.DOCUMENTS)
-  self.assertEqual(child['scopes'],['documents']);self.assertNotEqual(child['token'],self.root['token'])
+  self.assertEqual(child['scopes'],['documents','configurations']);self.assertNotEqual(child['token'],self.root['token'])
   with self.assertRaises(HTTPException):self.store.redeem(code,sessions.DOCUMENTS)
   with self.assertRaises(HTTPException):self.store.handoff(child['token'],'https://eduvize-design-system-api.onrender.com/')
+ def test_profile_handoff_does_not_grant_document_access(self):
+  for target in ['https://eduvize-weather.onrender.com/config','http://127.0.0.1:8789/config.html']:
+   origin,_=sessions.target(target)
+   child=self.store.redeem(self.store.handoff(self.root['token'],target),origin)
+   self.assertEqual(child['scopes'],['configurations'])
+   self.assertEqual(self.client.get('/api/admin-session/validate?scope=configurations',headers=self.auth(child['token'])).status_code,200)
+   self.assertEqual(self.client.get('/api/admin-session/validate?scope=documents',headers=self.auth(child['token'])).status_code,403)
+  self.assertEqual(self.client.get('/api/admin-session/validate?scope=configurations',headers=self.auth()).status_code,200)
  def test_concurrent_redeem_only_one_succeeds(self):
   code=self.store.handoff(self.root['token'],sessions.DOCUMENTS+'/config');results=[]
   def redeem():
