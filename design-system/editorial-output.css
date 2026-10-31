@@ -79,3 +79,19 @@ html[data-kiosk-app="news"][data-output-mode].kiosk-output #news :is(.title,.sum
 .news-page-controls{display:flex;gap:12px;margin-left:auto}
 .news-page-controls button{font:inherit;min-height:44px;padding:8px 16px;border:1px solid var(--ev-border);border-radius:var(--ev-control-radius,10px);background:var(--ev-secondary);color:var(--ev-secondary-text);cursor:pointer}
 html[data-kiosk-app="news"].kiosk-output .footer{align-items:center;gap:12px}
+
+/* Wisdom: category belongs to the heading; quote, author and work form one figure. */
+html[data-kiosk-app="wisdom"][data-output-mode] .head.edu-output-header{display:flex!important;flex-wrap:nowrap!important;align-items:center!important}
+html[data-kiosk-app="wisdom"][data-output-mode] .wisdom-heading{display:flex;flex-direction:column;justify-content:center;gap:.3em;min-width:0;flex:1}
+html[data-kiosk-app="wisdom"][data-output-mode] .wisdom-heading .topic{margin:0!important;width:auto!important;line-height:1.25!important}
+html[data-kiosk-app="wisdom"][data-output-mode] .wisdom-quotation{margin:0;gap:clamp(20px,3vmin,48px);text-align:left}
+html[data-kiosk-app="wisdom"][data-output-mode] .edu-wisdom-output .content>.quote{font-size:clamp(28px,calc(var(--edu-text-body,24px)*1.6),110px)!important;line-height:1.35!important;font-weight:500;max-width:32em}
+html[data-kiosk-app="wisdom"][data-output-mode] .edu-wisdom-output .content>.quote[data-length="long"]{font-size:clamp(24px,calc(var(--edu-text-body,24px)*1.25),80px)!important}
+html[data-kiosk-app="wisdom"][data-output-mode] .attribution{display:flex;flex-direction:column;gap:.45em;align-items:flex-start;max-width:60em}
+html[data-kiosk-app="wisdom"][data-output-mode] .attribution .author{font-size:clamp(20px,var(--edu-text-body,24px),64px)!important;line-height:1.25!important;font-weight:700;color:var(--ev-text)}
+html[data-kiosk-app="wisdom"][data-output-mode] .attribution :is(.work,.source-link){font-size:clamp(16px,var(--edu-text-label,18px),40px)!important;line-height:1.4!important}
+html[data-kiosk-app="wisdom"][data-output-mode] .footer{font-size:clamp(14px,var(--edu-text-caption,16px),30px)!important;line-height:1.4!important}
+html[data-kiosk-app="wisdom"].web-output .edu-wisdom-output .content>.quote{font-size:28px!important}
+html[data-kiosk-app="wisdom"].web-output .wisdom-quotation{gap:28px!important;padding:28px!important}
+html[data-kiosk-app="wisdom"].web-output .attribution :is(.work,.source-link){font-size:16px!important}
+html[data-kiosk-app="wisdom"].web-output .footer{font-size:14px!important}
