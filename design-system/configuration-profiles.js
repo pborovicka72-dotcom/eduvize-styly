@@ -56,6 +56,7 @@
     const save=button('Uložit na OneDrive',false);save.dataset.eduProfileSave='';
     if(local)local.before(save);else main.append(save);
     if(local&&/uložit (?:pouze )?(?:v|nastavení v) (?:tomto )?prohlížeči|uložit nastavení/i.test(local.textContent)&&adapter.app!=='styles')local.textContent='Uložit v prohlížeči';
+    if(local&&adapter.app==='styles'){local.textContent='Uložit styl na server';local.title='Uloží změny vybraného stylu do centrální služby Eduvize.';}
     const panel=make('div',null,'edu-profile-current');panel.dataset.eduProfilePanel=adapter.app;panel.id='edu-profile-save';
     const profileText=make('p','Profil není vybrán.','edu-profile-current__name'),status=make('p',null,'edu-profile-panel__status');status.setAttribute('role','status');status.setAttribute('aria-live','polite');
     const manage=make('a','Vybrat profil');manage.href=manageUrl('');const actions=make('div',null,'edu-admin__actions'),load=button('Načíst uložené nastavení'),undo=button('Vrátit před načtením');undo.hidden=true;load.hidden=true;actions.append(load,undo);panel.append(profileText,status,manage,actions);if(row)row.after(panel);else save.after(panel);
