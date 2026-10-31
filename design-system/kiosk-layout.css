@@ -65,3 +65,11 @@ body.tiles-home.frame-open #navigationHeading{display:none}
 .wrap>header .toolbar{flex-shrink:0;margin-left:auto}
 body.frame-open #pageContent{display:none}
 body:not(.menu-layout) .hero{display:none}
+
+/* Custom pages use the same header roles and skin as embedded applications. */
+body.subpage .wrap>.edu-output-header{display:flex!important;justify-content:space-between}
+body.subpage #navigationHeading{display:block!important;min-width:0;flex:1;background:transparent;color:inherit;padding:0;border:0;border-radius:0}
+body.subpage #navigationHeading .edu-header-title{color:inherit;margin:0!important}
+body.subpage #navigationHeading .edu-header-meta{color:inherit;margin:0!important}
+body.subpage #navigationHeading .edu-header-meta[hidden]{display:none!important}
+body.embedded-subpage #navigationActions{display:none!important}
