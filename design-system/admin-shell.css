@@ -21,6 +21,8 @@ html.ev-theme-pending body{visibility:hidden}
 .ev-admin .edu-output-section .edu-output-mode-row{display:block}
 .ev-admin .edu-output-actions{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-top:20px}
 .ev-admin .edu-admin__card h2{font-size:clamp(19px,1.6vw,26px);line-height:1.25;margin:0 0 17px}
+/* Cards with a leading application icon retain a clear icon-to-title gap. */
+.ev-admin .edu-admin__card>[data-edu-app-icon]+h2{margin-block-start:16px}
 .ev-admin .edu-admin__stack>h2{margin:0}
 .ev-admin .edu-admin__field-grid>.edu-checkbox-options{grid-column:1/-1}
 .ev-admin .edu-admin__stack{display:flex;flex-direction:column;gap:20px}
