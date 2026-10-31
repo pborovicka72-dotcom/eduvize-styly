@@ -4,16 +4,16 @@ html body :is(.edu-admin__card,.calendar-card,.upcoming-day,.forecast-card,.hour
  box-sizing:border-box;
  padding:max(var(--edu-card-safe-inset),var(--ev-card-pad,16px),calc(var(--ev-card-radius,20px)*.4))!important;
 }
-html body :is(.app-grid,.system-grid,.preview-gallery-grid,.upcoming-grid,.forecast-grid,.hourly-grid,.daily-hourly-grid,#edu-card-overview){
+html body :is(.app-grid,.system-grid,.upcoming-grid,.forecast-grid,.hourly-grid,.daily-hourly-grid,#edu-card-overview){
  grid-auto-rows:minmax(min-content,1fr)!important;
  align-items:stretch;
 }
-html body :is(.app-grid,.system-grid,.preview-gallery-grid,.upcoming-grid,.forecast-grid,.hourly-grid,.daily-hourly-grid,#edu-card-overview)>:is(.card,.edu-admin__card,.upcoming-day,.forecast-card,.hour-cell,.daily-hour-cell,#edu-card-item){
+html body :is(.app-grid,.system-grid,.upcoming-grid,.forecast-grid,.hourly-grid,.daily-hourly-grid,#edu-card-overview)>:is(.card,.edu-admin__card,.upcoming-day,.forecast-card,.hour-cell,.daily-hour-cell,#edu-card-item){
  align-self:stretch;box-sizing:border-box;min-width:0;
 }
 
 /* A measured minimum prevents shorter cards in later rows. */
-html body :is(.app-grid,.system-grid,.preview-gallery-grid,.upcoming-grid,.forecast-grid,.hourly-grid,.daily-hourly-grid,#edu-card-overview)>:is(.card,.edu-admin__card,.upcoming-day,.forecast-card,.hour-cell,.daily-hour-cell,#edu-card-item){min-height:var(--edu-card-equal-height,0px)!important}
+html body :is(.app-grid,.system-grid,.upcoming-grid,.forecast-grid,.hourly-grid,.daily-hourly-grid,#edu-card-overview)>:is(.card,.edu-admin__card,.upcoming-day,.forecast-card,.hour-cell,.daily-hour-cell,#edu-card-item){min-height:var(--edu-card-equal-height,0px)!important}
 
 /* Content starts at the top in every card; card height does not center short text. */
 html body :is(.edu-admin__card,.calendar-card,.upcoming-day,.forecast-card,.hour-cell,.daily-hour-cell,#edu-card-item){justify-content:flex-start!important;align-content:start!important}
