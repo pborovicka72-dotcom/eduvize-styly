@@ -7,12 +7,12 @@
   return Object.freeze({width,height,short,ratio,kind,scale:short/720});
  }
  function header(geometry,mode='nsp'){
-  const height=mode==='web'?96:geometry.short*.16;
-  return Object.freeze({height,icon:height*.60,title:height*.32,meta:height*.14,padding:height*.12,gap:height*.12});
+  const height=mode==='web'?96:Math.max(160,geometry.short*.22);
+  return Object.freeze({height,icon:height*.64,title:height*.36,meta:height*.18,padding:height*.05,gap:height*.08});
  }
  function text(geometry,mode='nsp'){
-  const body=mode==='web'?18:Math.max(16,Math.min(54,geometry.short*.027));
-  return Object.freeze({body,title:body*1.35,label:Math.max(14,body*.82),caption:Math.max(12,body*.72),value:body*1.8});
+  const body=mode==='web'?18:Math.max(40,Math.min(112,geometry.short*.052));
+  return Object.freeze({body,title:body*1.35,label:mode==='web'?17:Math.max(32,body*.95),caption:mode==='web'?16:Math.max(28,body*.85),value:body*1.65});
  }
  function holidays(geometry,options={}){
   const g=geometry,s=g.short,strip=g.kind==='panoramic',compact=g.kind==='compact';
