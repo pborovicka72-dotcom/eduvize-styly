@@ -11,6 +11,7 @@
   return policy;
  }
 function fit(body,minFont){
+ fitWordColumns(body);
  body.querySelectorAll(".upcoming-date,.metric-name,.metric-note").forEach(el=>el.style.fontSize="");
  body.querySelectorAll(".upcoming-event,.upcoming-name,.metric-value").forEach(el=>{
   el.style.fontSize="";
@@ -34,6 +35,26 @@ function fit(body,minFont){
  });
  fitCardText(body,minFont);
  fitHierarchy(body);
+}
+
+function fitWordColumns(body){
+ const grid=body.querySelector('.upcoming-grid');if(!grid||!grid.clientWidth)return;
+ grid.style.removeProperty('grid-template-columns');grid.style.removeProperty('grid-template-rows');
+ const cards=[...grid.querySelectorAll('.upcoming-day')];if(!cards.length)return;
+ const style=getComputedStyle(grid),gap=parseFloat(style.columnGap)||0;
+ const desired=Math.max(1,style.gridTemplateColumns.split(/\s+/).length);
+ const ctx=document.createElement('canvas').getContext('2d');let minimum=0;
+ for(const card of cards){
+  const cardStyle=getComputedStyle(card);const padding=(parseFloat(cardStyle.paddingLeft)||0)+(parseFloat(cardStyle.paddingRight)||0)+2;
+  for(const el of card.querySelectorAll('.upcoming-date,.upcoming-name,.upcoming-event')){
+   const cs=getComputedStyle(el);ctx.font=[cs.fontStyle,cs.fontWeight,cs.fontSize,cs.fontFamily].join(' ');
+   const inner=(parseFloat(cs.paddingLeft)||0)+(parseFloat(cs.paddingRight)||0);
+   for(const word of el.textContent.trim().split(/[ \t\r\n]+/))minimum=Math.max(minimum,ctx.measureText(word).width+padding+inner+4);
+  }
+ }
+ const columns=Math.max(1,Math.min(desired,Math.floor((grid.clientWidth+gap)/(minimum+gap))));
+ grid.style.setProperty('grid-template-columns','repeat('+columns+',minmax(0,1fr))','important');
+ if(body.classList.contains('ev-modern'))grid.style.setProperty('grid-template-rows','repeat('+Math.ceil(cards.length/columns)+',minmax(0,1fr))','important');
 }
 
 function fitCardText(body,minFont){
