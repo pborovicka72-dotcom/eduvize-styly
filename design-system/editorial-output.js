@@ -1,2 +1,25 @@
 /* Fit quotes to their actual text box, including narrow and panoramic segments. */
 (()=>{function fit(){if((window.EduvizeOutputModes?.mode?.()||(window.EduvizeOutputModes?.isKiosk?.()?'kiosk':'nsp'))!=='nsp')return;const q=document.querySelector('.edu-wisdom-output .quote');if(!q)return;const content=q.closest('.content');q.style.removeProperty('font-size');let size=parseFloat(getComputedStyle(q).fontSize);const other=Array.from(content.children).filter(e=>e!==q&&!e.hidden).reduce((n,e)=>n+e.getBoundingClientRect().height,0);const cs=getComputedStyle(content),available=content.clientHeight-parseFloat(cs.paddingTop)-parseFloat(cs.paddingBottom)-other-parseFloat(cs.gap||0);while(size>12&&(q.scrollHeight>available||q.scrollWidth>q.clientWidth)){size-=1;q.style.fontSize=size+'px'}}window.addEventListener('resize',fit);document.addEventListener('DOMContentLoaded',()=>{const q=document.getElementById('quote');if(q)new MutationObserver(fit).observe(q,{childList:true,characterData:true,subtree:true});new ResizeObserver(fit).observe(document.body);document.fonts?.ready.then(fit);fit()})})();
+
+/* News cards adapt to their available content area; shared headers keep their geometry. */
+(function(root){
+ const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+ function resolve(width,height,{signage=true,images=true,count=6}={}){
+  let columns=signage?(width>=2600?3:width>=1500?2:1):(width>=780?2:1);
+  let rows=signage?clamp(Math.floor(height/(images?480:380)),1,3):1;
+  const capacity=signage?Math.min(6,columns*rows):count;
+  columns=Math.max(1,Math.min(columns,count||1,capacity||1));
+  rows=signage?Math.max(1,Math.ceil(Math.min(capacity,count||1)/columns)):1;
+  const gap=clamp(Math.min(width,height)*.014,10,28);
+  const cardWidth=(width-gap*(columns-1))/columns;
+  const cardHeight=(height-gap*(rows-1))/rows;
+  const font=signage?clamp(Math.min(cardWidth/24,cardHeight/15),20,58):clamp(width/50,18,24);
+  return {columns,rows,capacity,side:cardWidth/cardHeight>1.35,font,pad:clamp(font*.65,14,32),gap};
+ }
+ function apply(body,grid,options){
+  const policy=resolve(grid.clientWidth,grid.clientHeight||root.innerHeight*.78,options);
+  for(const [key,value] of Object.entries({body:policy.font,title:policy.font*1.25,meta:Math.max(14,policy.font*.68),pad:policy.pad,gap:policy.gap}))body.style.setProperty('--news-card-'+key,value+'px');
+  return policy;
+ }
+ root.EduvizeNewsLayout=Object.freeze({resolve,apply});
+})(window);
