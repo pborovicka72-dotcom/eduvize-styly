@@ -51,12 +51,28 @@
   async function mount(adapter){
     if(!adapter||document.querySelector('[data-edu-profile-panel]'))return;
     const main=document.querySelector('main.edu-admin-page,main .edu-admin-page,.edu-admin-page');if(!main)return;
-    const ids={kiosk:'save',documents:'save-settings',weather:'weather-save-settings',holidays:'saveSettings',transport:'saveSettings',news:'saveLocal',wisdom:'copyOutput',styles:'save','school-systems':'save'};
-    const local=document.getElementById(ids[adapter.app]),row=local?.closest('.edu-output-actions,.toolbar,.theme-action-buttons,.sis-admin-actions')||local?.parentElement;
+    const ids={kiosk:'save',documents:'save-settings',weather:'weather-save-settings',holidays:'saveSettings',transport:'saveSettings',news:'saveLocal',wisdom:'saveLocal',styles:'saveLocal','school-systems':'save'};
+    const opens={kiosk:'#openKiosk',documents:'#open',weather:'button[form="location-settings"][type="submit"]',holidays:'#save',transport:'button[form="form"][type="submit"]',news:'#save',wisdom:'#openOutput','school-systems':'#open'};
+    const copies={kiosk:'shareTouch',documents:'copy',weather:'location-settings-cancel',holidays:'openOutput',transport:'copy',news:'copyUrl',wisdom:'copyOutput','school-systems':'copy'};
+    const localKey='eduvize-local-configuration-v1:'+adapter.app;
+    let local=document.getElementById(ids[adapter.app]);
+    const copy=document.getElementById(copies[adapter.app]),open=document.querySelector(opens[adapter.app]||':not(*)');
+    let row=(local||copy)?.closest('.edu-output-actions,.toolbar,.theme-action-buttons,.sis-admin-actions')||(local||copy)?.parentElement;
+    if(!row){row=make('div',null,'edu-output-actions');const server=document.getElementById('save');if(adapter.app==='styles'&&server)server.closest('.theme-action-panel').before(row);else main.append(row);}
+    if(!local){
+      local=button('Uložit v prohlížeči');local.id=ids[adapter.app];
+      local.onclick=()=>{try{
+        if(adapter.app==='wisdom')document.getElementById('audience')?.dispatchEvent(new Event('change',{bubbles:true}));
+        else localStorage.setItem(localKey,JSON.stringify(adapter.read()));
+        const feedback=document.querySelector('[data-edu-profile-panel] .edu-profile-panel__status')||document.getElementById('status')||document.getElementById('save-feedback');if(feedback)feedback.textContent='Nastavení je uloženo v tomto prohlížeči.';
+      }catch(error){alert('Nastavení se nepodařilo uložit: '+error.message);}};
+    }
+    local.textContent='Uložit v prohlížeči';
     const save=button('Uložit na OneDrive',false);save.dataset.eduProfileSave='';
-    if(local)local.before(save);else main.append(save);
-    if(local&&/uložit (?:pouze )?(?:v|nastavení v) (?:tomto )?prohlížeči|uložit nastavení/i.test(local.textContent)&&adapter.app!=='styles')local.textContent='Uložit v prohlížeči';
-    if(local&&adapter.app==='styles'){local.textContent='Uložit styl na server';local.title='Uloží změny vybraného stylu do centrální služby Eduvize.';}
+    // Move existing controls so their original handlers and submit behavior survive.
+    row.prepend(...[open,copy,save,local].filter(Boolean));
+    if(open)open.textContent='Otevřít výstup';
+    if(copy)copy.textContent='Kopírovat odkaz';
     const panel=make('div',null,'edu-profile-current');panel.dataset.eduProfilePanel=adapter.app;panel.id='edu-profile-save';
     const profileText=make('p','Profil není vybrán.','edu-profile-current__name'),status=make('p',null,'edu-profile-panel__status');status.setAttribute('role','status');status.setAttribute('aria-live','polite');
     const manage=make('a','Vybrat profil');manage.href=manageUrl('');const actions=make('div',null,'edu-admin__actions'),load=button('Načíst uložené nastavení'),undo=button('Vrátit před načtením');undo.hidden=true;load.hidden=true;actions.append(load,undo);panel.append(profileText,status,manage,actions);if(row)row.after(panel);else save.after(panel);
@@ -118,7 +134,7 @@
     root.addEventListener('beforeunload',event=>{if(profileId&&dirty()){event.preventDefault();event.returnValue='';}});
     watchAuth(()=>{state();if(ready&&!busy)work('Ověřuji aktivní profil…',()=>list(false));});
     document.addEventListener('visibilitychange',()=>{if(!document.hidden&&ready&&!busy)auth()?.refresh();});
-    state();try{await waitAdapter(adapter);ready=true;baseline=fingerprint(adapter.read());const resume=await restoreDraft();await auth()?.ready;await work('Načítám nastavení profilu…',()=>list(!resume));}catch(e){say(e.message,'error');state();}
+    state();try{await waitAdapter(adapter);if(adapter.app==='styles'){try{const saved=JSON.parse(localStorage.getItem(localKey)||'null');if(saved)await adapter.apply(saved);}catch{}}ready=true;baseline=fingerprint(adapter.read());const resume=await restoreDraft();await auth()?.ready;await work('Načítám nastavení profilu…',()=>list(!resume));}catch(e){say(e.message,'error');state();}
     return {refresh:()=>work('Ověřuji aktivní profil…',()=>list(false))};
   }
   function fields(ids){
