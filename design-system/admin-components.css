@@ -39,3 +39,11 @@
 
 
 .edu-content-intro{margin:0;padding:14px 16px;background:var(--ev-surface);color:var(--ev-text);border:1px solid var(--ev-border);border-left:4px solid var(--ev-primary);border-radius:var(--ev-card-radius,16px);font-size:clamp(15px,1.6vw,20px);line-height:1.5}
+
+/* Shared focused form dialog; validation remains beside the edited control. */
+.edu-admin-dialog{width:min(460px,calc(100vw - 32px));max-height:calc(100dvh - 32px);overflow:auto;padding:24px;border:1px solid var(--ev-border,var(--edu-admin-border));border-radius:var(--ev-card-radius,var(--edu-admin-card-radius));background:var(--ev-surface,var(--edu-admin-surface));color:var(--ev-text,var(--edu-admin-ink));font-family:var(--edu-admin-font)}
+.edu-admin-dialog::backdrop{background:rgb(0 0 0 / .4)}
+.edu-admin-dialog h2{margin:0 0 20px;font-size:22px}
+.edu-admin-dialog .edu-admin__field input{width:100%;box-sizing:border-box;min-height:var(--edu-admin-control-height);padding:8px 11px;border:1px solid var(--ev-border,var(--edu-admin-border));border-radius:var(--edu-admin-control-radius);background:var(--ev-surface,var(--edu-admin-surface));color:inherit;font:inherit}
+.edu-admin-dialog__error{min-height:1.5em;margin:10px 0 18px;line-height:1.5;font-weight:600}
+.edu-admin-dialog [aria-invalid=true]{outline:2px solid currentColor;outline-offset:2px}
