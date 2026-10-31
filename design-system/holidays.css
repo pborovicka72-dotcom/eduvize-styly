@@ -77,3 +77,6 @@ html[data-kiosk-app="holidays"].kiosk-output body .shell>:is(.hero,.calendar-met
 }
 .calendar-card .metric-icon>svg{width:65%!important;height:65%!important}
 .calendar-card .metric-top{gap:max(12px,calc(var(--edu-text-label,20px)*.35))}
+
+/* Give today’s name a little more space below its icon and label. */
+#names-card>.metric-value{margin-top:max(18px,.18em)}
