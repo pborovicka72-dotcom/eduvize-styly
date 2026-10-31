@@ -64,7 +64,7 @@ async function init(){try{const r=await fetch('/design-system/admin-theme.json',
 const tokenEl=document.getElementById('admin-token');tokenEl.value=sessionStorage.getItem('eduvize-documents-admin-token')||'';
 tokenEl.onchange=()=>{sessionStorage.setItem('eduvize-documents-admin-token',tokenEl.value.trim());loadThemes()};
 const msg=t=>document.getElementById('state').textContent=t;
-async function api(path,method='GET',body){let r;try{const headers=method==='GET'?{}:{'Authorization':'Bearer '+tokenEl.value.trim(),'Content-Type':'application/json'};r=await fetch('/api/design-system/'+path,{method,headers,body:body?JSON.stringify(body):undefined})}catch(e){throw Error('Server není dostupný: '+e.message)}const d=await r.json().catch(()=>({}));if(!r.ok){const detail=typeof d.detail==='string'?d.detail:'HTTP '+r.status;if(r.status===401||r.status===403)throw Error(method==='GET'?'Server stále vyžaduje token pro čtení. Vyčkejte na nasazení nové verze.':'Pro uložení změn zadejte platný administrační token ('+r.status+').');if(r.status===503)throw Error('Databáze stylů není dostupná (503). '+detail);throw Error(detail)}return d}
+async function api(path,method='GET',body){let r;try{const headers=method==='GET'?{}:{'Authorization':'Bearer '+tokenEl.value.trim(),'Content-Type':'application/json'};r=await fetch('/api/design-system/'+path,{method,headers,cache:'no-store',body:body?JSON.stringify(body):undefined})}catch(e){throw Error('Server není dostupný: '+e.message)}const d=await r.json().catch(()=>({}));if(!r.ok){const detail=typeof d.detail==='string'?d.detail:'HTTP '+r.status;if(r.status===401||r.status===403)throw Error(method==='GET'?'Server stále vyžaduje token pro čtení. Vyčkejte na nasazení nové verze.':'Pro uložení změn zadejte platný administrační token ('+r.status+').');if(r.status===503)throw Error('Databáze stylů není dostupná (503). '+detail);throw Error(detail)}return d}
 function selectTheme(id){
  const t=themes.find(x=>x.id===id);
  if(!t){msg('Vybraný styl nebyl nalezen.');return}
@@ -82,9 +82,15 @@ function selectTheme(id){
  }
  msg('Zobrazen náhled stylu: '+t.name);
 }
-async function loadThemes(pick){
+let themeListRequest=0;
+async function loadThemes(pick,created){
+ const request=++themeListRequest;
  try{
-  themes=await api('themes');
+  const fresh=await api('themes');
+  if(request!==themeListRequest)return;
+  if(!Array.isArray(fresh))throw Error('Server nevrátil seznam stylů.');
+  themes=fresh;
+  if(created&&!themes.some(t=>t.id===created.id))themes.push(created);
   const sel=document.getElementById('theme-select'),list=document.getElementById('theme-list-items');
   sel.replaceChildren();list.replaceChildren();
   for(const t of themes){
@@ -97,18 +103,18 @@ async function loadThemes(pick){
   // The editor shell stays standard; the initial preview follows the active theme.
   const requested=pick||themes.find(t=>t.active)?.id||'standard';
   selectTheme(themes.some(t=>t.id===requested)?requested:'standard');
- }catch(e){document.getElementById('theme-list-items').textContent='Styly se nepodařilo načíst: '+e.message;msg('Nelze načíst uložené styly: '+e.message);console.error('Eduvize theme loading failed',e)}
+ }catch(e){document.getElementById('theme-list-items').textContent='Styly se nepodařilo načíst: '+e.message;msg('Nelze načíst uložené styly: '+e.message);console.error('Eduvize theme loading failed',e);throw e}
  finally{document.getElementById('preview').setAttribute('aria-busy','false')}
 }
 document.getElementById('theme-select').addEventListener('change',e=>selectTheme(e.target.value));
 function feedback(message,state=''){const el=document.getElementById('save-feedback');el.className='save-feedback'+(state?' '+state:'');el.textContent=message}
 async function run(fn){try{await fn()}catch(e){feedback('✕ '+e.message,'error');msg('Chyba: '+e.message)}}
-document.getElementById('create').onclick=()=>run(async()=>{if(!tokenEl.value.trim())throw Error('Pro vytvoření stylu vyplňte administrační token.');const name=document.getElementById('theme-name').value.trim();const t=await api('themes','POST',{name,config:theme});await loadThemes(t.id);msg('Styl „'+name+'“ byl uložen do databáze a zobrazen v seznamu výše.')});
+document.getElementById('create').onclick=()=>run(async()=>{if(!tokenEl.value.trim())throw Error('Pro vytvoření stylu vyplňte administrační token.');const name=document.getElementById('theme-name').value.trim();const config=deep(theme);const t=await api('themes','POST',{name,config});await loadThemes(t.id,{...t,config,active:false,locked:false});msg('Styl „'+name+'“ byl uložen do databáze a zobrazen v seznamu výše.')});
 document.getElementById('save').onclick=()=>run(async()=>{if(!editable())throw Error('Nejprve odemkněte úpravy výchozího stylu');if(!tokenEl.value.trim()){feedback('Pro uložení vyplňte nahoře administrační token. Náhled změn zůstává zachován.','error');tokenEl.focus();return}const name=document.getElementById('theme-name').value.trim();const button=document.getElementById('save');button.disabled=true;feedback('Ukládám změny…','pending');try{await api('themes/'+selected,'PUT',{name,config:theme});await loadThemes(selected);feedback('✓ Změny stylu „'+name+'“ byly uloženy.');msg('Styl aktualizován.')}finally{button.disabled=!editable()}});
 document.getElementById('activate').onclick=()=>run(async()=>{await api('themes/'+selected+'/activate','POST');await loadThemes(selected);msg('Aktivní styl nastaven. Připojení dalších aplikací následuje.')});
 document.getElementById('remove').onclick=()=>run(async()=>{if(selected==='standard')throw Error('Výchozí styl nelze smazat');if(!confirm('Opravdu smazat vybraný styl?'))return;await api('themes/'+selected,'DELETE');await loadThemes('standard');msg('Styl smazán.')});
 document.getElementById('reset').onclick=()=>{if(!original)return;theme=deep(original);fields();msg('Náhled obnoven na výchozí hodnoty; uložené styly beze změny.')};
-document.getElementById('unlock').onclick=()=>{standardUnlocked=!standardUnlocked;updateEditLock();msg(standardUnlocked?'Výchozí styl je odemčený pro úpravy.':'Výchozí styl je zamčený.')};renderPalettes();init().then(()=>{loadThemes()});
+document.getElementById('unlock').onclick=()=>{standardUnlocked=!standardUnlocked;updateEditLock();msg(standardUnlocked?'Výchozí styl je odemčený pro úpravy.':'Výchozí styl je zamčený.')};renderPalettes();init().then(()=>loadThemes()).catch(()=>{});
 </script><script>
 (function(){function init(){const host=document.getElementById('preview-nsp-picker');if(host&&window.EduvizeNSPPicker)window.EduvizeNSPPicker.mount(host,{initial:{orientation:'landscape',style:1,block:1}});else console.error('Shared NSP picker unavailable')}if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});else init()})();
 </script><script>
