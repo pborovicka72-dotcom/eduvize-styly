@@ -67,6 +67,7 @@
         const feedback=document.querySelector('[data-edu-profile-panel] .edu-profile-panel__status')||document.getElementById('status')||document.getElementById('save-feedback');if(feedback)feedback.textContent='Nastavení je uloženo v tomto prohlížeči.';
       }catch(error){alert('Nastavení se nepodařilo uložit: '+error.message);}};
     }
+    if(adapter.app==='kiosk'){const primary=make('div',null,'edu-output-actions');row.before(primary);row=primary;}
     local.textContent='Uložit v prohlížeči';
     const save=button('Uložit na OneDrive',false);save.dataset.eduProfileSave='';
     // Move existing controls so their original handlers and submit behavior survive.
