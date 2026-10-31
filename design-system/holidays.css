@@ -66,3 +66,14 @@ html[data-kiosk-app="holidays"].kiosk-output body .shell>:is(.hero,.calendar-met
 /* The same three-line date identity is retained even in panoramic segments. */
 .ev-modern[data-segment-layout=panoramic] .hero>div:first-child{flex-direction:column;align-items:flex-start;gap:0}
 .ev-modern[data-segment-layout=panoramic] .calendar-date-year{flex-direction:column;align-items:flex-start;gap:0}
+
+/* Calendar card icons share the active theme and scale with their accompanying label. */
+.calendar-card .metric-icon{
+ --edu-icon-size:max(32px,calc(var(--edu-text-label,var(--ev-subtitle,20px))*1.25));
+ width:var(--edu-icon-size)!important;height:var(--edu-icon-size)!important;min-width:var(--edu-icon-size)!important;
+ flex:0 0 var(--edu-icon-size)!important;
+ background:var(--ev-secondary)!important;color:var(--ev-secondary-text)!important;
+ border-radius:var(--ev-icon-radius,10px)!important;
+}
+.calendar-card .metric-icon>svg{width:65%!important;height:65%!important}
+.calendar-card .metric-top{gap:max(12px,calc(var(--edu-text-label,20px)*.35))}
