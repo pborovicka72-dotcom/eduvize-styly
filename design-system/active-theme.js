@@ -9,7 +9,8 @@
  const fit=document.createElement('script');fit.src=new URL('fit-panel.js?v=2',base);document.head.append(fit);
 })();
 /* Shared Eduvize active theme loader. No local theme definitions. */
-(function(){
+(function(){ // The theme editor keeps the default shell; selections affect its preview only.
+ if(document.documentElement.dataset.eduTheme==='standard')return;
  const endpoint='https://eduvize-design-system-api.onrender.com/api/design-system/themes';
  const cacheKey='eduvize-active-theme-v1';
  const names={background:'--ev-bg',text:'--ev-text',surface:'--ev-surface',muted:'--ev-muted',primary:'--ev-primary',primaryText:'--ev-primary-text',secondary:'--ev-secondary',secondaryText:'--ev-secondary-text',accent:'--ev-accent',border:'--ev-border'};
