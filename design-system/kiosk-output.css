@@ -9,7 +9,7 @@ html.kiosk-output .edu-kiosk-stage::-webkit-scrollbar{display:none}
 .edu-kiosk-pagination[hidden]{display:none!important}
 .edu-kiosk-pagination button{min-height:44px;padding:8px 18px;cursor:pointer;font:inherit;font-size:clamp(14px,1.8vmin,22px);border-radius:var(--ev-control-radius,10px);border:1px solid var(--ev-border);background:var(--ev-secondary);color:var(--ev-secondary-text)}
 .edu-kiosk-pagination button:disabled{opacity:.45;cursor:default}
-html.kiosk-output :is(.shell,.web-shell){box-sizing:border-box;width:100%!important;max-width:none!important;margin:0!important;padding:clamp(6px,1vmin,18px)!important;min-height:0!important;height:100dvh!important;overflow:hidden!important}
+html.kiosk-output :is(.shell,.web-shell){box-sizing:border-box;width:100%!important;max-width:none!important;margin:0!important;padding:0!important;min-height:0!important;height:100dvh!important;overflow:hidden!important}
 html[data-kiosk-app="weather"].kiosk-output .shell{display:flex!important;flex-direction:column!important;gap:8px!important}
 html[data-kiosk-app="weather"].kiosk-output .hero{flex:none!important;max-height:36dvh!important;min-height:0!important;padding:clamp(6px,1vmin,16px)!important}
 html[data-kiosk-app="weather"].kiosk-output .temperature{font-size:clamp(32px,8vmin,80px)!important;margin:0!important}
@@ -41,7 +41,7 @@ html[data-kiosk-app="documents"].kiosk-output .tile{min-height:160px!important}
 html[data-kiosk-app="holidays"].kiosk-output body{display:flex!important;flex-direction:column!important}
 html[data-kiosk-app="holidays"].kiosk-output .shell{flex:1 1 0%!important;height:auto!important;display:block!important}
 html[data-kiosk-app="transport"].kiosk-output .site-header{display:none!important}
-html[data-kiosk-app="transport"].kiosk-output .page{height:100dvh!important;min-height:0!important;padding:8px!important}
+html[data-kiosk-app="transport"].kiosk-output .page{height:100dvh!important;min-height:0!important;padding:0!important}
 html[data-kiosk-app="transport"].kiosk-output .panel{height:100%!important;min-height:0!important;display:flex!important;flex-direction:column!important}
 html[data-kiosk-app="transport"].kiosk-output .body{flex:1!important;min-height:0!important}
 html[data-kiosk-app="transport"].kiosk-output .footer{flex:none!important;flex-wrap:wrap}
