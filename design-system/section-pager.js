@@ -10,7 +10,7 @@
   function fit(section){
    const width=host.clientWidth,height=host.clientHeight;if(!width||!height)return;
    const grid=section.querySelector('.metrics,.hourly-grid,.forecast-grid');
-   const count=grid?.children.length||1;const candidates=grid?[...new Set([1,2,3,6].filter(n=>n<=count))]:[1];
+   const count=grid?.children.length||1,fixed=Number(section.dataset.sectionColumns);const candidates=grid?(Number.isInteger(fixed)&&fixed>0?[Math.min(fixed,count)]:[...new Set([1,2,3,6].filter(n=>n<=count))]):[1];
    let best={scale:0,columns:1};
    section.style.setProperty('display','block','important');section.style.transform='none';
    function fits(scale,columns){section.style.width=(width/scale)+'px';if(grid)grid.style.setProperty('grid-template-columns','repeat('+columns+',minmax(0,1fr))','important');return section.scrollHeight*scale<=height-2&&section.scrollWidth*scale<=width+1;}
