@@ -1,7 +1,7 @@
 /* Equalize repeated cards across every row of a single overview. */
 (function(root){
  if(root.EduvizeCardLayout)return;
- const groups='.app-grid,.system-grid,.preview-gallery-grid,.upcoming-grid,.forecast-grid,.hourly-grid,.daily-hourly-grid';
+ const groups='.app-grid,.system-grid,.upcoming-grid,.forecast-grid,.hourly-grid,.daily-hourly-grid';
  const cards='.card,.edu-admin__card,.upcoming-day,.forecast-card,.hour-cell,.daily-hour-cell';
  let queued=false;const widths=new WeakMap(),watched=new WeakSet();
  function equalize(group){
