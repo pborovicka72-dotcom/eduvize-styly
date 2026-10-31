@@ -29,7 +29,7 @@ html[data-kiosk-app="news"].kiosk-output .title{font-size:clamp(19px,2.6vmin,30p
 html[data-kiosk-app="news"].kiosk-output .summary{font-size:clamp(16px,2vmin,23px)!important;line-height:1.45!important}
 html[data-kiosk-app="wisdom"].kiosk-output .web-shell,html[data-kiosk-app="wisdom"].kiosk-output #display,html[data-kiosk-app="wisdom"].kiosk-output #display>.panel{display:flex!important;flex-direction:column!important;min-height:0!important;height:100%!important}
 html[data-kiosk-app="wisdom"].kiosk-output .web-header{display:none!important}
-html[data-kiosk-app="wisdom"].kiosk-output #display>.panel{padding:clamp(8px,2vmin,24px)!important;width:100%!important;max-width:none!important}
+html[data-kiosk-app="wisdom"].kiosk-output #display>.panel{padding:0!important;width:100%!important;max-width:none!important}
 html[data-kiosk-app="wisdom"].kiosk-output .quote{font-size:clamp(24px,4.5vmin,60px)!important;line-height:1.35!important;margin:12px 0!important;overflow:visible!important}
 html[data-kiosk-app="wisdom"].kiosk-output .content{display:block!important}
 html[data-kiosk-app="documents"].kiosk-output .shell{display:flex!important;flex-direction:column!important}
