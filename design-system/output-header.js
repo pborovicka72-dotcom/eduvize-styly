@@ -7,6 +7,7 @@
   let metrics=api.header(geometry,mode);
   if(mode==='kiosk'&&parentHeight){const h=parentHeight;metrics={height:h,icon:h*.64,title:h*.36,meta:h*.18,padding:h*.05,gap:h*.08};}
   const inset=(metrics.height-metrics.icon)/2;
+  metrics={...metrics,gap:inset};
   const html=document.documentElement;html.style.setProperty('--edu-header-inset',inset+'px');
   for(const [name,value] of Object.entries(metrics))html.style.setProperty('--edu-header-'+name,value+'px');
   for(const [name,value] of Object.entries(api.text?.(geometry,mode)||{}))html.style.setProperty('--edu-text-'+name,value+'px');
