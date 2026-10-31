@@ -35,8 +35,6 @@ html[data-kiosk-app="documents"].kiosk-output #browse.hidden{display:none!import
 html[data-kiosk-app="documents"].kiosk-output #browse.hidden+.edu-kiosk-pagination{display:none!important}
 html[data-kiosk-app="documents"].kiosk-output #browse .grid{grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr))!important;align-content:start;grid-auto-rows:auto}
 html[data-kiosk-app="documents"].kiosk-output .tile{min-height:160px!important}
-html[data-kiosk-app="holidays"].kiosk-output body{display:flex!important;flex-direction:column!important}
-html[data-kiosk-app="holidays"].kiosk-output .shell{flex:1 1 0%!important;height:auto!important;display:block!important}
 html[data-kiosk-app="transport"].kiosk-output .site-header{display:none!important}
 html[data-kiosk-app="transport"].kiosk-output .page{height:100dvh!important;min-height:0!important;padding:0!important}
 html[data-kiosk-app="transport"].kiosk-output .panel{height:100%!important;min-height:0!important;display:flex!important;flex-direction:column!important}
@@ -44,10 +42,4 @@ html[data-kiosk-app="transport"].kiosk-output .body{flex:1!important;min-height:
 html[data-kiosk-app="transport"].kiosk-output .footer{flex:none!important;flex-wrap:wrap}
 
 html[data-kiosk-app="news"].kiosk-output .card.side-media{display:flex!important;flex-direction:column!important;grid-template-columns:none!important}
-html[data-kiosk-app="holidays"].kiosk-output .upcoming-grid{grid-template-columns:repeat(auto-fit,minmax(min(100%,200px),1fr))!important;grid-auto-rows:auto!important;gap:12px!important}
-html[data-kiosk-app="holidays"].kiosk-output .upcoming-day{container-type:normal!important;min-height:120px!important;height:auto!important;overflow:visible!important}
-html[data-kiosk-app="holidays"].kiosk-output .upcoming-name{font-size:clamp(22px,3vmin,36px)!important}
-html[data-kiosk-app="holidays"].kiosk-output .upcoming-date,html[data-kiosk-app="holidays"].kiosk-output .upcoming-event{font-size:clamp(16px,2vmin,22px)!important}
-html[data-kiosk-app="holidays"].kiosk-output .calendar-metrics{max-height:none!important;grid-auto-rows:auto!important}
-html[data-kiosk-app="holidays"].kiosk-output .calendar-card{min-height:120px!important;overflow:visible!important}
 html[data-kiosk-app="weather"].kiosk-output #weather-pages{display:block!important;grid-template-columns:none!important;grid-template-rows:none!important}
