@@ -19,7 +19,7 @@
   const nav=document.createElement('nav');nav.className='edu-kiosk-pagination';nav.setAttribute('aria-label',options.label||'Stránkování obsahu');
   const previous=document.createElement('button'),status=document.createElement('span'),next=document.createElement('button');
   previous.type=next.type='button';previous.textContent='← Předchozí';next.textContent='Další →';status.setAttribute('role','status');status.setAttribute('aria-live','polite');
-  nav.append(previous,status,next);host.after(nav);
+  nav.append(previous,status,next);if(options.automatic)nav.classList.add('edu-auto-pagination');host.after(nav);
   let pages=[0],index=0,queued=false;
   function show(){index=Math.max(0,Math.min(index,pages.length-1));host.scrollTop=pages[index];previous.disabled=index===0;next.disabled=index===pages.length-1;status.textContent=(index+1)+' / '+pages.length;nav.hidden=pages.length<2;host.dataset.kioskPages=String(pages.length);}
   function measure(){
@@ -40,11 +40,10 @@
   new ResizeObserver(schedule).observe(host);
   new MutationObserver(schedule).observe(host,{subtree:true,childList:true,characterData:true});
   host.addEventListener('load',schedule,true);root.addEventListener('resize',schedule);document.fonts?.ready.then(schedule);
-  const api=Object.freeze({refresh:schedule});instances.set(host,api);schedule();return api;
+  if(options.automatic)setInterval(()=>{if(!document.hidden&&pages.length>1){index=(index+1)%pages.length;show();}},Math.max(3,Number(options.seconds)||8)*1000);const api=Object.freeze({refresh:schedule});instances.set(host,api);schedule();return api;
  }
  function start(){
-  if(!root.EduvizeOutputModes?.isKiosk())return;
-  const app=document.documentElement.dataset.kioskApp;
+  const mode=root.EduvizeOutputModes?.mode?.()||(root.EduvizeOutputModes?.isKiosk?.()?'kiosk':'web');const app=document.documentElement.dataset.kioskApp;if(mode==='nsp'&&app==='weather'){mount(document.querySelector('#weather-pages'),{items:'.weather-page > *',automatic:true,seconds:new URLSearchParams(location.search).get('page_seconds')});return;}if(mode!=='kiosk')return;
   if(app==='weather')mount(document.querySelector('#weather-pages'),{items:'.weather-page > *'});
   if(app==='news')mount(document.querySelector('#news'),{items:'.card'});
   if(app==='wisdom')mount(document.querySelector('#display .content'),{items:'.quote,.attribution'});

@@ -42,3 +42,7 @@ Tento dokument popisuje cílové vlastnictví kódu. Samostatné moduly mohou st
 
 ## Automatická výška víceřádkových polí
 `active-theme.js` načítá společné `form-fields.js` a `form-fields.css`. Všechny editovatelné textarea se zvětšují i zmenšují podle obsahu, dostupné šířky a fontu. Dynamicky přidaná pole se registrují automaticky. Vědomá výjimka: `data-edu-autogrow="off"`. Po programatické změně hodnot lze zavolat `window.EduvizeForms?.refresh()`. Aplikace nesmějí udržovat vlastní kopii tohoto chování ani přepisovat jeho výšku/minimum.
+
+## Jednotné výstupy
+
+`output-modes.js` je společná smlouva pro Běžnou stránku, Newline Signage Pro a Kiosek. `output-header.js`, `segment-profile.js` a `output-integrity.js/css` sjednocují výšku hlaviček a textové role podle fyzického viewportu segmentu. Běžná stránka má průběžný obsah bez stránkování a animované logo z `web-brand.js/css`; kiosek používá ruční stránkování. Počasí v NSP může automaticky stránkovat kompletní měření a zapnuté předpovědi. Veškeré CSS počasí je v `design-system/weather-output.css`, nikoli v lokálních vrstvách aplikace.

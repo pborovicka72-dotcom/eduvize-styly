@@ -21,7 +21,7 @@
 
 /* Safe baseline before asynchronous active theme loading. */
 :root {
-  --ev-bg: var(--edu-admin-background);
+  --ev-bg: var(--edu-admin-bg);
   --ev-text: var(--edu-admin-ink);
   --ev-muted: var(--edu-admin-muted);
   --ev-surface: var(--edu-admin-surface);

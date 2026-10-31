@@ -69,4 +69,6 @@ Velikosti ikon, názvů, poznámek, mezer a vnitřního odsazení jsou pojmenova
 
 Jednotkové testy pokrývají všech 36 segmentů, limity uživatelské konfigurace a proporcionalitu při změně rozlišení. Prohlížečová kontrola používá všech 36 skutečných viewportů a dlouhá testovací jména i názvy událostí; měří přetékání karet a celé plochy. `?debug=1` ve výstupu ukáže profil, viewport a skutečný počet doplňkových dnů.
 
-Pro Počasí se mají nejprve seřadit priority (aktuální stav, hodinová, denní, textová předpověď), určit nejmenší čitelný blok a nad touto smlouvou vytvořit vlastní politiku. Geometrii a škálování náhledů přitom nepřepisovat.
+Počasí používá centrální `weather-output.css`. Standardní web řadí měření a zapnuté předpovědi pod sebe; kiosek má ruční stránkování a NSP automatické. Fyzický viewport všech segmentů vytváří společný `segment-display.js` nad `nsp-geometry.js`. Lokální kopie geometrie ani vrstvy historických CSS přepisů se neudržují.
+
+Textové role `text(geometry, mode)` jsou sdílené mezi aplikacemi. Hlavičku vynucuje `output-header.js` i pro dynamicky vytvořenou navigaci; stejný viewport má stejnou výšku a písmo. Běžný web používá hlavičku 96 px a základní text 18 px, průběžný responzivní obsah a sdílené animované logo přes `web-brand.js/css`. `output-integrity.js/css` odděluje web, NSP a kiosek, aby se stránkování a omezení plochy nepřenášela mezi režimy.

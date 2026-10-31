@@ -1,0 +1,6 @@
+/* One animated logo; its dimensions are independent of the app-specific content. */
+.edu-brand-logo{display:block!important;width:clamp(140px,20vw,220px)!important;height:64px!important;max-width:100%!important;object-fit:contain!important;flex:none}
+.edu-brand-identity{display:flex!important;align-items:center!important;width:auto!important;min-width:140px!important;height:auto!important;padding:0!important;background:transparent!important;border:0!important;border-radius:0!important}
+.edu-web-header{box-sizing:border-box;display:flex!important;align-items:center!important;justify-content:space-between;gap:20px;width:100%;max-width:1440px!important;min-height:88px!important;height:auto!important;margin:0 auto!important;padding:12px clamp(16px,3vw,36px)!important;background:var(--ev-bg,var(--edu-admin-bg));color:var(--ev-text,var(--edu-admin-ink))}
+.edu-web-heading{font-family:var(--edu-admin-font,system-ui);font-size:clamp(20px,2.5vw,28px);line-height:1.2;font-weight:650;text-align:right}
+@media(max-width:480px){.edu-web-header{gap:12px;min-height:80px!important}.edu-web-header .edu-brand-logo{width:140px!important;height:52px!important}.edu-web-heading{font-size:18px}.edu-page-header__identity{flex-wrap:wrap}}

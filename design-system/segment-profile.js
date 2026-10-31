@@ -6,9 +6,13 @@
   const kind=ratio>=2.7?'panoramic':short<720?'compact':ratio<.8?'portrait':ratio<1.4?'square':'landscape';
   return Object.freeze({width,height,short,ratio,kind,scale:short/720});
  }
- function header(geometry){
-  const height=geometry.short*.16;
+ function header(geometry,mode='nsp'){
+  const height=mode==='web'?96:geometry.short*.16;
   return Object.freeze({height,icon:height*.60,title:height*.32,meta:height*.14,padding:height*.12,gap:height*.12});
+ }
+ function text(geometry,mode='nsp'){
+  const body=mode==='web'?18:Math.max(16,Math.min(54,geometry.short*.027));
+  return Object.freeze({body,title:body*1.35,label:Math.max(14,body*.82),caption:Math.max(12,body*.72),value:body*1.8});
  }
  function holidays(geometry,options={}){
   const g=geometry,s=g.short,strip=g.kind==='panoramic',compact=g.kind==='compact';
@@ -20,5 +24,5 @@
   const px={head,icon:shared.icon,'date-size':shared.title,'date-meta':shared.meta,'head-pad':shared.padding,'head-side':shared.padding,'head-gap':shared.gap,'small-icon':s*.05,subtitle:Math.max(18,s*.035),name:Math.max(32,s*(strip||compact?.26:g.kind==='portrait'?.12:.09)),note:Math.max(14,s*(strip||compact?.04:.028)),'day-label':Math.max(16,s*(strip?.05:.036)),'day-name':Math.max(26,s*(strip?.17:.075)),'day-event':Math.max(14,s*(strip?.045:.032)),'card-pad':s*.022,gap:s*.016,'today-height':s*.18,'name-gap':s*.014,'event-pad':s*.012};
   return Object.freeze({geometry:g,upcomingDays,columns:Math.max(1,Math.min(columns,upcomingDays||1)),minFont:Math.max(10,s*.014),showToday:true,showUpcoming:upcomingDays>0,showUpcomingHeading:!strip,metricsColumns:compact||strip||g.kind==='portrait'?1:2,px:Object.freeze(px)});
  }
- root.EduvizeSegmentProfile=Object.freeze({resolve,header,holidays});
+ root.EduvizeSegmentProfile=Object.freeze({resolve,header,text,holidays});
 })(typeof window==='undefined'?globalThis:window);
