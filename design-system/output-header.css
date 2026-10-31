@@ -40,7 +40,7 @@ html[data-kiosk-app].kiosk-output.edu-menu-app-header .edu-output-header .edu-ap
 
 /* Shared touch target follows the metric-icon scale (nameday, weather details). */
 html[data-kiosk-app][data-output-mode]{--edu-navigation-size:max(44px,calc(var(--edu-text-label,24px)*1.5))}
-html[data-kiosk-app][data-output-mode] :is(.edu-pagination-button,.edu-kiosk-pagination button,.news-page-controls button){
+html[data-kiosk-app][data-output-mode] :is(.edu-pagination-button,.edu-kiosk-pagination:not(.edu-auto-pagination) button,.news-page-controls button){
  box-sizing:border-box!important;min-height:var(--edu-navigation-size)!important;
  padding:.2em .8em!important;font-family:inherit!important;
  font-size:max(16px,calc(var(--edu-navigation-size)*.4))!important;line-height:1.2!important;
