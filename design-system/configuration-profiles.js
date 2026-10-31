@@ -70,6 +70,7 @@
     if(adapter.app==='kiosk'){const primary=make('div',null,'edu-output-actions');row.before(primary);row=primary;}
     local.textContent='Uložit v prohlížeči';
     const save=button('Uložit na OneDrive',false);save.dataset.eduProfileSave='';
+    for(const control of [save,local]){control.className='edu-admin__button';control.dataset.eduSave='';}
     // Move existing controls so their original handlers and submit behavior survive.
     row.prepend(...[open,copy,save,local].filter(Boolean));
     if(open)open.textContent='Otevřít výstup';
