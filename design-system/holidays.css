@@ -62,3 +62,7 @@ html[data-kiosk-app="holidays"].kiosk-output body .shell{display:flex!important;
 html[data-kiosk-app="holidays"].kiosk-output body .shell>:is(.hero,.calendar-metrics,.upcoming){flex:0 0 auto!important}
 .upcoming{gap:max(16px,var(--ev-gap,16px))}
 .metric-icon.edu-app-icon{--edu-icon-size:var(--ev-small-icon,44px)}
+
+/* The same three-line date identity is retained even in panoramic segments. */
+.ev-modern[data-segment-layout=panoramic] .hero>div:first-child{flex-direction:column;align-items:flex-start;gap:0}
+.ev-modern[data-segment-layout=panoramic] .calendar-date-year{flex-direction:column;align-items:flex-start;gap:0}
