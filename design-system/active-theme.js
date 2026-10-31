@@ -55,3 +55,17 @@
  document.addEventListener('visibilitychange',()=>{if(!document.hidden)refresh()});
  window.setInterval(()=>{if(!document.hidden)refresh()},60000);
 })();
+
+/* Shared configuration controls load only in administrations. Output pages stay untouched. */
+(function(){
+ const base=new URL('.',document.currentScript.src);
+ function start(){
+  if(!document.querySelector('.edu-admin-page')||(!window.EduvizeProfileAdapter&&!document.getElementById('configurations')))return;
+  if(document.querySelector('script[data-edu-profiles]'))return;
+  const css=document.createElement('link');css.rel='stylesheet';css.href=new URL('configuration-profiles.css?v=profiles-20261031-1',base);document.head.append(css);
+  const load=()=>{const script=document.createElement('script');script.src=new URL('configuration-profiles.js?v=profiles-20261031-1',base);script.dataset.eduProfiles='';document.head.append(script);};
+  if(window.EduvizeAdminAuth)load();else{const auth=document.createElement('script');auth.src=new URL('admin-auth.js?v=profiles-20261031-1',base);auth.onload=load;document.head.append(auth);}
+ }
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});else start();
+ window.addEventListener('eduvize-profile-adapter-ready',start);
+})();

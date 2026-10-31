@@ -15,7 +15,7 @@
  const pageParams=new URL(location.href).searchParams;
  let requested=pageParams.get('returnTo'),manage=pageParams.get('manage')==='1';
  try{if(requested)sessionStorage.setItem('eduvize-account-return',requested);else{requested=sessionStorage.getItem('eduvize-account-return');manage=!!requested;}}catch{}
- function needsDrive(){try{const u=new URL(requested);return u.origin===auth.DOCS||/\/eduvize-(?:kiosek|dokumenty)\/config.html$/.test(u.pathname);}catch{return true;}}
+ function needsDrive(){try{const u=new URL(requested);return u.searchParams.has('edu-profile')||u.origin===auth.DOCS||/\/eduvize-(?:kiosek|dokumenty)\/config.html$/.test(u.pathname);}catch{return true;}}
  async function returnToApp(){const url=await auth.handoff(requested);try{sessionStorage.removeItem('eduvize-account-return');}catch{}location.replace(url);}
 
  function say(text){message.textContent=text;}

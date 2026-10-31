@@ -46,5 +46,5 @@ function syncMode(){root.hidden=false;picker?.setMode(mode.value==='kiosk'?'kios
 picker=window.EduvizeNSPPicker.mount(root,{initial,interactivePreview:true,previewUrl:state=>{const u=new URL(output(state));u.searchParams.set('preview','1');return u.href},onChange:state=>{try{localStorage.setItem(key,JSON.stringify(state))}catch{}if(isWeather){mode.value='signage';mode.dispatchEvent(new Event('change',{bubbles:true}))}else if(!isDocuments){mode.value='nsp'}syncMode()}});
 mode.addEventListener('change',syncMode);syncMode();
 let previewRefresh;document.addEventListener('input',refreshPreview);document.addEventListener('change',refreshPreview);function refreshPreview(event){if(root.contains(event.target)||!event.target.matches('input:not([type=password]):not([type=file]),select,textarea'))return;clearTimeout(previewRefresh);previewRefresh=setTimeout(()=>{picker.set(picker.get());syncMode()},250)}
-window.EduvizeSegmentSelection={params:()=>picker.get(),url:()=>output(picker.get())};
+window.EduvizeSegmentSelection={params:()=>picker.get(),url:()=>output(picker.get()),set:next=>{picker.set(next);try{localStorage.setItem(key,JSON.stringify(picker.get()))}catch{}syncMode();}};
 })();
