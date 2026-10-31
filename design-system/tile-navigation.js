@@ -1,6 +1,7 @@
 /* Shared capacity-aware tile paging, grid normalization and viewport geometry. */
 (function(root){
   function groups(items,capacity=8){
+    if(root.EduvizeOutputModes?.mode?.()==='web')return [items];
     capacity=Math.max(3,Math.min(64,Math.floor(Number(capacity)||8)));
     if(items.length<=capacity)return [items];
     const result=[items.slice(0,capacity-1)];let start=capacity-1;
@@ -44,6 +45,7 @@
     return best||{rows:1,counts:[total]};
   }
   function fit(nav,{mode='menu',position='left',columns,rows:requestedRows,tileCount,wrap}={}){
+    if(root.EduvizeOutputModes?.mode?.()==='web'){for(const button of nav.children){button.style.removeProperty('grid-row');button.style.removeProperty('grid-column');}return;}
     if(!nav.children.length||!nav.clientWidth||!nav.clientHeight)return;
     const style=document.documentElement.style,portrait=root.innerHeight>root.innerWidth,gap=parseFloat(getComputedStyle(nav).gap)||0;
     const padding=parseFloat(getComputedStyle(wrap).paddingLeft)||0,width=wrap.clientWidth-padding*2,height=wrap.clientHeight-padding*2;
