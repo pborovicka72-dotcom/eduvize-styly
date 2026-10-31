@@ -11,8 +11,9 @@
     function refresh(){
       queued=false;const w=host.clientWidth,h=host.clientHeight;if(!w||!h)return;
       const referenceHeight=viewport.clientHeight||h;
-      const metric=metrics(w,referenceHeight,options.flow);
-      const shape=metrics(w,h,options.flow).shape;
+      const web=root.EduvizeOutputModes?.mode?.()==='web';
+      const metric=web?{font:18,gap:20}:metrics(w,referenceHeight,options.flow);
+      const shape=web?(w<700?'portrait':'landscape'):metrics(w,h,options.flow).shape;
       if(host.dataset.contentShape!==shape)host.dataset.contentShape=shape;
       set(host.style,'--edu-content-font',metric.font+'px');
       set(host.style,'--edu-content-gap',metric.gap+'px');
