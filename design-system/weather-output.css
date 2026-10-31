@@ -4,8 +4,8 @@ body{margin:0;font-family:var(--edu-admin-font,system-ui);color:var(--ev-text);b
 .shell{width:100%;max-width:1440px;margin:auto;min-height:100dvh;padding:clamp(8px,1.2vmin,24px);display:flex;flex-direction:column;gap:clamp(8px,1.2vmin,24px)}
 .header{display:flex;justify-content:space-between;align-items:center}.brand{display:flex;align-items:center;gap:12px}.weather-legacy-heading{display:none}.status{font-size:var(--edu-text-caption);color:var(--ev-muted)}
 .hero{display:flex;align-items:center;justify-content:space-between;background:var(--ev-primary);color:var(--ev-primary-text);border-radius:var(--ev-control-radius);flex:none;min-width:0}
-.hero>div:first-child{display:flex;align-items:center;gap:clamp(8px,1.5vmin,28px);min-width:0;flex:1}
-.hero-label{flex:0 1 auto;max-width:8em;line-height:1.2}.temperature{order:-1;white-space:nowrap;font-weight:700;line-height:1;margin:0}
+.weather-current{display:flex;align-items:center;gap:var(--edu-header-gap);min-width:0;flex:1}
+.temperature{white-space:nowrap;font-weight:700;line-height:1;margin:0}
 .hero-details{display:flex;flex-direction:column;gap:4px;min-width:0}.hero-meta{display:flex;align-items:center;gap:6px;font-size:var(--edu-header-meta);line-height:1.2}
 .hero-meta svg{width:1em;height:1em;flex:none}.feels-like{display:flex;align-items:center;gap:6px;font-size:var(--edu-header-meta);line-height:1.2}.feels-like span,.feels-like strong{font:inherit}.feels-like strong{font-weight:650}
 .hero-art{display:flex;flex-direction:column;align-items:center;justify-content:center;flex:none}.hero-art svg{width:60%;height:60%;flex:none}.condition-label{font-size:calc(var(--edu-header-height)*.11);line-height:1.15;text-align:center;overflow-wrap:normal;hyphens:none}
@@ -23,5 +23,5 @@ html.nsp-output .shell,body.signage .shell{height:100dvh;min-height:0;max-width:
 html.nsp-output .header,html.kiosk-output .header{display:none}
 html.nsp-output #weather-pages{flex:1;min-height:0;overflow:hidden}
 html.nsp-output .weather-page{display:block;height:auto!important;overflow:visible}
-@media(max-width:620px){.metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.hero>div:first-child{gap:8px}.hero-label{max-width:5em}.hero-meta{flex-wrap:wrap}.section-heading{align-items:flex-start}}
-@media(max-width:620px){.hero>div:first-child{display:grid;grid-template-columns:auto minmax(0,1fr);gap:4px 10px}.hero .temperature{grid-column:1;grid-row:1/3}.hero .hero-label{grid-column:2;grid-row:1;max-width:none}.hero .hero-details{grid-column:2;grid-row:2}}
+@media(max-width:620px){.metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.weather-current{flex-direction:column;align-items:flex-start;gap:4px}.hero-meta{flex-wrap:nowrap}.section-heading{align-items:flex-start}}
+
