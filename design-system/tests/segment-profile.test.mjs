@@ -14,3 +14,9 @@ for(const [w,h] of [[3840,2160],[2160,3840],[872,488],[2968,488]]){const g=api.r
 assert.equal(api.holidays(api.resolve(3840,2160),{days:6}).columns,3);
 assert.equal(api.holidays(api.resolve(872,1672),{days:6}).upcomingDays,4);
 console.log('Common header dimensions and narrow segment readability priorities passed.');
+
+const shortBand=api.holidays(api.resolve(2160,560),{days:6});
+assert.equal(shortBand.upcomingDays,2);assert.equal(shortBand.columns,2);
+assert.equal(api.holidays(api.resolve(2160,560),{days:1}).upcomingDays,1);
+assert.ok(api.holidays(api.resolve(872,488),{days:6}).px.name>120);
+console.log('Compact today emphasis and shorter-band content density passed.');
