@@ -12,7 +12,7 @@ Aplikace definuje priority obsahu, jeho maximální počet a typografické role.
 
 | Profil | Podmínka (v tomto pořadí) | Dnešní údaje | Další dny | Sloupce přehledu |
 |---|---|---|---|---|
-| panoramic | poměr šířka/výška ≥ 2,7 | zachované pod společnou hlavičkou | nejvýše 3 | až 3 |
+| panoramic | poměr šířka/výška ≥ 2,7 | zachované pod společnou hlavičkou | nejvýše 2 při poměru pod 4,5; jinak 3 | až 3 |
 | compact | kratší strana < 720 px | zachované pod datem | bez samostatného přehledu | – |
 | portrait | poměr < 0,8 | zachované | nejvýše 6, pod 960 px šířky 4 | až 2 |
 | square | poměr < 1,4 | zachované | nejvýše 6 | až 3 |
@@ -31,7 +31,7 @@ Velikosti ikon, názvů, poznámek, mezer a vnitřního odsazení jsou pojmenova
 | landscape | 1 / 1 | 3840 × 2160 | landscape | 6 |
 | landscape | 2 / 1 | 1200 × 2160 | portrait | 6 |
 | landscape | 2 / 2 | 2640 × 1480 | landscape | 6 |
-| landscape | 2 / 3 | 2640 × 680 | panoramic | 3 |
+| landscape | 2 / 3 | 2640 × 680 | panoramic | 2 |
 | landscape | 3 / 1 | 960 × 2160 | portrait | 6 |
 | landscape | 3 / 2 | 2880 × 2160 | square | 6 |
 | landscape | 4 / 1 | 1680 × 1080 | landscape | 6 |
@@ -53,11 +53,11 @@ Velikosti ikon, názvů, poznámek, mezer a vnitřního odsazení jsou pojmenova
 | portrait | 1 / 1 | 2160 × 3840 | portrait | 6 |
 | portrait | 2 / 1 | 2160 × 960 | landscape | 6 |
 | portrait | 2 / 2 | 2160 × 2880 | portrait | 6 |
-| portrait | 3 / 1 | 2160 × 560 | panoramic | 3 |
+| portrait | 3 / 1 | 2160 × 560 | panoramic | 2 |
 | portrait | 3 / 2 | 2160 × 1216 | landscape | 6 |
 | portrait | 3 / 3 | 1080 × 2064 | portrait | 6 |
 | portrait | 3 / 4 | 1080 × 2064 | portrait | 6 |
-| portrait | 4 / 1 | 2160 × 560 | panoramic | 3 |
+| portrait | 4 / 1 | 2160 × 560 | panoramic | 2 |
 | portrait | 4 / 2 | 2160 × 1390 | landscape | 6 |
 | portrait | 4 / 3 | 2160 × 1890 | square | 6 |
 | portrait | 5 / 1 | 1080 × 1920 | portrait | 6 |
