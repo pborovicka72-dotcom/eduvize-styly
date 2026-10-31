@@ -79,3 +79,8 @@ html[data-kiosk-app="documents"][data-output-mode]:not(.web-output) #browse[data
 .docs-catalog-pagination[hidden]{display:none!important}
 .docs-catalog-pagination button{min-height:max(44px,calc(var(--edu-text-label,24px)*1.5));padding:.2em .8em;font:inherit;font-size:clamp(16px,2vmin,28px);border:1px solid var(--ev-border);border-radius:var(--ev-control-radius,10px);background:var(--ev-secondary);color:var(--ev-secondary-text)}
 .docs-catalog-pagination span{font-size:clamp(14px,1.6vmin,24px)}
+
+html[data-kiosk-app="documents"][data-output-mode] #documentNavigation .edu-navigation__heading{
+ flex:1 1 0%!important;max-width:none!important;padding:0!important;background:transparent!important;min-width:0!important;
+}
+html[data-kiosk-app="documents"][data-output-mode] #documentNavigation .edu-navigation__heading>div{flex:1;min-width:0}
