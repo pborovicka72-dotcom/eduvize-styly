@@ -46,3 +46,13 @@ Tento dokument popisuje cílové vlastnictví kódu. Samostatné moduly mohou st
 ## Jednotné výstupy
 
 `output-modes.js` je společná smlouva pro Běžnou stránku, Newline Signage Pro a Kiosek. `output-header.js`, `segment-profile.js` a `output-integrity.js/css` sjednocují výšku hlaviček a textové role podle fyzického viewportu segmentu. Běžná stránka má průběžný obsah bez stránkování a animované logo z `web-brand.js/css`; kiosek používá ruční stránkování. Počasí v NSP může automaticky stránkovat kompletní měření a zapnuté předpovědi. Veškeré CSS počasí je v `design-system/weather-output.css`, nikoli v lokálních vrstvách aplikace.
+
+## Společné přihlášení administrací
+
+Jediné zadávání administračních klíčů a připojení Microsoftu je nahoře na [rozcestníku aplikací](https://pborovicka72-dotcom.github.io/eduvize-styly/aplikace.html#account). Klíče Dokumentů a stylů jsou volitelné podle potřebných oprávnění; další oprávnění lze doplnit později. Klíče ani Microsoft tokeny se neukládají do klientských konfigurací.
+
+`admin_sessions.py` na existujícím API stylů vydává neprůhledné relace na osm hodin. Databáze uchovává pouze hashe relací; původní klíče se po ověření neuchovávají. Používá se existující `DATABASE_URL`, `DESIGN_SYSTEM_ADMIN_TOKEN` a ověření `DOCUMENTS_ADMIN_TOKEN` přes server Dokumentů; není potřeba přidávat sdílené tajemství mezi službami. Jednorázové předání přes fragment URL platí 60 sekund, je vázané na povolený cílový origin a dává jen oprávnění cílového modulu. Po výměně se fragment ihned odstraní. Nezávisí na cookies třetích stran.
+
+`design-system/admin-auth.js` poskytuje stav, návratový odkaz na centrum a autorizované požadavky. `admin-account.js/css` vlastní panel rozcestníku. Na stejné důvěryhodné GitHub Pages doméně se sdílí centrální relace; jiné domény dostávají vlastní podřízenou relaci. Odhlášení zruší rodičovskou relaci i všechny podřízené. Připojení OneDrive pro běžící výstupy zůstává na serveru Dokumentů. Při vypršení administrace nebo OneDrivu aplikace odkáže na rozcestník.
+
+Původní hlavičkové klíče zůstávají podporované na API pro stávající automatizace. Ve formulářích jednotlivých aplikací už nejsou. Při nasazení se nejprve zveřejní moduly a API obou služeb, poté panel a napojené administrace. Integrační testy: `python -m unittest discover -s tests -p 'test_admin_sessions.py'`; klient: `node design-system/tests/admin-auth.test.mjs`.
