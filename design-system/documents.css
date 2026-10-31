@@ -23,3 +23,59 @@ html.document-output .controls{display:flex;flex:none;justify-content:center;gap
 .folder-tile .tile-foot,.folder-tile .arrow{color:inherit}
 
 #documentNavigation{margin-bottom:12px}html.document-output #documentNavigation{padding:0;flex:none}
+
+/* Document catalogue: theme surfaces, shared header, and viewport-sized pages. */
+html[data-kiosk-app="documents"][data-output-mode] #browse .tile{
+ background:var(--ev-surface)!important;color:var(--ev-text)!important;
+ border:1px solid var(--ev-border)!important;border-radius:var(--ev-card-radius)!important;
+ justify-content:flex-start!important;min-width:0!important;text-align:left!important;
+}
+html[data-kiosk-app="documents"][data-output-mode] #browse .folder-icon{
+ border-radius:var(--ev-icon-radius,10px);background:var(--ev-secondary);color:var(--ev-secondary-text);
+ flex:none;align-self:flex-start;
+}
+html[data-kiosk-app="documents"][data-output-mode] #browse .tile-foot{color:var(--ev-muted)!important}
+html[data-kiosk-app="documents"][data-output-mode]:not(.web-output):not(.document-output) .shell{
+ display:flex!important;flex-direction:column!important;height:100dvh!important;max-width:none!important;min-height:0!important;overflow:hidden!important;
+}
+html[data-kiosk-app="documents"][data-output-mode]:not(.web-output) .shell>.card{
+ display:flex!important;flex-direction:column!important;flex:1 1 0%!important;min-height:0!important;
+ padding:0!important;border:0!important;box-shadow:none!important;background:transparent!important;overflow:hidden!important;
+}
+html[data-kiosk-app="documents"][data-output-mode]:not(.web-output) #browse{
+ display:flex!important;flex-direction:column!important;flex:1 1 0%!important;min-height:0!important;overflow:hidden!important;
+}
+html[data-kiosk-app="documents"][data-output-mode] #browse.hidden{display:none!important}
+html[data-kiosk-app="documents"][data-output-mode]:not(.web-output) #browse>.grid{
+ display:grid!important;grid-template-columns:repeat(var(--docs-columns,2),minmax(0,1fr))!important;
+ grid-template-rows:repeat(var(--docs-rows,2),minmax(0,1fr))!important;
+ gap:var(--docs-gap,16px)!important;flex:1 1 0%;min-width:0;min-height:0;width:100%!important;overflow:hidden;
+}
+html[data-kiosk-app="documents"][data-output-mode]:not(.web-output) #browse .tile{
+ display:flex!important;flex-direction:column!important;width:100%!important;height:100%!important;min-height:0!important;
+ padding:var(--docs-pad,20px)!important;gap:var(--docs-gap,16px)!important;overflow:hidden!important;transform:none;
+}
+html[data-kiosk-app="documents"][data-output-mode] #browse .tile[hidden]{display:none!important}
+html[data-kiosk-app="documents"][data-output-mode]:not(.web-output) #browse :is(.tile-title,.doc-title){
+ font:600 var(--docs-title,28px)/1.2 var(--edu-admin-font,system-ui)!important;
+ white-space:normal!important;overflow-wrap:anywhere!important;flex:0 1 auto!important;margin:0!important;min-height:0;
+}
+html[data-kiosk-app="documents"][data-output-mode]:not(.web-output) #browse :is(.tile-foot,.doc-type){
+ font:400 var(--docs-label,20px)/1.3 var(--edu-admin-font,system-ui)!important;margin:0!important;
+}
+html[data-kiosk-app="documents"][data-output-mode]:not(.web-output) #browse .tile-foot{margin-top:auto!important}
+html[data-kiosk-app="documents"][data-output-mode]:not(.web-output) #browse .folder-icon{
+ width:var(--docs-icon,56px)!important;height:var(--docs-icon,56px)!important;
+}
+html[data-kiosk-app="documents"][data-output-mode]:not(.web-output) #browse .folder-icon svg{width:60%;height:60%}
+html[data-kiosk-app="documents"][data-output-mode]:not(.web-output) #browse .tile-body{
+ display:flex;flex-direction:column;justify-content:flex-start;gap:var(--docs-gap,16px);padding:0;min-height:0;flex:1;
+}
+html[data-kiosk-app="documents"][data-output-mode]:not(.web-output) #browse .thumb{
+ height:32%!important;min-height:0!important;flex:0 0 32%;border-radius:var(--ev-icon-radius,10px);
+}
+html[data-kiosk-app="documents"][data-output-mode]:not(.web-output) #browse[data-docs-compact] .thumb{display:none!important}
+.docs-catalog-pagination{flex:none;display:flex;align-items:center;justify-content:center;gap:16px;margin-top:12px}
+.docs-catalog-pagination[hidden]{display:none!important}
+.docs-catalog-pagination button{min-height:max(44px,calc(var(--edu-text-label,24px)*1.5));padding:.2em .8em;font:inherit;font-size:clamp(16px,2vmin,28px);border:1px solid var(--ev-border);border-radius:var(--ev-control-radius,10px);background:var(--ev-secondary);color:var(--ev-secondary-text)}
+.docs-catalog-pagination span{font-size:clamp(14px,1.6vmin,24px)}
