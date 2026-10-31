@@ -42,7 +42,7 @@ html.ev-theme-pending body{visibility:hidden}
 
 /* Canonical header module: the same markup and rules on every page. */
 .edu-page-header{display:flex;flex-direction:column;gap:10px;margin:0 0 18px;padding:0;min-width:0;color:var(--ev-text,var(--edu-admin-ink,#142c46));font-family:var(--edu-admin-font,system-ui,sans-serif)}
-.edu-page-header__identity{display:flex;align-items:center;gap:24px;min-width:0}
+.edu-page-header__identity{display:flex;align-items:center;gap:15px;min-width:0}
 
 
 .edu-page-header__titles{min-width:0}
