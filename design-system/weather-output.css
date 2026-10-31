@@ -11,7 +11,7 @@ body{margin:0;font-family:var(--edu-admin-font,system-ui);color:var(--ev-text);b
 .hero-art{display:flex;flex-direction:column;align-items:center;justify-content:center;flex:none}.hero-art svg{width:60%;height:60%;flex:none}.condition-label{font-size:calc(var(--edu-header-height)*.11);line-height:1.15;text-align:center;overflow-wrap:normal;hyphens:none}
 .weather-pages{display:grid;grid-template-columns:repeat(var(--weather-panels,1),minmax(0,1fr));gap:var(--weather-gap,16px);align-content:start}.weather-page{display:block;min-width:0;margin:0}.weather-page[data-page="2"],.daily-forecast-page{grid-column:1/-1}.section-heading{display:flex;align-items:baseline;justify-content:space-between;gap:8px 16px;flex-wrap:wrap;margin:0 0 12px}.section-heading h2,.section-heading span{min-width:0;overflow-wrap:break-word}
 .section-heading h2{margin:0;line-height:1.25}.section-heading span{color:var(--ev-muted);text-align:right}.metrics{display:grid;grid-template-columns:repeat(var(--weather-metrics,3),minmax(0,1fr));gap:clamp(8px,1.3vmin,22px)}
-.metric,.forecast-card,.hour-cell{min-width:0;padding:1em;border:1px solid var(--ev-border);border-radius:var(--ev-card-radius);background:var(--ev-surface);color:var(--ev-text)}
+html[data-kiosk-app="weather"] #weather-pages :is(.metric,.forecast-card,.hour-cell){min-width:0;padding:calc(var(--edu-text-body)*1.111111)!important;border:1px solid var(--ev-border);border-radius:var(--ev-card-radius);background:var(--ev-surface);color:var(--ev-text)}
 .hourly-panel,.daily-forecast-panel{min-width:0;padding:0;border:0;background:transparent}
 .metric-top{display:flex;align-items:center;gap:8px}.metric-icon{display:grid;place-items:center;width:2em;height:2em;flex:none;background:var(--ev-secondary);color:var(--ev-secondary-text);border-radius:var(--ev-control-radius)}.metric-icon svg{width:60%;height:60%}.metric-value{font-weight:650;margin:6px 0}.metric-note{color:var(--ev-muted)}
 .hourly-grid,.daily-hourly-grid{display:grid;grid-template-columns:repeat(var(--weather-hours,3),minmax(0,1fr));gap:12px;align-items:stretch}.hour-cell,.daily-hour-cell{display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:.6em;min-width:0;text-align:center}
@@ -55,4 +55,4 @@ html[data-kiosk-app="weather"][data-output-mode][data-weather-header-only] .edu-
 html[data-weather-header-only] .edu-output-header .edu-header-art .condition-label{font-size:calc(var(--edu-header-meta)*.65);max-width:100%;overflow-wrap:break-word}
 
 /* Daily cards always share the entire section width, independently of hourly density. */
-html[data-kiosk-app="weather"] .daily-hourly-grid{grid-template-columns:repeat(3,minmax(0,1fr))!important}
+html[data-kiosk-app="weather"][data-output-mode] #weather-pages .daily-hourly-grid{grid-template-columns:repeat(3,minmax(0,1fr))!important}
