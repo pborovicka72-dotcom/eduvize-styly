@@ -53,3 +53,5 @@ html[data-kiosk-app="holidays"].kiosk-output .upcoming-name{font-size:clamp(22px
 html[data-kiosk-app="holidays"].kiosk-output .upcoming-date,html[data-kiosk-app="holidays"].kiosk-output .upcoming-event{font-size:clamp(16px,2vmin,22px)!important}
 html[data-kiosk-app="holidays"].kiosk-output .calendar-metrics{max-height:none!important;grid-auto-rows:auto!important}
 html[data-kiosk-app="holidays"].kiosk-output .calendar-card{min-height:120px!important;overflow:visible!important}
+html[data-kiosk-app="weather"].kiosk-output #weather-pages{display:block!important;grid-template-columns:none!important;grid-template-rows:none!important}
+html[data-kiosk-app="weather"].kiosk-output #weather-pages>.weather-page:not([hidden]){display:block!important;height:auto!important;min-height:0!important;margin-bottom:16px!important}
