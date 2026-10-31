@@ -1,5 +1,6 @@
 /* Physical preview resolution is independent of the administrator's browser size. */
 (function(root){
+ if(root.EduvizePreviewViewport)return;
  const mounted=new WeakMap();
  function mount(frame,options={}){
   if(mounted.has(frame)){const existing=mounted.get(frame);existing.setSize(options.width||3840,options.height||2160);return existing;}
