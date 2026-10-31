@@ -10,12 +10,12 @@
 .calendar-metrics{display:grid;grid-template-columns:repeat(var(--calendar-metrics-columns,2),minmax(0,1fr));gap:var(--ev-gap,20px)}
 .calendar-metrics:has(#names-card.hidden):has(#holiday-card.hidden){display:none}
 .calendar-card,.upcoming-day{min-width:0;padding:var(--ev-card-pad,24px);border:1px solid var(--ev-border);border-radius:var(--ev-card-radius);background:var(--ev-surface);color:var(--ev-text)}
-.calendar-card{display:flex;flex-direction:column;justify-content:center;min-height:var(--ev-today-height,150px)}
+.calendar-card{display:flex;flex-direction:column;justify-content:flex-start;min-height:var(--ev-today-height,150px)}
 .metric-top{display:flex;align-items:center;gap:12px}.metric-icon{width:var(--ev-small-icon,44px);height:var(--ev-small-icon,44px);display:grid;place-items:center;flex:none;border-radius:var(--ev-control-radius);background:var(--ev-secondary);color:var(--ev-secondary-text)}.metric-icon svg{width:60%;height:60%}
 .metric-name{font-size:var(--ev-subtitle,20px);font-weight:500}.metric-value{font-size:var(--ev-name,54px);font-weight:650;line-height:1.15;margin:12px 0;overflow-wrap:normal;word-break:normal;hyphens:none}.metric-value.long{font-size:calc(var(--ev-name,54px)*.9)}.metric-note{font-size:var(--ev-note,16px);color:var(--ev-muted);line-height:1.4}
 .upcoming{display:flex;flex-direction:column;gap:var(--ev-gap,16px);min-width:0;min-height:0}.section-heading h2{font-size:var(--ev-subtitle,22px);margin:0}
 .upcoming-grid{display:grid;grid-template-columns:repeat(var(--calendar-columns,var(--ev-columns,3)),minmax(0,1fr));gap:var(--ev-gap,14px);align-items:stretch;min-width:0;min-height:0}
-.upcoming-day{display:flex;flex-direction:column;justify-content:safe center;gap:var(--ev-name-gap,10px);overflow:hidden}.upcoming-date{font-size:var(--ev-day-label,16px);font-weight:600;color:var(--ev-primary)}.upcoming-name{font-size:var(--ev-day-name,26px);font-weight:600;line-height:1.2;overflow-wrap:normal;word-break:normal;hyphens:none}.upcoming-event{font-size:var(--ev-day-event,16px);line-height:1.4;padding:var(--ev-event-pad,10px);border-radius:var(--ev-control-radius);background:var(--ev-secondary);color:var(--ev-secondary-text);overflow-wrap:normal;word-break:normal;hyphens:none}
+.upcoming-day{display:flex;flex-direction:column;justify-content:flex-start;gap:var(--ev-name-gap,10px);overflow:hidden}.upcoming-date{font-size:var(--ev-day-label,16px);font-weight:600;color:var(--ev-primary)}.upcoming-name{font-size:var(--ev-day-name,26px);font-weight:600;line-height:1.2;overflow-wrap:normal;word-break:normal;hyphens:none}.upcoming-event{font-size:var(--ev-day-event,16px);line-height:1.4;padding:var(--ev-event-pad,10px);border-radius:var(--ev-control-radius);background:var(--ev-secondary);color:var(--ev-secondary-text);overflow-wrap:normal;word-break:normal;hyphens:none}
 .calendar-status{margin:0;color:var(--ev-muted);font-size:16px;line-height:1.4}
 body.ev-modern{height:100dvh;overflow:hidden}.ev-modern .shell{width:100%;height:100dvh;min-height:0;max-width:none;overflow:hidden;padding:var(--ev-pad-top,16px) var(--ev-pad-right,16px) var(--ev-pad-bottom,16px) var(--ev-pad-left,16px)}
 .ev-modern .calendar-metrics{max-height:32%;min-height:0;grid-auto-rows:minmax(0,1fr)}
@@ -56,3 +56,9 @@ body.ev-segment-wrapper{height:100dvh;overflow:hidden}body.ev-segment-wrapper>.s
 /* Repeat cards keep the same height on every row, including the final partial row. */
 .upcoming-grid{grid-auto-rows:minmax(min-content,1fr)!important;align-items:stretch}
 .upcoming-day{padding:max(16px,var(--ev-card-pad,24px),calc(var(--ev-card-radius,20px)*.4))!important}
+
+/* Distinct vertical rhythm between the calendar header, today and the upcoming days. */
+html[data-kiosk-app="holidays"].kiosk-output .shell{display:flex!important;flex-direction:column!important;gap:clamp(16px,2vmin,24px)!important}
+html[data-kiosk-app="holidays"].kiosk-output .shell>:is(.hero,.calendar-metrics,.upcoming){flex:0 0 auto!important}
+.upcoming{gap:max(16px,var(--ev-gap,16px))}
+.metric-icon.edu-app-icon{--edu-icon-size:var(--ev-small-icon,44px)}
