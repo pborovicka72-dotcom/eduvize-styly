@@ -16,7 +16,7 @@
   const upcomingDays=Math.min(requested,compact?0:strip?3:g.width<960&&g.kind==='portrait'?4:6);
   const columns=strip?Math.min(3,upcomingDays):g.kind==='portrait'?2:3;
   const shared=header(g),head=shared.height;
-  const px={head,icon:shared.icon,'date-size':shared.title,'date-meta':shared.meta,'head-pad':shared.padding,'head-side':shared.padding,'head-gap':shared.gap,'small-icon':s*.05,subtitle:Math.max(18,s*.035),name:Math.max(32,s*.09),note:Math.max(14,s*.028),'day-label':Math.max(16,s*.036),'day-name':Math.max(26,s*.075),'day-event':Math.max(14,s*.032),'card-pad':s*.022,gap:s*.016,'today-height':s*.18,'name-gap':s*.014,'event-pad':s*.012};
+  const px={head,icon:shared.icon,'date-size':shared.title,'date-meta':shared.meta,'head-pad':shared.padding,'head-side':shared.padding,'head-gap':shared.gap,'small-icon':s*.05,subtitle:Math.max(18,s*.035),name:Math.max(32,s*(strip?.26:g.kind==='portrait'?.12:.09)),note:Math.max(14,s*(strip?.04:.028)),'day-label':Math.max(16,s*(strip?.05:.036)),'day-name':Math.max(26,s*(strip?.17:.075)),'day-event':Math.max(14,s*(strip?.045:.032)),'card-pad':s*.022,gap:s*.016,'today-height':s*.18,'name-gap':s*.014,'event-pad':s*.012};
   return Object.freeze({geometry:g,upcomingDays,columns:Math.max(1,Math.min(columns,upcomingDays||1)),minFont:Math.max(10,s*.014),showToday:true,showUpcoming:upcomingDays>0,showUpcomingHeading:!strip,metricsColumns:compact||strip||g.kind==='portrait'?1:2,px:Object.freeze(px)});
  }
  root.EduvizeSegmentProfile=Object.freeze({resolve,header,holidays});
