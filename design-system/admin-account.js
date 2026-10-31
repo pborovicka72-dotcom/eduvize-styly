@@ -1,7 +1,7 @@
 /* The only place where administrators enter credentials or connect Microsoft. */
 (function(root){
  const auth=root.EduvizeAdminAuth,host=document.getElementById('edu-account-panel');if(!auth||!host)return;
- if(root.top!==root.self){const link=document.createElement('a');link.href=auth.HUB;link.target='_blank';link.rel='noopener';link.textContent='Otevřít účet a připojení v samostatném okně';host.replaceChildren(link);return;}
+ if(root.top!==root.self){const link=document.createElement('a');link.href=auth.HUB;link.target='_top';link.rel='noopener';link.textContent='Otevřít účet a připojení';host.replaceChildren(link);return;}
  function revealAccount(event){
   if(performance.getEntriesByType('navigation')[0]?.type==='reload'&&event?.type!=='hashchange')return;
   if(location.hash!=='#account'&&location.hash!=='#edu-account-panel')return;
@@ -29,5 +29,5 @@
  $('account-return').onclick=()=>work(returnToApp);
  root.addEventListener('eduvize-admin-auth-change',status);
  auth.ready.then(async()=>{status();await connection();revealAccount();if(requested&&!manage&&auth.status().connected&&(!needsDrive()||driveConnected)){try{await returnToApp();}catch(e){say(e.message);}}});
- document.querySelectorAll('a[href]').forEach(link=>{const u=new URL(link.href);const admin=(u.origin===auth.CENTRAL&&['/','/design-system','/design-system/'].includes(u.pathname))||(/\/config(?:\.html)?$/.test(u.pathname)&&['https://pborovicka72-dotcom.github.io',auth.DOCS,'https://eduvize-weather.onrender.com','https://eduvize-aktuality.onrender.com'].includes(u.origin));if(!admin)return;link.addEventListener('click',async event=>{if(!auth.status().connected||event.ctrlKey||event.metaKey||event.shiftKey||event.altKey)return;event.preventDefault();const child=link.target==='_blank'?window.open('about:blank','_blank'):null;if(child)child.opener=null;try{const url=await auth.handoff(link.href);if(child)child.location.href=url;else location.assign(url);}catch(e){child?.close();say(e.message);host.scrollIntoView({behavior:'smooth',block:'start'});}});});
+ document.querySelectorAll('a[href]').forEach(link=>{const u=new URL(link.href);const admin=(u.origin===auth.CENTRAL&&['/','/design-system','/design-system/'].includes(u.pathname))||(/\/config(?:\.html)?$/.test(u.pathname)&&['https://pborovicka72-dotcom.github.io',auth.DOCS,'https://eduvize-weather.onrender.com','https://eduvize-aktuality.onrender.com'].includes(u.origin));if(!admin)return;link.addEventListener('click',async event=>{if(!auth.status().connected||event.ctrlKey||event.metaKey||event.shiftKey||event.altKey)return;event.preventDefault();try{const url=await auth.handoff(link.href);location.assign(url);}catch(e){say(e.message);host.scrollIntoView({behavior:'smooth',block:'start'});}});});
 })(window);
