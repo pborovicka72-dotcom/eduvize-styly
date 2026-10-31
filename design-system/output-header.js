@@ -5,7 +5,7 @@
   queued=false;const api=root.EduvizeSegmentProfile;if(!api)return;
   const geometry=api.resolve(root.innerWidth,root.innerHeight),mode=root.EduvizeOutputModes?.mode?.()||(root.EduvizeOutputModes?.isKiosk?.()?'kiosk':'nsp');
   let metrics=api.header(geometry,mode);
-  if(mode==='kiosk'&&parentHeight){const h=parentHeight;metrics={height:h,icon:h*.6,title:h*.32,meta:h*.14,padding:h*.12,gap:h*.12};}
+  if(mode==='kiosk'&&parentHeight){const h=parentHeight;metrics={height:h,icon:h*.64,title:h*.36,meta:h*.18,padding:h*.05,gap:h*.08};}
   const html=document.documentElement;
   for(const [name,value] of Object.entries(metrics))html.style.setProperty('--edu-header-'+name,value+'px');
   for(const [name,value] of Object.entries(api.text?.(geometry,mode)||{}))html.style.setProperty('--edu-text-'+name,value+'px');
