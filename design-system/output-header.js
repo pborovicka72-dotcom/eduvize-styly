@@ -23,7 +23,9 @@
    const height=Math.min(metrics.height,Math.max(96,Math.min(176,root.innerWidth*.07)));
    metrics={height,icon:height*.64,title:height*.34,meta:height*.16,padding:height*.1,gap:height*.18};
   }
-  const inset=(metrics.height-metrics.icon)/2;
+  const weatherCompact=mode==='nsp'&&document.documentElement.dataset.kioskApp==='weather'&&geometry.kind==='compact';
+  if(weatherCompact){const height=geometry.height-Math.min(24,Math.max(8,geometry.short*.012))*2;metrics={height,icon:Math.min(height*.55,geometry.width*.16),title:geometry.width*.11,meta:geometry.width*.045,padding:height*.05,gap:geometry.width*.025};}
+  const inset=weatherCompact?metrics.padding:(metrics.height-metrics.icon)/2;
   metrics={...metrics,gap:inset};
   const html=document.documentElement;html.style.setProperty('--edu-header-inset',inset+'px');
   for(const [name,value] of Object.entries(metrics))html.style.setProperty('--edu-header-'+name,value+'px');
