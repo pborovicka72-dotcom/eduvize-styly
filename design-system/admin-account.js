@@ -2,7 +2,8 @@
 (function(root){
  const auth=root.EduvizeAdminAuth,host=document.getElementById('edu-account-panel');if(!auth||!host)return;
  if(root.top!==root.self){const link=document.createElement('a');link.href=auth.HUB;link.target='_blank';link.rel='noopener';link.textContent='Otevřít účet a připojení v samostatném okně';host.replaceChildren(link);return;}
- function revealAccount(){
+ function revealAccount(event){
+  if(performance.getEntriesByType('navigation')[0]?.type==='reload'&&event?.type!=='hashchange')return;
   if(location.hash!=='#account'&&location.hash!=='#edu-account-panel')return;
   for(let parent=host.parentElement;parent;parent=parent.parentElement)if(parent.tagName==='DETAILS')parent.open=true;
   requestAnimationFrame(()=>requestAnimationFrame(()=>host.scrollIntoView({behavior:'auto',block:'start'})));
