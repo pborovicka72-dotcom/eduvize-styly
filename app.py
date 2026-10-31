@@ -1,5 +1,5 @@
 """Standalone Eduvize Design System API. No OneDrive dependency."""
-import os,json,uuid,secrets
+import os,json,uuid,secrets,unicodedata
 from pathlib import Path
 import psycopg
 from fastapi import FastAPI,Header,HTTPException,Request
@@ -63,15 +63,30 @@ def list_admin_themes():
     custom=[{"id":row[0],"name":row[1],"config":row[2],"active":row[3]} for row in rows]
     return [{"id":"standard","name":"EDUVIZE Standard","config":next((t["config"] for t in custom if t["id"]=="standard"),theme_default()),"active":not any(t["active"] for t in custom if t["id"]!="standard"),"locked":True}]+[{**t,"locked":False} for t in custom if t["id"]!="standard"]
 
+def theme_name_key(name):
+    return unicodedata.normalize("NFKC", " ".join(name.split())).lower()
+
+def theme_unique_name(conn,name,exclude_id=None):
+    # Serialize name checks and writes together, including concurrent requests.
+    # Existing records stay untouched; no destructive migration of legacy duplicates.
+    conn.execute("LOCK TABLE eduvize_admin_themes IN SHARE ROW EXCLUSIVE MODE")
+    key=theme_name_key(name)
+    if exclude_id!="standard" and key==theme_name_key("EDUVIZE Standard"):
+        raise HTTPException(409,"Styl s tímto názvem již existuje. Pro nový styl zadejte jiný název.")
+    rows=conn.execute("SELECT id,name FROM eduvize_admin_themes").fetchall()
+    if any(ident!=exclude_id and theme_name_key(existing)==key for ident,existing in rows):
+        raise HTTPException(409,"Styl s tímto názvem již existuje. Zadejte jiný název.")
+
 @app.post("/api/design-system/themes")
 async def create_admin_theme(request:Request,authorization:str|None=Header(default=None)):
     check_admin(authorization)
     payload=await request.json()
-    name=str(payload.get("name","")).strip()
+    name=" ".join(str(payload.get("name","")).split())
     if not 1<=len(name)<=80:raise HTTPException(422,"Název musí mít 1–80 znaků")
     config=theme_validate(payload.get("config"))
     ident=str(uuid.uuid4())
     with theme_db() as conn:
+        theme_unique_name(conn,name)
         conn.execute("INSERT INTO eduvize_admin_themes (id,name,config) VALUES (%s,%s,%s::jsonb)",(ident,name,json.dumps(config)))
     return {"id":ident,"name":name}
 
@@ -79,10 +94,11 @@ async def create_admin_theme(request:Request,authorization:str|None=Header(defau
 async def update_admin_theme(theme_id:str,request:Request,authorization:str|None=Header(default=None)):
     check_admin(authorization)
     payload=await request.json()
-    name=str(payload.get("name","")).strip()
+    name=" ".join(str(payload.get("name","")).split())
     if not 1<=len(name)<=80:raise HTTPException(422,"Název musí mít 1–80 znaků")
     config=theme_validate(payload.get("config"))
     with theme_db() as conn:
+        theme_unique_name(conn,"EDUVIZE Standard" if theme_id=="standard" else name,theme_id)
         if theme_id=="standard":
             conn.execute("INSERT INTO eduvize_admin_themes (id,name,config,active) VALUES (%s,%s,%s::jsonb,FALSE) ON CONFLICT (id) DO UPDATE SET name=EXCLUDED.name,config=EXCLUDED.config",("standard","EDUVIZE Standard",json.dumps(config)))
             return {"id":"standard","name":"EDUVIZE Standard"}
