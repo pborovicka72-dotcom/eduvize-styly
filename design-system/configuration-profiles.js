@@ -40,15 +40,38 @@
   async function mount(adapter){
     if(!adapter||document.querySelector('[data-edu-profile-panel]'))return;
     const main=document.querySelector('main.edu-admin-page,main .edu-admin-page,.edu-admin-page');if(!main)return;
-    const panel=make('section',null,'edu-admin__card edu-profile-panel');panel.dataset.eduProfilePanel=adapter.app;panel.append(make('h2','Nastavení v profilu'));
-    const header=main.querySelector(':scope > .edu-page-header');if(header)header.after(panel);else main.prepend(panel);
-    const ui=controls(panel),save=button('Uložit nastavení',false),load=button('Načíst nastavení'),undo=button('Vrátit před načtením');undo.hidden=true;
-    const manage=make('a','Správa konfigurací','edu-admin__button edu-admin__button--secondary');manage.href=manageUrl(selection());ui.actions.prepend(save,load);ui.actions.append(undo,manage);
-    let busy=false,profileId=selection(),revision=0,baseline='',backup=null,errorText='',loaded=false,ready=false,tracked='';
+    const panel=make('section',null,'edu-admin__card edu-profile-panel');panel.dataset.eduProfilePanel=adapter.app;panel.id='edu-profile-save';panel.append(make('h2','Uložit konfiguraci'));
+    const footer=main.querySelector(':scope > footer');if(footer)footer.before(panel);else main.append(panel);
+    panel.append(make('p','Vyberte cílový profil a uložte nastavení na připojený OneDrive. Výběr profilu sám nepřepisuje rozpracované nastavení.','edu-admin__hint'));
+    const ui=controls(panel),save=button('Uložit na OneDrive',false),load=button('Načíst z OneDrive'),undo=button('Vrátit před načtením');undo.hidden=true;
+    const manage=make('a','Správa konfigurací','edu-admin__button edu-admin__button--secondary');manage.href=manageUrl(selection());manage.target='_blank';manage.rel='noopener';
+    ui.actions.prepend(save,load);ui.actions.append(undo,manage);
+    const help=make('p','Nový profil vytvoříte ve Správě konfigurací. Potom zde použijte Obnovit seznam.','edu-admin__hint');panel.append(help);
+    for(const local of main.querySelectorAll('button'))if(/uložit v prohlížeči/i.test(local.textContent)){local.textContent='Uložit pouze v tomto prohlížeči';local.classList.add('edu-admin__button--secondary');}
+    const draftKey='eduvize-profile-save-draft-v1:'+adapter.app+':'+location.pathname;
+    let busy=false,profileId=selection(),revision=0,baseline='',backup=null,errorText='',loaded=false,ready=false,tracked='',needsLogin=false,restored=false;
+    const canSave=()=>!!(root.EduvizeAdminAuth?.getToken('configurations')||root.EduvizeAdminAuth?.getToken('documents'));
+    function profileName(){return ui.select.selectedOptions[0]?.textContent||'vybraný profil';}
     function say(text,state=''){ui.status.textContent=text;ui.status.dataset.state=state;}
     function dirty(){return baseline&&fingerprint(adapter.read())!==baseline;}
-    function state(){save.disabled=busy||!ready||!profileId;load.disabled=busy||!ready||!profileId;undo.disabled=busy;ui.select.disabled=busy;ui.reload.disabled=busy;manage.href=manageUrl(profileId);}
-    async function work(text,fn){if(busy)return;busy=true;state();say(text);try{errorText='';await fn();}catch(e){errorText=e.message;say(e.message,'error');}finally{busy=false;state();}}
+    function state(){save.disabled=busy||!ready;save.textContent=!canSave()?'Přihlásit a uložit':needsLogin?'Připojit OneDrive a uložit':'Uložit na OneDrive';load.disabled=busy||!ready||!profileId||!canSave()||needsLogin;undo.disabled=busy;ui.select.disabled=busy;ui.reload.disabled=busy||!canSave();manage.href=manageUrl(profileId);}
+    async function work(text,fn){if(busy)return;clearTimeout(timer);busy=true;state();say(text);try{errorText='';await fn();}catch(e){errorText=e.message;needsLogin=[401,403].includes(e.status)||(e.status===503&&/OneDrive|Microsoft|připojení/i.test(e.message));say(e.message+(needsLogin?' Rozpracované nastavení zůstává na stránce. Obnovte připojení tlačítkem níže.':''),'error');}finally{busy=false;state();}}
+    function login(){
+      const auth=root.EduvizeAdminAuth;if(!auth)throw Error('Přihlášení se nepodařilo načíst. Obnovte stránku.');
+      const nonce=crypto.randomUUID(),url=new URL(location.href);url.searchParams.set('edu-resume-save',nonce);url.searchParams.set('edu-require-drive','1');url.hash='edu-profile-save';
+      const draft={nonce,app:adapter.app,path:location.pathname,createdAt:Date.now(),config:structuredClone(adapter.read()),profileId,revision,baseline,loaded,tracked};
+      try{sessionStorage.setItem(draftKey,JSON.stringify(draft));}catch{throw Error('Prohlížeč nepovolil bezpečné zachování rozpracovaného nastavení. Přihlášení otevřete v nové kartě a pak se sem vraťte.');}
+      // A stored draft is required before leaving; never serialize login credentials.
+      baseline=fingerprint(adapter.read());location.assign(auth.loginUrl(url.href));
+    }
+    async function restoreDraft(){
+      const url=new URL(location.href),nonce=url.searchParams.get('edu-resume-save');if(!nonce)return false;
+      let d;try{d=JSON.parse(sessionStorage.getItem(draftKey)||'null');}catch{}
+      if(!d||d.nonce!==nonce||d.app!==adapter.app||d.path!==location.pathname||Date.now()-d.createdAt>2*60*60*1000||!d.config){say('Rozpracované nastavení pro návrat z přihlášení nebylo nalezeno. Načtení profilu je pozastavené.','error');return true;}
+      await adapter.apply(structuredClone(d.config));profileId=d.profileId||'';revision=Number(d.revision)||0;baseline=typeof d.baseline==='string'?d.baseline:fingerprint(adapter.read());loaded=!!d.loaded;tracked=d.tracked||'';select(profileId);restored=true;
+      // Keep the draft until the restored state has been applied successfully.
+      sessionStorage.removeItem(draftKey);url.searchParams.delete('edu-resume-save');url.searchParams.delete('edu-require-drive');history.replaceState(null,'',url.href);return true;
+    }
     async function readProfile(apply=false){
       const p=await request('/'+profileId),entry=p.apps[adapter.app],incoming=entry?.revision||0;
       if(!apply&&tracked===profileId){if(incoming!==revision){say('Na OneDrive je novější verze. Před uložením ji načtěte.','dirty');return;}say(dirty()?'Neuložené změny.':loaded?'Uloženo na OneDrive.':'Tato aplikace zatím není v profilu uložená.',dirty()?'dirty':'saved');return;}
@@ -57,19 +80,32 @@
       if(apply){const before=structuredClone(adapter.read());try{await adapter.apply(structuredClone(entry.config));}catch(error){try{await adapter.apply(before);}catch{}throw error;}backup=before;undo.hidden=false;}
       baseline=fingerprint(apply?adapter.read():entry.config);loaded=true;say(apply?(adapter.loadedMessage||'Nastavení načteno z OneDrive.'):dirty()?'Neuložené změny oproti profilu.':'Uloženo na OneDrive.',dirty()?'dirty':'saved');
     }
-    async function list(initial=false){const data=await request();options(ui.select,data.items,profileId);profileId=ui.select.value;if(profileId){select(profileId);await readProfile(initial);}else say('Vyberte profil nebo jej vytvořte ve Správě konfigurací.');}
+    async function list(initial=false){
+      if(!canSave()){options(ui.select,[],profileId);say('Nastavení můžete upravovat. Pro uložení na OneDrive použijte Přihlásit a uložit.');return;}
+      const data=await request();needsLogin=false;options(ui.select,data.items,profileId);profileId=ui.select.value;
+      if(profileId){select(profileId);await readProfile(initial);}else say('Vyberte cílový profil. Nový můžete vytvořit ve Správě konfigurací.');
+      if(restored){say('Rozpracované nastavení je obnoveno. '+(profileId?'Zkontrolujte cílový profil a potvrďte Uložit na OneDrive.':'Vyberte cílový profil a potvrďte Uložit na OneDrive.'),'dirty');restored=false;requestAnimationFrame(()=>panel.scrollIntoView({block:'start'}));}
+    }
     ui.reload.onclick=()=>work('Načítám profily…',()=>list(false));
-    ui.select.onchange=()=>work('Načítám nastavení profilu…',async()=>{if(dirty()&&!confirm('Načíst jiný profil a nahradit neuložené změny této aplikace?')){ui.select.value=profileId;return;}profileId=ui.select.value;select(profileId);revision=0;loaded=false;tracked='';if(profileId)await readProfile(true);else say('Vyberte profil.');});
+    ui.select.onchange=()=>work('Ověřuji cílový profil…',async()=>{profileId=ui.select.value;select(profileId);revision=0;loaded=false;tracked='';if(profileId)await readProfile(false);else say('Vyberte cílový profil.');});
     load.onclick=()=>work('Načítám nastavení…',async()=>{if(dirty()&&!confirm('Nahradit neuložené změny nastavením z OneDrive?'))return;await readProfile(true);});
-    save.onclick=()=>work('Ukládám nastavení na OneDrive…',async()=>{const snapshot=structuredClone(adapter.read());const result=await request('/'+profileId+'/apps/'+adapter.app,{method:'PUT',body:JSON.stringify({expectedRevision:revision,config:snapshot})});revision=result.revision;baseline=fingerprint(snapshot);loaded=true;say(dirty()?'Během ukládání vznikly další neuložené změny.':'Uloženo na OneDrive.',dirty()?'dirty':'saved');});
-    undo.onclick=()=>work('Vracím předchozí místní nastavení…',async()=>{if(!backup)return;const previous=backup;backup=structuredClone(adapter.read());await adapter.apply(previous);say('Místní nastavení obnoveno. Pro změnu profilu použijte Uložit nastavení.','dirty');});
+    save.onclick=()=>work('Připravuji uložení…',async()=>{
+      await root.EduvizeAdminAuth?.ready;
+      if(!canSave()||needsLogin){login();return;}
+      if(!profileId){say('Nejprve vyberte cílový profil. Pokud ještě žádný nemáte, otevřete Správu konfigurací.');ui.select.focus();return;}
+      const snapshot=structuredClone(adapter.read());say('Ukládám nastavení na OneDrive…');
+      const result=await request('/'+profileId+'/apps/'+adapter.app,{method:'PUT',body:JSON.stringify({expectedRevision:revision,config:snapshot})});revision=result.revision;baseline=fingerprint(snapshot);loaded=true;
+      say(dirty()?'Během ukládání vznikly další neuložené změny.':'Uloženo na OneDrive do profilu „'+profileName()+'“.',dirty()?'dirty':'saved');
+    });
+    undo.onclick=()=>work('Vracím předchozí místní nastavení…',async()=>{if(!backup)return;const previous=backup;backup=structuredClone(adapter.read());await adapter.apply(previous);say('Místní nastavení obnoveno. Pro změnu profilu použijte Uložit na OneDrive.','dirty');});
     let timer;function changed(event){if(panel.contains(event.target)||busy)return;clearTimeout(timer);timer=setTimeout(()=>{if(!baseline)return;if(dirty()){errorText='';say(profileId?'Neuložené změny.':'Změny nejsou přiřazené k profilu.','dirty');}else if(!errorText)say(loaded?'Uloženo na OneDrive.':'Tato aplikace zatím není v profilu uložená.',loaded?'saved':'');},200);}
     for(const event of ['input','change','click','eduvize-profile-change'])document.addEventListener(event,changed);
     root.addEventListener('beforeunload',event=>{if(profileId&&dirty()){event.preventDefault();event.returnValue='';}});
-    root.addEventListener('eduvize-admin-auth-change',()=>{if(!busy)work('Načítám profily…',()=>list(false));});
-    state();try{await waitAdapter(adapter);ready=true;baseline=fingerprint(adapter.read());await work('Načítám profily…',()=>list(true));}catch(e){say(e.message,'error');}
+    root.addEventListener('eduvize-admin-auth-change',()=>{state();if(ready&&!busy)work('Načítám profily…',()=>list(false));});
+    state();try{await waitAdapter(adapter);ready=true;baseline=fingerprint(adapter.read());const resume=await restoreDraft();await root.EduvizeAdminAuth?.ready;await work('Načítám profily…',()=>list(!resume));}catch(e){say(e.message,'error');state();}
     return {refresh:()=>work('Načítám profily…',()=>list(false))};
   }
+
   function fields(ids){
     const controls=()=>ids.map(id=>document.getElementById(id)).filter(Boolean);
     return {read:()=>Object.fromEntries(controls().map(e=>[e.id,e.type==='checkbox'?e.checked:e.value])),apply(values){
