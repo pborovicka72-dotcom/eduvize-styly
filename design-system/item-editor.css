@@ -4,3 +4,5 @@
 
 /* At most two columns; each item keeps enough room for its form fields. */
 .edu-item-editor-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,max(520px,calc(50% - 6px))),1fr));gap:12px;align-items:start}.edu-item-editor-list>.edu-item-editor{margin:0}
+
+.edu-item-editor__drag{touch-action:none;cursor:grab;flex:none;border:0;background:transparent;color:var(--ev-muted);padding:6px;font:20px/1 system-ui}.edu-item-editor__drag:active{cursor:grabbing}.edu-item-editor.is-sorting{opacity:.55}.edu-item-editor.drop-before{box-shadow:inset 0 3px var(--ev-accent)}.edu-item-editor.drop-after{box-shadow:inset 0 -3px var(--ev-accent)}
