@@ -1,7 +1,7 @@
 /* Account status belongs to administration, never to display applications. */
 .edu-admin-session{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin:0 0 20px;padding:12px 16px;border:1px solid var(--edu-admin-border,var(--ev-border));border-radius:var(--edu-admin-control-radius,var(--ev-control-radius));background:var(--edu-admin-surface,var(--ev-surface));color:var(--edu-admin-ink,var(--ev-text))}
 .edu-admin-session__status{flex:1;min-width:180px;font-size:14px;line-height:1.5}
-.edu-account-panel{margin-bottom:24px;scroll-margin-top:16px}
+.edu-account-panel{margin-bottom:24px;scroll-margin-top:64px}
 .edu-account-panel h2{margin:0 0 12px}.edu-account-panel p{margin:8px 0 14px}
 .edu-account-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin-top:16px}
 .edu-account-fields label{display:flex;flex-direction:column;gap:8px;min-width:0}
