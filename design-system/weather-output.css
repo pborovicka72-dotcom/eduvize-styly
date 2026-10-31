@@ -49,7 +49,7 @@ html[data-weather-header-only] .weather-current{display:contents}
 html[data-weather-header-only] .temperature{grid-column:2;grid-row:1;align-self:end}
 html[data-weather-header-only] .hero-details{grid-column:1 / 3;grid-row:2;align-self:start;padding-top:var(--edu-header-gap);gap:12px}
 html[data-weather-header-only] .hero-art{grid-column:3;grid-row:1 / 3;width:100%!important;height:auto!important;min-width:0!important;align-self:center}
-html[data-kiosk-app="weather"][data-output-mode][data-weather-header-only] .edu-output-header .hero-art>svg{width:120%!important;height:auto!important;max-height:none!important;aspect-ratio:1}
+html[data-kiosk-app="weather"][data-output-mode][data-weather-header-only] .edu-output-header .hero-art>svg{width:90%!important;height:auto!important;max-height:none!important;aspect-ratio:1}
 
 
 html[data-weather-header-only] .edu-output-header .edu-header-art .condition-label{font-size:calc(var(--edu-header-meta)*.65);max-width:100%;overflow-wrap:break-word}
