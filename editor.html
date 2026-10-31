@@ -88,8 +88,8 @@ async function loadThemes(pick){
    const label=document.createElement('span');label.textContent=t.name+(t.active?' · aktivní':'')+(t.locked?' · výchozí':'');
    button.append(swatch,label);button.addEventListener('click',()=>selectTheme(t.id));list.append(button);
   }
-  // Start with the standard preview; subsequent selections remain local to the preview.
-  const requested=pick||'standard';
+  // Start with the active theme in the preview; the administration shell stays standard.
+  const requested=pick||themes.find(t=>t.active)?.id||'standard';
   selectTheme(themes.some(t=>t.id===requested)?requested:'standard');
  }catch(e){document.getElementById('theme-list-items').textContent='Styly se nepodařilo načíst: '+e.message;msg('Nelze načíst uložené styly: '+e.message);console.error('Eduvize theme loading failed',e)}
 }
