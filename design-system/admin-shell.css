@@ -46,7 +46,7 @@ html.ev-theme-pending body{visibility:hidden}
 
 
 .edu-page-header__titles{min-width:0}
-.edu-page-header__eyebrow{margin:0;font-size:13px;line-height:1.3;font-weight:800;letter-spacing:.13em;text-transform:uppercase;color:var(--ev-secondary,var(--edu-admin-secondary,#e7f0f4))}
+.edu-page-header__eyebrow{margin:0;font-size:13px;line-height:1.3;font-weight:800;letter-spacing:.13em;text-transform:uppercase;color:var(--ev-primary,var(--edu-admin-primary,#087c91))}
 .edu-page-header__title{margin:3px 0 0;font-size:clamp(25px,2.4vw,40px);font-weight:700;line-height:1.12;letter-spacing:normal;color:inherit}
 .edu-page-header__description{margin:0;max-width:100%;font-size:14px;line-height:1.55;font-weight:400;color:var(--ev-muted,var(--edu-admin-muted,#638098));overflow-wrap:break-word}
 
