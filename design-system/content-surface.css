@@ -22,3 +22,6 @@ body.subpage .edu-content-navigation .edu-navigation-button{font-size:clamp(14px
 
 /* The page heading and school identity share one visual and typographic contract. */
 .edu-content-heading{padding:.7em .85em;border-radius:min(var(--ev-card-radius),1em);background:var(--ev-primary);color:var(--ev-primary-text)}.edu-content-heading :is(.edu-navigation-title,h2){margin:0;font-size:1.55em;font-weight:600;line-height:1.15;overflow-wrap:break-word}.edu-content-heading :is(.edu-navigation-subtitle,.school-motto){margin:.5em 0 0;font-size:.8em;line-height:1.4;white-space:pre-line}.edu-content-navigation{font-size:var(--edu-page-font,clamp(16px,3vmin,68px))}.edu-content-navigation>.edu-content-heading{flex:1;min-width:0}
+
+/* One body-text size throughout school information, independent of semantic markup. */
+[data-edu-content-surface] :is(.school-text,.school-contact,.school-detail-label,.school-motto,.school-card .edu-navigation-button){font-size:var(--edu-content-font,22px)!important;line-height:1.4!important}
