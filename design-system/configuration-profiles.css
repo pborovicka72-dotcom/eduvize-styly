@@ -17,3 +17,8 @@
 .edu-profile-panel [hidden]{display:none!important}
 #edu-profile-save{scroll-margin-top:24px}
 #edu-profile-save .edu-admin__hint{font-size:16px;line-height:1.5}
+
+.edu-profile-feedback{padding:16px;border:1px solid var(--edu-admin-input-border);border-radius:var(--edu-admin-control-radius);background:var(--edu-admin-bg);color:var(--edu-admin-ink);line-height:1.5}
+.edu-profile-feedback[data-state=success]{font-weight:600}
+.edu-profile-app-details>summary{cursor:pointer;font-weight:700;padding:12px 0}
+.edu-profile-app-details[open]>.edu-profile-apps{margin-top:12px}
