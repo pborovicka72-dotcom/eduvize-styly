@@ -59,7 +59,7 @@ html.ev-theme-pending body{visibility:hidden}
 @media(max-width:600px){.ev-admin .shell.edu-admin-page,.ev-admin .wrap.edu-admin-page,.edu-admin .edu-admin-page{padding:16px;gap:16px}}
 
 /* One canonical field contract for all admin labels and controls. */
-.ev-admin :is(.edu-admin__card label:not(.edu-choice):not(.edu-admin__checkbox),.edu-admin__field,.edu-output-type){display:flex;flex-direction:column;gap:7px;min-width:0;color:var(--ev-text);font-weight:700}
+.ev-admin :is(.edu-admin__card label:not(.edu-choice):not(.edu-admin__checkbox):not(:has(>input[type=checkbox])):not(:has(>input[type=radio])),.edu-admin__field,.edu-output-type){display:flex;flex-direction:column;gap:7px;min-width:0;color:var(--ev-text);font-weight:700}
 .ev-admin :is(.edu-admin__card,.edu-admin__field,.edu-output-type) :is(input:not([type=checkbox]):not([type=radio]):not([type=file]),select,textarea){box-sizing:border-box;display:block;width:100%;min-width:0;height:var(--ev-control-height);min-height:var(--ev-control-height);padding:7px 11px;border:1px solid var(--ev-border);border-radius:var(--ev-field-radius,10px);background:var(--ev-surface);color:var(--ev-text);font:inherit;font-weight:400;appearance:auto}
 .ev-admin :is(.edu-admin__card,.edu-admin__field,.edu-output-type) :is(input,select,textarea):focus-visible{outline:2px solid var(--ev-accent);outline-offset:2px}
 .ev-admin .edu-output-type{max-width:340px}
@@ -70,3 +70,9 @@ html.ev-theme-pending body{visibility:hidden}
 .ev-admin .edu-checkbox-options{display:flex;align-items:center;flex-wrap:wrap;gap:12px 22px}
 .ev-admin .edu-checkbox-options label,.ev-admin label.edu-admin__checkbox{display:inline-flex;flex-direction:row;align-items:center;gap:8px;width:auto;font-size:13px;font-weight:600}
 .ev-admin .edu-checkbox-options input[type=checkbox],.ev-admin .edu-admin__checkbox input[type=checkbox]{width:17px;height:17px;min-height:0;accent-color:var(--ev-accent)}
+
+/* Checkbox/radio labels are horizontal, including labels nested in field grids. */
+.ev-admin .edu-admin__card label:has(>input:is([type=checkbox],[type=radio])){display:flex;flex-direction:row;align-items:center;justify-content:flex-start;gap:8px;min-width:0}
+.ev-admin .edu-admin__card label>input:is([type=checkbox],[type=radio]){flex:0 0 auto;width:17px;height:17px;min-height:0;margin:0;accent-color:var(--ev-accent)}
+/* Native action buttons use the same bold typography as the button component. */
+.ev-admin .edu-admin__card button:not(.edu-search-choice):not(.edu-choice):not(.ev-app-tile){font-family:var(--edu-admin-font);font-size:13px;font-weight:700}
