@@ -19,6 +19,10 @@
   const geometry=api.resolve(root.innerWidth,root.innerHeight),mode=root.EduvizeOutputModes?.mode?.()||(root.EduvizeOutputModes?.isKiosk?.()?'kiosk':'nsp');
   let metrics=api.header(geometry,mode);
   if(mode==='kiosk'&&parentHeight){const h=parentHeight;metrics={height:h,icon:h*.64,title:h*.36,meta:h*.18,padding:h*.05,gap:h*.08};}
+  if(mode==='kiosk'&&!parentHeight&&document.documentElement.dataset.kioskApp==='news'){
+   const height=Math.min(metrics.height,Math.max(96,Math.min(176,root.innerWidth*.07)));
+   metrics={height,icon:height*.64,title:height*.34,meta:height*.16,padding:height*.1,gap:height*.18};
+  }
   const inset=(metrics.height-metrics.icon)/2;
   metrics={...metrics,gap:inset};
   const html=document.documentElement;html.style.setProperty('--edu-header-inset',inset+'px');
