@@ -1,3 +1,4 @@
+@import url('https://pborovicka72-dotcom.github.io/eduvize-styly/design-system/card-layout.css?v=1');
 html.ev-theme-pending body{visibility:hidden}
 /* Shared Eduvize administration skin. Scope: .ev-admin only.
    Does not style app output, preview iframe content or Design System editor. */
