@@ -21,6 +21,11 @@
   }
   // Pack complete content blocks using their rendered height, rather than one block per page.
   function mountFlow(host,items,options){
+    if(root.EduvizeOutputModes?.mode()==='web'){
+      flows.get(host)?.observer?.disconnect();
+      mount(host,[items],{...options,fit:false,render:(sheet,all)=>options.render(sheet,all)});
+      return;
+    }
     let flow=flows.get(host);
     if(!flow){
       flow={anchor:0,queued:false,loadedImages:new Set()};flows.set(host,flow);
