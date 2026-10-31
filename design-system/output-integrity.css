@@ -84,3 +84,35 @@ html.web-output :is(.edu-paged-panel,.edu-paged-stage,.edu-paged-content,.edu-we
 html.web-output .edu-web-flow-section:empty{display:none!important}
 html.web-output .edu-web-flow-section+.edu-web-flow-section{margin-top:24px}
 html.web-output :is(.edu-pagination,.edu-kiosk-pagination,.page-indicator,#pagination,#controls,.edu-auto-pagination){display:none!important}
+
+/* Ordinary documents measure content, never a previous iframe viewport. */
+html.web-output,html.web-output body{height:auto!important;min-height:0!important}
+html.web-output #contentFrame{min-height:0!important;margin:0!important;align-self:stretch!important}
+html.web-output [data-edu-content-surface]{--edu-content-font:18px!important;--edu-content-gap:20px!important;font-size:18px!important;overflow:visible!important;container-type:normal!important}
+html.web-output :is(.school-sheet,.school-cards,.school-card,.page-content-sheet,.page-content-row,.page-section){height:auto!important;min-height:0!important;max-height:none!important;flex:none!important;align-content:start!important;justify-content:flex-start!important}
+html.web-output .school-sheet{display:flex!important;gap:20px}
+html.web-output .school-cards{display:grid!important;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr))!important;gap:20px}
+html.web-output :is(.school-card,.page-section){padding:20px!important}
+html.web-output :is(.school-text,.school-contact,.page-section p){font-size:18px!important;line-height:1.55!important}
+html.web-output :is(.school-card h3,.page-section h2){font-size:24px!important;line-height:1.25!important}
+html.web-output .edu-content-heading :is(h2,.edu-navigation-title){font-size:28px!important;line-height:1.2!important}
+html.web-output .edu-content-heading :is(.school-motto,.edu-navigation-subtitle){font-size:18px!important}
+html.web-output .school-intro{padding:20px!important}
+html.web-output .school-photo{height:auto!important;max-height:180px;object-fit:cover}
+html.web-output .page-content-sheet{grid-auto-rows:auto!important}
+html.web-output .page-content-row{align-items:flex-start!important}
+html.web-output .page-image-box{height:160px!important;flex-basis:30%!important}
+html.web-output .edu-web-header{position:static!important;float:none!important;transform:none!important;height:auto!important;min-height:80px!important;gap:20px!important;box-sizing:border-box!important}
+html.web-output :is(.web-shell,.shell)>.edu-web-header{padding:0!important;margin:0 0 24px!important;width:100%!important}
+html.web-output .edu-web-header .edu-brand-logo{margin:0!important;position:static!important}
+html.web-output .edu-output-header{height:auto!important;min-height:96px!important;max-height:none!important;flex-wrap:wrap!important;align-content:center!important}
+html.web-output .edu-output-header .edu-header-title{font-size:28px!important}
+html.web-output .edu-output-header .edu-header-meta{font-size:16px!important}
+html.web-output .head.edu-output-header{display:grid!important;grid-template-columns:48px minmax(0,1fr)!important;gap:6px 16px!important;padding:20px!important}
+html.web-output .head.edu-output-header>.head-icon{grid-column:1;grid-row:1 / span 2;width:48px!important;height:48px!important}
+html.web-output .head.edu-output-header>.edu-header-title{grid-column:2;grid-row:1}
+html.web-output .head.edu-output-header>.topic{grid-column:2;grid-row:2;margin:0!important}
+html.web-output :is(.hourly-grid,.daily-hourly-grid,.forecast-grid,.metrics){display:grid!important;grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr))!important;gap:16px!important}
+html.web-output :is(.hour-cell,.daily-hour-cell){padding:20px!important;gap:12px!important;justify-content:flex-start!important}
+html.web-output :is(.edu-media-viewer,.edu-media-viewport,#viewer){height:auto!important;min-height:0!important;max-height:none!important;flex:none!important;overflow:visible!important}
+html.web-output .edu-media-viewport .edu-document-image{margin:0 auto!important;max-width:100%!important;height:auto!important}
