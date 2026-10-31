@@ -8,3 +8,20 @@
 .edu-output-header .edu-header-art{width:var(--edu-header-icon,9.6vmin);height:var(--edu-header-icon,9.6vmin);flex:0 0 var(--edu-header-icon,9.6vmin);margin:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
 .edu-output-header .edu-header-art>svg{width:60%;height:60%;flex:none}
 .edu-output-header .edu-header-art .condition-label{font-size:calc(var(--edu-header-height,16vmin)*.10);line-height:1.15;text-align:center}
+
+/* Application identities follow the calendar header in every output mode. */
+html[data-kiosk-app][data-output-mode] .edu-output-header .edu-app-icon{
+ display:inline-grid!important;place-items:center!important;box-sizing:border-box!important;
+ width:var(--edu-header-icon)!important;height:var(--edu-header-icon)!important;
+ min-width:var(--edu-header-icon)!important;flex:0 0 var(--edu-header-icon)!important;
+ padding:0!important;margin:0!important;border:0!important;
+ border-radius:var(--ev-icon-radius,10px)!important;
+ background:var(--ev-secondary)!important;color:var(--ev-secondary-text)!important;
+}
+html[data-kiosk-app][data-output-mode] .edu-output-header .edu-app-icon>svg{
+ display:block!important;width:60%!important;height:60%!important;max-height:60%!important;
+ margin:auto!important;transform:none!important;
+}
+html[data-kiosk-app][data-output-mode] .edu-output-header :is(.brand,.edu-app-heading,.edu-header-group){
+ display:flex;align-items:center;gap:var(--edu-header-gap)!important;min-width:0;
+}
