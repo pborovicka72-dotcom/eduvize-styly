@@ -6,12 +6,13 @@
   const geometry=api.resolve(root.innerWidth,root.innerHeight),mode=root.EduvizeOutputModes?.mode?.()||(root.EduvizeOutputModes?.isKiosk?.()?'kiosk':'nsp');
   let metrics=api.header(geometry,mode);
   if(mode==='kiosk'&&parentHeight){const h=parentHeight;metrics={height:h,icon:h*.64,title:h*.36,meta:h*.18,padding:h*.05,gap:h*.08};}
-  const html=document.documentElement;
+  const inset=(metrics.height-metrics.icon)/2;
+  const html=document.documentElement;html.style.setProperty('--edu-header-inset',inset+'px');
   for(const [name,value] of Object.entries(metrics))html.style.setProperty('--edu-header-'+name,value+'px');
   for(const [name,value] of Object.entries(api.text?.(geometry,mode)||{}))html.style.setProperty('--edu-text-'+name,value+'px');
   document.querySelectorAll('.edu-output-header').forEach(header=>{
    for(const name of ['height','min-height','max-height'])header.style.setProperty(name,metrics.height+'px','important');
-   header.style.setProperty('padding',metrics.padding+'px','important');
+   header.style.setProperty('padding',metrics.padding+'px '+inset+'px','important');
    header.style.setProperty('gap',metrics.gap+'px','important');
    header.style.setProperty('flex-shrink','0','important');
    for(const node of header.querySelectorAll('.edu-header-title'))node.style.setProperty('font-size',metrics.title+'px','important');
