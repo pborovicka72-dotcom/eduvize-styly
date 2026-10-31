@@ -6,7 +6,7 @@
   if(performance.getEntriesByType('navigation')[0]?.type==='reload'&&event?.type!=='hashchange')return;
   if(location.hash!=='#account'&&location.hash!=='#edu-account-panel')return;
   for(let parent=host.parentElement;parent;parent=parent.parentElement)if(parent.tagName==='DETAILS')parent.open=true;
-  requestAnimationFrame(()=>requestAnimationFrame(()=>host.scrollIntoView({behavior:'auto',block:'start'})));
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{const heading=document.querySelector('main > .edu-page-header');const target=heading||host;root.scrollTo({top:Math.max(0,target.getBoundingClientRect().top+root.scrollY-16),left:0,behavior:'instant'});}));
  }
  root.addEventListener('hashchange',revealAccount);
  root.addEventListener('load',revealAccount,{once:true});
