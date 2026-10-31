@@ -75,3 +75,12 @@ html.web-output #tiles{display:grid!important;grid-template-columns:repeat(auto-
 html.web-output .wrap>header{position:static!important;height:auto!important}
 #ev-preview.kiosk-preview{overflow:hidden!important}
 .edu-web-preview-controls{display:flex;gap:12px;margin:0 0 16px}
+
+/* Website menus occupy only their content height; viewport tracks belong to kiosk output. */
+html.web-output #tiles{grid-template-rows:none!important;grid-auto-rows:auto!important;align-content:start!important;min-height:0!important;height:auto!important;margin:0!important;flex:none!important}
+html.web-output #tiles>*{grid-row:auto!important;grid-column:auto!important;min-height:0!important}
+html.web-output body.menu-layout #tiles{grid-area:auto!important}
+html.web-output :is(.edu-paged-panel,.edu-paged-stage,.edu-paged-content,.edu-web-flow-section){height:auto!important;min-height:0!important;max-height:none!important;overflow:visible!important}
+html.web-output .edu-web-flow-section:empty{display:none!important}
+html.web-output .edu-web-flow-section+.edu-web-flow-section{margin-top:24px}
+html.web-output :is(.edu-pagination,.edu-kiosk-pagination,.page-indicator,#pagination,#controls,.edu-auto-pagination){display:none!important}
