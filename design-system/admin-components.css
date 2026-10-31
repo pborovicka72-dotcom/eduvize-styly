@@ -18,13 +18,13 @@
 /* Shared application tile, active state and editor icon. */
 .ev-app-tile,#tiles .ev-app-tile,body.menu-layout #tiles .ev-app-tile,body.tiles-home #tiles .ev-app-tile{background:var(--ev-primary)!important;color:var(--ev-primary-text)!important;border:1px solid var(--ev-border)!important;border-radius:calc(var(--ev-control-radius)*var(--kiosk-ui-scale,1))!important;box-shadow:none!important}
 .ev-app-tile.active,#tiles .ev-app-tile.active,body.menu-layout #tiles .ev-app-tile.active,body.tiles-home #tiles .ev-app-tile.active{background:var(--ev-secondary)!important;color:var(--ev-secondary-text)!important;border:2px solid var(--ev-accent)!important}
-.ev-app-tile .app-icon,#tiles .ev-app-tile .app-icon{background:var(--ev-secondary)!important;color:var(--ev-secondary-text)!important;border-radius:min(calc(var(--ev-icon-radius,10px)*var(--kiosk-ui-scale,1)),22%)!important;box-shadow:none!important}
+.ev-app-tile .app-icon,#tiles .ev-app-tile .app-icon{background:var(--ev-secondary)!important;color:var(--ev-secondary-text)!important;border-radius:calc(var(--ev-icon-radius,10px)*var(--kiosk-ui-scale,1))!important;box-shadow:none!important}
 .ev-app-tile.active .app-icon,#tiles .ev-app-tile.active .app-icon{background:var(--ev-accent)!important;color:var(--ev-primary-text)!important}
 .ev-app-tile strong{font-weight:400}
 .ev-app-tile .app-icon svg{width:60%;height:60%;stroke:currentColor;stroke-width:1.6}
 .ev-app-tile small{color:var(--ev-muted)!important}
 .ev-app-tile:focus-visible{outline:3px solid var(--ev-accent)!important}
-.app-icon.ev-editor-app-icon{display:grid;place-items:center;background:var(--ev-primary)!important;color:var(--ev-primary-text)!important;border:1px solid var(--ev-border)!important;border-radius:min(var(--ev-icon-radius,10px),22%)!important;box-shadow:none!important}
+.app-icon.ev-editor-app-icon{display:grid;place-items:center;background:var(--ev-primary)!important;color:var(--ev-primary-text)!important;border:1px solid var(--ev-border)!important;border-radius:var(--ev-icon-radius,10px)!important;box-shadow:none!important}
 .ev-editor-app-icon svg{stroke:currentColor}
 
 /* Shared layouts: align adjacent fields and actions on their control baseline. */
