@@ -1,6 +1,6 @@
 /* Shared administration header: one accessible route back to the application hub. */
 (function(){
- function mount(){if(location.pathname.replace(/\/$/,'')==='/eduvize-styly/aplikace.html')return;for(const header of document.querySelectorAll('main .edu-page-header')){
+ function mount(){if(location.pathname.replace(/\/$/,'')==='/eduvize-styly/aplikace.html')return;for(const header of [document.querySelector('main > .edu-page-header')].filter(Boolean)){
   if(header.querySelector('.edu-page-header__home'))continue;
   const link=document.createElement('a');link.className='edu-page-header__home';
   link.href='https://pborovicka72-dotcom.github.io/eduvize-styly/aplikace.html';
