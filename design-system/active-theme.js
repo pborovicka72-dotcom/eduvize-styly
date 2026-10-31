@@ -62,8 +62,8 @@
  function start(){
   if(!document.querySelector('.edu-admin-page')||(!window.EduvizeProfileAdapter&&!document.getElementById('configurations')))return;
   if(document.querySelector('script[data-edu-profiles]'))return;
-  const css=document.createElement('link');css.rel='stylesheet';css.href=new URL('configuration-profiles.css?v=simple-profiles-20261031-1',base);document.head.append(css);
-  const load=()=>{const script=document.createElement('script');script.src=new URL('configuration-profiles.js?v=unified-actions-20261101-2',base);script.dataset.eduProfiles='';document.head.append(script);};
+  const css=document.createElement('link');css.rel='stylesheet';css.href=new URL('configuration-profiles.css?v=save-style-20261101-2',base);document.head.append(css);
+  const load=()=>{const script=document.createElement('script');script.src=new URL('configuration-profiles.js?v=save-style-20261101-2',base);script.dataset.eduProfiles='';document.head.append(script);};
   if(window.EduvizeAdminAuth)load();else{const auth=document.createElement('script');auth.src=new URL('admin-auth.js?v=profile-cache-20261101-1',base);auth.onload=load;document.head.append(auth);}
  }
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});else start();
