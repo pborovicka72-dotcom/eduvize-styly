@@ -1,0 +1,55 @@
+/* Shared kiosk output. Theme colors continue to come from the active design. */
+html.kiosk-output,html.kiosk-output body{width:100%;height:100%;min-height:0!important;overflow:hidden!important;overscroll-behavior:none}
+html.kiosk-output body{background:var(--ev-bg,var(--edu-admin-bg));color:var(--ev-text,var(--edu-admin-ink));}
+html.kiosk-output :is(button,a){touch-action:manipulation}
+html.kiosk-output button:focus-visible,html.kiosk-output a:focus-visible{outline:3px solid var(--ev-accent);outline-offset:2px}
+html.kiosk-output .edu-kiosk-stage{flex:1 1 0%!important;min-height:0!important;overflow:hidden!important;scroll-behavior:auto;scrollbar-width:none;overscroll-behavior:contain}
+html.kiosk-output .edu-kiosk-stage::-webkit-scrollbar{display:none}
+.edu-kiosk-pagination{display:flex;flex:none;align-items:center;justify-content:center;gap:clamp(8px,2vw,24px);padding:6px 0;min-height:52px;background:var(--ev-surface,var(--edu-admin-surface));color:var(--ev-text,var(--edu-admin-ink))}
+.edu-kiosk-pagination[hidden]{display:none!important}
+.edu-kiosk-pagination button{min-height:44px;padding:8px 18px;cursor:pointer;font:inherit;font-size:clamp(14px,1.8vmin,22px);border-radius:var(--ev-control-radius,10px);border:1px solid var(--ev-border);background:var(--ev-secondary);color:var(--ev-secondary-text)}
+.edu-kiosk-pagination button:disabled{opacity:.45;cursor:default}
+html.kiosk-output :is(.shell,.web-shell){box-sizing:border-box;width:100%!important;max-width:none!important;margin:0!important;padding:clamp(6px,1vmin,18px)!important;min-height:0!important;height:100dvh!important;overflow:hidden!important}
+html[data-kiosk-app="weather"].kiosk-output .shell{display:flex!important;flex-direction:column!important;gap:8px!important}
+html[data-kiosk-app="weather"].kiosk-output .hero{flex:none!important;max-height:36dvh!important;min-height:0!important;padding:clamp(6px,1vmin,16px)!important}
+html[data-kiosk-app="weather"].kiosk-output .temperature{font-size:clamp(32px,8vmin,80px)!important;margin:0!important}
+html[data-kiosk-app="weather"].kiosk-output .hero-icon{max-height:16dvh!important}
+html[data-kiosk-app="weather"].kiosk-output .weather-pages{display:block!important}
+html[data-kiosk-app="weather"].kiosk-output .weather-page:not([hidden]){display:block!important;height:auto!important;overflow:visible!important}
+html[data-kiosk-app="weather"].kiosk-output .weather-page[hidden]{display:none!important}
+html[data-kiosk-app="weather"].kiosk-output :is(.daily-forecast-panel,.hourly-panel,.forecast-text){overflow:visible!important;max-height:none!important;height:auto!important}
+html[data-kiosk-app="weather"].kiosk-output #page-indicator{display:none!important}
+html[data-kiosk-app="news"].kiosk-output .shell{display:flex!important;flex-direction:column!important}
+html[data-kiosk-app="news"].kiosk-output #news{display:grid!important;grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr))!important;grid-auto-rows:max-content!important;gap:16px!important;align-content:start!important}
+html[data-kiosk-app="news"].kiosk-output .card{height:auto!important;min-height:0!important;overflow:visible!important;break-inside:avoid}
+html[data-kiosk-app="news"].kiosk-output .media{height:clamp(90px,18vh,200px)!important}
+html[data-kiosk-app="news"].kiosk-output .content{flex:none!important;height:auto!important;overflow:visible!important}
+html[data-kiosk-app="news"].kiosk-output :is(.title,.summary){display:block!important;overflow:visible!important;-webkit-line-clamp:unset!important;max-height:none!important;white-space:normal!important}
+html[data-kiosk-app="news"].kiosk-output .title{font-size:clamp(19px,2.6vmin,30px)!important;line-height:1.2!important}
+html[data-kiosk-app="news"].kiosk-output .summary{font-size:clamp(16px,2vmin,23px)!important;line-height:1.45!important}
+html[data-kiosk-app="wisdom"].kiosk-output .web-shell,html[data-kiosk-app="wisdom"].kiosk-output #display,html[data-kiosk-app="wisdom"].kiosk-output #display>.panel{display:flex!important;flex-direction:column!important;min-height:0!important;height:100%!important}
+html[data-kiosk-app="wisdom"].kiosk-output .web-header{display:none!important}
+html[data-kiosk-app="wisdom"].kiosk-output #display>.panel{padding:clamp(8px,2vmin,24px)!important;width:100%!important;max-width:none!important}
+html[data-kiosk-app="wisdom"].kiosk-output .quote{font-size:clamp(24px,4.5vmin,60px)!important;line-height:1.35!important;margin:12px 0!important;overflow:visible!important}
+html[data-kiosk-app="wisdom"].kiosk-output .content{display:block!important}
+html[data-kiosk-app="documents"].kiosk-output .shell{display:flex!important;flex-direction:column!important}
+html[data-kiosk-app="documents"].kiosk-output .shell>.card{display:flex!important;flex:1!important;flex-direction:column!important;min-height:0!important;overflow:hidden!important}
+html[data-kiosk-app="documents"].kiosk-output #browse.hidden{display:none!important}
+html[data-kiosk-app="documents"].kiosk-output #browse.hidden+.edu-kiosk-pagination{display:none!important}
+html[data-kiosk-app="documents"].kiosk-output #browse .grid{grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr))!important;align-content:start;grid-auto-rows:auto}
+html[data-kiosk-app="documents"].kiosk-output .tile{min-height:160px!important}
+html[data-kiosk-app="holidays"].kiosk-output body{display:flex!important;flex-direction:column!important}
+html[data-kiosk-app="holidays"].kiosk-output .shell{flex:1 1 0%!important;height:auto!important;display:block!important}
+html[data-kiosk-app="transport"].kiosk-output .site-header{display:none!important}
+html[data-kiosk-app="transport"].kiosk-output .page{height:100dvh!important;min-height:0!important;padding:8px!important}
+html[data-kiosk-app="transport"].kiosk-output .panel{height:100%!important;min-height:0!important;display:flex!important;flex-direction:column!important}
+html[data-kiosk-app="transport"].kiosk-output .body{flex:1!important;min-height:0!important}
+html[data-kiosk-app="transport"].kiosk-output .footer{flex:none!important;flex-wrap:wrap}
+
+html[data-kiosk-app="news"].kiosk-output .card.side-media{display:flex!important;flex-direction:column!important;grid-template-columns:none!important}
+html[data-kiosk-app="holidays"].kiosk-output .upcoming-grid{grid-template-columns:repeat(auto-fit,minmax(min(100%,200px),1fr))!important;grid-auto-rows:auto!important;gap:12px!important}
+html[data-kiosk-app="holidays"].kiosk-output .upcoming-day{container-type:normal!important;min-height:120px!important;height:auto!important;overflow:visible!important}
+html[data-kiosk-app="holidays"].kiosk-output .upcoming-name{font-size:clamp(22px,3vmin,36px)!important}
+html[data-kiosk-app="holidays"].kiosk-output .upcoming-date,html[data-kiosk-app="holidays"].kiosk-output .upcoming-event{font-size:clamp(16px,2vmin,22px)!important}
+html[data-kiosk-app="holidays"].kiosk-output .calendar-metrics{max-height:none!important;grid-auto-rows:auto!important}
+html[data-kiosk-app="holidays"].kiosk-output .calendar-card{min-height:120px!important;overflow:visible!important}
