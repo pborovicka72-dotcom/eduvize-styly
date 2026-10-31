@@ -50,8 +50,7 @@ html.ev-theme-pending body{visibility:hidden}
 .edu-page-header__title{margin:3px 0 0;font-size:clamp(25px,2.4vw,40px);font-weight:700;line-height:1.12;letter-spacing:normal;color:inherit}
 .edu-page-header__description{grid-column:1/-1;margin:0;max-width:100%;font-size:14px;line-height:1.55;font-weight:400;color:var(--ev-muted,var(--edu-admin-muted,#638098));overflow-wrap:break-word}
 
-.edu-page-header__home{grid-column:2;grid-row:1;display:inline-flex;align-items:center;justify-content:center;gap:10px;align-self:start;min-height:52px;padding:10px 14px;border-radius:var(--ev-icon-radius,10px);background:var(--ev-primary,var(--edu-admin-primary));text-decoration:none;flex-shrink:0}
-.edu-page-header__home{color:var(--ev-primary-text,var(--edu-admin-primary-text));font-size:14px;font-weight:600;line-height:1.3}
+.edu-page-header__home{grid-column:2;grid-row:1;display:inline-flex;align-items:center;justify-content:center;gap:10px;align-self:start;min-height:52px;padding:10px 14px;border-radius:var(--ev-icon-radius,10px);background:var(--ev-primary,var(--edu-admin-primary));text-decoration:none;flex-shrink:0;color:var(--ev-primary-text,var(--edu-admin-primary-text));font-size:14px;font-weight:600;line-height:1.3}
 .edu-page-header__home img{display:block;width:32px;height:32px;object-fit:contain;flex:none}
 .edu-page-header__home span{max-width:90px}
 @media(max-width:480px){.edu-page-header__home{flex-direction:column;gap:5px;padding:8px;max-width:92px;font-size:12px;text-align:center}.edu-page-header__home img{width:26px;height:26px}}
