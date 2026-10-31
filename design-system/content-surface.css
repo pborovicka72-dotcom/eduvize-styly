@@ -25,3 +25,15 @@ body.subpage .edu-content-navigation .edu-navigation-button{font-size:clamp(14px
 
 /* One body-text size throughout school information, independent of semantic markup. */
 [data-edu-content-surface] :is(.school-text,.school-contact,.school-detail-label,.school-motto,.school-card .edu-navigation-button){font-size:var(--edu-content-font,22px)!important;line-height:1.4!important}
+
+/* School facts share one text contract, including labels and contact values. */
+html[data-kiosk-app="kiosk"][data-output-mode] #schoolContent :is(.school-text,.school-contact,.school-detail-label){
+ font-family:inherit!important;font-size:var(--edu-content-font,18px)!important;font-weight:400!important;line-height:1.4!important;
+}
+html[data-kiosk-app="kiosk"][data-output-mode] :is(.school-card,.page-section){justify-content:flex-start!important}
+html[data-kiosk-app="kiosk"][data-output-mode] #pageContent .page-content-row{align-items:stretch!important}
+html[data-kiosk-app="kiosk"][data-output-mode] #pageContent .page-image-box{
+ align-self:stretch!important;height:auto!important;min-height:7em;max-height:none!important;
+ background:var(--ev-secondary);flex:0 0 30%!important;
+}
+html[data-kiosk-app="kiosk"][data-output-mode] #pageContent .page-section-image{object-fit:var(--page-image-fit,cover)!important}
