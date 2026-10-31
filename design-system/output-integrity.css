@@ -52,3 +52,6 @@ html.nsp-output .edu-kiosk-stage{flex:1 1 0%;min-height:0;overflow:hidden;scroll
 
 /* All output surfaces use the theme card radius, without kiosk-only scaling. */
 html[data-kiosk-app][data-output-mode] :is(.metric,.calendar-card,.forecast-card,.hourly-panel,.daily-forecast-panel,.hour-cell,.daily-hour-cell,.upcoming-day,.school-card,.page-section,.school-intro){border-radius:var(--ev-card-radius)!important}
+
+/* Ordinary pages always keep the complete document in the normal scrolling flow. */
+html.web-output .edu-kiosk-stage{height:auto!important;max-height:none!important;overflow:visible!important;flex:none!important}
