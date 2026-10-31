@@ -3,6 +3,7 @@ import os,json,uuid,secrets,unicodedata
 from pathlib import Path
 import psycopg
 from fastapi import FastAPI,Header,HTTPException,Request
+from admin_sessions import SessionStore, session_router, require_session
 from fastapi.responses import FileResponse
 from fastapi.middleware.cors import CORSMiddleware
 ROOT=Path(__file__).resolve().parent
@@ -11,10 +12,12 @@ ADMIN=os.getenv("DESIGN_SYSTEM_ADMIN_TOKEN","")
 app=FastAPI(title="Eduvize Design System")
 app.add_middleware(CORSMiddleware,allow_origins=["https://pborovicka72-dotcom.github.io","https://eduvize-weather.onrender.com","https://eduvize-dokumenty-api.onrender.com","https://eduvize-aktuality.onrender.com"],allow_methods=["GET","POST","PUT","DELETE"],allow_headers=["Authorization","Content-Type"])
 def check_admin(auth):
+    if auth and auth.startswith("Bearer edu_"):
+        require_session(admin_sessions,auth,"styles");return
     if not ADMIN:raise HTTPException(503,"DESIGN_SYSTEM_ADMIN_TOKEN is not configured")
     if not auth or not secrets.compare_digest(auth,"Bearer "+ADMIN):raise HTTPException(401,"Neplatný administrační klíč")
 @app.get("/health")
-def health():return {"status":"ok","database_configured":bool(DATABASE_URL),"admin_configured":bool(ADMIN)}
+def health():return {"status":"ok","central_admin_sessions":True,"database_configured":bool(DATABASE_URL),"admin_configured":bool(ADMIN)}
 @app.get("/")
 @app.get("/design-system")
 @app.get("/design-system/")
@@ -124,3 +127,7 @@ def delete_admin_theme(theme_id:str,authorization:str|None=Header(default=None))
     if not row:raise HTTPException(404,"Styl nenalezen")
     return {"deleted":theme_id}
 
+
+# Central sessions reuse the existing database; no new service secret is needed.
+admin_sessions=SessionStore(theme_db)
+app.include_router(session_router(admin_sessions,ADMIN))
