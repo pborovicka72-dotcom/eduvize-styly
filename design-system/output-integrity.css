@@ -61,3 +61,8 @@ html.web-output :is(.wrap,#pageContent,#schoolContent,.edu-paged-panel,.edu-page
 html.web-output .wrap{display:flex!important;flex-direction:column!important}
 html.web-output :is(#pageContent,#schoolContent){grid-area:auto!important;width:100%!important}
 html.web-output .edu-paged-content{position:static!important;transform:none!important;width:100%!important}
+
+/* Responsive kiosk menus must not use cqmin after leaving a size container. */
+html.web-output body:is(.menu-layout,.tiles-home) #tiles .tile{--tile-icon-size:64px;container-type:normal!important;display:flex!important;flex-direction:row!important;align-items:center!important;justify-content:flex-start!important;gap:20px!important;padding:20px!important;box-sizing:border-box}
+html.web-output body:is(.menu-layout,.tiles-home) #tiles .tile .app-icon{width:64px!important;height:64px!important;flex:0 0 64px!important;margin:0!important;box-sizing:border-box}
+html.web-output body:is(.menu-layout,.tiles-home) #tiles .tile strong{width:auto!important;max-width:none!important;text-align:left!important;font-size:var(--edu-text-title,24px)!important}
