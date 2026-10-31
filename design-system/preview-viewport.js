@@ -10,7 +10,7 @@
   for(const [name,value] of Object.entries({position:'absolute',left:'0',top:'0','max-width':'none','max-height':'none','min-width':'0','min-height':'0','transform-origin':'top left',border:'0',display:'block',margin:'0'}))frame.style.setProperty(name,value,'important');
   let width=3840,height=2160;
   function fit(){const scale=Math.min(host.clientWidth/width,host.clientHeight/height);if(scale>0)frame.style.setProperty('transform','scale('+scale+')','important');}
-  function setSize(w,h){if(!(Number.isFinite(w)&&Number.isFinite(h)&&w>0&&h>0))throw new Error('Neplatné rozlišení náhledu');width=w;height=h;frame.style.setProperty('width',w+'px','important');frame.style.setProperty('height',h+'px','important');if(options.aspect!==false)host.style.aspectRatio=w+' / '+h;host.dataset.previewResolution=w+' × '+h;frame.setAttribute('data-preview-width',String(w));frame.setAttribute('data-preview-height',String(h));fit();}
+  function setSize(w,h){if(!(Number.isFinite(w)&&Number.isFinite(h)&&w>0&&h>0))throw new Error('Neplatné rozlišení náhledu');width=w;height=h;frame.style.setProperty('width',w+'px','important');frame.style.setProperty('height',h+'px','important');if(options.aspect!==false)host.style.setProperty('aspect-ratio',w+' / '+h,'important');host.dataset.previewResolution=w+' × '+h;frame.setAttribute('data-preview-width',String(w));frame.setAttribute('data-preview-height',String(h));fit();}
   const observer=new ResizeObserver(fit);observer.observe(host);frame.addEventListener('load',fit);
   const api={setSize,fit,getSize:()=>({width,height}),destroy(){observer.disconnect();mounted.delete(frame);}};mounted.set(frame,api);setSize(options.width||3840,options.height||2160);return api;
  }
