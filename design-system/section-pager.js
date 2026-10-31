@@ -25,6 +25,7 @@
   }
   function schedule(){if(!queued){queued=true;requestAnimationFrame(()=>{queued=false;show();});}}
   previous.onclick=()=>{index--;show();};next.onclick=()=>{index++;show();};
+  host.tabIndex=0;host.addEventListener('keydown',event=>{if(event.target.matches('input,textarea,select,button,a,[contenteditable]'))return;if(event.key==='PageDown'||event.key==='PageUp'){event.preventDefault();index+=event.key==='PageDown'?1:-1;show();}});
   new ResizeObserver(schedule).observe(host);new MutationObserver(schedule).observe(host,{subtree:true,childList:true,characterData:true});
   host.addEventListener('load',schedule,true);root.addEventListener('resize',schedule);root.addEventListener('load',schedule);document.fonts?.ready.then(schedule);
   if(automatic)setInterval(()=>{if(!document.hidden&&pages.length>1){index=(index+1)%pages.length;show();}},Math.max(3,Number(seconds)||8)*1000);
