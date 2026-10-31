@@ -3,7 +3,7 @@
 /* Shared roles, applied after app components: identical viewport = identical typography. */
 html[data-kiosk-app][data-output-mode]{font-family:var(--edu-admin-font,system-ui);font-size:var(--edu-text-body,18px);color:var(--ev-text);background:var(--ev-bg)}
 html[data-kiosk-app][data-output-mode] body{font-family:inherit;color:var(--ev-text);background:var(--ev-bg)}
-html[data-kiosk-app][data-output-mode] .edu-output-header{box-sizing:border-box!important;display:flex!important;align-items:center!important;overflow:hidden!important;min-width:0;background:var(--ev-primary)!important;color:var(--ev-primary-text)!important;border:0!important;border-radius:var(--ev-control-radius)!important}
+html[data-kiosk-app][data-output-mode] .edu-output-header{box-sizing:border-box!important;display:flex!important;align-items:center!important;overflow:hidden!important;min-width:0;background:var(--ev-primary)!important;color:var(--ev-primary-text)!important;border:0!important;border-radius:var(--ev-card-radius)!important}
 html[data-kiosk-app][data-output-mode] .edu-output-header .edu-header-title{font-size:var(--edu-header-title)!important;line-height:1.12!important;margin:0!important;font-weight:650!important;overflow-wrap:normal}
 html[data-kiosk-app][data-output-mode] .edu-output-header .edu-header-meta{font-size:var(--edu-header-meta)!important;line-height:1.2!important;margin:0!important}
 html[data-kiosk-app][data-output-mode] .edu-output-header :is(.edu-app-icon,.edu-header-art){width:var(--edu-header-icon)!important;height:var(--edu-header-icon)!important;min-width:var(--edu-header-icon)!important;flex:0 0 var(--edu-header-icon)!important;padding:0!important;margin:0!important}
@@ -49,3 +49,6 @@ body.edu-segment-wrapper>:not(#edu-segment-host){display:none!important}
 html.nsp-output .edu-kiosk-stage{flex:1 1 0%;min-height:0;overflow:hidden;scrollbar-width:none}
 .edu-auto-pagination{min-height:24px;padding:2px 0;background:transparent;font-size:var(--edu-text-caption)}
 .edu-auto-pagination button{display:none}
+
+/* All output surfaces use the theme card radius, without kiosk-only scaling. */
+html[data-kiosk-app][data-output-mode] :is(.metric,.calendar-card,.forecast-card,.hourly-panel,.daily-forecast-panel,.hour-cell,.daily-hour-cell,.upcoming-day,.school-card,.page-section,.school-intro){border-radius:var(--ev-card-radius)!important}
