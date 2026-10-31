@@ -11,3 +11,6 @@ html body :is(.app-grid,.system-grid,.preview-gallery-grid,.upcoming-grid,.forec
 html body :is(.app-grid,.system-grid,.preview-gallery-grid,.upcoming-grid,.forecast-grid,.hourly-grid,.daily-hourly-grid)>:is(.card,.edu-admin__card,.upcoming-day,.forecast-card,.hour-cell,.daily-hour-cell){
  align-self:stretch;box-sizing:border-box;min-width:0;
 }
+
+/* A measured minimum prevents shorter cards in later rows. */
+html body :is(.app-grid,.system-grid,.preview-gallery-grid,.upcoming-grid,.forecast-grid,.hourly-grid,.daily-hourly-grid)>:is(.card,.edu-admin__card,.upcoming-day,.forecast-card,.hour-cell,.daily-hour-cell){min-height:var(--edu-card-equal-height,0px)!important}
