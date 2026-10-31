@@ -1,3 +1,11 @@
+/* A page refresh starts at the top; explicit section links still work on navigation. */
+(function(root){
+ if(root.EduvizePageStart)return;root.EduvizePageStart=true;
+ if('scrollRestoration' in history)history.scrollRestoration='manual';
+ const reload=performance.getEntriesByType('navigation')[0]?.type==='reload';
+ function top(){if(reload||!location.hash)requestAnimationFrame(()=>root.scrollTo({top:0,left:0,behavior:'instant'}));}
+ root.addEventListener('pageshow',top);root.addEventListener('load',top,{once:true});top();
+})(window);
 /* Bootstrap shared controls for all consumers of the design system. */
 (function(){
  if(document.querySelector('script[data-edu-form-fields]'))return;
