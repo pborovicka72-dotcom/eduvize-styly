@@ -2,8 +2,8 @@
 (function(){
  if(document.querySelector('script[data-edu-form-fields]'))return;
  const base=new URL('.',document.currentScript.src);
- const cardsCss=document.createElement('link');cardsCss.rel='stylesheet';cardsCss.href=new URL('card-layout.css?v=5',base);document.head.append(cardsCss);
- const cardsScript=document.createElement('script');cardsScript.src=new URL('card-layout.js?v=4',base);document.head.append(cardsScript);
+ const cardsCss=document.createElement('link');cardsCss.rel='stylesheet';cardsCss.href=new URL('card-layout.css?v=catalog-natural-20261031',base);document.head.append(cardsCss);
+ const cardsScript=document.createElement('script');cardsScript.src=new URL('card-layout.js?v=catalog-natural-20261031',base);document.head.append(cardsScript);
  const css=document.createElement('link');css.rel='stylesheet';css.href=new URL('form-fields.css?v=3',base);document.head.append(css);
  const script=document.createElement('script');script.src=new URL('form-fields.js?v=2',base);script.dataset.eduFormFields='';document.head.append(script);
  const typographyCss=document.createElement('link');typographyCss.rel='stylesheet';typographyCss.href=new URL('typography.css?v=20261031-whole-words-1',base);document.head.append(typographyCss);
