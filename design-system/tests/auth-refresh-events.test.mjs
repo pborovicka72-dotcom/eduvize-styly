@@ -1,0 +1,12 @@
+import fs from 'node:fs';
+import vm from 'node:vm';
+import assert from 'node:assert/strict';
+const memory=()=>{const m=new Map();return {getItem:k=>m.get(k)||null,setItem:(k,v)=>m.set(k,v),removeItem:k=>m.delete(k)};};
+const events=[],expiresAt=Date.now()/1000+3600;let profileId='';
+const response=data=>({ok:true,status:200,json:async()=>data});
+const scope={window:{addEventListener(){},dispatchEvent:e=>events.push(e.type)},document:{body:null,readyState:'complete'},location:{origin:'https://pborovicka72-dotcom.github.io',pathname:'/eduvize-styly/ucet.html',href:'https://pborovicka72-dotcom.github.io/eduvize-styly/ucet.html'},history:{replaceState(){}},localStorage:memory(),sessionStorage:memory(),URL,URLSearchParams,AbortController,CustomEvent:class{constructor(type){this.type=type}},setTimeout:()=>1,clearTimeout(){},fetch:async(url,options={})=>{if(url.endsWith('/profile')){profileId=JSON.parse(options.body).profileId;return response({profileId});}return response({token:'edu_test',scopes:['documents'],expiresAt,profileId});}};
+vm.runInNewContext(fs.readFileSync(new URL('../admin-auth.js',import.meta.url),'utf8'),scope);const auth=scope.window.EduvizeAdminAuth;await auth.ready;await auth.login('test','test');const initial=events.length;
+await auth.refresh();await auth.refresh();await auth.refresh();assert.equal(events.length,initial,'unchanged background checks must not reload profile consumers');
+await auth.selectProfile('a'.repeat(32));assert.equal(events.length,initial+1,'changing the active profile must notify consumers');await auth.refresh();assert.equal(events.length,initial+1);
+await auth.logout();assert.equal(events.length,initial+2,'logout must notify consumers');
+console.log('Unchanged session checks are quiet; profile changes and logout still notify listeners.');
