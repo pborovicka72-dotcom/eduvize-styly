@@ -30,10 +30,11 @@ html.nsp-output .weather-page{display:block;height:auto!important;overflow:visib
 html.web-output[data-kiosk-app="weather"] .hero{margin-bottom:24px}
 
 /* Section paging never exposes fragments of adjacent sections. */
+#weather-pages{font-size:var(--edu-text-body)}
 #weather-pages[data-section-pager]{position:relative;display:block;overflow:hidden;min-height:0}
 #weather-pages[data-section-pager]>.weather-page{position:absolute;top:0;left:0;display:none!important;margin:0;box-sizing:border-box}
 #weather-pages[data-section-pager]>.weather-page.is-section-current{display:block!important}
-html[data-kiosk-app="weather"] .edu-output-header~#weather-pages .hour-cell{background:var(--ev-secondary);color:var(--ev-secondary-text);border:1px solid var(--ev-border)}
+html[data-kiosk-app="weather"] .edu-output-header~#weather-pages .hour-cell{background:var(--ev-surface);color:var(--ev-text);border:1px solid var(--ev-border)}
 html[data-kiosk-app="weather"] :is(.hourly-panel,.daily-forecast-panel){background:transparent;border:0;padding:0}
 html[data-kiosk-app="weather"] .hourly-grid{gap:var(--weather-gap,16px)}
 
