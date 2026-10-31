@@ -2,5 +2,5 @@
 .edu-typography-unit,time{white-space:nowrap;overflow-wrap:normal;word-break:normal}
 
 /* Text wraps at word boundaries, never in the middle of a word or date. */
-html body :where(*):not(input):not(textarea):not(pre):not(code){overflow-wrap:normal!important;word-break:normal!important;hyphens:none!important}
+html body :is(*,#edu-typography-contract):not(input):not(textarea):not(pre):not(code){overflow-wrap:normal!important;word-break:normal!important;hyphens:none!important}
 .edu-typography-unit,time{white-space:nowrap!important;overflow-wrap:normal!important;word-break:normal!important}
