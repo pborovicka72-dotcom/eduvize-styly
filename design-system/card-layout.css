@@ -14,3 +14,6 @@ html body :is(.app-grid,.system-grid,.preview-gallery-grid,.upcoming-grid,.forec
 
 /* A measured minimum prevents shorter cards in later rows. */
 html body :is(.app-grid,.system-grid,.preview-gallery-grid,.upcoming-grid,.forecast-grid,.hourly-grid,.daily-hourly-grid,#edu-card-overview)>:is(.card,.edu-admin__card,.upcoming-day,.forecast-card,.hour-cell,.daily-hour-cell,#edu-card-item){min-height:var(--edu-card-equal-height,0px)!important}
+
+/* Content starts at the top in every card; card height does not center short text. */
+html body :is(.edu-admin__card,.calendar-card,.upcoming-day,.forecast-card,.hour-cell,.daily-hour-cell,#edu-card-item){justify-content:flex-start!important;align-content:start!important}
