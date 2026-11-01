@@ -1,0 +1,79 @@
+/* Station composition uses shared Eduvize tokens and the geometry policy in weather-layout.js. */
+html.weather-station{--station-ink:var(--ev-primary,#142d50);--station-accent:var(--ev-accent,#f8d344);--station-track:var(--ev-border,#dce6f0)}
+html.weather-station body main.shell{display:flex!important;flex-direction:column!important;max-width:none!important;width:100%!important;min-height:100dvh!important;height:auto!important;overflow:visible!important;gap:clamp(8px,.6vmin,20px)!important;padding:clamp(8px,.8vmin,24px)!important;box-sizing:border-box}
+html.weather-station .shell>:is(.hero,.weather-pages,.page-indicator),html.weather-station .edu-kiosk-pagination{display:none!important}
+html.weather-station .shell>.footer{order:10}
+html.weather-station .station-dashboard{--station-body:24px;--station-gap:clamp(10px,.8vmin,24px);position:relative;container-type:size;display:grid!important;grid-template-rows:minmax(0,1.7fr) minmax(0,1.25fr) minmax(0,.9fr) auto;gap:var(--station-gap);width:100%;flex:none;min-height:0;color:var(--ev-text,#142d50);font-family:inherit;font-size:var(--station-body);line-height:1.35}
+.station-dashboard *{box-sizing:border-box;min-width:0}
+.weather-station .station-dashboard [hidden]{display:none!important}
+.station-top{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:var(--station-gap);min-height:0}
+.station-hero,.station-card{border-radius:var(--ev-card-radius,20px);border:1px solid var(--station-track);padding:clamp(10px,1cqw,32px);min-height:0;overflow:hidden}
+.station-hero{display:grid;grid-template-rows:minmax(0,1fr) auto auto auto auto;gap:.12em;background:var(--station-ink);color:var(--ev-primary-text,#fff)}
+.station-current{display:flex;justify-content:center;align-items:center;gap:4%;min-height:0}
+.station-symbol{display:flex;align-items:center;justify-content:center;width:40%;height:100%;flex:none}
+.station-symbol svg{display:block;width:100%;height:100%;max-height:100%;color:var(--station-accent)}
+.station-temperature{font-size:clamp(42px,7cqw,190px);font-weight:700;line-height:1.05;white-space:nowrap;letter-spacing:-.045em}
+.station-condition{font-size:1.25em;font-weight:600;line-height:1.15}
+.station-feels{font-size:.86em}
+.station-place{font-size:.86em;font-weight:400;margin:0;opacity:.85}
+.station-time{font-size:.68em;opacity:.85}
+.station-instruments{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:repeat(2,minmax(0,1fr));gap:var(--station-gap);min-height:0}
+.station-card{background:var(--ev-surface,#fff)}
+html.weather-station .station-card h2{font-size:1.05em;font-weight:650;line-height:1.2;margin:0 0 .2em;color:inherit}
+.station-instruments .station-card{position:relative;display:flex;flex-direction:column;justify-content:center;padding-right:38%}
+.station-value{font-size:1.85em;line-height:1.1;font-weight:700;letter-spacing:-.03em;white-space:nowrap}
+.station-value .station-unit{font-size:.52em;letter-spacing:0;font-weight:500;white-space:nowrap}
+.station-note{font-size:.63em;line-height:1.3;margin-top:.35em}
+.station-gauge{position:absolute;width:33%;height:80%;right:3%;top:50%;transform:translateY(-50%);color:var(--station-ink)}
+.station-gauge svg{display:block;width:100%;height:100%}
+.station-gauge svg:not([viewBox="0 0 120 100"]):not([viewBox="0 0 120 120"]){color:var(--station-accent)}
+.station-hourly,.station-daily{display:flex;flex-direction:column;gap:.3em;padding-block:.45em}
+.station-forecast-heading{display:flex;align-items:center;justify-content:space-between;gap:1em;flex:none}
+.station-forecast-heading h2{flex:none}
+.station-extras{display:flex;justify-content:space-between;gap:1em}
+.station-extra{display:flex;flex-direction:column;font-size:.57em;line-height:1.2;gap:.12em}
+.station-extra strong{font-size:1.4em}
+.station-chart{display:flex;flex-direction:column;flex:1;min-height:0;gap:.3em}
+.station-chart>svg{display:block;width:100%;flex:1;min-height:24px;overflow:visible}
+.station-hours{display:grid;grid-template-columns:repeat(var(--station-hours,6),minmax(0,1fr));gap:.3em;text-align:center;flex:none}
+.station-hours>div{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:.12em .2em}
+.station-hours .hour-icon{width:1.6em;height:1.6em}
+.station-hours .hour-icon svg{display:block;width:100%;height:100%}
+.station-hours strong{font-size:.9em}
+.station-hours .station-hour-condition{width:100%;font-size:.6em;line-height:1.15}
+.station-hours .station-hour-time{width:100%;font-size:.55em;line-height:1.2;padding-bottom:.2em}
+.station-days{display:grid;flex:1;min-height:0;gap:var(--station-gap);grid-auto-rows:minmax(0,1fr)}
+.station-day{display:grid;grid-template-columns:minmax(0,1fr) auto;grid-template-rows:repeat(3,auto);align-content:center;gap:.2em .4em;border:1px solid var(--station-track);border-radius:var(--ev-card-radius,20px);padding:.5em;min-height:0}
+.station-day .hour-icon{grid-column:2;grid-row:1/4;align-self:center;width:1.8em;height:1.8em}
+.station-day .hour-icon svg{display:block;width:100%;height:100%}
+/* Cloned forecast cells keep station typography instead of the standard output's cell scale. */
+html.weather-station:is(.kiosk-output,.nsp-output) body main.shell .station-dashboard .station-day :is(.hour-time,.hour-time *){font-size:calc(var(--station-body)*.7)!important;line-height:1.15!important;font-weight:400!important}
+html.weather-station:is(.kiosk-output,.nsp-output) body main.shell .station-dashboard .station-day :is(.hour-temp,.hour-temp *){font-size:calc(var(--station-body)*1.12)!important;line-height:1.15!important;font-weight:650!important}
+html.weather-station:is(.kiosk-output,.nsp-output) body main.shell .station-dashboard .station-day :is(.daily-night-temp,.daily-night-temp *){font-size:calc(var(--station-body)*.62)!important;line-height:1.2!important;font-weight:400!important}
+.station-day .hour-rain{display:none}
+.station-text{padding:.25em .6em}
+.station-text summary{font-size:.85em;font-weight:600;cursor:pointer;min-height:1.8em;display:flex;align-items:center;list-style:none}
+.station-text summary::-webkit-details-marker{display:none}
+.station-text summary:before{content:'+';margin-right:.6em}
+.station-text[open] summary:before{content:'−'}
+.weather-station .station-text[open]{position:absolute;inset:auto 0 0;z-index:20;height:var(--station-text-height);max-height:var(--station-text-height);display:flex;flex-direction:column;box-shadow:0 -12px 40px #142d5030;gap:0}
+.station-text[open] summary{flex:none}
+.station-text-content{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1em;width:100%;min-height:0;overflow-y:auto;overscroll-behavior:contain;padding:.5em .2em 1em;scroll-padding-bottom:1em}
+.station-text[open] .station-text-content{height:var(--station-text-content-height);max-height:var(--station-text-content-height);align-content:start}
+.station-text .forecast-card{margin:0;padding:0 .5em .5em;border:0;background:transparent;min-width:0}
+html.weather-station:is(.kiosk-output,.nsp-output) body main.shell .station-dashboard .station-text .forecast-card :is(p,p *){font-size:calc(var(--station-body)*.85)!important;line-height:1.45!important;font-weight:400!important}
+html.weather-station:is(.kiosk-output,.nsp-output) body main.shell .station-dashboard .station-text .forecast-card :is(h3,h3 *){font-size:var(--station-body)!important;line-height:1.25!important}
+.station-text .forecast-card p{margin-block:.5em}
+.station-dashboard[data-station-shape="portrait"] .station-top{grid-template-columns:1fr;grid-template-rows:minmax(0,1.1fr) minmax(0,1fr)}
+.station-dashboard[data-station-shape="portrait"] .station-hero{grid-template-columns:minmax(0,1fr) minmax(0,1fr);grid-template-rows:minmax(0,1fr) auto auto}
+.station-dashboard[data-station-shape="portrait"] .station-current{grid-column:1/-1;grid-row:1;gap:5%}
+.station-dashboard[data-station-shape="portrait"] .station-temperature{font-size:clamp(48px,12cqw,240px)}
+.station-dashboard[data-station-shape="portrait"] .station-symbol{width:32%}
+.station-dashboard[data-station-shape="portrait"] .station-condition{grid-column:1;grid-row:2;font-size:1.15em}
+.station-dashboard[data-station-shape="portrait"] .station-feels{grid-column:2;grid-row:2;text-align:right}
+.station-dashboard[data-station-shape="portrait"] .station-place{grid-column:1;grid-row:3}
+.station-dashboard[data-station-shape="portrait"] .station-time{grid-column:2;grid-row:3;text-align:right}
+.station-dashboard[data-station-shape="portrait"] .station-forecast-heading{align-items:flex-start;flex-direction:column;gap:.3em}
+.station-dashboard[data-station-shape="portrait"] .station-extras{width:100%}
+.station-dashboard[data-station-shape="portrait"] .station-days{gap:.4em}
+.station-dashboard[data-station-shape="portrait"] .station-text-content{grid-template-columns:1fr}

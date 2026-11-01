@@ -14,7 +14,13 @@
   const columnWidth=(available-(panels-1)*gutter)/panels;
   return Object.freeze({profile:geometry.kind,portrait,headerOnly:mode==='nsp'&&geometry.kind==='compact',strip:mode==='nsp'&&geometry.kind==='panoramic',panels,metrics:portrait?2:Math.max(1,Math.min(3,Math.floor(columnWidth/(text.body*(mode==='web'?9:6))))),hours:portrait?2:Math.max(1,Math.min(6,Math.floor(columnWidth/(text.body*(mode==='web'?8:5))))),daily:portrait?1:3,forecast:portrait?1:Math.max(1,Math.min(3,Math.floor(available/(text.body*9)))),gap:gutter});
  }
+ function stationPolicy(width,height,{hourly=true,daily=true,text=true}={}){
+  const portrait=width/height<1;
+  const body=Math.max(14,Math.min(54,Math.min(width,height)*(portrait?.025:.022)));
+  return {portrait,body,hours:width/body<40?3:6,
+   rows:['minmax(0,'+(portrait?'2.5':'1.7')+'fr)',hourly?'minmax(0,1.25fr)':'',daily?'minmax(0,'+(portrait?'1.35':'.9')+'fr)':'',text?'auto':''].filter(Boolean).join(' ')};
+ }
  function apply(){const mode=root.EduvizeOutputModes.mode(),p=policy(root.innerWidth,root.innerHeight,mode),html=document.documentElement;html.dataset.weatherProfile=p.profile;html.toggleAttribute('data-weather-portrait',p.portrait);html.toggleAttribute('data-weather-header-only',p.headerOnly);html.toggleAttribute('data-weather-strip',p.strip);for(const name of ['panels','metrics','hours','forecast','daily'])html.style.setProperty('--weather-'+name,p[name]);html.style.setProperty('--weather-gap',p.gap+'px');const host=document.querySelector('#weather-pages');if(host){for(const [page,columns] of [['0',p.metrics],['1',p.hours],['2',p.forecast],['3',p.daily]]){const section=host.querySelector('[data-page="'+page+'"]');if(section)section.dataset.sectionColumns=String(columns);}}if(host)for(const [name,value] of Object.entries(contentText(root.EduvizeSegmentProfile.resolve(root.innerWidth,root.innerHeight),mode)))host.style.setProperty('--edu-text-'+name,value+'px');}
- root.EduvizeWeatherLayout=Object.freeze({policy,apply});
+ root.EduvizeWeatherLayout=Object.freeze({policy,stationPolicy,apply});
  root.addEventListener('resize',apply);if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',apply,{once:true});else apply();
 })(window);
