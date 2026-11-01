@@ -103,3 +103,19 @@ body.menu-layout.frame-open.zoom-frame #contentFrame{
  height:calc(100% / var(--embedded-scale,1));
  align-self:start;justify-self:start;
 }
+
+/* Home and back share one touch target instead of using the content-header icon size. */
+html[data-kiosk-app="kiosk"][data-output-mode] #navigationActions :is(#back,#home){
+ box-sizing:border-box!important;height:var(--edu-navigation-size,44px)!important;
+ min-height:var(--edu-navigation-size,44px)!important;max-height:var(--edu-navigation-size,44px)!important;
+ font-size:max(16px,calc(var(--edu-navigation-size,44px)*.4))!important;
+ line-height:1.2!important;align-items:center;justify-content:center;
+}
+html[data-kiosk-app="kiosk"][data-output-mode] #navigationActions #home{
+ width:var(--edu-navigation-size,44px)!important;min-width:var(--edu-navigation-size,44px)!important;
+ flex:0 0 var(--edu-navigation-size,44px)!important;padding:0!important;
+}
+html[data-kiosk-app="kiosk"][data-output-mode] #navigationActions #back{padding:0 .8em!important}
+html[data-kiosk-app="kiosk"][data-output-mode] #navigationActions #back span{font:inherit!important;width:auto}
+html[data-kiosk-app="kiosk"][data-output-mode] #navigationActions{align-items:center;gap:calc(var(--edu-navigation-size,44px)*.18)}
+body.tiles-home.frame-open .wrap>header{justify-content:flex-end;min-height:var(--edu-navigation-size,44px)}
