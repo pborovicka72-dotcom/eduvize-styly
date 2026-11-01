@@ -39,6 +39,11 @@
    header.style.setProperty('flex-shrink','0','important');
    for(const node of header.querySelectorAll('.edu-header-title'))node.style.setProperty('font-size',metrics.title+'px','important');
    for(const node of header.querySelectorAll('.edu-header-meta'))node.style.setProperty('font-size',metrics.meta+'px','important');
+   for(const group of header.querySelectorAll('.hero-details')){
+    const nodes=group.querySelectorAll('.feels-like,.hero-meta');
+    for(const node of nodes)node.style.fontSize=metrics.meta+'px';
+    for(let pass=0;pass<3;pass++){const required=Math.max(group.scrollWidth,...Array.from(nodes,node=>node.scrollWidth));if(required<=group.clientWidth+1||!group.clientWidth)break;const scale=group.clientWidth/required;for(const node of nodes)node.style.fontSize=Math.max(1,parseFloat(getComputedStyle(node).fontSize)*scale-.2)+'px';}
+   }
    fitTitles(header);
    header.dataset.eduHeader='shared';
   });
