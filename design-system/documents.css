@@ -63,7 +63,7 @@ html[data-kiosk-app="documents"][data-output-mode]:not(.web-output) #browse :is(
 html[data-kiosk-app="documents"][data-output-mode]:not(.web-output) #browse :is(.tile-foot,.doc-type){
  font:400 var(--docs-label,20px)/1.3 var(--edu-admin-font,system-ui)!important;margin:0!important;
 }
-html[data-kiosk-app="documents"][data-output-mode]:not(.web-output) #browse .tile-foot{margin-top:auto!important}
+html[data-kiosk-app="documents"][data-output-mode]:not(.web-output) #browse .tile-foot{margin-top:0!important;flex:none;min-width:0}
 html[data-kiosk-app="documents"][data-output-mode]:not(.web-output) #browse .folder-icon{
  width:var(--docs-icon,56px)!important;height:var(--docs-icon,56px)!important;
 }
@@ -84,3 +84,5 @@ html[data-kiosk-app="documents"][data-output-mode] #documentNavigation .edu-navi
  flex:1 1 0%!important;max-width:none!important;padding:0!important;background:transparent!important;min-width:0!important;
 }
 html[data-kiosk-app="documents"][data-output-mode] #documentNavigation .edu-navigation__heading>div{flex:1;min-width:0}
+
+html[data-kiosk-app="documents"][data-output-mode]:not(.web-output) #browse .arrow{font-size:inherit!important;color:inherit}
