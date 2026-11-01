@@ -21,7 +21,7 @@ html[data-kiosk-app="news"][data-output-mode] #news .content{padding:var(--news-
 html[data-kiosk-app="news"][data-output-mode] #news .title{font-size:var(--news-card-title,28px)!important;line-height:1.22!important;font-weight:650;overflow-wrap:anywhere}
 html[data-kiosk-app="news"][data-output-mode] #news .summary{font-size:var(--news-card-body,22px)!important;line-height:1.45!important;overflow-wrap:anywhere}
 html[data-kiosk-app="news"][data-output-mode] #news :is(.date,.detail){font-size:var(--news-card-meta,16px)!important;line-height:1.3!important}
-html[data-kiosk-app="news"][data-output-mode] #news .media{flex:0 0 auto;width:100%;height:min(42cqh,56.25cqw);min-width:0;min-height:0}
+html[data-kiosk-app="news"][data-output-mode] #news .media{flex:0 0 auto;width:100%;height:min(48cqh,66.6667cqw);min-width:0;min-height:0}
 html[data-kiosk-app="news"][data-output-mode] #news .media.missing-photo{display:none!important}
 html[data-kiosk-app="news"][data-output-mode] #news .media img{object-fit:cover}
 html[data-kiosk-app="news"][data-output-mode] body.image-contain #news .media img{object-fit:contain}
@@ -79,3 +79,7 @@ html[data-kiosk-app="news"][data-output-mode].kiosk-output #news :is(.title,.sum
 .news-page-controls{display:flex;gap:12px;margin-left:auto;flex:none}
 .news-page-controls .edu-pagination-button{font-size:clamp(16px,var(--edu-text-caption,20px),36px);min-height:44px;padding:.4em .75em}
 .news-page-controls .edu-pagination-status{font-size:clamp(14px,var(--edu-text-caption,18px),32px)}
+
+/* Choose image placement from the actual card geometry, shared by NSP and kiosk. */
+html[data-kiosk-app="news"][data-output-mode]:not(.web-output) #news .card.side-media{flex-direction:row!important}
+html[data-kiosk-app="news"][data-output-mode]:not(.web-output) #news .card.side-media .media{flex:0 0 42%;width:42%;height:100%;min-height:0}
