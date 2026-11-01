@@ -18,3 +18,10 @@
 /* Both save destinations share one global action appearance, including legacy app controls. */
 .ev-admin button.edu-admin__button[data-edu-save]{display:inline-flex!important;align-items:center;justify-content:center;gap:8px;box-sizing:border-box;min-height:var(--edu-admin-control-height)!important;padding:10px 14px!important;border:0!important;border-radius:var(--edu-admin-control-radius)!important;background:var(--edu-admin-primary)!important;color:var(--edu-admin-primary-text)!important;font:700 13px var(--edu-admin-font)!important;box-shadow:none!important;cursor:pointer}
 .ev-admin button.edu-admin__button[data-edu-save]:disabled{opacity:.55;cursor:not-allowed}
+
+
+/* Profile selection is a compact secondary action with room on both sides. */
+.edu-profile-current{gap:12px;margin-block:24px}
+.edu-profile-current>.edu-admin__button{align-self:flex-start;flex:none;width:fit-content;max-width:100%;margin-block:4px;white-space:normal}
+.edu-profile-current>.edu-admin__actions{margin-top:0}
+.edu-profile-current>.edu-admin__actions:not(:has(:not([hidden]))){display:none}

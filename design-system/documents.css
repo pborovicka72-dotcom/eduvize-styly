@@ -97,3 +97,7 @@ html[data-output-mode="kiosk"] #detail .controls{background:var(--ev-surface);ga
 html[data-output-mode="kiosk"] #kioskPdfPosition:empty{display:none}
 html:not(.kiosk-output) #kioskPdfPosition{display:none}
 html[data-output-mode="kiosk"] #browse .thumb{background:var(--ev-bg)}
+
+
+/* Loading status follows the same reading scale as the document output. */
+html.kiosk-output.document-output #documentLoading{font-size:var(--edu-text-body,clamp(24px,3vmin,68px));line-height:1.4}

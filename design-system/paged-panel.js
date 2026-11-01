@@ -47,7 +47,10 @@
     const nav=host.querySelector?.('.edu-pagination'),style=typeof getComputedStyle==='function'?getComputedStyle(host):null;
     const reserve=(nav?.getBoundingClientRect().height||34)+(parseFloat(style?.rowGap)||10);
     const height=host.clientHeight-reserve;
-    for(let i=0;i<items.length;i++){
+    let wholeFits=false;
+    if(options.preferWhole&&measurable){measure.replaceChildren();options.render(measure,items);wholeFits=measure.scrollHeight<=host.clientHeight;}
+    if(wholeFits)groups.push({start:0,items});
+    for(let i=0;!wholeFits&&i<items.length;i++){
       const candidate=[...group,items[i]];
       let fits=true;
       if(measurable){measure.replaceChildren();options.render(measure,candidate);fits=measure.scrollHeight<=(start===0&&i===items.length-1?host.clientHeight:height);}
@@ -62,3 +65,4 @@
   }
   root.EduvizePagedPanel=Object.freeze({mount,mountFlow});
 })(window);
+
