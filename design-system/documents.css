@@ -48,8 +48,8 @@ html[data-kiosk-app="documents"][data-output-mode]:not(.web-output) #browse{
 html[data-kiosk-app="documents"][data-output-mode] #browse.hidden{display:none!important}
 html[data-kiosk-app="documents"][data-output-mode]:not(.web-output) #browse>.grid{
  display:grid!important;grid-template-columns:repeat(var(--docs-columns,2),minmax(0,1fr))!important;
- grid-template-rows:repeat(var(--docs-rows,2),minmax(0,1fr))!important;
- gap:var(--docs-gap,16px)!important;flex:1 1 0%;min-width:0;min-height:0;width:100%!important;overflow:hidden;
+ grid-template-rows:repeat(var(--docs-rows,2),var(--docs-card-height,280px))!important;align-content:start!important;
+ gap:var(--docs-gap,16px)!important;flex:0 0 auto;min-width:0;min-height:0;width:min(100%,var(--docs-grid-width,100%))!important;max-width:100%;overflow:hidden;
 }
 html[data-kiosk-app="documents"][data-output-mode]:not(.web-output) #browse .tile{
  display:flex!important;flex-direction:column!important;width:100%!important;height:100%!important;min-height:0!important;
