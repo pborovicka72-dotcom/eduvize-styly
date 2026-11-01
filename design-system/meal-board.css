@@ -1,0 +1,44 @@
+/* Whole-day meal cards: one source for every output mode. Colors and corners are theme tokens. */
+.edu-meal-board{display:grid;grid-template-columns:repeat(var(--edu-meal-columns,1),minmax(0,1fr));gap:var(--meal-gap,22px);height:100%;font-size:var(--meal-body,22px);line-height:1.28}
+.edu-meal-day{display:flex;flex-direction:column;min-width:0;min-height:0;border:1px solid var(--ev-border,#d6e4e9);border-radius:var(--ev-card-radius,20px);background:var(--ev-surface,#fff);overflow:hidden}
+.edu-meal-day-head{display:flex;align-items:center;justify-content:space-between;gap:.8em;flex:none;padding:.7em .9em;background:var(--ev-secondary,#e6f0f3);color:var(--ev-secondary-text,#176c7a);border-bottom:1px solid var(--ev-border,#d6e4e9)}
+.edu-meal-day-head h2{font-size:1.2em;font-weight:650;line-height:1.15;margin:0;min-width:0}
+.edu-meal-date{font-size:.78em;line-height:1.25;text-align:right;flex-shrink:0;max-width:48%}
+.edu-meal-day-body{display:flex;flex-direction:column;flex:1;min-height:0;padding:0 .9em .3em}
+.edu-meal-course{display:grid;grid-template-columns:1.8em minmax(0,1fr);gap:.7em;padding:.65em 0;min-width:0}
+.edu-meal-course+.edu-meal-course{border-top:1px solid var(--ev-border,#d6e4e9)}
+.edu-meal-course[data-kind=lunch]{flex:1}
+.edu-meal-supplements{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.7em;border-top:1px solid var(--ev-border,#d6e4e9)}
+.edu-meal-supplements>.edu-meal-course{border:0}
+.edu-meal-copy,.edu-meal-choice-copy{min-width:0}
+.edu-meal-icon{width:1.8em;height:1.8em;display:grid;place-items:center;border-radius:var(--ev-icon-radius,8px);background:var(--ev-secondary,#e6f0f3);color:var(--ev-secondary-text,#176c7a)}
+.edu-meal-icon svg{display:block;width:63%;height:63%}
+.edu-meal-category{font-size:.6em;font-weight:600;text-transform:uppercase;letter-spacing:.055em;color:var(--ev-muted,#67818e);line-height:1.2;margin:0 0 .55em}
+.edu-meal-choices{display:grid;gap:.55em}
+.edu-meal-choice{display:grid;grid-template-columns:1.1em minmax(0,1fr);gap:.45em;align-items:baseline}
+.edu-meal-choice.unnumbered{grid-template-columns:minmax(0,1fr)}
+.edu-meal-choice+.edu-meal-choice{border-top:1px solid var(--ev-border,#d6e4e9);padding-top:.55em}
+.edu-meal-number{display:grid;place-items:center;width:1.5em;min-height:1.5em;font-size:.64em;line-height:1.1;border-radius:var(--ev-control-radius,5px);color:var(--ev-secondary-text,#176c7a);background:var(--ev-secondary,#e6f0f3)}
+.edu-meal-name{font-size:1em;line-height:1.28;font-weight:450;margin:0;overflow-wrap:anywhere;hyphens:none}
+.edu-meal-allergens{font-size:.53em;line-height:1.25;color:var(--ev-muted,#67818e);margin:.35em 0 0;overflow-wrap:anywhere}
+.edu-meal-course[data-kind=other],.edu-meal-course[data-kind=drinks]{font-size:.85em}
+[data-meal-horizontal=true] .edu-meal-day-body{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,2fr) minmax(0,.9fr);gap:.7em;align-items:start}
+[data-meal-horizontal=true] .edu-meal-course{border:0;padding:.4em 0;grid-template-columns:1.4em minmax(0,1fr);gap:.4em}
+[data-meal-horizontal=true] .edu-meal-icon{width:1.4em;height:1.4em}
+[data-meal-horizontal=true] .edu-meal-course[data-kind=lunch]{grid-column:2;grid-row:1/span 8}
+[data-meal-horizontal=true] .edu-meal-supplements{grid-column:3;grid-row:1/span 8;display:flex;flex-direction:column;gap:0;border:0}
+[data-meal-horizontal=true] .edu-meal-course:not([data-kind=lunch]):not([data-kind=drinks]):not([data-kind=other]){grid-column:1}
+[data-output-mode=web] .edu-meal-board{height:auto;align-items:stretch}
+[data-output-mode=web] .edu-meal-day{min-height:0}
+@media(max-width:650px){[data-output-mode=web] .edu-meal-day-head{align-items:flex-start;flex-direction:column;gap:.35em}[data-output-mode=web] .edu-meal-date{max-width:100%;text-align:left}}
+
+[data-meal-compact=true] [data-edu-source-details]{display:none}
+
+[data-meal-wide=true] .edu-meal-course[data-kind=lunch] .edu-meal-choices{grid-template-columns:repeat(var(--meal-choices,1),minmax(0,1fr));gap:.8em}
+[data-meal-wide=true] .edu-meal-course[data-kind=lunch] .edu-meal-choice+.edu-meal-choice{border-top:0;border-left:1px solid var(--ev-border,#d6e4e9);padding-top:0;padding-left:.6em}
+[data-meal-wide=true] .edu-meal-supplements{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.7em}
+[data-meal-compact=true] .edu-meal-day-head{padding:.4em .7em}
+[data-meal-compact=true] .edu-meal-course{padding:.25em 0}
+[data-meal-compact=true] .edu-meal-choices{gap:.25em}
+[data-meal-compact=true] .edu-meal-choice+.edu-meal-choice{padding-top:.25em}
+[data-meal-compact=true] .edu-meal-category{margin-bottom:.3em}
