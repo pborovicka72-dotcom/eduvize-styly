@@ -18,11 +18,28 @@
       set(host.style,'--edu-content-font',metric.font+'px');
       set(host.style,'--edu-content-gap',metric.gap+'px');
       if(viewport!==host)set(viewport.style,'--edu-page-font',metric.font+'px');
+      if(options.fit&&!web){
+        const sheet=host.querySelector('.school-sheet');
+        if(sheet){
+          const fits=()=>sheet.scrollHeight<=h+1&&sheet.scrollWidth<=w+1&&Array.from(host.querySelectorAll('.school-card,.school-about-copy')).every(card=>card.scrollHeight<=card.clientHeight+1&&card.scrollWidth<=card.clientWidth+1);
+          if(!fits()){
+            let low=Math.min(16,metric.font),high=metric.font;
+            set(host.style,'--edu-content-font',low+'px');
+            for(let attempt=0;attempt<10;attempt++){
+              const candidate=(low+high)/2;set(host.style,'--edu-content-font',candidate+'px');
+              if(fits())low=candidate;else high=candidate;
+            }
+            set(host.style,'--edu-content-font',low+'px');
+          }
+        }
+      }
     }
     function schedule(){if(queued)return;queued=true;requestAnimationFrame(refresh);}
     const resize=new ResizeObserver(schedule);resize.observe(host);if(viewport!==host)resize.observe(viewport);
     document.fonts?.ready.then(schedule);
+    if(options.fit){new MutationObserver(schedule).observe(host,{childList:true,characterData:true,subtree:true});host.addEventListener('load',schedule,true);}
     mounted.set(host,true);refresh();
   }
   root.EduvizeContentSurface=Object.freeze({mount,metrics});
 })(window);
+

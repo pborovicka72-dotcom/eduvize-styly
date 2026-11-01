@@ -1,6 +1,8 @@
 /* One physical header and text scale for equal viewport dimensions. */
 (function(root){
  let parentHeight=null,queued=false;
+ function headerStyle(value){document.documentElement.dataset.kioskHeader=value==='light'?'light':'dark';}
+ headerStyle(new URLSearchParams(root.location.search).get('kiosk_header'));
  function fitTitles(header){
   for(const node of header.querySelectorAll('.edu-header-title,.edu-header-meta')){
    let available=node.clientWidth;
@@ -24,6 +26,10 @@
   kiosk:['#schoolContent .school-card h3','#pageContent .page-section h2','#pageContent .page-section p']
  };
  function contentInset(header,app,fallback){
+  if(app==='kiosk'){
+   const card=document.querySelector('#schoolContent .school-card-about'),copy=card?.querySelector('.school-about-copy');
+   if(card&&copy&&card.getBoundingClientRect().width)return Math.max(0,card.getBoundingClientRect().left-header.getBoundingClientRect().left+(parseFloat(getComputedStyle(copy).paddingLeft)||fallback));
+  }
   for(const selector of textAnchors[app]||[]){
    const target=Array.from(document.querySelectorAll(selector)).find(node=>node.getBoundingClientRect().width>0);
    if(!target)continue;
@@ -91,7 +97,7 @@
  }
  function schedule(){if(queued)return;queued=true;requestAnimationFrame(update);}
  root.addEventListener('resize',schedule);
- root.addEventListener('message',event=>{if(event.source!==root.parent||root.parent===root||!root.EduvizeOutputModes?.isKiosk?.())return;if(event.data?.type==='eduvize-kiosk-layout'){if(event.data.parentMode)document.documentElement.classList.toggle('edu-kiosk-header-legacy',event.data.parentMode!=='kiosk');document.documentElement.classList.toggle('edu-menu-app-header',event.data.menuLayout===true);schedule();}const h=Number(event.data?.headerHeight);if(event.data?.type==='eduvize-kiosk-layout'&&Number.isFinite(h)&&h>=44&&h<=root.innerHeight*.4){parentHeight=h;schedule();}});
+ root.addEventListener('message',event=>{if(event.source!==root.parent||root.parent===root||!root.EduvizeOutputModes?.isKiosk?.())return;if(event.data?.type==='eduvize-kiosk-layout'){headerStyle(event.data.headerStyle||(event.data.menuLayout?'light':'dark'));if(event.data.parentMode)document.documentElement.classList.toggle('edu-kiosk-header-legacy',event.data.parentMode!=='kiosk');document.documentElement.classList.toggle('edu-menu-app-header',event.data.menuLayout===true);schedule();}const h=Number(event.data?.headerHeight);if(event.data?.type==='eduvize-kiosk-layout'&&Number.isFinite(h)&&h>=44&&h<=root.innerHeight*.4){parentHeight=h;schedule();}});
  function start(){
   if(root.EduvizeOutputModes?.mode?.()==='kiosk'&&document.documentElement.dataset.kioskApp==='weather'){
    const transforms=new WeakMap();
@@ -106,5 +112,6 @@
   update();new MutationObserver(schedule).observe(document.body,{subtree:true,childList:true,characterData:true});
   root.addEventListener('load',schedule);document.fonts?.ready.then(schedule);}
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});else start();
- update();root.EduvizeOutputHeader=Object.freeze({update:schedule});
+ update();root.EduvizeOutputHeader=Object.freeze({update:schedule,setStyle:headerStyle});
 })(window);
+

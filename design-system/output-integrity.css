@@ -135,19 +135,19 @@ html.web-output[data-kiosk-app="transport"] .time{font-size:22px!important;line-
 
 /* Light application headings belong only to kiosk output.
    All colors follow the active global theme; geometry and text scale stay shared. */
-html[data-kiosk-app][data-output-mode="kiosk"].kiosk-output:not(.edu-kiosk-header-legacy) .edu-output-header,
-html[data-kiosk-app][data-output-mode="kiosk"].kiosk-output:not(.edu-kiosk-header-legacy) body.subpage .wrap>.edu-output-header{
+html[data-kiosk-app][data-output-mode="kiosk"].kiosk-output[data-kiosk-header="light"]:not(.edu-kiosk-header-legacy) .edu-output-header,
+html[data-kiosk-app][data-output-mode="kiosk"].kiosk-output[data-kiosk-header="light"]:not(.edu-kiosk-header-legacy) body.subpage .wrap>.edu-output-header{
  background:var(--ev-bg)!important;color:var(--ev-text)!important;
  border:0!important;border-bottom:3px solid var(--ev-secondary)!important;
  border-radius:0!important;box-shadow:none!important;
 }
-html[data-kiosk-app][data-output-mode="kiosk"].kiosk-output:not(.edu-kiosk-header-legacy) .edu-output-header :is(.edu-header-title,.edu-header-meta,.edu-navigation-heading,.hero-details,.condition-label){
+html[data-kiosk-app][data-output-mode="kiosk"].kiosk-output[data-kiosk-header="light"]:not(.edu-kiosk-header-legacy) .edu-output-header :is(.edu-header-title,.edu-header-meta,.edu-navigation-heading,.hero-details,.condition-label){
  color:inherit!important;
 }
-html[data-kiosk-app][data-output-mode="kiosk"].kiosk-output:not(.edu-kiosk-header-legacy) .edu-output-header .edu-navigation-heading{
+html[data-kiosk-app][data-output-mode="kiosk"].kiosk-output[data-kiosk-header="light"]:not(.edu-kiosk-header-legacy) .edu-output-header .edu-navigation-heading{
  background:transparent!important;
 }
-html[data-kiosk-app][data-output-mode="kiosk"].kiosk-output:not(.edu-kiosk-header-legacy) .edu-output-header .edu-app-icon{
+html[data-kiosk-app][data-output-mode="kiosk"].kiosk-output[data-kiosk-header="light"]:not(.edu-kiosk-header-legacy) .edu-output-header .edu-app-icon{
  background:transparent!important;color:var(--ev-primary)!important;
 }
 /* The style version is visible in kiosk output only. */
@@ -194,3 +194,14 @@ html[data-kiosk-app="transport"][data-output-mode="kiosk"] .message{
 
 
 html.kiosk-output .edu-output-header[hidden]{display:none!important}
+
+
+/* Header skin follows the kiosk layout, including custom school pages. */
+html[data-kiosk-header="dark"]:is(.kiosk-output,[data-kiosk-app="kiosk"]:not(.web-output)) .edu-output-header,
+html[data-kiosk-header="dark"]:is(.kiosk-output,[data-kiosk-app="kiosk"]:not(.web-output)) body.subpage .wrap>.edu-output-header{
+ background:var(--ev-primary)!important;color:var(--ev-primary-text)!important;
+ border:0!important;border-radius:var(--ev-card-radius)!important;box-shadow:none!important;
+}
+html[data-kiosk-header="dark"]:is(.kiosk-output,[data-kiosk-app="kiosk"]:not(.web-output)) .edu-output-header :is(.edu-header-title,.edu-header-meta,.hero-details,.condition-label){color:inherit!important}
+html[data-kiosk-header="dark"]:is(.kiosk-output,[data-kiosk-app="kiosk"]:not(.web-output)) .edu-output-header .edu-navigation-heading{background:transparent!important;color:inherit!important}
+html[data-kiosk-header="dark"]:is(.kiosk-output,[data-kiosk-app="kiosk"]:not(.web-output)) .edu-output-header .edu-app-icon{background:var(--ev-secondary)!important;color:var(--ev-secondary-text)!important}
