@@ -1,7 +1,7 @@
 import fs from 'node:fs';
 import vm from 'node:vm';
 import assert from 'node:assert/strict';
-let resize;const styles={};const host={clientWidth:1200,clientHeight:675,style:{},dataset:{},classList:{add(){}}};const frame={style:{setProperty:(k,v)=>styles[k]=v},classList:{add(){}},setAttribute(){},addEventListener(){}};
+let resize;const styles={};const host={clientWidth:1200,clientHeight:675,style:{setProperty(k,v){this[k]=v}},dataset:{},classList:{add(){}}};const frame={style:{setProperty:(k,v)=>styles[k]=v},classList:{add(){}},setAttribute(){},addEventListener(){}};
 const scope={window:{},getComputedStyle:()=>({position:'relative'}),ResizeObserver:class{constructor(fn){resize=fn;}observe(){}disconnect(){}}};
 vm.runInNewContext(fs.readFileSync(new URL('../preview-viewport.js',import.meta.url),'utf8'),scope);
 const view=scope.window.EduvizePreviewViewport.mount(frame,{host,width:3840,height:2160});
