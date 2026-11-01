@@ -36,6 +36,9 @@
  function resolve(width,height,{signage=true,images=true,count=6}={}){
   let columns=signage?(width>=2600?3:width>=1500?2:1):(width>=780?2:1);
   let rows=signage?clamp(Math.floor(height/(images?480:380)),1,3):1;
+  // Near-square portrait segments need wider cards, rather than six shallow photo strips.
+  const proposedRatio=(width/columns)/(height/rows);
+  if(signage&&images&&columns===2&&rows===3&&proposedRatio>=1.15&&proposedRatio<1.45)columns=1;
   const capacity=signage?Math.min(6,columns*rows):count;
   columns=Math.max(1,Math.min(columns,count||1,capacity||1));
   rows=signage?Math.max(1,Math.ceil(Math.min(capacity,count||1)/columns)):1;
