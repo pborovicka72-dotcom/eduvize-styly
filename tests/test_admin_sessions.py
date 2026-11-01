@@ -109,6 +109,19 @@ class SessionTests(unittest.TestCase):
    with self.assertRaises(HTTPException):self.store.redeem(code,sessions.DOCUMENTS)
   with patch.object(sessions.time,'time',return_value=now+sessions.TTL+1):
    with self.assertRaises(HTTPException):self.store.read(self.root['token'])
+ def test_remember_device_expiry_and_revocation(self):
+  response=self.client.post('/api/admin-session',json={'stylesKey':'test-only-styles-key','remember':True},headers={'Origin':sessions.HUB_ORIGIN})
+  self.assertEqual(response.status_code,200)
+  data=response.json();now=sessions.time.time()
+  self.assertGreater(data['expiresAt']-now,sessions.REMEMBER_TTL-5)
+  self.assertLessEqual(data['expiresAt']-now,sessions.REMEMBER_TTL)
+  with patch.object(sessions.time,'time',return_value=now+sessions.TTL+1):
+   self.assertEqual(self.store.read(data['token'])['scopes'],['styles'])
+  self.store.revoke(data['token'])
+  with self.assertRaises(HTTPException):self.store.read(data['token'])
+ def test_remember_requires_boolean(self):
+  response=self.client.post('/api/admin-session',json={'stylesKey':'test-only-styles-key','remember':'true'},headers={'Origin':sessions.HUB_ORIGIN})
+  self.assertEqual(response.status_code,422)
  def test_failed_login_does_not_replace_existing_session(self):
   response=self.client.post('/api/admin-session',json={'stylesKey':'wrong'},headers={**self.auth(),'Origin':sessions.HUB_ORIGIN})
   self.assertEqual(response.status_code,401);self.assertEqual(self.store.read(self.root['token'])['scopes'],['documents','styles'])

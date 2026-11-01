@@ -15,7 +15,7 @@
  function getToken(scope){return validated&&session?.expiresAt*1000>Date.now()&&(!scope||session.scopes.includes(scope))?session.token:''}
  function cleanUrl(){const u=new URL(location.href);const hash=new URLSearchParams(u.hash.slice(1));if(hash.has('edu-auth-code'))u.hash=hash.get('edu-return-hash')||'';return u;}
  function loginUrl(returnTo=cleanUrl().href){const u=new URL(ACCOUNT);if(!isAccount){u.searchParams.set('returnTo',returnTo);if(getToken())u.searchParams.set('manage','1');}u.hash='account';return u.href}
- function changed(){clearTimeout(expiryTimer);if(session){expiryTimer=setTimeout(()=>{message='Přihlášení vypršelo. Obnovte je na stránce Účet a konfigurace.';clear();},Math.max(1,session.expiresAt*1000-Date.now()));}renderBanner();const state=JSON.stringify([!!getToken(),validated?session?.scopes:[],validated?session?.profileId||'':'',session?.expiresAt||0,message]);if(state!==lastState){lastState=state;root.dispatchEvent(new CustomEvent('eduvize-admin-auth-change'));}}
+ function changed(){clearTimeout(expiryTimer);if(session){expiryTimer=setTimeout(()=>{if(session?.expiresAt*1000>Date.now()){changed();return;}message='Přihlášení vypršelo. Obnovte je na stránce Účet a konfigurace.';clear();},Math.max(1,Math.min(2147483647,session.expiresAt*1000-Date.now())));}renderBanner();const state=JSON.stringify([!!getToken(),validated?session?.scopes:[],validated?session?.profileId||'':'',session?.expiresAt||0,message]);if(state!==lastState){lastState=state;root.dispatchEvent(new CustomEvent('eduvize-admin-auth-change'));}}
  async function json(response){const data=await response.json().catch(()=>({}));if(!response.ok){const e=Error(typeof data.detail==='string'?data.detail:'Služba není dostupná ('+response.status+').');e.status=response.status;throw e;}return data;}
  async function refresh(){
   const version=++refreshVersion,candidate=stored(),sameToken=session?.token===candidate?.token;session=candidate;if(!sameToken)validated=false;
@@ -48,10 +48,10 @@
   if(!response.ok){const data=await response.clone().json().catch(()=>({}));failure(response.status,typeof data.detail==='string'?data.detail:'');}
   return response;
  }
- async function login(stylesKey,documentsKey){
+ async function login(stylesKey,documentsKey,remember=false){
   await ready;
   const headers={'Content-Type':'application/json'};if(getToken())headers.Authorization='Bearer '+session.token;
-  const data=await json(await sessionFetch(CENTRAL+'/api/admin-session',{method:'POST',cache:'no-store',headers,body:JSON.stringify({stylesKey,documentsKey})}));
+  const data=await json(await sessionFetch(CENTRAL+'/api/admin-session',{method:'POST',cache:'no-store',headers,body:JSON.stringify({stylesKey,documentsKey,remember:remember===true})}));
   message='';save(data,true);return data;
  }
  async function selectProfile(profileId){await ready;if(!getToken())throw Error(need());const data=await json(await sessionFetch(CENTRAL+'/api/admin-session/profile',{method:'PUT',cache:'no-store',headers:{Authorization:'Bearer '+session.token,'Content-Type':'application/json'},body:JSON.stringify({profileId})}));save({...session,profileId:data.profileId},true);return data.profileId;}

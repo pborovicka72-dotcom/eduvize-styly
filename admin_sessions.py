@@ -13,6 +13,7 @@ HUB='https://pborovicka72-dotcom.github.io/eduvize-styly/aplikace.html'
 DOCUMENTS='https://eduvize-dokumenty-api.onrender.com'
 HUB_ORIGIN='https://pborovicka72-dotcom.github.io'
 TTL=8*60*60
+REMEMBER_TTL=30*24*60*60
 TARGETS={
  ('https://eduvize-design-system-api.onrender.com','/'):'styles',
  ('https://eduvize-design-system-api.onrender.com','/design-system'):'styles',
@@ -64,8 +65,8 @@ class SessionStore:
    if profile_id:conn.execute('INSERT INTO eduvize_admin_profile_selection_v1 (root_hash,profile_id) VALUES (%s,%s) ON CONFLICT (root_hash) DO UPDATE SET profile_id=EXCLUDED.profile_id',(row['root'],profile_id))
    else:conn.execute('DELETE FROM eduvize_admin_profile_selection_v1 WHERE root_hash=%s',(row['root'],))
   return profile_id
- def create(self,scopes):
-  token='edu_'+secrets.token_urlsafe(32);expires=time.time()+TTL
+ def create(self,scopes,remember=False):
+  token='edu_'+secrets.token_urlsafe(32);expires=time.time()+(REMEMBER_TTL if remember else TTL)
   with self.db() as conn:
    conn.execute('DELETE FROM eduvize_admin_sessions_v1 WHERE expires<=%s',(time.time(),))
    conn.execute('DELETE FROM eduvize_admin_handoffs_v1 WHERE expires<=%s',(time.time(),))
@@ -125,7 +126,9 @@ def session_router(store,styles_key,documents_url=DOCUMENTS):
    if r.status_code in (401,403):raise HTTPException(401,'Neplatný klíč Dokumentů a OneDrive.')
    if not r.is_success:raise HTTPException(503,'Nelze ověřit připojení Dokumentů. Zkuste to později.')
    scopes.add('documents')
-  result=store.create(scopes)
+  remember=data.get('remember',False)
+  if not isinstance(remember,bool):raise HTTPException(422,'Neplatná volba zapamatování přihlášení.')
+  result=store.create(scopes,remember=remember)
   if old and old.get('profileId'):
    store.select_profile(result['token'],old['profileId']);result['profileId']=old['profileId']
   if old:
