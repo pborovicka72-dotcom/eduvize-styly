@@ -20,6 +20,7 @@ TARGETS={
  (DOCUMENTS,'/config'):'documents',
  ('https://eduvize-weather.onrender.com','/config'):None,
  ('https://eduvize-aktuality.onrender.com','/config'):None,
+ ('https://eduvize-skolni-systemy.onrender.com','/config.html'):None,
  ('http://127.0.0.1:8789','/config.html'):None,
 }
 for repo in ['eduvize-kiosek','eduvize-svatky','eduvize-moudrost-dne','eduvize-jizdni-rady','eduvize-dokumenty']:
