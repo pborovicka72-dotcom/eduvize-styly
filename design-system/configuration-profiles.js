@@ -126,11 +126,14 @@
     }
     load.onclick=()=>work('Načítám uložené nastavení…',async()=>{if(dirty()&&!confirm('Nahradit rozpracované změny uloženým nastavením? Původní místní stav půjde vrátit.'))return;await auth().refresh();if(!activeId())throw Error('Nejprve vyberte profil na stránce Účet a konfigurace.');profileId=activeId();tracked='';manualLoad=true;try{await readProfile(true);}finally{manualLoad=false;}});
     save.onclick=()=>work('Připravuji uložení…',async()=>{
+      // Keep both the shared recovery snapshot and each app's native local format.
+      localStorage.setItem(localKey,JSON.stringify(adapter.read()));
+      local.click();
       await auth()?.ready;if(!canSave()||needsLogin){login();return;}
       await auth().refresh();if(!canSave()){login();return;}
       if(!activeId()){login();return;}
       if(activeId()!==profileId){needsReload=true;throw Error('Aktivní profil se změnil. Před uložením načtěte jeho nastavení.');}
-      const snapshot=structuredClone(adapter.read());say('Ukládám na OneDrive…');const result=await request('/'+profileId+'/apps/'+adapter.app,{method:'PUT',body:JSON.stringify({expectedRevision:revision,config:snapshot})});revision=result.revision;baseline=fingerprint(snapshot);loaded=true;say(dirty()?'Během ukládání vznikly další neuložené změny.':'Uloženo na OneDrive.',dirty()?'dirty':'saved');
+      const snapshot=structuredClone(adapter.read());say('Ukládám na OneDrive…');const result=await request('/'+profileId+'/apps/'+adapter.app,{method:'PUT',body:JSON.stringify({expectedRevision:revision,config:snapshot})});revision=result.revision;baseline=fingerprint(snapshot);loaded=true;say(dirty()?'Během ukládání vznikly další neuložené změny.':'Uloženo na OneDrive i v prohlížeči.',dirty()?'dirty':'saved');
     });
     manage.onclick=event=>{event.preventDefault();work('Otevírám výběr profilu…',async()=>login());};
     undo.onclick=()=>work('Vracím místní nastavení…',async()=>{if(!backup)return;const previous=backup;backup=structuredClone(adapter.read());await adapter.apply(previous);say('Místní nastavení obnoveno.','dirty');});
