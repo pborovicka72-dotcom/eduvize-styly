@@ -13,7 +13,7 @@
  const cardsCss=document.createElement('link');cardsCss.rel='stylesheet';cardsCss.href=new URL('card-layout.css?v=catalog-natural-20261031',base);document.head.append(cardsCss);
  const cardsScript=document.createElement('script');cardsScript.src=new URL('card-layout.js?v=catalog-natural-20261031',base);document.head.append(cardsScript);
  const css=document.createElement('link');css.rel='stylesheet';css.href=new URL('form-fields.css?v=3',base);document.head.append(css);
- const script=document.createElement('script');script.src=new URL('form-fields.js?v=2',base);script.dataset.eduFormFields='';document.head.append(script);
+ const script=document.createElement('script');script.src=new URL('form-fields.js?v=https-inputs-20261101-1',base);script.dataset.eduFormFields='';document.head.append(script);
  const typographyCss=document.createElement('link');typographyCss.rel='stylesheet';typographyCss.href=new URL('typography.css?v=20261031-whole-words-1',base);document.head.append(typographyCss);
  const typography=document.createElement('script');typography.src=new URL('typography.js?v=3',base);document.head.append(typography);
  const fit=document.createElement('script');fit.src=new URL('fit-panel.js?v=2',base);document.head.append(fit);
