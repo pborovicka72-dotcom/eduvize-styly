@@ -35,3 +35,26 @@ html{font-family:var(--edu-admin-font,system-ui,sans-serif);color:var(--ev-text)
 body.show-all .page,body.show-all .panel{height:auto;min-height:0}body.show-all .departures-viewport{overflow:visible;flex:none}body.show-all .body{flex:none}
 @media(max-width:900px){.updated{display:none}.footer-caption{display:none}}
 @media(max-width:600px){.web-mode .site-header{padding:16px}.site-icon{--edu-icon-size:40px}.site-heading{font-size:24px}.clock-date{max-width:15em}.table-header,.departure{grid-template-columns:3.3em 3em minmax(0,1fr) 2.8em!important}}
+
+/* Transport roles reserve their actual text width, independent of global value typography. */
+html[data-kiosk-app="transport"][data-output-mode]:not(.web-output) :is(.table-header,.departure){
+ grid-template-columns:calc(var(--transport-time)*3.35) calc(var(--transport-route)*4.8) minmax(0,1.65fr) minmax(0,1fr) calc(var(--transport-stop)*4.8)!important;
+ column-gap:var(--transport-gap)!important;
+}
+html[data-kiosk-app="transport"][data-output-mode]:not(.web-output) [data-transport-layout="stacked"] :is(.table-header,.departure){
+ grid-template-columns:calc(var(--transport-time)*3.35) calc(var(--transport-route)*4.8) minmax(0,1fr) calc(var(--transport-stop)*4.8)!important;
+}
+html[data-kiosk-app="transport"][data-output-mode] .departure{
+ background:color-mix(in srgb,var(--ev-primary) 5%,var(--ev-surface))!important;color:var(--ev-text)!important;
+ border:0;border-radius:var(--ev-control-radius); 
+}
+html[data-kiosk-app="transport"][data-output-mode] .departure:nth-child(even){background:var(--ev-surface)!important}
+html[data-kiosk-app="transport"][data-output-mode]:not(.web-output) .time{font-size:var(--transport-time)!important;line-height:1.2!important}
+html[data-kiosk-app="transport"][data-output-mode]:not(.web-output) :is(.route,.route-number){font-size:var(--transport-route)!important;line-height:1.2!important}
+html[data-kiosk-app="transport"][data-output-mode]:not(.web-output) .destination{font-size:var(--transport-text)!important;line-height:1.25!important}
+html[data-kiosk-app="transport"][data-output-mode]:not(.web-output) :is(.stop,.countdown){font-size:var(--transport-stop)!important;line-height:1.25!important}
+html[data-kiosk-app="transport"][data-output-mode]:not(.web-output) .table-header span{font-size:var(--transport-label)!important;line-height:1.2!important;white-space:nowrap}
+html[data-kiosk-app="transport"][data-output-mode] .identity{flex:1 1 0%;min-width:0}
+html[data-kiosk-app="transport"][data-output-mode] .clock{max-width:36%;overflow:hidden}
+html[data-kiosk-app="transport"][data-output-mode] [data-transport-layout="stacked"] .clock-date{display:none}
+html[data-kiosk-app="transport"][data-output-mode] [data-transport-layout="stacked"] .clock-time{font-size:var(--transport-time)!important}
