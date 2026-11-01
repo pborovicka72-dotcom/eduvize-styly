@@ -15,10 +15,10 @@ html{font-family:var(--edu-admin-font,system-ui,sans-serif);color:var(--ev-text)
 .departures-viewport{min-height:0;flex:1;overflow:hidden}
 .departure{padding-block:var(--transport-rowPad,10px);margin-bottom:var(--transport-rowGap,6px);background:var(--ev-secondary);color:var(--ev-secondary-text);border:1px solid var(--ev-border);border-radius:var(--ev-control-radius);line-height:1.18}
 .time{font-size:var(--transport-time,26px);font-weight:750;white-space:nowrap;font-variant-numeric:tabular-nums}
-.route{display:grid;grid-template-columns:var(--transport-route-icon,20px) minmax(0,1fr);align-items:center;gap:.15em;padding:.22em .25em;border-radius:var(--ev-control-radius);background:#0868ad;color:#fff;font-size:var(--transport-route,22px);font-weight:750;white-space:nowrap}
-.route-number{text-align:center;min-width:0}.route svg{width:var(--transport-route-icon,20px);height:var(--transport-route-icon,20px);display:block}
+.route{display:grid;grid-template-columns:var(--transport-route-icon,20px) minmax(0,1fr);align-items:center;gap:.25em;padding:.25em .45em;border-radius:var(--ev-control-radius);background:#0868ad;color:#fff;font-size:var(--transport-route,22px);font-weight:750;white-space:nowrap}
+.route-number{text-align:center;min-width:0;overflow:hidden;text-overflow:ellipsis;padding-inline:.08em}.route svg{width:var(--transport-route-icon,20px);height:var(--transport-route-icon,20px);display:block}
 /* PID line colors carry transport meaning rather than application theme styling. */
-.route.metro-a{background:#00843d}.route.metro-b{background:#f5c518;color:#172b4d}.route.metro-c{background:#d71920}.route.tram{background:#bb2737}.route.train{background:#634b91}.route.ferry{background:#087f91}.route.funicular{background:#6d597a}.route.unknown{background:#536679}
+.route.metro-a{background:#00843d}.route.metro-b{background:#f5c518;color:#172b4d}.route.metro-c{background:#d71920}.route.tram{background:#bb2737}.route.train{background:#634b91}.route.trolleybus{background:#16704a}.route.ferry{background:#087f91}.route.funicular{background:#6d597a}.route.unknown{background:#536679}
 .destination,.stop{overflow-wrap:anywhere;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden}
 .destination{font-size:var(--transport-text,24px);font-weight:650}.stop{font-size:var(--transport-stop,19px);font-weight:600;color:var(--ev-text)}
 .countdown{font-size:var(--transport-stop,19px);font-weight:700;white-space:nowrap;color:var(--ev-primary)}
