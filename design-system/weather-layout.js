@@ -17,7 +17,7 @@
  function stationPolicy(width,height,{hourly=true,daily=true,text=true}={}){
   const portrait=width/height<1;
   const body=Math.max(14,Math.min(54,Math.min(width,height)*(portrait?.025:.022)));
-  return {portrait,body,hours:portrait&&width/height<.75?3:6,
+  return {portrait,body,hours:6,
    rows:['minmax(0,'+(portrait?'2.5':'1.7')+'fr)',hourly?'minmax(0,1.25fr)':'',daily?'minmax(0,'+(portrait?'.85':'.9')+'fr)':'',text?'auto':''].filter(Boolean).join(' ')};
  }
  function apply(){const mode=root.EduvizeOutputModes.mode(),p=policy(root.innerWidth,root.innerHeight,mode),html=document.documentElement;html.dataset.weatherProfile=p.profile;html.toggleAttribute('data-weather-portrait',p.portrait);html.toggleAttribute('data-weather-header-only',p.headerOnly);html.toggleAttribute('data-weather-strip',p.strip);for(const name of ['panels','metrics','hours','forecast','daily'])html.style.setProperty('--weather-'+name,p[name]);html.style.setProperty('--weather-gap',p.gap+'px');const host=document.querySelector('#weather-pages');if(host){for(const [page,columns] of [['0',p.metrics],['1',p.hours],['2',p.forecast],['3',p.daily]]){const section=host.querySelector('[data-page="'+page+'"]');if(section)section.dataset.sectionColumns=String(columns);}}if(host)for(const [name,value] of Object.entries(contentText(root.EduvizeSegmentProfile.resolve(root.innerWidth,root.innerHeight),mode)))host.style.setProperty('--edu-text-'+name,value+'px');}

@@ -7,6 +7,7 @@ const policy=context.window.EduvizeWeatherLayout.stationPolicy;
 for(const [width,height]of [[1390,1560],[1900,1400],[2160,3840],[3840,2160],[600,1000]]){
  const result=policy(width,height,{text:false});
  assert.equal(result.portrait,width<height);
+ assert.equal(result.hours,6);
  assert(result.body>=14&&result.body<=54);
  assert.equal(result.rows.split('minmax').length-1,3);
  assert(!result.rows.includes('auto'));
@@ -15,4 +16,4 @@ assert(policy(1390,1560,{text:true}).rows.endsWith('auto'));
 assert.equal(policy(1390,1560,{hourly:false,daily:false,text:false}).rows.split('minmax').length-1,1);
 console.log('Station composition follows the available content viewport and enabled forecasts.');
 
-assert.equal(policy(1400,2400).hours,3);assert.equal(policy(1900,1400).hours,6);
+assert.equal(policy(1400,2400).hours,6);assert.equal(policy(1900,1400).hours,6);
