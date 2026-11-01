@@ -21,6 +21,7 @@ const kiosk=outputMode==='kiosk',web=outputMode!=='nsp',previewNode=q('#ev-previ
 q('.ev-picker-title').textContent=kiosk?'Náhled kiosku':web?'Náhled běžné stránky':window.EduvizeNSPSelectorText.title;
 for(const selector of ['.ev-picker-hint','#ev-tabs','#ev-cards','#ev-block-title','#ev-blocks'])q(selector).hidden=web;
 q('h3').hidden=web;
+host.querySelectorAll('.edu-web-preview-controls').forEach(control=>control.remove());
 previewNode.style.cssText='';
 if(web){
 previewNode.closest('#ev-segments')?.querySelector('.edu-web-preview-controls')?.remove();previewNode.querySelectorAll('iframe').forEach(frame=>window.EduvizePreviewViewport?.unmount(frame));previewNode.replaceChildren();previewNode.className='web-preview';previewNode.style.cssText='width:100%;max-width:none;aspect-ratio:auto';
