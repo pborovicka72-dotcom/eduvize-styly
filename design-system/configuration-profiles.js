@@ -140,13 +140,14 @@
     function changed(event){if(panel.contains(event.target)||event.target===save||busy||needsReload)return;clearTimeout(timer);timer=setTimeout(()=>{if(!baseline)return;if(dirty()){errorText='';say('Neuložené změny.','dirty');}else if(!errorText)say(loaded?'Uloženo na OneDrive.':'Dosud neuloženo na OneDrive.',loaded?'saved':'');},200);}
     for(const event of ['input','change','click','eduvize-profile-change'])document.addEventListener(event,changed);
     // Automatic preview/profile refreshes must never create an exit warning.
-    if(adapter.app==='kiosk'){
+    if(['kiosk','transport'].includes(adapter.app)){
       const edited=event=>{if(event.isTrusted&&!panel.contains(event.target))kioskEdited=true;};
       for(const type of ['input','change'])document.addEventListener(type,edited,true);
       document.addEventListener('click',event=>{if(event.isTrusted&&event.target.closest('#addButton,#newPage,#deletePage,.edu-item-editor__actions'))kioskEdited=true;},true);
+      if(adapter.app==='transport')document.addEventListener('click',event=>{if(event.isTrusted&&event.target.closest('#selectedStops,#selected-stops,.selected-stops,.stop-chip'))kioskEdited=true;},true);
       local.addEventListener('click',()=>queueMicrotask(()=>{kioskEdited=false;}));
     }
-    root.addEventListener('beforeunload',event=>{if(!profileId||!baseline||(adapter.app==='kiosk'&&!kioskEdited))return;const current=departureFingerprint(adapter.read()),saved=departureFingerprint(JSON.parse(baseline));if(current!==saved){event.preventDefault();event.returnValue='';}});
+    root.addEventListener('beforeunload',event=>{if(!profileId||!baseline||(['kiosk','transport'].includes(adapter.app)&&!kioskEdited))return;const current=departureFingerprint(adapter.read()),saved=departureFingerprint(JSON.parse(baseline));if(current!==saved){event.preventDefault();event.returnValue='';}});
     watchAuth(()=>{state();if(ready&&!busy)work('Ověřuji aktivní profil…',()=>list(false));});
     document.addEventListener('visibilitychange',()=>{if(!document.hidden&&ready&&!busy)auth()?.refresh();});
     state();try{await waitAdapter(adapter);if(adapter.app==='styles'){try{const saved=JSON.parse(localStorage.getItem(localKey)||'null');if(saved)await adapter.apply(saved);}catch{}}ready=true;baseline=fingerprint(adapter.read());const resume=await restoreDraft();await auth()?.ready;await work('Načítám nastavení profilu…',()=>list(!resume));}catch(e){say(e.message,'error');state();}
