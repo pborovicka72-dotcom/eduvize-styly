@@ -94,3 +94,12 @@ html[data-kiosk-app="kiosk"]:not(.web-output) body.subpage .wrap>.edu-output-hea
 html[data-kiosk-app="kiosk"]:not(.web-output) .school-intro.edu-content-heading{
  background:var(--ev-surface)!important;color:var(--ev-text)!important;
 }
+
+/* Zoomed websites fill their assigned content track, including the full width.
+   Keep the iframe in the grid: absolute offsets were based on the whole kiosk. */
+body.menu-layout.frame-open.zoom-frame #contentFrame{
+ position:static;left:auto;top:auto;
+ width:calc(100% / var(--embedded-scale,1));
+ height:calc(100% / var(--embedded-scale,1));
+ align-self:start;justify-self:start;
+}
