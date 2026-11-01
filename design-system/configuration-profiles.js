@@ -72,12 +72,13 @@
     const save=button('Uložit na OneDrive',false);save.dataset.eduProfileSave='';
     for(const control of [save,local]){control.className='edu-admin__button';control.dataset.eduSave='';}
     // Move existing controls so their original handlers and submit behavior survive.
-    row.prepend(...[open,copy,save,local].filter(Boolean));
+    row.prepend(...[save,local,copy,open].filter(Boolean));
+    if(adapter.app==='styles'){const publish=document.getElementById('save');if(publish){publish.textContent='Použít změny ve sdíleném stylu';publish.title='Aktualizuje centrální styl Eduvize. Konfiguraci svého profilu uložíte tlačítkem Uložit na OneDrive.';}}
     if(open)open.textContent='Otevřít výstup';
     if(copy)copy.textContent='Kopírovat odkaz';
     const panel=make('div',null,'edu-profile-current');panel.dataset.eduProfilePanel=adapter.app;panel.id='edu-profile-save';
     const profileText=make('p','Profil není vybrán.','edu-profile-current__name'),status=make('p',null,'edu-profile-panel__status');status.setAttribute('role','status');status.setAttribute('aria-live','polite');
-    const manage=make('a','Vybrat profil');manage.href=manageUrl('');const actions=make('div',null,'edu-admin__actions'),load=button('Načíst uložené nastavení'),undo=button('Vrátit před načtením');undo.hidden=true;load.hidden=true;actions.append(load,undo);panel.append(profileText,status,manage,actions);if(row)row.after(panel);else save.after(panel);
+    const manage=make('a','Vybrat profil','edu-admin__button edu-admin__button--secondary');manage.href=manageUrl('');const actions=make('div',null,'edu-admin__actions'),load=button('Načíst uložené nastavení'),undo=button('Vrátit před načtením');undo.hidden=true;load.hidden=true;actions.append(load,undo);panel.append(profileText,status,manage,actions);if(row)row.after(panel);else save.after(panel);
     const ui={status};
     const draftKey='eduvize-profile-save-draft-v1:'+adapter.app+':'+location.pathname;
     let busy=false,profileId='',profileTitle='',revision=0,baseline='',backup=null,errorText='',loaded=false,ready=false,tracked='',needsLogin=false,restored=false,needsReload=false,manualLoad=false,timer;
