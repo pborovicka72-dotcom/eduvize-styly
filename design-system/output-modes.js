@@ -18,7 +18,7 @@
  function url(value,mode){const u=new URL(value,root.location.href);if(mode==='kiosk'){
   for(const key of segmentKeys)u.searchParams.delete(key);
   // layout can also be a numeric legacy NSP template.
-  u.searchParams.delete('layout');u.searchParams.set('viewMode','kiosk');u.searchParams.set('output','kiosk');u.searchParams.set('paging','auto');
+  u.searchParams.delete('layout');u.searchParams.set('viewMode','kiosk');u.searchParams.set('output','kiosk');if(!['0','1'].includes(u.searchParams.get('paging')))u.searchParams.set('paging','auto');
  }else if(mode==='web'){
   for(const key of segmentKeys)u.searchParams.delete(key);
   u.searchParams.delete('layout');u.searchParams.delete('output');u.searchParams.set('viewMode','web');u.searchParams.set('paging','off');
@@ -31,3 +31,4 @@
  function start(){document.querySelectorAll('#setting-output,#viewMode,#layout,#outputType,#kiosk-output-type').forEach(s=>{if(s.tagName==='SELECT'&&Array.from(s.options).some(o=>/Newline Signage Pro/.test(o.text)))install(s);});}
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});else start();
 })(window);
+

@@ -48,10 +48,7 @@
    metrics={height,icon:height*.64,title:height*.34,meta:height*.18,padding:height*.08,gap:height*.1};
   }
   if(mode==='kiosk'&&parentHeight){const h=document.documentElement.dataset.eduHeaderDensity==='compact'?Math.min(parentHeight,metrics.height):parentHeight;metrics={height:h,icon:h*.64,title:h*.36,meta:h*.18,padding:h*.05,gap:h*.08};}
-  if(mode==='kiosk'&&!parentHeight&&document.documentElement.dataset.kioskApp==='news'){
-   const height=Math.min(metrics.height,Math.max(96,Math.min(176,root.innerWidth*.07)));
-   metrics={height,icon:height*.64,title:height*.34,meta:height*.16,padding:height*.1,gap:height*.18};
-  }
+
   const weatherCompact=mode==='nsp'&&document.documentElement.dataset.kioskApp==='weather'&&geometry.kind==='compact';
   if(weatherCompact){const height=geometry.height-Math.min(24,Math.max(8,geometry.short*.012))*2;metrics={height,icon:Math.min(height*.55,geometry.width*.16),title:geometry.width*.11,meta:geometry.width*.045,padding:height*.05,gap:geometry.width*.025};}
   const weatherPortrait=mode!=='web'&&!parentHeight&&document.documentElement.dataset.kioskApp==='weather'&&geometry.ratio<.8;
@@ -118,4 +115,5 @@
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});else start();
  update();root.EduvizeOutputHeader=Object.freeze({update:schedule,setStyle:headerStyle});
 })(window);
+
 

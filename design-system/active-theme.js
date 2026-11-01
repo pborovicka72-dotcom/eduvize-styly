@@ -10,7 +10,7 @@
 (function(){
  if(document.querySelector('script[data-edu-form-fields]'))return;
  const base=new URL('.',document.currentScript.src);
- const cardsCss=document.createElement('link');cardsCss.rel='stylesheet';cardsCss.href=new URL('card-layout.css?v=catalog-natural-20261031',base);document.head.append(cardsCss);
+ const cardsCss=document.createElement('link');cardsCss.rel='stylesheet';cardsCss.href=new URL('card-layout.css?v=20261101-card-borders-19',base);document.head.append(cardsCss);
  const cardsScript=document.createElement('script');cardsScript.src=new URL('card-layout.js?v=catalog-natural-20261031',base);document.head.append(cardsScript);
  const css=document.createElement('link');css.rel='stylesheet';css.href=new URL('form-fields.css?v=3',base);document.head.append(css);
  const script=document.createElement('script');script.src=new URL('form-fields.js?v=https-inputs-20261101-1',base);script.dataset.eduFormFields='';document.head.append(script);
@@ -69,3 +69,4 @@
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});else start();
  window.addEventListener('eduvize-profile-adapter-ready',start);
 })();
+

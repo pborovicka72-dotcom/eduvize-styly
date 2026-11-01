@@ -32,9 +32,8 @@
 (function(root){
  const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
  function resolve(width,height,{signage=true,images=true,count=6}={}){
-  const kiosk=root.EduvizeOutputModes?.mode?.()==='kiosk';
-  let columns=kiosk?(width>=height?3:2):signage?(width>=2600?3:width>=1500?2:1):(width>=780?2:1);
-  let rows=kiosk?(width>=height?2:3):signage?clamp(Math.floor(height/(images?480:380)),1,3):1;
+  let columns=signage?(width>=2600?3:width>=1500?2:1):(width>=780?2:1);
+  let rows=signage?clamp(Math.floor(height/(images?480:380)),1,3):1;
   const capacity=signage?Math.min(6,columns*rows):count;
   columns=Math.max(1,Math.min(columns,count||1,capacity||1));
   rows=signage?Math.max(1,Math.ceil(Math.min(capacity,count||1)/columns)):1;
@@ -51,3 +50,4 @@
  }
  root.EduvizeNewsLayout=Object.freeze({resolve,apply});
 })(window);
+
