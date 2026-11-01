@@ -40,7 +40,7 @@
   return fallback;
  }
  function update(){
-  queued=false;const api=root.EduvizeSegmentProfile;if(!api)return;
+  queued=false;const api=root.EduvizeSegmentProfile;if(!api||root.innerWidth<1||root.innerHeight<1)return;
   const geometry=api.resolve(root.innerWidth,root.innerHeight),mode=root.EduvizeOutputModes?.mode?.()||(root.EduvizeOutputModes?.isKiosk?.()?'kiosk':'nsp');
   let metrics=api.header(geometry,mode);
   if(mode!=='web'&&document.documentElement.dataset.eduHeaderDensity==='compact'){
