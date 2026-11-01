@@ -73,3 +73,24 @@ body.subpage #navigationHeading .edu-header-title{color:inherit;margin:0!importa
 body.subpage #navigationHeading .edu-header-meta{color:inherit;margin:0!important}
 body.subpage #navigationHeading .edu-header-meta[hidden]{display:none!important}
 body.embedded-subpage #navigationActions{display:none!important}
+
+/* Kiosk visual refinement 20261101-1. Scoped to kiosk; web and other apps keep their skin. */
+html[data-kiosk-app="kiosk"]:not(.web-output) #tiles .ev-app-tile .app-icon{
+ background:transparent!important;color:var(--ev-secondary)!important;
+ border:0!important;box-shadow:none!important;
+}
+html[data-kiosk-app="kiosk"]:not(.web-output) #tiles .ev-app-tile.active .app-icon{
+ color:var(--ev-secondary-text)!important;
+}
+/* Double only the menu/content separation, preserving gaps inside the menu. */
+html[data-kiosk-app="kiosk"]:not(.web-output) body.menu-layout:not(.menu-top):not(.menu-bottom) .wrap{
+ column-gap:calc(clamp(4px,1vmin,12px)*2);
+}
+html[data-kiosk-app="kiosk"]:not(.web-output) body.menu-layout:is(.menu-top,.menu-bottom) .wrap{
+ row-gap:calc(clamp(4px,1vmin,12px)*2);
+}
+/* Light title surfaces for custom pages and school identity; retain theme text contrast. */
+html[data-kiosk-app="kiosk"]:not(.web-output) body.subpage .wrap>.edu-output-header,
+html[data-kiosk-app="kiosk"]:not(.web-output) .school-intro.edu-content-heading{
+ background:var(--ev-surface)!important;color:var(--ev-text)!important;
+}
