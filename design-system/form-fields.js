@@ -1,3 +1,40 @@
+/* Shared URL entry rule, including dynamically inserted controls. */
+(function(root){
+  if(root.EduvizeURLs)return;
+  function normalize(value){
+    const text=String(value||'').trim();
+    if(!text||/^[a-z][a-z0-9+.-]*:/i.test(text)||/^(?:[/?#]|\.\.?\/)/.test(text))return text.startsWith('//')?'https:'+text:text;
+    if(!text.includes('/')&&/\.(?:html?|php|json|pdf|png|svg|jpe?g|webp|mp4)$/i.test(text))return text;
+    if(/^[^\s/@]+\.[^\s/]+(?:[/?#][^\s]*)?$/.test(text))return 'https://'+text;
+    return text;
+  }
+  function eligible(field){
+    if(!(field instanceof HTMLInputElement)||field.readOnly||field.disabled||field.dataset.eduUrl==='off')return false;
+    if(field.type==='url'||field.dataset.eduUrl==='on')return true;
+    if(!['text','search'].includes(field.type))return false;
+    const key=field.id+' '+field.name;
+    const label=field.closest('label');
+    const caption=label?Array.from(label.childNodes).filter(node=>node.nodeType===3).map(node=>node.textContent).join(' ').trim():'';
+    if(/^(?:URL\b|odkaz(?:\s|$)|adresa webu|webová adresa)/i.test(caption)||/\bURL\b/.test(caption))return true;
+    return /(?:url|href|website|webaddress)/i.test(key)||/^https?:\/\//i.test(field.placeholder||'');
+  }
+  function apply(field,notify=true){
+    if(!eligible(field))return;
+    const value=normalize(field.value);
+    if(value===field.value)return;
+    field.value=value;
+    if(notify){field.dispatchEvent(new Event('input',{bubbles:true}));field.dispatchEvent(new Event('change',{bubbles:true}));}
+  }
+  function all(){document.querySelectorAll('input').forEach(field=>apply(field));}
+  document.addEventListener('change',event=>apply(event.target,false),true);
+  document.addEventListener('focusout',event=>apply(event.target),true);
+  document.addEventListener('input',event=>{if(event.inputType==='insertFromPaste')apply(event.target);},true);
+  document.addEventListener('keydown',event=>{if(event.key==='Enter')all();},true);
+  document.addEventListener('click',event=>{if(event.target.closest?.('button,input[type=submit],a'))all();},true);
+  document.addEventListener('submit',all,true);
+  root.EduvizeURLs=Object.freeze({normalize,refresh:all});
+})(window);
+
 /* Shared textarea sizing. Loaded once by active-theme.js in every application. */
 (function () {
   if (window.EduvizeForms) return;
