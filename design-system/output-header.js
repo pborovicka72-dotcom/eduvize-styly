@@ -14,6 +14,24 @@
    }
   }
  }
+ const textAnchors={
+  holidays:['.calendar-card .metric-value','.upcoming-day .upcoming-date'],
+  weather:['.metric-value','.forecast-card h3','.hour-time','.hour-temp','.forecast-empty'],
+  news:['#news .title','#news .content'],
+  wisdom:['.wisdom-quotation .quote','.wisdom-quotation'],
+  documents:['#browse .tile-title','#browse .doc-title','#browse .tile'],
+  transport:['.departure .time','.table-header span:first-child'],
+  kiosk:['#schoolContent .school-card h3','#pageContent .page-section h2','#pageContent .page-section p']
+ };
+ function contentInset(header,app,fallback){
+  for(const selector of textAnchors[app]||[]){
+   const target=Array.from(document.querySelectorAll(selector)).find(node=>node.getBoundingClientRect().width>0);
+   if(!target)continue;
+   const style=getComputedStyle(target);
+   return Math.max(0,target.getBoundingClientRect().left-header.getBoundingClientRect().left+(parseFloat(style.borderLeftWidth)||0)+(parseFloat(style.paddingLeft)||0));
+  }
+  return fallback;
+ }
  function update(){
   queued=false;const api=root.EduvizeSegmentProfile;if(!api)return;
   const geometry=api.resolve(root.innerWidth,root.innerHeight),mode=root.EduvizeOutputModes?.mode?.()||(root.EduvizeOutputModes?.isKiosk?.()?'kiosk':'nsp');
@@ -34,14 +52,10 @@
   for(const [name,value] of Object.entries(api.text?.(geometry,mode)||{}))html.style.setProperty('--edu-text-'+name,value+'px');
   document.querySelectorAll('.edu-output-header').forEach(header=>{
    for(const name of ['height','min-height','max-height'])header.style.setProperty(name,metrics.height+'px','important');
-   let textInset=inset;
-   if(mode==='kiosk'&&html.dataset.kioskApp==='holidays'){
-    const card=Array.from(document.querySelectorAll('.calendar-card,.upcoming-day')).find(node=>node.getBoundingClientRect().width>0);
-    if(card){
-     const style=getComputedStyle(card);
-     textInset=Math.max(0,card.getBoundingClientRect().left-header.getBoundingClientRect().left+(parseFloat(style.borderLeftWidth)||0)+(parseFloat(style.paddingLeft)||0));
-    }
-    html.style.setProperty('--edu-calendar-text-inset',textInset+'px');
+   const textInset=mode==='kiosk'?contentInset(header,html.dataset.kioskApp,inset):inset;
+   if(mode==='kiosk'){
+    html.style.setProperty('--edu-kiosk-text-inset',textInset+'px');
+    if(html.dataset.kioskApp==='holidays')html.style.setProperty('--edu-calendar-text-inset',textInset+'px');
    }
    header.style.setProperty('padding',metrics.padding+'px '+textInset+'px','important');
    header.style.setProperty('gap',metrics.gap+'px','important');

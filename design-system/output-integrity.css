@@ -158,3 +158,32 @@ html[data-kiosk-app][data-output-mode="kiosk"].kiosk-output:not(.edu-kiosk-heade
  background:var(--ev-surface);color:var(--ev-text);
  font:10px/1.2 system-ui,sans-serif;pointer-events:none;
 }
+
+/* Kiosk text alignment: all application headings follow the visible content's left edge. */
+html[data-kiosk-app][data-output-mode="kiosk"] .edu-output-header .edu-app-icon{order:1}
+html[data-kiosk-app="news"][data-output-mode="kiosk"] .edu-output-header .brand{flex:1;min-width:0}
+html[data-kiosk-app][data-output-mode="kiosk"] .section-heading{
+ padding-inline:var(--edu-kiosk-text-inset,var(--edu-header-inset));
+}
+html[data-kiosk-app="weather"][data-output-mode="kiosk"] .metric-top{justify-content:space-between}
+html[data-kiosk-app="weather"][data-output-mode="kiosk"] .metric-top .metric-icon{order:1}
+html[data-kiosk-app="weather"][data-output-mode="kiosk"] :is(.hour-cell,.daily-hour-cell){
+ align-items:flex-start!important;text-align:left!important;
+}
+html[data-kiosk-app="weather"][data-output-mode="kiosk"] .daily-hour-cell{padding:calc(var(--edu-text-body)*1.111111)!important}
+html[data-kiosk-app="weather"][data-output-mode="kiosk"] .edu-output-header .weather-current{order:0}
+html[data-kiosk-app="weather"][data-output-mode="kiosk"] .edu-output-header .hero-art{order:2}
+html[data-kiosk-app="weather"][data-output-mode="kiosk"][data-weather-portrait] .hero{
+ grid-template-columns:minmax(0,1fr) auto auto!important;
+}
+html[data-kiosk-app="weather"][data-output-mode="kiosk"][data-weather-portrait] .weather-current{grid-column:1}
+html[data-kiosk-app="weather"][data-output-mode="kiosk"][data-weather-portrait] .hero>.edu-app-icon{grid-column:2}
+html[data-kiosk-app="weather"][data-output-mode="kiosk"][data-weather-portrait] .hero-art{grid-column:3}
+html[data-kiosk-app="kiosk"][data-output-mode="kiosk"] .page-image-box{order:1}
+html[data-kiosk-app="transport"][data-output-mode="kiosk"] .table-header{
+ padding-left:calc(var(--transport-gap,12px) + 1px);
+}
+
+html[data-kiosk-app][data-output-mode="kiosk"] :is(.empty,.error,.forecast-empty){
+ text-align:left;padding-inline:var(--edu-kiosk-text-inset,var(--edu-header-inset));
+}
