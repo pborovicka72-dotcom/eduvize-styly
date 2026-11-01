@@ -160,7 +160,7 @@ html[data-kiosk-app][data-output-mode="kiosk"].kiosk-output:not(.edu-kiosk-heade
 }
 
 /* Kiosk text alignment: all application headings follow the visible content's left edge. */
-html[data-kiosk-app][data-output-mode="kiosk"] .edu-output-header .edu-app-icon{order:0}
+html[data-kiosk-app][data-output-mode="kiosk"] .edu-output-header .edu-app-icon{order:-1}
 html[data-kiosk-app="news"][data-output-mode="kiosk"] .edu-output-header .brand{flex:1;min-width:0}
 html[data-kiosk-app][data-output-mode="kiosk"] .section-heading{
  padding-inline:var(--edu-kiosk-section-inset,var(--edu-kiosk-text-inset,var(--edu-header-inset)));
