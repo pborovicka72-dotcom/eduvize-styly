@@ -2,7 +2,7 @@
 (function(root){
  let parentHeight=null,queued=false;
  function fitTitles(header){
-  for(const node of header.querySelectorAll('.edu-header-title')){
+  for(const node of header.querySelectorAll('.edu-header-title,.edu-header-meta')){
    let available=node.clientWidth;
    if(!available)continue;
    let size=parseFloat(getComputedStyle(node).fontSize);
