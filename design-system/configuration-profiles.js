@@ -81,7 +81,7 @@
     const manage=make('a','Vybrat profil','edu-admin__button edu-admin__button--secondary');manage.href=manageUrl('');const actions=make('div',null,'edu-admin__actions'),load=button('Načíst uložené nastavení'),undo=button('Vrátit před načtením');undo.hidden=true;load.hidden=true;actions.append(load,undo);panel.append(profileText,status,manage,actions);if(row)row.after(panel);else save.after(panel);
     const ui={status};
     const draftKey='eduvize-profile-save-draft-v1:'+adapter.app+':'+location.pathname;
-    let busy=false,profileId='',profileTitle='',revision=0,baseline='',backup=null,errorText='',loaded=false,ready=false,tracked='',needsLogin=false,restored=false,needsReload=false,manualLoad=false,timer,kioskEdited=false;
+    let busy=false,profileId='',profileTitle='',revision=0,baseline='',backup=null,errorText='',loaded=false,ready=false,tracked='',needsLogin=false,restored=false,needsReload=false,manualLoad=false,timer,kioskEdited=false,browserBaseline='';
     const auth=()=>root.EduvizeAdminAuth;
     const canSave=()=>!!(auth()?.getToken('configurations')||auth()?.getToken('documents'));
     const activeId=()=>auth()?.status().profileId||'';
@@ -141,13 +141,15 @@
     for(const event of ['input','change','click','eduvize-profile-change'])document.addEventListener(event,changed);
     // Automatic preview/profile refreshes must never create an exit warning.
     if(['kiosk','transport'].includes(adapter.app)){
-      const edited=event=>{if(event.isTrusted&&!panel.contains(event.target))kioskEdited=true;};
+      const edited=event=>{if(event.isTrusted&&!panel.contains(event.target)&&!event.target.readOnly&&!event.target.disabled)kioskEdited=true;};
       for(const type of ['input','change'])document.addEventListener(type,edited,true);
       document.addEventListener('click',event=>{if(event.isTrusted&&event.target.closest('#addButton,#newPage,#deletePage,.edu-item-editor__actions'))kioskEdited=true;},true);
       if(adapter.app==='transport')document.addEventListener('click',event=>{if(event.isTrusted&&event.target.closest('#selectedStops,#selected-stops,.selected-stops,.stop-chip'))kioskEdited=true;},true);
-      local.addEventListener('click',()=>queueMicrotask(()=>{kioskEdited=false;}));
+      local.addEventListener('click',()=>queueMicrotask(()=>{browserBaseline=departureFingerprint(adapter.read());kioskEdited=false;}));
+      // The kiosk's share handler saves the native local configuration before copying.
+      if(adapter.app==='kiosk'&&copy)copy.addEventListener('click',()=>queueMicrotask(()=>{browserBaseline=departureFingerprint(adapter.read());kioskEdited=false;}));
     }
-    root.addEventListener('beforeunload',event=>{if(!profileId||!baseline||(['kiosk','transport'].includes(adapter.app)&&!kioskEdited))return;const current=departureFingerprint(adapter.read()),saved=departureFingerprint(JSON.parse(baseline));if(current!==saved){event.preventDefault();event.returnValue='';}});
+    root.addEventListener('beforeunload',event=>{if(!profileId||!baseline||(['kiosk','transport'].includes(adapter.app)&&!kioskEdited))return;const current=departureFingerprint(adapter.read()),saved=departureFingerprint(JSON.parse(baseline));if(current!==saved&&current!==browserBaseline){event.preventDefault();event.returnValue='';}});
     watchAuth(()=>{state();if(ready&&!busy)work('Ověřuji aktivní profil…',()=>list(false));});
     document.addEventListener('visibilitychange',()=>{if(!document.hidden&&ready&&!busy)auth()?.refresh();});
     state();try{await waitAdapter(adapter);if(adapter.app==='styles'){try{const saved=JSON.parse(localStorage.getItem(localKey)||'null');if(saved)await adapter.apply(saved);}catch{}}ready=true;baseline=fingerprint(adapter.read());const resume=await restoreDraft();await auth()?.ready;await work('Načítám nastavení profilu…',()=>list(!resume));}catch(e){say(e.message,'error');state();}
