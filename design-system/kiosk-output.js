@@ -14,6 +14,7 @@
   return points;
  }
  function mount(host,options={}){
+  options={...options,automatic:options.automatic&&root.EduvizeOutputModes?.mode?.()!=='kiosk'};
   if(!host)return null;if(instances.has(host))return instances.get(host);
   host.classList.add('edu-kiosk-stage');
   const nav=document.createElement('nav');nav.className='edu-kiosk-pagination';nav.setAttribute('aria-label',options.label||'Stránkování obsahu');
