@@ -122,3 +122,10 @@ html[data-kiosk-app="kiosk"] body.frame-open .wrap>.edu-content-navigation,html[
 body.tiles-home.frame-open .wrap{grid-template-rows:minmax(0,1fr) auto}
 body.tiles-home.frame-open #contentFrame{grid-column:1;grid-row:1}
 body.tiles-home.frame-open #navigationActions{grid-column:1;grid-row:2}
+
+
+/* A single, icon-only home anchor stays at the lower left. */
+html[data-kiosk-app="kiosk"]:not(.web-output) .kiosk-navigation{justify-content:flex-start}
+html[data-kiosk-app="kiosk"][data-output-mode] #navigationActions #home{width:var(--edu-navigation-size)!important;padding:0!important}
+/* External sites retain their own design viewport and fill the content track. */
+body.frame-open.zoom-frame #contentFrame{position:static;left:auto;top:auto;align-self:start;justify-self:start;transform-origin:top left;width:calc(100% / var(--embedded-scale,1));height:calc(100% / var(--embedded-scale,1))}

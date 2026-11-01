@@ -160,7 +160,7 @@ html[data-kiosk-app][data-output-mode="kiosk"].kiosk-output:not(.edu-kiosk-heade
 }
 
 /* Kiosk text alignment: all application headings follow the visible content's left edge. */
-html[data-kiosk-app][data-output-mode="kiosk"] .edu-output-header .edu-app-icon{order:1}
+html[data-kiosk-app][data-output-mode="kiosk"] .edu-output-header .edu-app-icon{order:0}
 html[data-kiosk-app="news"][data-output-mode="kiosk"] .edu-output-header .brand{flex:1;min-width:0}
 html[data-kiosk-app][data-output-mode="kiosk"] .section-heading{
  padding-inline:var(--edu-kiosk-section-inset,var(--edu-kiosk-text-inset,var(--edu-header-inset)));
@@ -171,13 +171,13 @@ html[data-kiosk-app="weather"][data-output-mode="kiosk"] :is(.hour-cell,.daily-h
  align-items:flex-start!important;text-align:left!important;
 }
 html[data-kiosk-app="weather"][data-output-mode="kiosk"] .daily-hour-cell{padding:calc(var(--edu-text-body)*1.111111)!important}
-html[data-kiosk-app="weather"][data-output-mode="kiosk"] .edu-output-header .weather-current{order:0}
+html[data-kiosk-app="weather"][data-output-mode="kiosk"] .edu-output-header .weather-current{order:1}
 html[data-kiosk-app="weather"][data-output-mode="kiosk"] .edu-output-header .hero-art{order:2}
 html[data-kiosk-app="weather"][data-output-mode="kiosk"][data-weather-portrait] .hero{
- grid-template-columns:minmax(0,1fr) auto auto!important;
+ grid-template-columns:auto minmax(0,1fr) auto!important;
 }
-html[data-kiosk-app="weather"][data-output-mode="kiosk"][data-weather-portrait] .weather-current{grid-column:1}
-html[data-kiosk-app="weather"][data-output-mode="kiosk"][data-weather-portrait] .hero>.edu-app-icon{grid-column:2}
+html[data-kiosk-app="weather"][data-output-mode="kiosk"][data-weather-portrait] .weather-current{grid-column:2}
+html[data-kiosk-app="weather"][data-output-mode="kiosk"][data-weather-portrait] .hero>.edu-app-icon{grid-column:1}
 html[data-kiosk-app="weather"][data-output-mode="kiosk"][data-weather-portrait] .hero-art{grid-column:3}
 html[data-kiosk-app="kiosk"][data-output-mode="kiosk"] .page-image-box{order:1}
 html[data-kiosk-app="transport"][data-output-mode="kiosk"] .table-header{
@@ -191,3 +191,6 @@ html[data-kiosk-app][data-output-mode="kiosk"] :is(.empty,.error){
 html[data-kiosk-app="transport"][data-output-mode="kiosk"] .message{
  text-align:left;padding-inline:var(--edu-kiosk-text-inset,var(--edu-header-inset));
 }
+
+
+html.kiosk-output .edu-output-header[hidden]{display:none!important}

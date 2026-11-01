@@ -9,3 +9,7 @@
 .edu-status-panel__date,.edu-status-panel__clock{font-size:calc(var(--edu-status-height,90px)*.18);font-weight:500;line-height:1.2;white-space:nowrap;font-variant-numeric:tabular-nums}
 .edu-status-panel__date--compact{display:none}
 .edu-status-panel--compact .edu-status-panel__date:not(.edu-status-panel__date--compact){display:none}.edu-status-panel--compact .edu-status-panel__date--compact{display:inline}
+
+
+/* The brand artwork always sits on its white logo canvas. */
+html[data-kiosk-app="kiosk"] .edu-status-panel__brand{background:white}
