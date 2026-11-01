@@ -11,9 +11,6 @@ html.kiosk-output .edu-kiosk-stage::-webkit-scrollbar{display:none}
 .edu-kiosk-pagination button:disabled{opacity:.45;cursor:default}
 html.kiosk-output :is(.shell,.web-shell){box-sizing:border-box;width:100%!important;max-width:none!important;margin:0!important;padding:0!important;min-height:0!important;height:100dvh!important;overflow:hidden!important}
 html[data-kiosk-app="weather"].kiosk-output .shell{display:flex!important;flex-direction:column!important;gap:8px!important}
-html[data-kiosk-app="weather"].kiosk-output .hero{flex:none!important;max-height:36dvh!important;min-height:0!important;padding:clamp(6px,1vmin,16px)!important}
-html[data-kiosk-app="weather"].kiosk-output .temperature{font-size:clamp(32px,8vmin,80px)!important;margin:0!important}
-html[data-kiosk-app="weather"].kiosk-output .hero-icon{max-height:16dvh!important}
 html[data-kiosk-app="weather"].kiosk-output :is(.daily-forecast-panel,.hourly-panel,.forecast-text){overflow:visible!important;max-height:none!important;height:auto!important}
 html[data-kiosk-app="weather"].kiosk-output #page-indicator{display:none!important}
 html[data-kiosk-app="wisdom"].kiosk-output .web-shell,html[data-kiosk-app="wisdom"].kiosk-output #display,html[data-kiosk-app="wisdom"].kiosk-output #display>.panel{display:flex!important;flex-direction:column!important;min-height:0!important;height:100%!important}
