@@ -6,7 +6,7 @@ vm.runInNewContext(fs.readFileSync(new URL('../holidays-layout.js',import.meta.u
 // Today's name may already have been reduced to fit a long name: actual size wins.
 for(const todaySize of [194,44,24]){
  const today={font:todaySize,style:{},getBoundingClientRect:()=>({height:50})};
- const future=[20,65,162].map(font=>({font,style:{}}));
+ const future=[20,65,162].map(font=>({font,style:{setProperty(key,value){if(key==='font-size')this.fontSize=value;}}}));
  const body={querySelector:()=>today,querySelectorAll:()=>future};
  scope.window.EduvizeHolidaysLayout.fitHierarchy(body);
  assert.ok(future.every(el=>Number(scope.getComputedStyle(el).fontSize.replace('px',''))<=todaySize*.8));
