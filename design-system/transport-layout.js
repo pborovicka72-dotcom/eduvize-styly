@@ -5,10 +5,10 @@
   const text=web?18:Math.max(28,Math.min(80,geometry.short*.034));
   const px={text,time:text*1.08,route:text*.9,stop:text*.88,label:text*.7,footer:Math.max(12,Math.min(28,geometry.short*.025)),gap:Math.max(6,text*.3),pad:Math.max(8,Math.min(30,geometry.short*.014)),rowPad:text*.18,rowGap:Math.max(3,text*.08),'route-icon':text*.72};
   for(const [key,value] of Object.entries(px))body.style.setProperty('--transport-'+key,value+'px');
-  body.dataset.transportLayout=width<1400?'stacked':'table';
+  body.dataset.transportLayout=width<1400||width/text<38?'stacked':'table';
   body.dataset.segmentLayout=geometry.kind;
-  const station=body.querySelector('#station');if(station){station.dataset.fullLabel=station.dataset.fullLabel||station.textContent;station.textContent=width<1400?station.dataset.fullLabel.split(' · ')[0]:station.dataset.fullLabel;}
-  const heading=body.querySelector('.destination-heading');if(heading)heading.textContent=width<1400?'Směr / zastávka':'Směr';
+  const station=body.querySelector('#station');if(station){station.dataset.fullLabel=station.dataset.fullLabel||station.textContent;station.textContent=width<1400||width/text<38?station.dataset.fullLabel.split(' · ')[0]:station.dataset.fullLabel;}
+  const heading=body.querySelector('.destination-heading');if(heading)heading.textContent=width<1400||width/text<38?'Směr / zastávka':'Směr';
   return Object.freeze({geometry,px:Object.freeze(px)});
  }
  root.EduvizeTransportLayout=Object.freeze({apply});
