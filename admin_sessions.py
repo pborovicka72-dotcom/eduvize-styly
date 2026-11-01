@@ -119,7 +119,7 @@ def session_router(store,styles_key,documents_url=DOCUMENTS):
    scopes.add('styles')
   if dk:
    try:
-    async with httpx.AsyncClient(timeout=20,follow_redirects=False) as client:r=await client.get(documents_url+'/api/admin/status',headers={'Authorization':'Bearer '+dk})
+    async with httpx.AsyncClient(timeout=20,follow_redirects=False) as client:r=await client.get(documents_url+'/api/admin/status',params={'authOnly':'true'},headers={'Authorization':'Bearer '+dk})
    except httpx.HTTPError:raise HTTPException(503,'Služba Dokumentů nyní není dostupná.')
    if r.status_code in (401,403):raise HTTPException(401,'Neplatný klíč Dokumentů a OneDrive.')
    if not r.is_success:raise HTTPException(503,'Nelze ověřit připojení Dokumentů. Zkuste to později.')
