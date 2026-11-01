@@ -31,12 +31,11 @@
   const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
   const title=clamp(heading*.48,22,68),label=clamp(title*.55,16,38);
   const gap=clamp(title*.4,12,28),maxWidth=clamp(title*12,300,720);
-  let columns=Math.max(1,Math.min(count,Math.floor((width+gap)/(maxWidth+gap))||1));
-  if(count===4&&columns===3)columns=2;
-  const cardWidth=Math.min(maxWidth,(width-gap*(columns-1))/columns);
+  let columns=Math.max(1,Math.min(count,Math.ceil((width+gap)/(maxWidth+gap))||1));
+  const cardWidth=(width-gap*(columns-1))/columns;
   const cardHeight=Math.min(height,clamp(cardWidth*(folder?.62:.95),folder?180:280,folder?440:680));
   const rows=Math.max(1,Math.min(Math.ceil(count/columns),Math.floor((height+gap)/(cardHeight+gap))||1));
-  return Object.freeze({columns,rows,title,label,gap,pad:clamp(title*.55,14,36),icon:clamp(title*1.35,40,96),cardHeight,gridWidth:columns*cardWidth+gap*(columns-1)});
+  return Object.freeze({columns,rows,title,label,gap,pad:clamp(title*.55,14,36),icon:clamp(title*1.35,40,96),cardHeight,gridWidth:width});
  }
  root.EduvizeSegmentProfile=Object.freeze({resolve,header,text,holidays,documentCatalog});
 })(typeof window==='undefined'?globalThis:window);
