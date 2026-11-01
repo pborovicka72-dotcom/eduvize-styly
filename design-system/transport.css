@@ -75,3 +75,13 @@ html.web-output[data-kiosk-app="transport"] [data-transport-layout="stacked"] .d
 html.web-output[data-kiosk-app="transport"] [data-transport-layout="stacked"] .table-header>span:last-child{display:block}
 
 html[data-kiosk-app="transport"] .stop{word-break:break-word}
+
+html.web-output[data-kiosk-app="transport"] :is(.departure,.table-header){grid-template-columns:5em 4.5em minmax(0,1fr) 5em!important}
+html.web-output[data-kiosk-app="transport"] .departure{grid-template-areas:'time route destination countdown' 'time route stop delay'!important}
+html.web-output[data-kiosk-app="transport"] .time{grid-area:time}
+html.web-output[data-kiosk-app="transport"] .route{grid-area:route}
+html.web-output[data-kiosk-app="transport"] .destination{grid-area:destination}
+html.web-output[data-kiosk-app="transport"] .stop{grid-area:stop}
+html.web-output[data-kiosk-app="transport"] .countdown{grid-area:countdown}
+html.web-output[data-kiosk-app="transport"] .delay{grid-area:delay;font-size:14px!important}
+html.web-output[data-kiosk-app="transport"] .table-header :is(.stop-heading,span:last-child){display:none!important}
