@@ -7,6 +7,7 @@
   for(const [key,value] of Object.entries(px))body.style.setProperty('--transport-'+key,value+'px');
   body.dataset.transportLayout=width<1400?'stacked':'table';
   body.dataset.segmentLayout=geometry.kind;
+  const station=body.querySelector('#station');if(station){station.dataset.fullLabel=station.dataset.fullLabel||station.textContent;station.textContent=width<1400?station.dataset.fullLabel.split(' · ')[0]:station.dataset.fullLabel;}
   const heading=body.querySelector('.destination-heading');if(heading)heading.textContent=width<1400?'Směr / zastávka':'Směr';
   return Object.freeze({geometry,px:Object.freeze(px)});
  }
