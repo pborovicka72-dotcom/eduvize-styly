@@ -85,3 +85,14 @@ html.web-output[data-kiosk-app="transport"] .stop{grid-area:stop}
 html.web-output[data-kiosk-app="transport"] .countdown{grid-area:countdown}
 html.web-output[data-kiosk-app="transport"] .delay{grid-area:delay;font-size:14px!important}
 html.web-output[data-kiosk-app="transport"] .table-header :is(.stop-heading,span:last-child){display:none!important}
+
+/* A regular desktop page has room for six independent columns. */
+@media(min-width:901px){
+ html.web-output[data-kiosk-app="transport"] :is(.departure,.table-header){
+  grid-template-columns:5em 4.5em minmax(0,1.6fr) minmax(0,1fr) 4.5em 6em!important;
+  grid-template-areas:none!important;
+ }
+ html.web-output[data-kiosk-app="transport"] .departure>:is(.time,.route,.destination,.stop,.countdown,.delay){grid-area:auto!important}
+ html.web-output[data-kiosk-app="transport"] .delay{font-size:var(--transport-stop,16px)!important}
+ html.web-output[data-kiosk-app="transport"] .table-header :is(.stop-heading,span:last-child){display:block!important}
+}
