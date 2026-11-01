@@ -1,12 +1,13 @@
 /* Shared Documents API uploader. Credentials are supplied by the caller only. */
 (function(root){
-  const accept='.pdf,.png,.jpg,.jpeg,.webp,.mp4,.webm,.docx,.pptx';
-  const maxSize=20*1024*1024;
+  const accept='.pdf,.png,.jpg,.jpeg,.webp,.mp4,.webm';
+  const maxSize=100*1024*1024;
   function validate(file){
     if(!file)return 'Vyberte soubor.';
-    if(!file.size||file.size>maxSize)return 'Soubor musí mít velikost od 1 B do 20 MB.';
+    if(!file.size)return 'Soubor je prázdný. Vyberte neprázdný soubor.';
+    if(file.size>maxSize)return 'Soubor musí mít velikost do 100 MB.';
     const ext='.'+file.name.split('.').pop().toLowerCase();
-    if(!accept.split(',').includes(ext))return 'Povoleny jsou PDF, obrázky, MP4, WebM, DOCX a PPTX.';
+    if(!accept.split(',').includes(ext))return 'Povoleny jsou PDF, obrázky, MP4 a WebM. Word a PowerPoint nejprve exportujte do PDF.';
     return null;
   }
   function bind(options){
@@ -15,6 +16,14 @@
     category.closest('label')?.classList.add('edu-admin__field');
     progress.classList.add('edu-upload-progress');message.classList.add('edu-upload-status');
     let busy=false;
+    const showValidation=()=>{
+      if(busy)return;
+      const error=file.files[0]?validate(file.files[0]):null;
+      file.setCustomValidity(error||'');
+      if(error){bar.value=0;message.textContent=error;progress.hidden=false;}
+      else {message.textContent='';progress.hidden=true;}
+    };
+    file.addEventListener('change',showValidation);
     form.onsubmit=async event=>{
       event.preventDefault();if(busy)return;busy=true;await root.EduvizeAdminAuth?.ready;
       const selected=file.files[0],error=validate(selected),token=getToken()?.trim();
