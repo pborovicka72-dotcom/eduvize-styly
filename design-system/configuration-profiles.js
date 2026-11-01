@@ -70,7 +70,7 @@
     if(adapter.app==='kiosk'){const primary=make('div',null,'edu-output-actions');row.before(primary);row=primary;}
     local.textContent='Uložit v prohlížeči';
     const save=button('Uložit na OneDrive',false);save.dataset.eduProfileSave='';
-    for(const control of [save,local]){control.className='edu-admin__button';control.dataset.eduSave='';}
+    for(const control of [save,local,copy,open].filter(Boolean)){const saving=control===save||control===local;control.className='edu-admin__button'+(saving?'':' edu-admin__button--secondary');control.dataset.eduOutputAction=saving?'save':'secondary';if(saving)control.dataset.eduSave='';}
     // Move existing controls so their original handlers and submit behavior survive.
     row.prepend(...[save,local,copy,open].filter(Boolean));
     if(adapter.app==='styles'){const publish=document.getElementById('save');if(publish){publish.textContent='Použít změny ve sdíleném stylu';publish.title='Aktualizuje centrální styl Eduvize. Konfiguraci svého profilu uložíte tlačítkem Uložit na OneDrive.';}}
