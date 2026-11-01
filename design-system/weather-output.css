@@ -64,6 +64,7 @@ html[data-weather-portrait] .hero>.edu-app-icon{grid-column:1;grid-row:1}
 html[data-weather-portrait] .temperature{flex:0 0 auto}
 html[data-weather-portrait] .hero-details{flex:0 0 auto;min-width:0}
 html[data-weather-portrait] .hero-art{grid-column:3;grid-row:1}
+html[data-weather-portrait] .edu-output-header .hero-art .condition-label{max-width:100%;font-size:calc(var(--edu-header-meta)*.65);overflow-wrap:break-word}
 html[data-weather-portrait] :is(.feels-like,.hero-meta){flex-wrap:nowrap;white-space:nowrap}
 html[data-weather-portrait] .metric{display:flex;flex-direction:column;justify-content:center}
 html[data-weather-portrait] .hour-cell{justify-content:center}
