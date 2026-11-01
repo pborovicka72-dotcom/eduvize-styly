@@ -74,7 +74,6 @@ html[data-kiosk-app="news"][data-output-mode]:not(.web-output) #news .card{conta
 /* Kiosk uses the same image-above-text cards and layout policy as signage. */
 html[data-kiosk-app="news"][data-output-mode].kiosk-output #news{grid-auto-rows:minmax(0,1fr)!important;align-content:stretch!important;flex:1 1 0%!important;overflow:hidden!important}
 html[data-kiosk-app="news"][data-output-mode].kiosk-output #news .card{display:flex!important;flex-direction:column!important;height:100%!important;overflow:hidden!important}
-html[data-kiosk-app="news"][data-output-mode].kiosk-output #news .media{width:100%!important;height:auto!important;min-height:0!important;flex:0 0 28%!important}
 html[data-kiosk-app="news"][data-output-mode].kiosk-output #news .content{flex:1 1 0%!important;min-height:0!important;overflow:hidden!important}
 html[data-kiosk-app="news"][data-output-mode].kiosk-output #news :is(.title,.summary){overflow:hidden!important}
 .news-page-controls{display:flex;gap:12px;margin-left:auto;flex:none}
