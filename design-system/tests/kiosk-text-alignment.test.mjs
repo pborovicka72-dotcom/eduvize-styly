@@ -5,7 +5,7 @@ const source=fs.readFileSync(new URL('../output-header.js',import.meta.url),'utf
 const start=source.indexOf(' const textAnchors='),end=source.indexOf(' function update(){',start);
 assert.ok(start>=0&&end>start);
 const nodes=new Map();
-const context={document:{querySelectorAll:selector=>nodes.get(selector)||[]},getComputedStyle:n=>n.style};
+const context={document:{querySelector:()=>null,querySelectorAll:selector=>nodes.get(selector)||[]},getComputedStyle:n=>n.style};
 vm.runInNewContext(source.slice(start,end),context);
 const header={getBoundingClientRect:()=>({left:100})};
 function node(left,width=200,padding='0px',border='0px'){return {getBoundingClientRect:()=>({left,width}),style:{paddingLeft:padding,borderLeftWidth:border}}}
