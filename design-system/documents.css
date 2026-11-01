@@ -89,13 +89,13 @@ html[data-kiosk-app="documents"][data-output-mode]:not(.web-output) #browse .arr
 
 
 /* Kiosk navigation belongs outside the heading, alongside the content controls. */
-html[data-output-mode="kiosk"] #documentNavigation .edu-navigation__actions{display:none}
-html[data-output-mode="kiosk"] .edu-document-navigation button[hidden]{display:none}
-html[data-output-mode="kiosk"] #documentNavigation{margin-bottom:12px}
+html[data-kiosk-app="documents"][data-output-mode] #documentNavigation .edu-navigation__actions{display:none}
+html[data-kiosk-app="documents"][data-output-mode] .edu-document-navigation button[hidden]{display:none}
+html[data-kiosk-app="documents"][data-output-mode] #documentNavigation{margin-bottom:12px}
 html[data-output-mode="kiosk"] #pdfTools:empty{display:none}
 html[data-output-mode="kiosk"] #detail .controls{background:var(--ev-surface);gap:12px}
 html[data-output-mode="kiosk"] #kioskPdfPosition:empty{display:none}
-html:not(.kiosk-output) #kioskPdfPosition{display:none}
+
 html[data-output-mode="kiosk"] #browse .thumb{background:var(--ev-bg)}
 
 
