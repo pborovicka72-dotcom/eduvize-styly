@@ -42,7 +42,7 @@
   const cardWidth=(width-gap*(columns-1))/columns;
   const cardHeight=(height-gap*(rows-1))/rows;
   const font=signage?clamp(Math.min(cardWidth/24,cardHeight/15),20,58):(root.EduvizeOutputModes?.mode?.()==='kiosk'?clamp(width/100,20,32):16);
-  return {columns,rows,capacity,side:cardWidth/cardHeight>1.35,font,pad:clamp(font*.65,14,32),gap};
+  return {columns,rows,capacity,side:false,font,pad:clamp(font*.65,14,32),gap};
  }
  function apply(body,grid,options){
   const policy=resolve(grid.clientWidth,grid.clientHeight||root.innerHeight*.78,options);
