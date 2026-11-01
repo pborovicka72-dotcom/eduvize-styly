@@ -132,3 +132,29 @@ html.web-output[data-kiosk-app="transport"] .time{font-size:22px!important;line-
  html:is(.nsp-output,.kiosk-output) :is([data-edu-source-details],.work,.source-link,#source){display:none!important}
  html:is(.nsp-output,.kiosk-output) .footer:not(:has(nav,button,#page,[role="navigation"],.edu-kiosk-pagination)){display:none!important}
 }
+
+/* Light application headings belong only to kiosk output.
+   All colors follow the active global theme; geometry and text scale stay shared. */
+html[data-kiosk-app][data-output-mode="kiosk"].kiosk-output:not(.edu-kiosk-header-legacy) .edu-output-header,
+html[data-kiosk-app][data-output-mode="kiosk"].kiosk-output:not(.edu-kiosk-header-legacy) body.subpage .wrap>.edu-output-header{
+ background:var(--ev-bg)!important;color:var(--ev-text)!important;
+ border:0!important;border-bottom:3px solid var(--ev-secondary)!important;
+ border-radius:0!important;box-shadow:none!important;
+}
+html[data-kiosk-app][data-output-mode="kiosk"].kiosk-output:not(.edu-kiosk-header-legacy) .edu-output-header :is(.edu-header-title,.edu-header-meta,.edu-navigation-heading,.hero-details,.condition-label){
+ color:inherit!important;
+}
+html[data-kiosk-app][data-output-mode="kiosk"].kiosk-output:not(.edu-kiosk-header-legacy) .edu-output-header .edu-navigation-heading{
+ background:transparent!important;
+}
+html[data-kiosk-app][data-output-mode="kiosk"].kiosk-output:not(.edu-kiosk-header-legacy) .edu-output-header .edu-app-icon{
+ background:transparent!important;color:var(--ev-primary)!important;
+}
+/* The style version is visible in kiosk output only. */
+.edu-kiosk-style-version{display:none}
+html[data-kiosk-app][data-output-mode="kiosk"].kiosk-output:not(.edu-kiosk-header-legacy) .edu-kiosk-style-version{
+ display:block;position:fixed;right:5px;bottom:4px;z-index:2147483646;
+ padding:2px 5px;border:1px solid var(--ev-border);border-radius:3px;
+ background:var(--ev-surface);color:var(--ev-text);
+ font:10px/1.2 system-ui,sans-serif;pointer-events:none;
+}
