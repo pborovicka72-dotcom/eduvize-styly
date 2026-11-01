@@ -17,7 +17,7 @@ assert.equal(ordinary.searchParams.get('paging'),'off');assert.equal(ordinary.se
 let count=0;
 for(const styles of Object.values(window.EduvizeNSPLayouts.layouts))for(const rects of Object.values(styles))for(const [w,h]of rects){
  const geometry=profile.resolve(w,h),header=profile.header(geometry),text=profile.text(geometry);
- assert.equal(header.height,Math.min(w,h)*.16);assert.ok(text.body>=16);assert.ok(text.title>text.body);assert.ok(text.value>text.title);assert.equal(profile.header(geometry,'web').height,96);assert.equal(profile.text(geometry,'web').body,18);count++;
+ assert.equal(header.height,Math.min(w,h)<=720?192:Math.min(w,h)<=1200?288:Math.round(Math.min(w,h)*.22/32)*32);assert.ok(text.body>=16);assert.ok(text.title>text.body);assert.ok(text.value>text.title);assert.equal(profile.header(geometry,'web').height,96);assert.equal(profile.text(geometry,'web').body,18);count++;
 }
 assert.equal(count,36);
 const css=fs.readFileSync(new URL('output-integrity.css',base),'utf8');
