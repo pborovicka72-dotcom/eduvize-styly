@@ -104,18 +104,21 @@ body.menu-layout.frame-open.zoom-frame #contentFrame{
  align-self:start;justify-self:start;
 }
 
-/* Home and back share one touch target instead of using the content-header icon size. */
-html[data-kiosk-app="kiosk"][data-output-mode] #navigationActions :is(#back,#home){
- box-sizing:border-box!important;height:var(--edu-navigation-size,44px)!important;
- min-height:var(--edu-navigation-size,44px)!important;max-height:var(--edu-navigation-size,44px)!important;
- font-size:max(16px,calc(var(--edu-navigation-size,44px)*.4))!important;
- line-height:1.2!important;align-items:center;justify-content:center;
-}
+
+/* The kiosk returns home from a bottom row; application headings contain no kiosk controls. */
+.kiosk-navigation{display:flex;justify-content:center;align-items:center;flex:0 0 auto;padding:clamp(4px,.6vmin,10px) 0}
+.kiosk-navigation[hidden],.kiosk-navigation.hidden{display:none!important}
 html[data-kiosk-app="kiosk"][data-output-mode] #navigationActions #home{
- width:var(--edu-navigation-size,44px)!important;min-width:var(--edu-navigation-size,44px)!important;
- flex:0 0 var(--edu-navigation-size,44px)!important;padding:0!important;
+ display:inline-flex!important;align-items:center;justify-content:center;gap:.4em;
+ box-sizing:border-box!important;width:auto!important;min-width:var(--edu-navigation-size,44px)!important;
+ height:var(--edu-navigation-size,44px)!important;min-height:var(--edu-navigation-size,44px)!important;
+ flex:0 0 auto!important;padding:0 .8em!important;
+ font-size:max(16px,calc(var(--edu-navigation-size,44px)*.4))!important;line-height:1.2!important;
+ border-radius:var(--ev-control-radius)!important;
+ background:var(--ev-secondary);color:var(--ev-secondary-text);
 }
-html[data-kiosk-app="kiosk"][data-output-mode] #navigationActions #back{padding:0 .8em!important}
-html[data-kiosk-app="kiosk"][data-output-mode] #navigationActions #back span{font:inherit!important;width:auto}
-html[data-kiosk-app="kiosk"][data-output-mode] #navigationActions{align-items:center;gap:calc(var(--edu-navigation-size,44px)*.18)}
-body.tiles-home.frame-open .wrap>header{justify-content:flex-end;min-height:var(--edu-navigation-size,44px)}
+html[data-kiosk-app="kiosk"][data-output-mode] #navigationActions #home svg{width:1.35em;height:1.35em;flex:none}
+html[data-kiosk-app="kiosk"] body.frame-open .wrap>.edu-content-navigation,html[data-kiosk-app="kiosk"] body.frame-open #schoolContent{display:none!important}
+body.tiles-home.frame-open .wrap{grid-template-rows:minmax(0,1fr) auto}
+body.tiles-home.frame-open #contentFrame{grid-column:1;grid-row:1}
+body.tiles-home.frame-open #navigationActions{grid-column:1;grid-row:2}
