@@ -187,3 +187,7 @@ html[data-kiosk-app="transport"][data-output-mode="kiosk"] .table-header{
 html[data-kiosk-app][data-output-mode="kiosk"] :is(.empty,.error,.forecast-empty){
  text-align:left;padding-inline:var(--edu-kiosk-text-inset,var(--edu-header-inset));
 }
+
+html[data-kiosk-app="transport"][data-output-mode="kiosk"] .message{
+ text-align:left;padding-inline:var(--edu-kiosk-text-inset,var(--edu-header-inset));
+}
