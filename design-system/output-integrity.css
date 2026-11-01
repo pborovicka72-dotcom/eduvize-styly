@@ -165,12 +165,6 @@ html[data-kiosk-app="news"][data-output-mode="kiosk"] .edu-output-header .brand{
 html[data-kiosk-app][data-output-mode="kiosk"] .section-heading{
  padding-inline:var(--edu-kiosk-section-inset,var(--edu-kiosk-text-inset,var(--edu-header-inset)));
 }
-html[data-kiosk-app="weather"][data-output-mode="kiosk"] .metric-top{justify-content:space-between}
-html[data-kiosk-app="weather"][data-output-mode="kiosk"] .metric-top .metric-icon{order:1}
-html[data-kiosk-app="weather"][data-output-mode="kiosk"] :is(.hour-cell,.daily-hour-cell){
- align-items:flex-start!important;text-align:left!important;
-}
-html[data-kiosk-app="weather"][data-output-mode="kiosk"] .daily-hour-cell{padding:calc(var(--edu-text-body)*1.111111)!important}
 html[data-kiosk-app="weather"][data-output-mode="kiosk"] .edu-output-header .weather-current{order:1}
 html[data-kiosk-app="weather"][data-output-mode="kiosk"] .edu-output-header .hero-art{order:2}
 html[data-kiosk-app="weather"][data-output-mode="kiosk"][data-weather-portrait] .hero{
