@@ -61,3 +61,17 @@ html[data-kiosk-app="transport"][data-output-mode] [data-transport-layout="stack
 
 html[data-kiosk-app="transport"][data-output-mode] [data-transport-layout="stacked"] .head .clock{width:22%;max-width:22%}
 html[data-kiosk-app="transport"][data-output-mode] [data-transport-layout="stacked"] .head .clock-time{font-size:var(--transport-time)!important}
+
+/* Live status is a distinct column; unknown is never displayed as zero delay. */
+html[data-kiosk-app="transport"][data-output-mode]:not(.web-output) :is(.table-header,.departure){grid-template-columns:calc(var(--transport-time)*3.35) calc(var(--transport-route)*4.8) minmax(0,1.65fr) minmax(0,1fr) calc(var(--transport-stop)*4.8) calc(var(--transport-stop)*5.3)!important}
+html[data-kiosk-app="transport"] .delay{font-size:var(--transport-stop)!important;line-height:1.25;font-weight:600;white-space:nowrap}
+html[data-kiosk-app="transport"] .is-delayed{color:#a42b21}
+html[data-kiosk-app="transport"] .is-canceled .destination{text-decoration:line-through}
+html[data-kiosk-app="transport"][data-output-mode]:not(.web-output) [data-transport-layout="stacked"] .departure{grid-template-areas:'time route destination countdown' 'time route stop delay'}
+html[data-kiosk-app="transport"] [data-transport-layout="stacked"] .delay{grid-area:delay}
+html[data-kiosk-app="transport"] [data-transport-layout="stacked"] .table-header>span:last-child{display:none}
+html.web-output[data-kiosk-app="transport"] :is(.departure,.table-header){grid-template-columns:5em 4.5em minmax(0,1fr) 4em 5em!important}
+html.web-output[data-kiosk-app="transport"] [data-transport-layout="stacked"] .departure{grid-template-areas:'time route destination countdown delay' 'time route stop countdown delay'}
+html.web-output[data-kiosk-app="transport"] [data-transport-layout="stacked"] .table-header>span:last-child{display:block}
+
+html[data-kiosk-app="transport"] .stop{word-break:break-word}
