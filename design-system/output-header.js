@@ -49,9 +49,18 @@
    for(const node of header.querySelectorAll('.edu-header-title'))node.style.setProperty('font-size',metrics.title+'px','important');
    for(const node of header.querySelectorAll('.edu-header-meta'))node.style.setProperty('font-size',metrics.meta+'px','important');
    for(const group of header.querySelectorAll('.hero-details')){
+    group.hidden=false;
     const nodes=group.querySelectorAll('.feels-like,.hero-meta');
     for(const node of nodes)node.style.fontSize=metrics.meta+'px';
-    for(let pass=0;pass<3;pass++){const required=Math.max(group.scrollWidth,...Array.from(nodes,node=>node.scrollWidth));if(required<=group.clientWidth+1||!group.clientWidth)break;const scale=group.clientWidth/required;for(const node of nodes)node.style.fontSize=Math.max(1,parseFloat(getComputedStyle(node).fontSize)*scale-.2)+'px';}
+    const current=header.querySelector('.weather-current'),temperature=header.querySelector('.temperature');
+    if(current&&temperature&&getComputedStyle(current).display!=='contents'){
+     const gap=parseFloat(getComputedStyle(current).gap)||0;
+     const needed=Math.max(group.scrollWidth,...Array.from(nodes,node=>node.scrollWidth));
+     const available=current.clientWidth-temperature.getBoundingClientRect().width-gap;
+     const scale=Math.min(1,available/Math.max(1,needed));
+     if(scale<.8)group.hidden=true;
+     else for(const node of nodes)node.style.fontSize=(metrics.meta*scale)+'px';
+    }
    }
    fitTitles(header);
    header.dataset.eduHeader='shared';
