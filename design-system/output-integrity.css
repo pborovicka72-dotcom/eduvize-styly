@@ -163,7 +163,7 @@ html[data-kiosk-app][data-output-mode="kiosk"].kiosk-output:not(.edu-kiosk-heade
 html[data-kiosk-app][data-output-mode="kiosk"] .edu-output-header .edu-app-icon{order:1}
 html[data-kiosk-app="news"][data-output-mode="kiosk"] .edu-output-header .brand{flex:1;min-width:0}
 html[data-kiosk-app][data-output-mode="kiosk"] .section-heading{
- padding-inline:var(--edu-kiosk-text-inset,var(--edu-header-inset));
+ padding-inline:var(--edu-kiosk-section-inset,var(--edu-kiosk-text-inset,var(--edu-header-inset)));
 }
 html[data-kiosk-app="weather"][data-output-mode="kiosk"] .metric-top{justify-content:space-between}
 html[data-kiosk-app="weather"][data-output-mode="kiosk"] .metric-top .metric-icon{order:1}
@@ -184,7 +184,7 @@ html[data-kiosk-app="transport"][data-output-mode="kiosk"] .table-header{
  padding-left:calc(var(--transport-gap,12px) + 1px);
 }
 
-html[data-kiosk-app][data-output-mode="kiosk"] :is(.empty,.error,.forecast-empty){
+html[data-kiosk-app][data-output-mode="kiosk"] :is(.empty,.error){
  text-align:left;padding-inline:var(--edu-kiosk-text-inset,var(--edu-header-inset));
 }
 

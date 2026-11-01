@@ -27,8 +27,9 @@
   for(const selector of textAnchors[app]||[]){
    const target=Array.from(document.querySelectorAll(selector)).find(node=>node.getBoundingClientRect().width>0);
    if(!target)continue;
-   const style=getComputedStyle(target);
-   return Math.max(0,target.getBoundingClientRect().left-header.getBoundingClientRect().left+(parseFloat(style.borderLeftWidth)||0)+(parseFloat(style.paddingLeft)||0));
+   const style=getComputedStyle(target),rect=target.getBoundingClientRect();
+   const scale=target.offsetWidth?rect.width/target.offsetWidth:1;
+   return Math.max(0,rect.left-header.getBoundingClientRect().left+((parseFloat(style.borderLeftWidth)||0)+(parseFloat(style.paddingLeft)||0))*scale);
   }
   return fallback;
  }
@@ -55,6 +56,14 @@
    const textInset=mode==='kiosk'?contentInset(header,html.dataset.kioskApp,inset):inset;
    if(mode==='kiosk'){
     html.style.setProperty('--edu-kiosk-text-inset',textInset+'px');
+    const textLeft=header.getBoundingClientRect().left+textInset;
+    for(const section of document.querySelectorAll('.section-heading')){
+     const rect=section.getBoundingClientRect();
+     if(!rect.width||!section.offsetWidth)continue;
+     const scale=rect.width/section.offsetWidth;
+     section.style.setProperty('--edu-kiosk-section-inset',Math.max(0,(textLeft-rect.left)/scale)+'px');
+    }
+
     if(html.dataset.kioskApp==='holidays')html.style.setProperty('--edu-calendar-text-inset',textInset+'px');
    }
    header.style.setProperty('padding',metrics.padding+'px '+textInset+'px','important');
@@ -83,7 +92,18 @@
  function schedule(){if(queued)return;queued=true;requestAnimationFrame(update);}
  root.addEventListener('resize',schedule);
  root.addEventListener('message',event=>{if(event.source!==root.parent||root.parent===root||!root.EduvizeOutputModes?.isKiosk?.())return;if(event.data?.type==='eduvize-kiosk-layout'){if(event.data.parentMode)document.documentElement.classList.toggle('edu-kiosk-header-legacy',event.data.parentMode!=='kiosk');document.documentElement.classList.toggle('edu-menu-app-header',event.data.menuLayout===true);schedule();}const h=Number(event.data?.headerHeight);if(event.data?.type==='eduvize-kiosk-layout'&&Number.isFinite(h)&&h>=44&&h<=root.innerHeight*.4){parentHeight=h;schedule();}});
- function start(){update();new MutationObserver(schedule).observe(document.body,{subtree:true,childList:true,characterData:true});
+ function start(){
+  if(root.EduvizeOutputModes?.mode?.()==='kiosk'&&document.documentElement.dataset.kioskApp==='weather'){
+   const transforms=new WeakMap();
+   new MutationObserver(records=>{
+    for(const {target} of records){
+     if(!target.matches('.weather-page'))continue;
+     const key=target.style.transform+'|'+target.style.width+'|'+target.className;
+     if(transforms.get(target)!==key){transforms.set(target,key);schedule();}
+    }
+   }).observe(document.body,{subtree:true,attributes:true,attributeFilter:['style','class']});
+  }
+  update();new MutationObserver(schedule).observe(document.body,{subtree:true,childList:true,characterData:true});
   root.addEventListener('load',schedule);document.fonts?.ready.then(schedule);}
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});else start();
  update();root.EduvizeOutputHeader=Object.freeze({update:schedule});

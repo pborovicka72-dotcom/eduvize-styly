@@ -17,6 +17,8 @@ nodes.clear();nodes.set('.metric-value',[node(0,0)]);nodes.set('.forecast-card h
 assert.equal(context.contentInset(header,'weather',40),31,'Use the visible section, not a hidden page.');
 nodes.clear();nodes.set('#news .content',[node(100,400,'20px','1px')]);
 assert.equal(context.contentInset(header,'news',40),21,'Include the border and inner card padding.');
+nodes.clear();const scaled=node(100,200,'20px','1px');scaled.offsetWidth=400;nodes.set('#news .content',[scaled]);
+assert.equal(context.contentInset(header,'news',40),10.5,'Convert inner padding to the visible scale.');
 nodes.clear();
 assert.equal(context.contentInset(header,'documents',40),40,'An empty catalogue retains a usable heading inset.');
 assert.equal(context.contentInset(header,'unknown',40),40);
