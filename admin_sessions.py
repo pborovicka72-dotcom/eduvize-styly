@@ -15,6 +15,8 @@ HUB_ORIGIN='https://pborovicka72-dotcom.github.io'
 TTL=8*60*60
 REMEMBER_TTL=30*24*60*60
 TARGETS={
+ ('https://eduvize-jidelnicek.onrender.com','/config.html'):None,
+ ('http://127.0.0.1:8790','/config.html'):None,
  ('https://eduvize-design-system-api.onrender.com','/'):'styles',
  ('https://eduvize-design-system-api.onrender.com','/design-system'):'styles',
  ('https://eduvize-design-system-api.onrender.com','/design-system/'):'styles',
@@ -163,3 +165,4 @@ def session_router(store,styles_key,documents_url=DOCUMENTS):
   if origin not in ORIGINS:raise HTTPException(403,'Nepovolená stránka přihlášení.')
   data=await request.json();return store.redeem(data.get('code'),origin)
  return router
+
