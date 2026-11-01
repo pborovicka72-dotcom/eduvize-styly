@@ -2,6 +2,7 @@
 (function(root){
  const instances=new WeakMap();
  function mount(host,{items=':scope > *',automatic=false,seconds=8}={}){
+  automatic=automatic&&root.EduvizeOutputModes?.mode?.()!=='kiosk';
   if(!host||instances.has(host))return instances.get(host);
   host.classList.add('edu-kiosk-stage','edu-section-stage');host.dataset.sectionPager='true';
   const nav=document.createElement('nav');nav.className='edu-kiosk-pagination'+(automatic?' edu-auto-pagination':'');nav.setAttribute('aria-label','Stránkování sekcí');
