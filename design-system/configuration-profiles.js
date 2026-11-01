@@ -14,7 +14,7 @@
     {id:'wisdom',name:'Moudrost dne',url:'https://pborovicka72-dotcom.github.io/eduvize-moudrost-dne/config.html'},
     {id:'news',name:'Aktuality',url:'https://eduvize-aktuality.onrender.com/config'},
     {id:'styles',name:'Styly',url:'https://eduvize-design-system-api.onrender.com/'},
-    {id:'school-systems',name:'Školní informační systémy · místní test',url:'http://127.0.0.1:8789/config.html'}
+    {id:'school-systems',name:'Školní informační systémy',url:'https://eduvize-skolni-systemy.onrender.com/config.html'}
   ]);
   const make=(tag,text,cls)=>{const e=document.createElement(tag);if(text)e.textContent=text;if(cls)e.className=cls;return e;};
   const button=(text,secondary=true)=>{const e=make('button',text,'edu-admin__button'+(secondary?' edu-admin__button--secondary':''));e.type='button';return e;};
