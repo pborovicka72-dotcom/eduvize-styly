@@ -58,3 +58,6 @@ html[data-kiosk-app="transport"][data-output-mode] .identity{flex:1 1 0%;min-wid
 html[data-kiosk-app="transport"][data-output-mode] .clock{max-width:36%;overflow:hidden}
 html[data-kiosk-app="transport"][data-output-mode] [data-transport-layout="stacked"] .clock-date{display:none}
 html[data-kiosk-app="transport"][data-output-mode] [data-transport-layout="stacked"] .clock-time{font-size:var(--transport-time)!important}
+
+html[data-kiosk-app="transport"][data-output-mode] [data-transport-layout="stacked"] .head .clock{width:22%;max-width:22%}
+html[data-kiosk-app="transport"][data-output-mode] [data-transport-layout="stacked"] .head .clock-time{font-size:var(--transport-time)!important}
