@@ -58,12 +58,12 @@ html[data-weather-header-only] .edu-output-header .edu-header-art .condition-lab
 html[data-kiosk-app="weather"][data-output-mode] #weather-pages .daily-hourly-grid{grid-template-columns:repeat(var(--weather-daily,3),minmax(0,1fr))!important}
 
 /* Tall weather panels reserve independent header cells and use vertical card tracks. */
-html[data-kiosk-app="weather"][data-weather-portrait] .hero.edu-output-header{display:grid!important;grid-template-columns:auto minmax(0,1.35fr) minmax(0,1fr) auto;grid-template-rows:1fr}
-html[data-weather-portrait] .weather-current{display:contents}
+html[data-kiosk-app="weather"][data-weather-portrait] .hero.edu-output-header{display:grid!important;grid-template-columns:auto minmax(0,1fr) auto;grid-template-rows:1fr}
+html[data-weather-portrait] .weather-current{display:flex;grid-column:2;grid-row:1;gap:calc(var(--edu-header-meta)*.5);justify-content:flex-start;min-width:0}
 html[data-weather-portrait] .hero>.edu-app-icon{grid-column:1;grid-row:1}
-html[data-weather-portrait] .temperature{grid-column:2;grid-row:1;align-self:center}
-html[data-weather-portrait] .hero-details{grid-column:3;grid-row:1;align-self:center;min-width:0}
-html[data-weather-portrait] .hero-art{grid-column:4;grid-row:1}
+html[data-weather-portrait] .temperature{flex:0 0 auto}
+html[data-weather-portrait] .hero-details{flex:0 0 auto;min-width:0}
+html[data-weather-portrait] .hero-art{grid-column:3;grid-row:1}
 html[data-weather-portrait] :is(.feels-like,.hero-meta){flex-wrap:nowrap;white-space:nowrap}
 html[data-weather-portrait] .metric{display:flex;flex-direction:column;justify-content:center}
 html[data-weather-portrait] .hour-cell{justify-content:center}
