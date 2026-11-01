@@ -1,3 +1,7 @@
 .edu-editorial-settings{display:grid;gap:20px}.edu-editorial-settings .wide,.edu-editorial-settings .image-options{grid-column:1/-1}.edu-editorial-settings .image-options{display:grid;gap:16px}.selection-actions{display:flex;gap:10px;flex-wrap:wrap;margin:12px 0}.disabled-option{opacity:.5}
 
 .wisdom-save-status{display:block;margin:16px 0 0;padding:12px 16px;border:1px solid var(--ev-border);border-radius:var(--ev-control-radius);background:var(--ev-bg);color:var(--ev-muted);font-size:14px;line-height:1.4}
+
+/* Field groups retain vertical spacing before adjacent actions. */
+.edu-editorial-settings .wide:has(>label){display:flex;flex-direction:column;gap:16px}
+.edu-editorial-settings .wide>label+.edu-admin__actions{margin-top:4px}
