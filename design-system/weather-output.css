@@ -39,7 +39,6 @@ html[data-kiosk-app="weather"] .hourly-grid{gap:var(--weather-gap,16px)}
 
 /* Low horizontal strips reserve their complete area for weather content. */
 html[data-weather-strip] :is(.footer,.edu-auto-pagination,.page-indicator){display:none!important}
-html[data-weather-strip] #weather-pages .weather-page{min-height:100%}
 html[data-weather-strip] #weather-pages :is(.hourly-grid,.metrics,.forecast-grid){align-items:stretch}
 html[data-weather-header-only] :is(#weather-pages,.footer,.edu-kiosk-pagination,.page-indicator,.weather-alerts){display:none!important}
 html[data-weather-header-only] .shell{justify-content:center}
