@@ -8,7 +8,7 @@
 <link rel="stylesheet" href="./design-system/app-icons.css?v=20261031-identity-gap-1">
 <link rel="icon" type="image/svg+xml" href="./design-system/assets/eduvize-favicon-monochrome.svg?v=20261031-account-mono-1">
 <script src="./design-system/theme-first-paint.js?v=2"></script>
-<script src="./design-system/admin-auth.js?v=profile-cache-20261101-1"></script>
+<script src="./design-system/admin-auth.js?v=20261101-remember-1"></script>
 <script defer src="./design-system/active-theme.js?v=20261101-school-pdf-12"></script>
 <script defer src="./design-system/admin-header.js?v=6"></script>
 <script defer src="./design-system/admin-navigation.js?v=1"></script>
@@ -17,7 +17,7 @@
 
 <section id="edu-account-panel" class="edu-admin__card edu-account-panel" aria-labelledby="account"><h2 id="account">Účet a připojení</h2>
 <div class="edu-account-status"><strong id="account-session" role="status">Ověřuji přihlášení…</strong><span id="account-onedrive" role="status">Ověřuji připojení OneDrive…</span></div>
-<p>Přihlaste se jednou pro všechny administrace. Společný klíč zpřístupní Dokumenty, OneDrive i správu stylů. Přihlášení platí osm hodin.</p>
+<p>Přihlaste se jednou pro všechny administrace. Společný klíč zpřístupní Dokumenty, OneDrive i správu stylů. Se zapamatováním platí přihlášení 30 dní, jinak osm hodin.</p>
 <form id="account-form"><div class="edu-account-fields"><label>Společný klíč Eduvize<input id="account-key" type="password" autocomplete="off" required></label></div>
 <label class="edu-admin__checkbox"><input id="account-remember" type="checkbox" checked> Pamatovat přihlášení na tomto zařízení po dobu 30 dní</label><p class="note">Na sdíleném počítači tuto volbu vypněte. Ukládá se přihlašovací token, nikoli společný klíč.</p>
 <div class="edu-admin__actions"><button id="account-login" type="submit" class="edu-admin__button">Přihlásit správu Eduvize</button><button id="account-logout" type="button" class="edu-admin__button edu-admin__button--secondary" disabled>Odhlásit administrace</button><button id="account-microsoft" type="button" class="edu-admin__button edu-admin__button--secondary" disabled>Připojit / obnovit OneDrive</button><button id="account-return" type="button" class="edu-admin__button edu-admin__button--secondary" hidden>Vrátit se do administrace</button><button id="account-check" type="button" class="edu-admin__button edu-admin__button--secondary" disabled>Ověřit připojení</button></div></form>
