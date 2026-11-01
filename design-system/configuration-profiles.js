@@ -81,7 +81,7 @@
     const manage=make('a','Vybrat profil','edu-admin__button edu-admin__button--secondary');manage.href=manageUrl('');const actions=make('div',null,'edu-admin__actions'),load=button('Načíst uložené nastavení'),undo=button('Vrátit před načtením');undo.hidden=true;load.hidden=true;actions.append(load,undo);panel.append(profileText,status,manage,actions);if(row)row.after(panel);else save.after(panel);
     const ui={status};
     const draftKey='eduvize-profile-save-draft-v1:'+adapter.app+':'+location.pathname;
-    let busy=false,profileId='',profileTitle='',revision=0,baseline='',backup=null,errorText='',loaded=false,ready=false,tracked='',needsLogin=false,restored=false,needsReload=false,manualLoad=false,timer;
+    let busy=false,profileId='',profileTitle='',revision=0,baseline='',backup=null,errorText='',loaded=false,ready=false,tracked='',needsLogin=false,restored=false,needsReload=false,manualLoad=false,timer,kioskEdited=false;
     const auth=()=>root.EduvizeAdminAuth;
     const canSave=()=>!!(auth()?.getToken('configurations')||auth()?.getToken('documents'));
     const activeId=()=>auth()?.status().profileId||'';
@@ -89,7 +89,7 @@
     function say(text,state=''){status.textContent=text;status.dataset.state=state;}
     function dirty(){return baseline&&fingerprint(adapter.read())!==baseline;}
     // Choosing a preview segment is persisted, but is not a reason to block navigation.
-    function departureFingerprint(value){if(!value||typeof value!=='object')return fingerprint(value);const {segment,...content}=value;return fingerprint(content);}
+    function departureFingerprint(value){if(!value||typeof value!=='object')return fingerprint(value);const {segment,...content}=value;if(adapter.app==='kiosk'&&content.data){const {newsSources,layoutOrientation,layoutStyle,layoutBlock,previewPage,previewView,previewRevision,previewReset,...data}=content.data;content.data=data;}return fingerprint(content);}
     function state(){save.disabled=busy||!ready||needsReload;load.disabled=busy||!ready||!canSave();load.hidden=!needsReload;undo.disabled=busy;actions.hidden=load.hidden&&undo.hidden;manage.hidden=!!profileId;profileText.textContent=profileTitle?'Profil: '+profileTitle:'Profil není vybrán.';}
     async function work(text,fn){if(busy)return;clearTimeout(timer);busy=true;state();say(text);try{errorText='';await fn();}catch(e){errorText=e.message;needsLogin=[401,403].includes(e.status)||(e.status===503&&/OneDrive|Microsoft|připojení/i.test(e.message));if(e.status===409)needsReload=true;say(e.message,'error');}finally{busy=false;state();}}
     function login(){
@@ -136,7 +136,14 @@
     undo.onclick=()=>work('Vracím místní nastavení…',async()=>{if(!backup)return;const previous=backup;backup=structuredClone(adapter.read());await adapter.apply(previous);say('Místní nastavení obnoveno.','dirty');});
     function changed(event){if(panel.contains(event.target)||event.target===save||busy||needsReload)return;clearTimeout(timer);timer=setTimeout(()=>{if(!baseline)return;if(dirty()){errorText='';say('Neuložené změny.','dirty');}else if(!errorText)say(loaded?'Uloženo na OneDrive.':'Dosud neuloženo na OneDrive.',loaded?'saved':'');},200);}
     for(const event of ['input','change','click','eduvize-profile-change'])document.addEventListener(event,changed);
-    root.addEventListener('beforeunload',event=>{if(!profileId||!baseline)return;const current=departureFingerprint(adapter.read()),saved=departureFingerprint(JSON.parse(baseline));if(current!==saved){event.preventDefault();event.returnValue='';}});
+    // Automatic preview/profile refreshes must never create an exit warning.
+    if(adapter.app==='kiosk'){
+      const edited=event=>{if(event.isTrusted&&!panel.contains(event.target))kioskEdited=true;};
+      for(const type of ['input','change'])document.addEventListener(type,edited,true);
+      document.addEventListener('click',event=>{if(event.isTrusted&&event.target.closest('#addButton,#newPage,#deletePage,.edu-item-editor__actions'))kioskEdited=true;},true);
+      local.addEventListener('click',()=>queueMicrotask(()=>{kioskEdited=false;}));
+    }
+    root.addEventListener('beforeunload',event=>{if(!profileId||!baseline||(adapter.app==='kiosk'&&!kioskEdited))return;const current=departureFingerprint(adapter.read()),saved=departureFingerprint(JSON.parse(baseline));if(current!==saved){event.preventDefault();event.returnValue='';}});
     watchAuth(()=>{state();if(ready&&!busy)work('Ověřuji aktivní profil…',()=>list(false));});
     document.addEventListener('visibilitychange',()=>{if(!document.hidden&&ready&&!busy)auth()?.refresh();});
     state();try{await waitAdapter(adapter);if(adapter.app==='styles'){try{const saved=JSON.parse(localStorage.getItem(localKey)||'null');if(saved)await adapter.apply(saved);}catch{}}ready=true;baseline=fingerprint(adapter.read());const resume=await restoreDraft();await auth()?.ready;await work('Načítám nastavení profilu…',()=>list(!resume));}catch(e){say(e.message,'error');state();}
