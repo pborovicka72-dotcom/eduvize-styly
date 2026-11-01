@@ -83,11 +83,4 @@ body.ev-segment-wrapper{height:100dvh;overflow:hidden}body.ev-segment-wrapper>.s
 html[data-kiosk-app="holidays"][data-output-mode="kiosk"] .section-heading{
  padding-inline:var(--edu-calendar-text-inset,var(--edu-header-inset));
 }
-html[data-kiosk-app="holidays"][data-output-mode="kiosk"] .calendar-card .metric-top{
- justify-content:space-between;
-}
-html[data-kiosk-app="holidays"][data-output-mode="kiosk"] .calendar-card .metric-icon{
- order:1;
-}
-html[data-kiosk-app="holidays"][data-output-mode="kiosk"] .hero .calendar-art{order:1}
 html[data-kiosk-app="holidays"][data-output-mode="kiosk"] .upcoming-event{padding-inline:0}
