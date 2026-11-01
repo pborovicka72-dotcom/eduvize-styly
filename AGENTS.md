@@ -10,3 +10,5 @@
 - In NSP and kiosk long horizontal strips (aspect ratio >= 2.7) and narrow portrait columns (width <= 1200px, aspect ratio <= 0.8), hide secondary source details. Mark provenance/work/source metadata with `data-edu-source-details`. Keep authors, primary content and pagination/touch controls visible. Ordinary web pages retain source metadata.
 
 - All administration output action rows use this order: Save to OneDrive, Save in browser, Copy link, Open output. Preserve native handlers when moving controls. Keep server style publishing, backups and destructive actions separate from these four actions. Local saving must remain available without a Microsoft connection.
+
+- Weather station layouts in NSP must use the canonical `EduvizeNSPLayouts.kioskAllowed` predicate, shared with kiosk administration. Disable unsupported segments in the picker and enforce the same rule on direct output URLs.
