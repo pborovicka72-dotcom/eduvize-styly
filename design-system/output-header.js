@@ -34,7 +34,16 @@
   for(const [name,value] of Object.entries(api.text?.(geometry,mode)||{}))html.style.setProperty('--edu-text-'+name,value+'px');
   document.querySelectorAll('.edu-output-header').forEach(header=>{
    for(const name of ['height','min-height','max-height'])header.style.setProperty(name,metrics.height+'px','important');
-   header.style.setProperty('padding',metrics.padding+'px '+inset+'px','important');
+   let textInset=inset;
+   if(mode==='kiosk'&&html.dataset.kioskApp==='holidays'){
+    const card=Array.from(document.querySelectorAll('.calendar-card,.upcoming-day')).find(node=>node.getBoundingClientRect().width>0);
+    if(card){
+     const style=getComputedStyle(card);
+     textInset=Math.max(0,card.getBoundingClientRect().left-header.getBoundingClientRect().left+(parseFloat(style.borderLeftWidth)||0)+(parseFloat(style.paddingLeft)||0));
+    }
+    html.style.setProperty('--edu-calendar-text-inset',textInset+'px');
+   }
+   header.style.setProperty('padding',metrics.padding+'px '+textInset+'px','important');
    header.style.setProperty('gap',metrics.gap+'px','important');
    header.style.setProperty('flex-shrink','0','important');
    for(const node of header.querySelectorAll('.edu-header-title'))node.style.setProperty('font-size',metrics.title+'px','important');
