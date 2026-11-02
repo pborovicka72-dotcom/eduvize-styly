@@ -8,4 +8,5 @@
 #school-summary dt{font-size:0.875em;color:var(--edu-admin-muted);margin-bottom:6px}
 #school-summary dd{font-weight:600;overflow-wrap:anywhere}
 #school-summary dl>div:first-child{grid-column:1/-1}
+#school-summary dl>div:first-child dd{font-size:1.25em;font-weight:700;line-height:1.35}
 #schoolForm>.edu-admin__actions{padding-top:18px;border-top:1px solid var(--edu-admin-border);flex-wrap:wrap}
