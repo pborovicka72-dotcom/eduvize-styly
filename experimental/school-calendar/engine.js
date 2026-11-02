@@ -4,7 +4,7 @@
  function select(data,school,category=''){
   if(!school?.school_type)return [];
   const events=data.events.filter(e=>e.types.includes(school.school_type));
-  const spring=data.spring[school.district];
+  const spring=data.spring[school.calendar_district||school.district];
   if(spring&&['ZS','SS','ZUS','KON'].includes(school.school_type))events.push({id:'spring-'+school.district,title:'Jarní prázdniny',...spring,category:'school',source:'https://msmt.gov.cz/organizace-skolniho-roku',verifiedAt:data.verifiedAt,status:'confirmed',note:school.district});
   return events.filter(e=>!category||e.category===category).sort((a,b)=>a.start.localeCompare(b.start)||a.title.localeCompare(b.title,'cs'));
  }

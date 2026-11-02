@@ -1,0 +1,2 @@
+/* Layout only; colors, typography, cards and controls use the central components. */
+.school-results{display:grid;gap:12px}.school-result{display:flex;align-items:center;justify-content:space-between;gap:16px;border-top:1px solid var(--edu-admin-border);padding:16px 0}.school-result>div{min-width:0;overflow-wrap:anywhere}.school-result p{margin:6px 0}.school-card-version{text-align:right;padding-top:20px}@media(max-width:680px){.school-result{align-items:flex-start;flex-direction:column}}

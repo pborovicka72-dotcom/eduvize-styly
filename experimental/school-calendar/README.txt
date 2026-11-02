@@ -24,3 +24,14 @@ Testy: node test_engine.mjs
 Před produkčním zapojením: další školní roky; schvalování a aktualizace centrálních
 termínů; adaptér Svátků; rozhraní školního účtu a více pracovišť; sdílený picker a
 geometrie kiosk/NSP; podmínky typů škol a uchazečů; revize a automatický odběr ICS.
+
+Karta školy v2026.11.02.2:
+- account.html používá společné admin-tokens/components/shell, aktivní téma a navigaci.
+- school-card.js vyhledává názvy bez diakritiky, IZO, RED IZO a IČO; výběr doplní okres sídla.
+- schools.json.gz je minimalizovaný export MŠMT ke 30. 9. 2026; neobsahuje kontakty ani osoby.
+  Zdroj: https://lkod-ftp.msmt.gov.cz/00022985/250d6b3f-71a2-4441-b8a0-4df141071f13/rssz-cela-cr-2026-09-30.jsonld
+  Aktualizace: python scripts/build_school_registry.py /cesta/rssz.jsonld
+  Okres odpovídá sídlu právního subjektu, nikoli každému odloučenému pracovišti.
+- Přihlášení správy a připojení Microsoft/OneDrive zajišťuje existující ucet.html.
+  Microsoft dosud není identitou školy a nepřidává této lokální kartě cloudovou synchronizaci.
+- Testy nové karty: node experimental/school-calendar/test_school_card.mjs
