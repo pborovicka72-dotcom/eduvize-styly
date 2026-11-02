@@ -1,0 +1,16 @@
+/* Shared semantic change states: the timetable and substitution list use the same contract. */
+:root{--edu-change-ink:#79500b;--edu-change-bg:#fff2d3;--edu-cancel-ink:#9a3040;--edu-cancel-bg:#fbe8ec;--edu-added-ink:#21674f;--edu-added-bg:#e5f3eb}
+.edu-schedule-change{--change-ink:var(--edu-change-ink);--change-bg:var(--edu-change-bg)}
+.edu-schedule-change[data-change-type=cancelled]{--change-ink:var(--edu-cancel-ink);--change-bg:var(--edu-cancel-bg)}
+.edu-schedule-change[data-change-type=added]{--change-ink:var(--edu-added-ink);--change-bg:var(--edu-added-bg)}
+.edu-change-badge{display:inline-block;max-width:100%;font-size:.72em;line-height:1.25;font-weight:650;padding:.3em .55em;border:1px solid color-mix(in srgb,var(--change-ink) 22%,transparent);border-radius:var(--ev-control-radius,6px);background:var(--change-bg);color:var(--change-ink);overflow-wrap:anywhere}
+.edu-change-original{display:block;font-size:.8em;line-height:1.35;color:var(--ev-muted,#617b8c);margin-top:.35em;overflow-wrap:anywhere}
+.edu-change-current{font-weight:600;line-height:1.35;overflow-wrap:anywhere}
+.edu-change-legend{display:flex;flex-wrap:wrap;gap:.5em 1.2em;font-size:var(--tt-meta,16px);line-height:1.4}
+.edu-change-legend span{display:inline-flex;align-items:center;gap:.4em}
+.edu-change-legend i{display:inline-block;width:.65em;height:.65em;border-radius:50%;background:var(--change-ink)}
+.edu-substitution-list{display:flex;flex-direction:column;gap:.6em;font-size:var(--tt-meta,18px);min-width:0;min-height:0}
+.edu-substitution-row{display:grid;grid-template-columns:6.5em 4.5em 9em 5.5em minmax(0,1fr);align-items:center;gap:.7em;padding:.8em 1em;border:1px solid var(--ev-border,#dce7eb);border-inline-start:4px solid var(--change-ink);border-radius:var(--ev-card-radius,14px);background:var(--ev-surface,#fff);min-width:0;break-inside:avoid}
+.edu-substitution-row>*{min-width:0}.edu-substitution-time{font-weight:650}.edu-substitution-time small{display:block;color:var(--ev-muted);font-size:.8em;font-weight:400;margin-top:.25em}
+.edu-substitution-class{font-weight:650}.edu-substitution-subject{font-weight:650;font-size:1.15em;overflow-wrap:anywhere}
+@container(max-width:1000px){.edu-substitution-row{grid-template-columns:6em 4em minmax(0,1fr)}.edu-substitution-subject{grid-column:1}.edu-substitution-detail{grid-column:2/-1}}
