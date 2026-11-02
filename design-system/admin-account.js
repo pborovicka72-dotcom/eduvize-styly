@@ -1,34 +1,56 @@
-/* The only place where administrators enter credentials or connect Microsoft. */
+/* A verified session controls the account view and visibility of school information. */
 (function(root){
  const auth=root.EduvizeAdminAuth,host=document.getElementById('edu-account-panel');if(!auth||!host)return;
- if(root.top!==root.self){const link=document.createElement('a');link.href=auth.ACCOUNT;link.target='_top';link.rel='noopener';link.textContent='Otevřít účet a připojení';host.replaceChildren(link);return;}
- function revealAccount(event){
-  if(performance.getEntriesByType('navigation')[0]?.type==='reload'&&event?.type!=='hashchange')return;
-  if(location.hash!=='#account'&&location.hash!=='#edu-account-panel')return;
-  for(let parent=host.parentElement;parent;parent=parent.parentElement)if(parent.tagName==='DETAILS')parent.open=true;
-  requestAnimationFrame(()=>requestAnimationFrame(()=>{const heading=document.querySelector('main > .edu-page-header');const target=heading||host;root.scrollTo({top:Math.max(0,target.getBoundingClientRect().top+root.scrollY-16),left:0,behavior:'instant'});}));
- }
- root.addEventListener('hashchange',revealAccount);
- root.addEventListener('load',revealAccount,{once:true});
- revealAccount();
- const $=id=>host.querySelector('#'+id),message=$('account-message');let busy=false,driveConnected=false;
- const pageParams=new URL(location.href).searchParams;
- let requested=pageParams.get('returnTo'),manage=pageParams.get('manage')==='1';
- try{if(requested)sessionStorage.setItem('eduvize-account-return',requested);else if(pageParams.get('onedrive')==='connected'){requested=sessionStorage.getItem('eduvize-account-return');manage=!!requested;}}catch{}
- function needsDrive(){try{const u=new URL(requested);return u.searchParams.get('edu-require-drive')==='1'||u.searchParams.has('edu-profile')||u.origin===auth.DOCS||/\/eduvize-(?:kiosek|dokumenty)\/config.html$/.test(u.pathname);}catch{return true;}}
- async function returnToApp(){if(!auth.status().profileId){say('Nejprve se přihlaste k účtu školy.');document.getElementById('configurations')?.scrollIntoView({block:'start',behavior:'smooth'});return;}const url=await auth.handoff(requested);try{sessionStorage.removeItem('eduvize-account-return');}catch{}location.replace(url);}
-
+ if(root.top!==root.self){const link=document.createElement('a');link.href=auth.ACCOUNT;link.target='_top';link.rel='noopener';link.textContent='Otevřít přihlášení';host.replaceChildren(link);return;}
+ const $=id=>host.querySelector('#'+id),message=$('account-message');
+ let initializing=true,busy=false,driveConnected=false,signingOut=false;
+ const params=new URL(location.href).searchParams;
+ let requested=params.get('returnTo'),manage=params.get('manage')==='1';
+ try{if(requested)sessionStorage.setItem('eduvize-account-return',requested);else if(params.get('onedrive')==='connected'){requested=sessionStorage.getItem('eduvize-account-return');manage=!!requested;}}catch{}
  function say(text){message.textContent=text;}
- function status(){const s=auth.status();if($('account-signin-prompt'))$('account-signin-prompt').hidden=s.connected;$('account-session').textContent=s.connected?'Přihlášeno do '+(s.schoolId?['správy školy']:s.scopes.map(x=>x==='styles'?'správy stylů':'Dokumentů a OneDrive')).join(' a ')+'. Platí do '+new Date(s.expiresAt*1000).toLocaleTimeString('cs-CZ',{hour:'2-digit',minute:'2-digit'})+'.':s.message||'Nejste přihlášeni.';$('account-logout').disabled=!s.connected;$('account-microsoft').disabled=!s.scopes.includes('documents');$('account-check').disabled=!s.scopes.includes('documents');$('account-return').hidden=!requested;$('account-return').disabled=!s.connected||!s.profileId;}
- async function connection(){status();if(!auth.getToken('documents')){driveConnected=false;$('account-onedrive').textContent='Nejprve se přihlaste účtem Microsoft své školy. Potom připojte její OneDrive.';return;}try{const r=await auth.fetch(auth.DOCS+'/api/admin/status?verify=1',{},'documents');const d=await r.json();if(!r.ok)throw Error(d.detail||'Připojení nelze ověřit.');driveConnected=!!d.connected;$('account-onedrive').textContent=d.connected?'OneDrive je připojený'+(d.account?.displayName?' · '+d.account.displayName:'')+'.':d.needsReconnect?'Připojení OneDrive vypršelo. Použijte Připojit / obnovit OneDrive.':'OneDrive není připojený. Použijte Připojit / obnovit OneDrive.';return true;}catch(e){driveConnected=false;$('account-onedrive').textContent=e.message;return false;}}
- async function work(fn){if(busy)return;busy=true;$('account-login').disabled=true;say('Pracuji…');try{await fn();}catch(e){say(e.message);}finally{busy=false;$('account-login').disabled=false;status();}}
- $('account-form').onsubmit=e=>{e.preventDefault();work(async()=>{const key=$('account-key').value.trim();if(!key)throw Error('Vyplňte společný klíč Eduvize.');await auth.login(key,key,$('account-remember')?.checked===true);$('account-key').value='';say('Společné přihlášení je připravené. Zařízení si pamatuje přihlašovací token; klíč se neukládá.');await connection();if(requested&&(!needsDrive()||driveConnected))await returnToApp();});};
- if($('account-microsoft-login'))$('account-microsoft-login').onclick=()=>work(()=>auth.loginMicrosoft($('account-remember')?.checked===true));
- $('account-logout').onclick=()=>work(async()=>{await auth.logout();$('account-onedrive').textContent='Připojení OneDrive zůstává na serveru pro běžící aplikace.';say('Odhlášeno ve všech administracích.');});
- $('account-check').onclick=()=>work(async()=>{if(await connection())say('Stav připojení ověřen.');else say('Stav připojení nyní nelze ověřit. Zkuste to znovu.');});
- $('account-microsoft').onclick=()=>work(async()=>{const r=await auth.fetch(auth.DOCS+'/api/admin/microsoft/start',{method:'POST'},'documents');const data=await r.json();if(!r.ok)throw Error(data.detail||'Přihlášení nelze otevřít.');const u=new URL(data.url);if(u.origin!==auth.DOCS||u.pathname!=='/auth/microsoft/storage/start')throw Error('Neplatná přihlašovací adresa Microsoftu.');location.assign(u.href);});
- $('account-return').onclick=()=>work(returnToApp);
- root.addEventListener('eduvize-admin-auth-change',status);
+ function status(){
+  const s=auth.status(),connected=s.connected&&!initializing&&!signingOut;
+  host.setAttribute('aria-labelledby',connected?'account-connected-title':'account');
+  document.body.dataset.accountState=initializing?'loading':connected?'signed-in':'signed-out';
+  $('account-loading').hidden=!initializing;
+  $('account-login-view').hidden=initializing||connected;
+  $('account-connected-view').hidden=!connected;
+  document.querySelectorAll('[data-account-private]').forEach(node=>{node.hidden=!connected||node.id==='configurations';});
+  $('account-session').textContent=connected?(s.schoolId?'Přihlášeno do správy školy.':'Přihlášeno jako správce služby.') : '';
+  $('account-microsoft-login').disabled=busy||initializing;
+  $('account-login').disabled=busy||initializing;
+  $('account-logout').disabled=busy||!connected;
+  $('account-drive').hidden=!s.scopes.includes('documents');
+  $('account-microsoft').disabled=busy||!connected||!s.scopes.includes('documents');
+  $('account-microsoft').textContent=driveConnected?'Obnovit připojení':'Připojit OneDrive';
+  $('account-microsoft').classList.toggle('edu-admin__button--secondary',driveConnected);
+  $('account-check').disabled=busy||!connected||!s.scopes.includes('documents');
+  $('account-return').hidden=!requested||!connected;
+  $('account-return').disabled=busy||!s.profileId;
+ }
+ async function connection(){
+  if(!auth.getToken('documents')){driveConnected=false;status();return false;}
+  const token=auth.getToken('documents');$('account-onedrive').textContent='Ověřuji připojení…';
+  try{
+   const r=await auth.fetch(auth.DOCS+'/api/admin/status?verify=1',{},'documents'),d=await r.json();
+   if(auth.getToken('documents')!==token)return false;
+   if(!r.ok)throw Error(d.detail||'Připojení nelze ověřit.');
+   driveConnected=!!d.connected;
+   $('account-onedrive').textContent=d.connected?'Připojeno'+(d.account?.displayName?' · '+d.account.displayName:'')+'.':d.needsReconnect?'Připojení vypršelo. Obnovte je tlačítkem níže.':'OneDrive zatím není připojený.';
+   status();return true;
+  }catch(e){if(auth.getToken('documents')===token){driveConnected=false;$('account-onedrive').textContent=e.message;status();}return false;}
+ }
+ async function work(text,fn){if(busy)return;busy=true;say(text);status();try{await fn();}catch(e){say(e.message);}finally{busy=false;status();}}
+ function needsDrive(){try{const u=new URL(requested);return u.searchParams.get('edu-require-drive')==='1'||u.searchParams.has('edu-profile')||u.origin===auth.DOCS||/\/eduvize-(?:kiosek|dokumenty)\/config.html$/.test(u.pathname);}catch{return true;}}
+ async function returnToApp(){if(!auth.status().profileId)throw Error('Nejprve se přihlaste k účtu školy.');const url=await auth.handoff(requested);try{sessionStorage.removeItem('eduvize-account-return');}catch{}location.replace(url);}
+ $('account-form').onsubmit=e=>{e.preventDefault();work('Ověřuji přihlášení…',async()=>{const key=$('account-key').value.trim();if(!key)throw Error('Vyplňte klíč správce služby.');await auth.login(key,key,$('account-remember').checked);$('account-key').value='';say('');await connection();if(requested&&(!needsDrive()||driveConnected))await returnToApp();});};
+ $('account-microsoft-login').onclick=()=>work('Otevírám přihlášení Microsoft…',()=>auth.loginMicrosoft($('account-remember').checked));
+ $('account-logout').onclick=()=>{signingOut=true;status();work('Odhlašuji…',async()=>{try{await auth.logout();}finally{signingOut=false;driveConnected=false;status();}say('Odhlášení proběhlo úspěšně.');});};
+ $('account-check').onclick=()=>work('Ověřuji OneDrive…',async()=>{say(await connection()?'Připojení bylo ověřeno.':'Připojení nyní nelze ověřit. Zkuste to znovu.');});
+ $('account-microsoft').onclick=()=>work('Otevírám připojení OneDrive…',async()=>{const r=await auth.fetch(auth.DOCS+'/api/admin/microsoft/start',{method:'POST'},'documents'),data=await r.json();if(!r.ok)throw Error(data.detail||'Připojení nelze otevřít.');const u=new URL(data.url);if(u.origin!==auth.DOCS||u.pathname!=='/auth/microsoft/storage/start')throw Error('Neplatná adresa připojení OneDrive.');location.assign(u.href);});
+ $('account-return').onclick=()=>work('Otevírám administraci…',returnToApp);
+ root.addEventListener('eduvize-admin-auth-change',()=>{status();if(!initializing&&!auth.status().connected){driveConnected=false;say(auth.status().message||'');}});
  root.addEventListener('eduvize-admin-request-progress',event=>{if(event.detail?.text)say(event.detail.text);});
- auth.ready.then(async()=>{status();say('Ověřuji přihlášení a připojení…');await connection();say('');revealAccount();if(requested&&!manage&&auth.status().connected&&(!needsDrive()||driveConnected)){try{await returnToApp();}catch(e){say(e.message);}}});
+ status();
+ auth.ready.then(async()=>{initializing=false;status();if(!auth.status().connected){say(auth.status().message||'');return;}await connection();if(requested&&!manage&&auth.status().connected&&(!needsDrive()||driveConnected)){try{await returnToApp();}catch(e){say(e.message);}}}).catch(e=>{initializing=false;status();say(e.message);});
 })(window);

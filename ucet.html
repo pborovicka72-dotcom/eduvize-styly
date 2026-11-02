@@ -4,7 +4,7 @@
 <link rel="stylesheet" href="./design-system/admin-tokens.css">
 <link rel="stylesheet" href="./design-system/admin-components.css">
 <link rel="stylesheet" href="./design-system/admin-shell.css?v=20261031-header-home-5">
-<link rel="stylesheet" href="./design-system/admin-account.css?v=20261031-scroll-offset-2">
+<link rel="stylesheet" href="./design-system/admin-account.css?v=20261102-login-layout-1">
 <link rel="stylesheet" href="./design-system/app-icons.css?v=20261031-identity-gap-1">
 <link rel="icon" type="image/svg+xml" href="./design-system/assets/eduvize-favicon-monochrome.svg?v=20261031-account-mono-1">
 <script src="./design-system/theme-first-paint.js?v=2"></script>
@@ -14,20 +14,35 @@
 <script defer src="./design-system/admin-navigation.js?v=1"></script>
 <link rel="stylesheet" href="./experimental/school-calendar/school-card.css?v=20261102-school-polish-1">
 </head><body class="ev-admin"><main class="edu-admin-page">
-<header class="edu-page-header"><div class="edu-page-header__identity"><span class="edu-app-icon"><img src="./design-system/assets/eduvize-symbol-white.svg" alt="Eduvize" width="32" height="32"></span><div class="edu-page-header__titles"><div class="edu-page-header__eyebrow">EDUVIZE · SPRÁVA</div><h1 class="edu-page-header__title">Účet, škola a konfigurace</h1></div></div><p class="edu-page-header__description">Společné přihlášení, karta školy, připojení OneDrive a společné nastavení všech aplikací.</p></header>
+<header class="edu-page-header"><div class="edu-page-header__identity"><span class="edu-app-icon"><img src="./design-system/assets/eduvize-symbol-white.svg" alt="Eduvize" width="32" height="32"></span><div class="edu-page-header__titles"><div class="edu-page-header__eyebrow">EDUVIZE · SPRÁVA</div><h1 class="edu-page-header__title">Účet, škola a konfigurace</h1></div></div><p class="edu-page-header__description">Správa účtu, školy a jejího úložiště.</p></header>
 
-<section id="edu-account-panel" class="edu-admin__card edu-account-panel" aria-labelledby="account"><h2 id="account">Účet a připojení</h2>
-<div class="edu-account-status"><strong id="account-session" role="status">Ověřuji přihlášení…</strong><span id="account-onedrive" role="status">Ověřuji připojení OneDrive…</span></div>
-<p><span id="account-signin-prompt">Přihlaste se účtem Microsoft své školy. </span>Škola má jedno nastavení pro všechny aplikace. OneDrive připojíte samostatně po přihlášení. Se zapamatováním platí přihlášení 30 dní, jinak osm hodin.</p>
-<form id="account-form"><details><summary>Přístup správce služby</summary><div class="edu-account-fields"><label>Klíč správce služby Eduvize<input id="account-key" type="password" autocomplete="off"></label></div><button id="account-login" type="submit" class="edu-admin__button edu-admin__button--secondary">Přihlásit správce služby</button></details>
-<label class="edu-admin__checkbox"><input id="account-remember" type="checkbox" checked> Pamatovat přihlášení na tomto zařízení po dobu 30 dní</label><p class="note">Na sdíleném počítači tuto volbu vypněte. Ukládá se přihlašovací token, nikoli společný klíč.</p>
-<div class="edu-admin__actions"><button id="account-microsoft-login" type="button" class="edu-admin__button">Přihlásit účtem Microsoft</button><button id="account-logout" type="button" class="edu-admin__button edu-admin__button--secondary" disabled>Odhlásit administrace</button><button id="account-microsoft" type="button" class="edu-admin__button edu-admin__button--secondary" disabled>Připojit / obnovit OneDrive</button><button id="account-return" type="button" class="edu-admin__button edu-admin__button--secondary" hidden>Vrátit se do administrace</button><button id="account-check" type="button" class="edu-admin__button edu-admin__button--secondary" disabled>Ověřit připojení</button></div></form>
-<p class="note">Každý účet školy má oddělené nastavení a vlastní úložiště. K OneDrivu se připojte stejným Microsoft účtem jako ke škole.</p><p id="account-message" role="status" aria-live="polite"></p><p class="note">Klíče se neukládají do prohlížeče. Připojení Microsoftu zůstává na serveru pro běžící aplikace i po odhlášení administrace.</p></section>
-<section id="school-card" class="edu-admin__card" aria-labelledby="lookup-title"><h2 id="lookup-title">Karta školy</h2><div id="school-summary" hidden></div><div id="school-lookup"><p class="edu-admin__hint">Vyhledejte školu, zkontrolujte její údaje a uložte kartu.</p><form id="school-search"><div class="edu-admin__control-row"><label class="edu-admin__field">Název školy, RED IZO nebo IČO<input id="school-query" type="search" minlength="2" required autocomplete="off" placeholder="Začněte psát název školy nebo RED IZO" aria-describedby="school-search-status" aria-controls="school-results" aria-autocomplete="list" role="combobox" aria-expanded="false"></label></div></form><p id="school-search-status" role="status" aria-live="polite"></p><div id="school-results" class="school-results" role="listbox" aria-label="Nalezené školy"></div><p class="edu-admin__hint" id="school-source"></p></div>
+<section id="edu-account-panel" class="edu-admin__card edu-account-panel" aria-labelledby="account">
+<div id="account-loading" role="status">Ověřuji přihlášení…</div>
+<div id="account-login-view" hidden>
+<h2 id="account">Přihlášení do Eduvize</h2>
+<p id="account-signin-prompt" class="edu-account-intro">Přihlaste se účtem Microsoft své školy.</p>
+<button id="account-microsoft-login" type="button" class="edu-admin__button edu-account-signin">Přihlásit účtem Microsoft</button>
+<label class="edu-admin__checkbox edu-account-remember"><input id="account-remember" type="checkbox" checked> Zůstat přihlášený na tomto zařízení</label>
+<p class="edu-admin__hint">Na sdíleném počítači tuto možnost vypněte.</p>
+<p class="edu-account-explanation">Po přihlášení můžete spravovat školu a připojit její OneDrive.</p>
+<details id="account-operator" class="edu-account-operator"><summary>Přístup správce služby</summary>
+<form id="account-form"><div class="edu-account-fields"><label>Klíč správce služby<input id="account-key" type="password" autocomplete="off"></label></div>
+<button id="account-login" type="submit" class="edu-admin__button edu-admin__button--secondary">Přihlásit správce služby</button></form></details>
+</div>
+<div id="account-connected-view" hidden>
+<div class="edu-account-heading"><div><h2 id="account-connected-title">Účet a úložiště školy</h2><p id="account-session" role="status"></p></div><button id="account-logout" type="button" class="edu-admin__button edu-admin__button--secondary">Odhlásit se</button></div>
+<div id="account-drive" class="edu-account-drive"><h3>OneDrive</h3><p id="account-onedrive" role="status">Ověřuji připojení…</p><p class="edu-admin__hint">Dokumenty a nastavení se ukládají do OneDrivu přihlášeného účtu.</p>
+<div class="edu-admin__actions"><button id="account-microsoft" type="button" class="edu-admin__button">Připojit OneDrive</button><button id="account-check" type="button" class="edu-admin__button edu-admin__button--secondary">Ověřit připojení</button></div></div>
+<p class="edu-admin__hint edu-account-signout-note">Odhlášení ze správy nepřeruší provoz kiosků.</p>
+<button id="account-return" type="button" class="edu-admin__button" hidden>Vrátit se do administrace</button>
+</div>
+<p id="account-message" class="edu-account-message" role="status" aria-live="polite"></p>
+</section>
+<section id="school-card" data-account-private hidden class="edu-admin__card" aria-labelledby="lookup-title"><h2 id="lookup-title">Karta školy</h2><div id="school-summary" hidden></div><div id="school-lookup"><p class="edu-admin__hint">Vyhledejte školu, zkontrolujte její údaje a uložte kartu.</p><form id="school-search"><div class="edu-admin__control-row"><label class="edu-admin__field">Název školy, RED IZO nebo IČO<input id="school-query" type="search" minlength="2" required autocomplete="off" placeholder="Začněte psát název školy nebo RED IZO" aria-describedby="school-search-status" aria-controls="school-results" aria-autocomplete="list" role="combobox" aria-expanded="false"></label></div></form><p id="school-search-status" role="status" aria-live="polite"></p><div id="school-results" class="school-results" role="listbox" aria-label="Nalezené školy"></div><p class="edu-admin__hint" id="school-source"></p></div>
 <form id="schoolForm"><div id="school-editor"><h3>Údaje školy</h3><div class="edu-admin__field-grid">
 <label class="edu-admin__field">Název školy<input id="name" required maxlength="300"></label><label class="edu-admin__field">Typ školy<select id="school_type"><option value="ZS">Základní škola</option><option value="SS">Střední škola</option><option value="KON">Konzervatoř</option><option value="ZUS">Základní umělecká škola</option><option value="MS">Mateřská škola</option><option value="VOS">Vyšší odborná škola</option><option value="OTHER">Školské zařízení</option></select></label>
 <label class="edu-admin__field">RED IZO<input id="red_izo" inputmode="numeric" pattern="[0-9]{9}" maxlength="9"></label><label class="edu-admin__field">IZO<input id="izo" inputmode="numeric" pattern="[0-9]{9}" maxlength="9"></label><label class="edu-admin__field">IČO<input id="ico" inputmode="numeric" pattern="[0-9]{8}" maxlength="8"></label><label class="edu-admin__field">Adresa<input id="address" maxlength="300"></label><label class="edu-admin__field">Obec<input id="municipality" maxlength="100"></label><label class="edu-admin__field">Okres<input id="district" readonly aria-describedby="district-hint"></label><label class="edu-admin__field">Kraj<input id="region" maxlength="100"></label></div><p class="edu-admin__hint" id="district-hint">Okres se načte automaticky po výběru školy z rejstříku.</p></div><div class="edu-admin__actions"><button id="school-edit" type="button" class="edu-admin__button" hidden>Upravit kartu školy</button><button id="school-change" type="button" class="edu-admin__button edu-admin__button--secondary" hidden>Vybrat jinou školu</button><button id="school-cancel" type="button" class="edu-admin__button edu-admin__button--secondary" hidden>Zrušit úpravy</button><button class="edu-admin__button" type="button" id="schoolSaveLocal">Uložit v prohlížeči</button></div><p id="status" role="status" aria-live="polite"></p></form></section>
 
-<section id="configurations" class="edu-admin__card" aria-label="Správa konfigurací"></section>
-<footer style="text-align:right;padding-top:20px">Účet a konfigurace · v2026.11.02.32</footer></main><script src="./design-system/admin-account.js?v=20261102-school-polish-1"></script><script src="./experimental/school-calendar/school-card.js?v=20261102-schools-1"></script></body></html>
+<section id="configurations" data-account-private hidden class="edu-admin__card" aria-label="Správa konfigurací"></section>
+<footer style="text-align:right;padding-top:20px">Účet a konfigurace · v2026.11.02.33</footer></main><script src="./design-system/admin-account.js?v=20261102-login-layout-1"></script><script src="./experimental/school-calendar/school-card.js?v=20261102-schools-1"></script></body></html>
 

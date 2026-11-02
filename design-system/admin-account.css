@@ -9,3 +9,22 @@
 .edu-account-status{display:flex;flex-wrap:wrap;gap:10px 24px;line-height:1.5}
 .edu-account-status strong{font-weight:600}.edu-account-panel [role=status]{min-height:1.5em;margin-top:12px}
 @media(max-width:600px){.edu-account-fields{grid-template-columns:1fr}}
+
+/* Account states: private content is hidden before authentication is verified. */
+.edu-account-panel [hidden],[data-account-private][hidden]{display:none!important}
+body[data-account-state="signed-out"] .edu-account-panel,body[data-account-state="loading"] .edu-account-panel{max-width:520px;margin:32px auto;padding:32px}
+.edu-account-panel .edu-account-signin{width:100%;justify-content:center;margin:8px 0 20px}
+.edu-account-panel .edu-account-intro{margin:0 0 20px;color:var(--edu-admin-muted)}
+.edu-account-remember{margin-top:4px}
+.edu-account-panel .edu-account-explanation{margin:24px 0;color:var(--edu-admin-muted);line-height:1.5}
+.edu-account-operator{border-top:1px solid var(--edu-admin-border);padding-top:20px;margin-top:24px}
+.edu-account-operator summary{cursor:pointer;color:var(--edu-admin-muted);font-size:.875rem}
+.edu-account-operator .edu-account-fields{grid-template-columns:1fr;margin-bottom:16px}
+.edu-account-heading{display:flex;justify-content:space-between;align-items:flex-start;gap:20px}
+.edu-account-heading h2{margin-bottom:8px}.edu-account-heading #account-session{margin:0;color:var(--edu-admin-muted)}
+.edu-account-drive{padding-top:24px;margin-top:24px;border-top:1px solid var(--edu-admin-border)}
+.edu-account-drive h3{font-size:1.125rem;margin:0 0 8px}.edu-account-drive #account-onedrive{font-weight:600;margin-top:0}
+.edu-account-panel .edu-account-signout-note{margin-top:24px}
+.edu-account-panel .edu-account-message:empty{display:none}
+.edu-account-panel .edu-account-message{margin:20px 0 0;line-height:1.5}
+@media(max-width:600px){body[data-account-state="signed-out"] .edu-account-panel,body[data-account-state="loading"] .edu-account-panel{margin:20px auto;padding:24px}.edu-account-heading{flex-direction:column;gap:12px}}
