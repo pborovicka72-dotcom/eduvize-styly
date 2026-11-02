@@ -64,7 +64,7 @@
  }
  const ready=initialize();
  root.EduvizeAdminAuth=Object.freeze({ready,refresh,getToken,fetch:authorizedFetch,login,logout,handoff,selectProfile,loginUrl,need,failure,status:()=>({connected:!!getToken(),profileId:validated?session?.profileId||'':'',scopes:validated?[...session.scopes]:[],expiresAt:session?.expiresAt||0,message}),CENTRAL,DOCS,HUB,ACCOUNT});
- const linkLibrary=document.createElement('script');linkLibrary.src='https://pborovicka72-dotcom.github.io/eduvize-styly/design-system/generated-links.js?v=20261102-groups-3';document.head.append(linkLibrary);
+ const linkLibrary=document.createElement('script');linkLibrary.src='https://pborovicka72-dotcom.github.io/eduvize-styly/design-system/generated-links.js?v=20261102-latest-4';document.head.append(linkLibrary);
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',renderBanner,{once:true});else renderBanner();
  root.addEventListener('storage',e=>{if(e.key===KEY)refresh();});
 })(window);
