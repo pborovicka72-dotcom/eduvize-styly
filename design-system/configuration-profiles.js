@@ -6,6 +6,7 @@
   const DOCS='https://eduvize-dokumenty-api.onrender.com';
   const API=DOCS+'/api/admin/configuration-profiles',SELECTION='eduvize-profile-selection-v1';
   const apps=Object.freeze([
+    {id:'school-identity',name:'Karta školy',url:ACCOUNT+'#school-card'},
     {id:'kiosk',name:'Kiosek',url:'https://pborovicka72-dotcom.github.io/eduvize-kiosek/config.html'},
     {id:'documents',name:'Dokumenty',url:DOCS+'/config'},
     {id:'weather',name:'Počasí',url:'https://eduvize-weather.onrender.com/config'},
@@ -53,7 +54,7 @@
   async function mount(adapter){
     if(!adapter||document.querySelector('[data-edu-profile-panel]'))return;
     const main=document.querySelector('main.edu-admin-page,main .edu-admin-page,.edu-admin-page');if(!main)return;
-    const ids={'day-progress':'save',menu:'saveLocal',kiosk:'save',documents:'save-settings',weather:'weather-save-settings',holidays:'saveSettings',transport:'saveSettings',news:'saveLocal',wisdom:'saveLocal',styles:'saveLocal','school-systems':'save'};
+    const ids={'school-identity':'schoolSaveLocal','day-progress':'save',menu:'saveLocal',kiosk:'save',documents:'save-settings',weather:'weather-save-settings',holidays:'saveSettings',transport:'saveSettings',news:'saveLocal',wisdom:'saveLocal',styles:'saveLocal','school-systems':'save'};
     const opens={'day-progress':'#open',menu:'#open',kiosk:'#openKiosk',documents:'#open',weather:'button[form="location-settings"][type="submit"]',holidays:'#save',transport:'button[form="form"][type="submit"]',news:'#save',wisdom:'#openOutput','school-systems':'#open'};
     const copies={'day-progress':'copy',menu:'copy',kiosk:'shareTouch',documents:'copy',weather:'location-settings-cancel',holidays:'openOutput',transport:'copy',news:'copyUrl',wisdom:'copyOutput','school-systems':'copy'};
     const localKey='eduvize-local-configuration-v1:'+adapter.app;

@@ -35,3 +35,8 @@ Karta školy v2026.11.02.2:
 - Přihlášení správy a připojení Microsoft/OneDrive zajišťuje existující ucet.html.
   Microsoft dosud není identitou školy a nepřidává této lokální kartě cloudovou synchronizaci.
 - Testy nové karty: node experimental/school-calendar/test_school_card.mjs
+
+Karta školy v2026.11.02.3: součást ucet.html, původní account.html přesměrovává.
+Našeptávač při psaní nabízí pouze školy a slučuje je podle RED IZO; vyhledává název, RED IZO a IČO.
+Ukládání school-identity používá společný EduvizeProfiles adaptér a revizované profily na OneDrive.
+Vyžaduje aktualizovaný backend Dokumenty s povolenou aplikací school-identity.
