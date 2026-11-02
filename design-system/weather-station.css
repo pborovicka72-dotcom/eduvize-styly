@@ -60,10 +60,10 @@ html.weather-station:is(.kiosk-output,.nsp-output) body main.shell .station-dash
 .station-text summary::-webkit-details-marker{display:none}
 .station-text summary:before{content:'+';margin-right:.6em}
 .station-text[open] summary:before{content:'−'}
-.weather-station .station-text[open]{position:absolute;inset:auto 0 0;z-index:20;height:var(--station-text-height);max-height:var(--station-text-height);display:flex;flex-direction:column;box-shadow:0 -12px 40px #142d5030;gap:0}
+.weather-station .station-text[open]{position:static;display:flex;flex-direction:column;min-height:0;gap:0}
 .station-text[open] summary{flex:none}
 .station-text-content{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1em;width:100%;min-height:0;overflow-y:auto;overscroll-behavior:contain;padding:.5em .2em 1em;scroll-padding-bottom:1em}
-.station-text[open] .station-text-content{height:var(--station-text-content-height);max-height:var(--station-text-content-height);align-content:start}
+.station-text[open] .station-text-content{flex:1;align-content:start}
 .station-text .forecast-card{margin:0;padding:0 .5em .5em;border:0;background:transparent;min-width:0}
 html.weather-station:is(.kiosk-output,.nsp-output) body main.shell .station-dashboard .station-text .forecast-card :is(p,p *){font-size:calc(var(--station-body)*.85)!important;line-height:1.45!important;font-weight:400!important}
 html.weather-station:is(.kiosk-output,.nsp-output) body main.shell .station-dashboard .station-text .forecast-card :is(h3,h3 *){font-size:var(--station-body)!important;line-height:1.25!important}

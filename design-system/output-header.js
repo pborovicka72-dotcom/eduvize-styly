@@ -1,6 +1,6 @@
 /* One physical header and text scale for equal viewport dimensions. */
 (function(root){
- let parentHeight=null,queued=false;
+ let parentHeight=null,queued=false;const headerStates=new WeakMap();
  function headerStyle(value){document.documentElement.dataset.kioskHeader=value==='light'?'light':'dark';}
  headerStyle(new URLSearchParams(root.location.search).get('kiosk_header'));
  function fitTitles(header){
@@ -42,7 +42,7 @@
   return fallback;
  }
  function update(){
-  queued=false;const api=root.EduvizeSegmentProfile;if(!api||root.innerWidth<1||root.innerHeight<1)return;
+  queued=false;if(document.documentElement.classList.contains('weather-station'))return;const api=root.EduvizeSegmentProfile;if(!api||root.innerWidth<1||root.innerHeight<1)return;
   const geometry=api.resolve(root.innerWidth,root.innerHeight),mode=root.EduvizeOutputModes?.mode?.()||(root.EduvizeOutputModes?.isKiosk?.()?'kiosk':'nsp');
   let metrics=api.header(geometry,mode);
   if(mode!=='web'&&document.documentElement.dataset.eduHeaderDensity==='compact'){
@@ -61,8 +61,9 @@
   document.querySelectorAll('.edu-output-header').forEach(header=>{
    // Hidden source headers must not mutate values observed by alternate views.
    if(!header.getBoundingClientRect().width)return;
-   for(const name of ['height','min-height','max-height'])header.style.setProperty(name,metrics.height+'px','important');
    const textInset=mode==='kiosk'?contentInset(header,html.dataset.kioskApp,inset):inset;
+   const state=JSON.stringify([metrics,textInset,mode,header.clientWidth,header.textContent]);if(headerStates.get(header)===state)return;
+   for(const name of ['height','min-height','max-height'])header.style.setProperty(name,metrics.height+'px','important');
    if(mode==='kiosk'){
     html.style.setProperty('--edu-kiosk-text-inset',textInset+'px');
     const textLeft=header.getBoundingClientRect().left+textInset;
@@ -95,7 +96,7 @@
     }
    }
    fitTitles(header);
-   header.dataset.eduHeader='shared';
+   header.dataset.eduHeader='shared';headerStates.set(header,state);
   });
  }
  function schedule(){if(queued)return;queued=true;requestAnimationFrame(update);}

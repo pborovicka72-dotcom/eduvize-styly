@@ -17,3 +17,5 @@ assert.equal(policy(1390,1560,{hourly:false,daily:false,text:false}).rows.split(
 console.log('Station composition follows the available content viewport and enabled forecasts.');
 
 assert.equal(policy(1400,2400).hours,6);assert.equal(policy(1900,1400).hours,6);
+
+const expanded=policy(1400,2400,{text:true,textOpen:true});assert.equal(expanded.rows.split('minmax').length-1,4);assert(!expanded.rows.includes('auto'));assert.equal(expanded.hours,6);

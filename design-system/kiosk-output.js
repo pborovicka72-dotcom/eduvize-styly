@@ -44,6 +44,7 @@
   if(options.automatic)setInterval(()=>{if(!document.hidden&&pages.length>1){index=(index+1)%pages.length;show();}},Math.max(3,Number(options.seconds)||8)*1000);const api=Object.freeze({refresh:schedule});instances.set(host,api);schedule();return api;
  }
  function start(){
+  if(document.documentElement.classList.contains('weather-station'))return;
   const mode=root.EduvizeOutputModes?.mode?.()||(root.EduvizeOutputModes?.isKiosk?.()?'kiosk':'web');const app=document.documentElement.dataset.kioskApp;if(mode==='nsp'&&app==='weather'){root.EduvizeSectionPager.mount(document.querySelector('#weather-pages'),{items:'.weather-page',automatic:true,seconds:new URLSearchParams(location.search).get('page_seconds')});return;}if(mode==='web')return;
   if(app==='weather')root.EduvizeSectionPager.mount(document.querySelector('#weather-pages'),{items:'.weather-page'});
   if(app==='news')mount(document.querySelector('#news'),{items:'.card'});
