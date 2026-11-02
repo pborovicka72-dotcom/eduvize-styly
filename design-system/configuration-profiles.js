@@ -189,8 +189,21 @@
     restore.onclick=()=>work('Obnovuji zálohu…',async()=>{if(!current||!historySelect.value)return;if(!confirm('Obnovit nastavení všech aplikací ve vybraném profilu? Současné nastavení zůstane zálohované.'))return;await request('/'+id+'/restore',{method:'POST',body:JSON.stringify({revision:Number(historySelect.value),expectedRevision:current.revision})});await draw();});
     watchAuth(()=>{if(!busy)work('Načítám profily…',()=>list());});await work('Načítám profily…',()=>list());
   }
+  function schoolSuggestion(adapter){
+    if(!['weather','transport'].includes(adapter?.app)||document.getElementById('edu-school-suggestion'))return;
+    const input=document.getElementById(adapter.app==='weather'?'address-search-input':'search');
+    if(!input)return;
+    const panel=make('section',null,'edu-admin__card');panel.id='edu-school-suggestion';panel.hidden=true;
+    const info=make('p'),go=button('Vyhledat školu'),dismiss=button('Pokračovat s vlastním nastavením');panel.append(info,go,dismiss);
+    input.closest('form').before(panel);let school=null,seq=0;
+    function show(value){school=value&&typeof value==='object'&&typeof value.name==='string'&&value.name.trim()?value:null;panel.hidden=!school;if(school)info.textContent='Na kartě školy je uložena škola: '+school.name+([school.address,school.municipality].filter(Boolean).length?' · '+[school.address,school.municipality].filter(Boolean).join(', '):'')+'. Chcete ji vyhledat?';}
+    go.onclick=()=>{if(!school)return;input.value=[school.name,school.municipality].filter(Boolean).join(' ');input.dispatchEvent(new Event('input',{bubbles:true}));if(adapter.app==='weather')document.getElementById('address-search-button')?.click();input.scrollIntoView({block:'center',behavior:'smooth'});input.focus();};
+    dismiss.onclick=()=>{panel.hidden=true;};
+    async function refresh(){const current=++seq;panel.hidden=true;try{await root.EduvizeAdminAuth?.ready;const id=root.EduvizeAdminAuth?.status().profileId||selection();if(id){const profile=await request('/'+id);if(current!==seq)return;show(profile.apps?.['school-identity']?.config?.data);return;}let local;try{local=JSON.parse(localStorage.getItem('eduvize-school-card-preview-v1')||'null');}catch{}if(current===seq)show(local);}catch{panel.hidden=true;}}
+    watchAuth(refresh);refresh();
+  }
   root.EduvizeProfiles=Object.freeze({mount,manager,fields,segment,applySegment,apps,request,fingerprint});
-  function start(){manager(document.getElementById('configurations'));if(root.EduvizeProfileAdapter)mount(root.EduvizeProfileAdapter);}
+  function start(){manager(document.getElementById('configurations'));if(root.EduvizeProfileAdapter){mount(root.EduvizeProfileAdapter);schoolSuggestion(root.EduvizeProfileAdapter);}}
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});else start();
-  root.addEventListener('eduvize-profile-adapter-ready',()=>mount(root.EduvizeProfileAdapter));
+  root.addEventListener('eduvize-profile-adapter-ready',()=>{mount(root.EduvizeProfileAdapter);schoolSuggestion(root.EduvizeProfileAdapter);});
 })(window);
