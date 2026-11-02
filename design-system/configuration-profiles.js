@@ -82,6 +82,10 @@
     const panel=make('div',null,'edu-profile-current');panel.dataset.eduProfilePanel=adapter.app;panel.id='edu-profile-save';
     const profileText=make('p','Profil není vybrán.','edu-profile-current__name'),status=make('p',null,'edu-profile-panel__status');status.setAttribute('role','status');status.setAttribute('aria-live','polite');
     const manage=make('a','Účet a připojení','edu-admin__button edu-admin__button--secondary');manage.href=manageUrl('');const actions=make('div',null,'edu-admin__actions'),load=button('Načíst uložené nastavení'),undo=button('Vrátit před načtením');undo.hidden=true;load.hidden=true;actions.append(load,undo);panel.append(profileText,status,manage,actions);if(row)row.after(panel);else save.after(panel);
+    const changeStatus=make('p','Bez neuložených změn.','edu-profile-change-status');changeStatus.dataset.eduChangeStatus='';changeStatus.setAttribute('role','status');changeStatus.setAttribute('aria-live','polite');panel.prepend(changeStatus);
+    let editBaseline='',userChanged=false;
+    function resetEditState(message='Bez neuložených změn.'){editBaseline=fingerprint(adapter.read());changeStatus.textContent=message;changeStatus.dataset.state='saved';}
+    function showEditState(){if(!editBaseline)return;const changed=fingerprint(adapter.read())!==editBaseline;changeStatus.textContent=userChanged&&changed?'Neuložené změny.':'Bez neuložených změn.';changeStatus.dataset.state=userChanged&&changed?'dirty':'saved';}
     const ui={status};
     const draftKey='eduvize-profile-save-draft-v1:'+adapter.app+':'+location.pathname;
     let busy=false,profileId='',profileTitle='',revision=0,baseline='',backup=null,errorText='',loaded=false,ready=false,tracked='',needsLogin=false,restored=false,needsReload=false,manualLoad=false,timer,kioskEdited=false,browserBaseline='';
@@ -92,7 +96,7 @@
     function say(text,state=''){status.textContent=text;status.dataset.state=state;}
     let segmentEdited=false;
     function dirty(){
-      if(!baseline)return false;
+      if(!baseline||!userChanged)return false;
       const current=adapter.read(),saved=JSON.parse(baseline);
       if(adapter.app==='documents'&&!segmentEdited){
         const {segment:currentSegment,...currentValues}=current;
@@ -121,17 +125,18 @@
       const url=new URL(location.href),nonce=url.searchParams.get('edu-resume-save');if(!nonce)return false;
       let d;try{d=JSON.parse(sessionStorage.getItem(draftKey)||'null');}catch{}
       if(!d||d.nonce!==nonce||d.app!==adapter.app||d.path!==location.pathname||Date.now()-d.createdAt>2*60*60*1000||!d.config){say('Rozpracované nastavení pro návrat z přihlášení nebylo nalezeno. Načtení profilu je pozastavené.','error');return true;}
-      await adapter.apply(structuredClone(d.config));profileId=d.profileId||'';revision=Number(d.revision)||0;baseline=typeof d.baseline==='string'?d.baseline:fingerprint(adapter.read());loaded=!!d.loaded;tracked=d.tracked||'';select(profileId);restored=true;
+      await adapter.apply(structuredClone(d.config));userChanged=true;showEditState();profileId=d.profileId||'';revision=Number(d.revision)||0;baseline=typeof d.baseline==='string'?d.baseline:fingerprint(adapter.read());loaded=!!d.loaded;tracked=d.tracked||'';select(profileId);restored=true;
       // Keep the draft until the restored state has been applied successfully.
       sessionStorage.removeItem(draftKey);url.searchParams.delete('edu-resume-save');url.searchParams.delete('edu-require-drive');history.replaceState(null,'',url.href);return true;
     }
     async function readProfile(apply=false){
       const p=await request('/'+profileId,{fresh:manualLoad}),entry=p.apps[adapter.app],incoming=entry?.revision||0;profileTitle=p.name;
-      if(!apply&&tracked===profileId){if(incoming!==revision){needsReload=true;say('Na OneDrive je novější nastavení. Před uložením je načtěte.','error');return;}say(dirty()?'Neuložené změny.':loaded?'Uloženo na OneDrive.':'Dosud neuloženo na OneDrive.',dirty()?'dirty':'saved');return;}
-      if(!entry&&apply&&adapter.app==='school-identity')await adapter.apply({schemaVersion:1,data:{}});
+      if(!apply&&tracked===profileId){if(incoming!==revision){needsReload=true;say('Na OneDrive je novější nastavení. Před uložením je načtěte.','error');return;}say(dirty()?'Změny nejsou uložené na OneDrive.':loaded?'Uloženo na OneDrive.':'Dosud neuloženo na OneDrive.',dirty()?'dirty':'saved');return;}
       if(entry&&!entry.config.empty&&apply){const before=structuredClone(adapter.read());try{await adapter.apply(structuredClone(entry.config));}catch(error){try{await adapter.apply(before);}catch{}throw error;}if(manualLoad){backup=before;undo.hidden=false;}}
+      if(!entry&&apply&&adapter.app==='school-identity')await adapter.apply({schemaVersion:1,data:{}});
+      if(apply){userChanged=false;resetEditState();}
       revision=incoming;tracked=profileId;needsReload=false;loaded=!!entry&&!entry.config.empty;baseline=fingerprint(apply||!loaded?adapter.read():entry.config);
-      say(loaded?(apply?(adapter.loadedMessage||'Nastavení načteno z OneDrive.'):dirty()?'Neuložené změny.':'Uloženo na OneDrive.'):'Dosud neuloženo na OneDrive.',dirty()?'dirty':'saved');
+      say(loaded?(apply?(adapter.loadedMessage||'Nastavení načteno z OneDrive.'):dirty()?'Změny nejsou uložené na OneDrive.':'Uloženo na OneDrive.'):'Dosud neuloženo na OneDrive.',dirty()?'dirty':'saved');
     }
     async function list(initial=false){
       if(!canSave()){say('Pro uložení na OneDrive se přihlaste. Rozpracované změny zůstanou zachované.');return;}
@@ -155,9 +160,19 @@
       const snapshot=structuredClone(adapter.read());say('Ukládám na OneDrive…');const result=await request('/'+profileId+'/apps/'+adapter.app,{method:'PUT',body:JSON.stringify({expectedRevision:revision,config:snapshot})});revision=result.revision;baseline=fingerprint(snapshot);loaded=true;say(dirty()?'Během ukládání vznikly další neuložené změny.':'Uloženo na OneDrive i v prohlížeči.',dirty()?'dirty':'saved');
     });
     manage.onclick=event=>{event.preventDefault();work('Otevírám výběr profilu…',async()=>login());};
-    undo.onclick=()=>work('Vracím místní nastavení…',async()=>{if(!backup)return;const previous=backup;backup=structuredClone(adapter.read());await adapter.apply(previous);say('Místní nastavení obnoveno.','dirty');});
-    function changed(event){if(panel.contains(event.target)||event.target===save||busy||needsReload)return;clearTimeout(timer);timer=setTimeout(()=>{if(!baseline)return;if(dirty()){errorText='';say('Neuložené změny.','dirty');}else if(!errorText)say(loaded?'Uloženo na OneDrive.':'Dosud neuloženo na OneDrive.',loaded?'saved':'');},200);}
+    undo.onclick=()=>work('Vracím místní nastavení…',async()=>{if(!backup)return;const previous=backup;backup=structuredClone(adapter.read());await adapter.apply(previous);userChanged=true;showEditState();say('Místní nastavení obnoveno.','dirty');});
+    function changed(event){
+      if(!panel.contains(event.target)&&event.target!==save&&event.target!==local){
+        const field=['input','change'].includes(event.type)&&event.target.matches?.('input,select,textarea,[contenteditable]')&&!event.target.readOnly&&!event.target.disabled;
+        const action=event.type==='click'&&event.target.closest?.('button')&&!event.target.closest('.edu-output-actions,.toolbar,.theme-action-buttons,.sis-admin-actions,.day-actions');
+        if((event.isTrusted&&(field||action))||event.type==='eduvize-profile-change')userChanged=true;
+        if(!userChanged&&editBaseline)editBaseline=fingerprint(adapter.read());
+        showEditState();
+      }
+      if(panel.contains(event.target)||event.target===save||busy||needsReload)return;clearTimeout(timer);timer=setTimeout(()=>{if(!baseline)return;if(dirty()){errorText='';say('Změny nejsou uložené na OneDrive.','dirty');}else if(!errorText)say(loaded?'Uloženo na OneDrive.':'Dosud neuloženo na OneDrive.',loaded?'saved':'');},200);}
     for(const event of ['input','change','click','eduvize-profile-change'])document.addEventListener(event,changed);
+    local.addEventListener('click',()=>queueMicrotask(()=>{try{adapter.validate?.();const value=adapter.read();localStorage.setItem(localKey,JSON.stringify(value));resetEditState('Uloženo v prohlížeči.');}catch(error){changeStatus.textContent=error.message;changeStatus.dataset.state='error';}}));
+    document.addEventListener('eduvize-configuration-saved',()=>resetEditState('Uloženo v prohlížeči.'));
     // Automatic preview/profile refreshes must never create an exit warning.
     if(['kiosk','transport'].includes(adapter.app)){
       const edited=event=>{if(!event.isTrusted||panel.contains(event.target)||event.target.readOnly||event.target.disabled)return;if(adapter.app==='transport'&&!event.target.matches('#source,#minutes,#limit,#pageSeconds,#nearbyKm,#viewMode,#transport input'))return;kioskEdited=true;};
@@ -172,7 +187,7 @@
     root.addEventListener('beforeunload',event=>{if(!profileId||!baseline||(['kiosk','transport'].includes(adapter.app)&&!kioskEdited))return;const current=departureFingerprint(adapter.read()),saved=departureFingerprint(JSON.parse(baseline));if(current!==saved&&current!==browserBaseline){event.preventDefault();event.returnValue='';}});
     watchAuth(()=>{state();if(ready&&!busy)work('Ověřuji aktivní profil…',()=>list(false));});
     document.addEventListener('visibilitychange',()=>{if(!document.hidden&&ready&&!busy)auth()?.refresh();});
-    state();try{await waitAdapter(adapter);if(adapter.app==='styles'){try{const saved=JSON.parse(localStorage.getItem(localKey)||'null');if(saved)await adapter.apply(saved);}catch{}}ready=true;baseline=fingerprint(adapter.read());const resume=await restoreDraft();await auth()?.ready;await work('Načítám nastavení profilu…',()=>list(!resume));}catch(e){say(e.message,'error');state();}
+    state();try{await waitAdapter(adapter);if(adapter.app==='styles'){try{const saved=JSON.parse(localStorage.getItem(localKey)||'null');if(saved)await adapter.apply(saved);}catch{}}ready=true;resetEditState();baseline=fingerprint(adapter.read());const resume=await restoreDraft();await auth()?.ready;await work('Načítám nastavení profilu…',()=>list(!resume));}catch(e){say(e.message,'error');state();}
     return {refresh:()=>work('Ověřuji aktivní profil…',()=>list(false))};
   }
   function fields(ids){
