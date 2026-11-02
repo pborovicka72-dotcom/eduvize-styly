@@ -1,42 +1,16 @@
-Eduvize — karta školy a školní kalendář, vývojový náhled 2026.11.02.1
+EDUVIZE — ŠKOLNÍ KALENDÁŘ
+Funkční verze, 2. listopadu 2026.
 
-Otevřete account.html přes HTTP server, vyplňte testovací kartu a přejděte do index.html.
-Veřejný náhled nemá Microsoft přihlášení. Nejde o bezpečnostní hranici školy.
-Údaje náhledu se ukládají lokálně pod odděleným klíčem eduvize-school-card-preview-v1.
-Produkční implementace musí místo tohoto úložiště použít /api/me a school context
-z ověřené serverové relace (viz cloud_core.py v lokální přípravě).
+Otevření: index.html. Ručně lze vybrat typ školy a okres, přihlášený školní účet načítá vlastní school-identity ze společného profilu na OneDrive. Místní karta se čte pouze pod klíčem ověřené školy; bez přihlášení se nepřebírá starý neoddělený testovací záznam. Přepnutí účtu nebo odhlášení okamžitě odstraní předchozí kartu. Název školy se nedává do veřejného odkazu.
 
-Obsah: školní rok 2026/2027, organizace vyučování, všechny okresní skupiny jarních
-prázdnin, přijímací řízení včetně prvního a druhého kola a maturitní cyklus 2027.
-Zdroje a datum kontroly jsou součástí každé události. Nejde o automatický odběr.
-Konkrétní dny profilových zkoušek a třetí/další kola stanovují školy, proto je
-nevymýšlíme. Podrobný rozpis maturitních didaktických testů ještě není načten.
-Svátky a jmeniny odkazují na stávající aplikaci; dosud nejsou vloženy do mřížky
-kalendáře, aby nevznikla paralelní databáze. K úplnému propojení chybí adaptér.
+Zobrazení: posuvných 30 dní, kalendářní měsíc a agenda. Kliknutí na den otevře jeho detail. Šest nezávislých filtrů: organizace roku/prázdniny, přijímací řízení, maturity, svátky, významné dny, jmeniny. Filtry a rozsah platí pro přehled, detail, ICS export i vytvořený odkaz. Prázdný výběr nevypisuje všechny události. URL přenáší veřejné filtry, typ školy a okres, nikdy oprávnění či identitu školy.
 
-Funkční rozhraní: karta školy, výběr okresu/typu školy, agenda, měsíční pohled,
-filtrování oblastí a export statického ICS s celodenními událostmi. Import ICS
-není živý odběr a pozdější změny zdrojů se do importovaného souboru nepromítnou.
-Kiosek/NSP: parametr display je interní hrubý vývojový náhled; zatím není připojen
-ke společnému výběru segmentů, hlavičce a typografii. Nevydávat za hotový výstup.
+Školní rok 2026/2027: data MŠMT/Cermat, všechny okresní skupiny jarních prázdnin, přijímací řízení a maturitní cyklus 2027. Každá školní událost má zdroj a datum kontroly. Konkrétní školní zkoušky a další kola stanovují školy; nevymýšlíme je. Podrobný rozpis maturitních testů ještě není doplněn. Další roky je potřeba doplnit a schválit. Import ICS je statický, není to živý odběr.
 
-Testy: node test_engine.mjs
-Před produkčním zapojením: další školní roky; schvalování a aktualizace centrálních
-termínů; adaptér Svátků; rozhraní školního účtu a více pracovišť; sdílený picker a
-geometrie kiosk/NSP; podmínky typů škol a uchazečů; revize a automatický odběr ICS.
+Jmeniny a svátky: přímé čtení https://pborovicka72-dotcom.github.io/eduvize-svatky/calendar.json. Žádná druhá produkční databáze. Tobiáš 2. listopadu byl opraven v aplikaci Svátky; Dušičky jsou samostatná událost. Selhání zdroje se hlásí samostatně, školní události zůstávají dostupné.
 
-Karta školy v2026.11.02.2:
-- account.html používá společné admin-tokens/components/shell, aktivní téma a navigaci.
-- school-card.js vyhledává názvy bez diakritiky, IZO, RED IZO a IČO; výběr doplní okres sídla.
-- schools.json.gz je minimalizovaný export MŠMT ke 30. 9. 2026; neobsahuje kontakty ani osoby.
-  Zdroj: https://lkod-ftp.msmt.gov.cz/00022985/250d6b3f-71a2-4441-b8a0-4df141071f13/rssz-cela-cr-2026-09-30.jsonld
-  Aktualizace: python scripts/build_school_registry.py /cesta/rssz.jsonld
-  Okres odpovídá sídlu právního subjektu, nikoli každému odloučenému pracovišti.
-- Přihlášení správy a připojení Microsoft/OneDrive zajišťuje existující ucet.html.
-  Microsoft dosud není identitou školy a nepřidává této lokální kartě cloudovou synchronizaci.
-- Testy nové karty: node experimental/school-calendar/test_school_card.mjs
+Výstup: display=1&viewMode=nsp; interaktivní kiosek display=1&viewMode=kiosk ponechá filtry a navigaci. Velký přehled vyžaduje plochu >= 1,4 milionu pixelů, kratší hranu >= 850 a poměr stran 0,42–2,4; menší segmenty používají stránkovanou agendu. Geometrii přímých segmentových URL řeší společný segment-display.js; samostatný administrační picker a ukládání konfigurace kalendáře na OneDrive zatím nejsou připojeny. Opakované denní karty mají jednotnou výšku, delší titulky se zkrátí v kartě a celý text zůstane v detailu a přístupném názvu. Zdrojová patička je v malých segmentech skrytá.
 
-Karta školy v2026.11.02.3: součást ucet.html, původní account.html přesměrovává.
-Našeptávač při psaní nabízí pouze školy a slučuje je podle RED IZO; vyhledává název, RED IZO a IČO.
-Ukládání school-identity používá společný EduvizeProfiles adaptér a revizované profily na OneDrive.
-Vyžaduje aktualizovaný backend Dokumenty s povolenou aplikací school-identity.
+Karta školy: součást ../../ucet.html, vyhledávání registru MŠMT a ukládání school-identity zajišťuje současná společná implementace. account.html přesměrovává. Rejstřík schools.json.gz pochází z exportu MŠMT k 30. 9. 2026.
+
+Testy: node experimental/school-calendar/test_engine.mjs; node experimental/school-calendar/test_school_card.mjs. Ověřeno také ruční filtrování, detail, URL, odhlášení a přepnutí škol s izolovaným testovacím adaptérem. Přihlášení skutečným Microsoft účtem nebylo při této změně prováděno.
