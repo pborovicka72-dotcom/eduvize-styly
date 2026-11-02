@@ -29,3 +29,7 @@ console.log('A stale unauthorized response cannot clear a newer login.');
 const limitedPending=storage();limitedPending.setItem('eduvize-ms-login-v1',JSON.stringify({verifier:'v'.repeat(64),createdAt:Date.now()}));
 const limited=environment('#edu-ms-ticket='+'t'.repeat(43),limitedPending);limited.local.setItem=()=>{throw Error('quota');};await limited.auth.ready;assert.equal(limited.auth.status().connected,true);await limited.auth.refresh();assert.equal(limited.auth.status().connected,true);assert.ok(limited.pending.getItem('eduvize-admin-session-v1'));
 console.log('Sign-in remains valid when persistent browser storage is unavailable.');
+
+returned.local.removeItem('eduvize-admin-session-v1');await returned.auth.refresh();assert.equal(returned.auth.status().connected,true);assert.ok(returned.pending.getItem('eduvize-admin-session-v1'));
+returned.transport=async()=>({ok:false,status:401,json:async()=>({detail:'revoked'})});await returned.auth.refresh();assert.equal(returned.auth.status().connected,false);assert.equal(returned.pending.getItem('eduvize-admin-session-v1'),null);
+console.log('A tab survives stale shared-storage removal; server revocation still logs it out.');

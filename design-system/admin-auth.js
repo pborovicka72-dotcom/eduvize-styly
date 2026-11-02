@@ -38,8 +38,8 @@
 
  function read(storage){try{const s=JSON.parse(storage.getItem(KEY)||'null');return s&&typeof s.token==='string'&&s.token.startsWith('edu_')&&Number.isFinite(s.expiresAt)&&s.expiresAt*1000>Date.now()?s:null;}catch{return null}}
  function stored(){try{return location.origin==='https://pborovicka72-dotcom.github.io'?(sessionStorage.getItem('eduvize-admin-session-fallback')==='1'?read(sessionStorage)||read(localStorage):read(localStorage)||read(sessionStorage)):read(sessionStorage)}catch{return null}}
- function save(s,central=false){console.warn('Eduvize auth save',{central,expiryType:typeof s.expiresAt,scopes:s.scopes});refreshVersion++;session=s;validated=true;try{(central?localStorage:sessionStorage).setItem(KEY,JSON.stringify(s));if(central){sessionStorage.removeItem(KEY);sessionStorage.removeItem('eduvize-admin-session-fallback');}}catch{try{sessionStorage.setItem(KEY,JSON.stringify(s));sessionStorage.setItem('eduvize-admin-session-fallback','1');message='Prohlížeč nepovolil trvalé zapamatování. Přihlášení platí v této kartě.';}catch{message='Prohlížeč nepovolil zapamatování přihlášení.';}}changed();}
- function clear(all=false){console.warn('Eduvize auth clear',new Error().stack);refreshVersion++;const previous=session?.token;session=null;validated=false;try{if(all||read(sessionStorage)?.token===previous)sessionStorage.removeItem(KEY);if(all||read(localStorage)?.token===previous)localStorage.removeItem(KEY);}catch{}changed();}
+ function save(s,central=false){refreshVersion++;session=s;validated=true;try{(central?localStorage:sessionStorage).setItem(KEY,JSON.stringify(s));if(central){try{sessionStorage.setItem(KEY,JSON.stringify(s));}catch{}sessionStorage.removeItem('eduvize-admin-session-fallback');}}catch{try{sessionStorage.setItem(KEY,JSON.stringify(s));sessionStorage.setItem('eduvize-admin-session-fallback','1');message='Prohlížeč nepovolil trvalé zapamatování. Přihlášení platí v této kartě.';}catch{message='Prohlížeč nepovolil zapamatování přihlášení.';}}changed();}
+ function clear(all=false){refreshVersion++;const previous=session?.token;session=null;validated=false;try{if(all||read(sessionStorage)?.token===previous)sessionStorage.removeItem(KEY);if(all||read(localStorage)?.token===previous)localStorage.removeItem(KEY);}catch{}changed();}
  function getToken(scope){return validated&&session?.expiresAt*1000>Date.now()&&(!scope||session.scopes.includes(scope))?session.token:''}
  function cleanUrl(){const u=new URL(location.href);const hash=new URLSearchParams(u.hash.slice(1));if(hash.has('edu-auth-code'))u.hash=hash.get('edu-return-hash')||'';return u;}
  function loginUrl(returnTo=cleanUrl().href){const u=new URL(ACCOUNT);if(!isAccount){u.searchParams.set('returnTo',returnTo);if(getToken())u.searchParams.set('manage','1');}u.hash='account';return u.href}
@@ -47,9 +47,9 @@
  async function json(response){const data=await response.json().catch(()=>({}));if(!response.ok){const e=Error(typeof data.detail==='string'?data.detail:'Služba není dostupná ('+response.status+').');e.status=response.status;throw e;}return data;}
  async function refresh(){
   const version=++refreshVersion,candidate=stored(),sameToken=session?.token===candidate?.token;session=candidate;if(!sameToken)validated=false;
-  if(!session){console.warn('Eduvize auth no stored session');changed();return;}
+  if(!session){changed();return;}
   const token=session.token;
-  try{const data=await json(await sessionFetch(CENTRAL+'/api/admin-session',{cache:'no-store',headers:{Authorization:'Bearer '+token}}));if(version!==refreshVersion||stored()?.token!==token)return;session={...session,...data};validated=true;message='';changed();}
+  try{const data=await json(await sessionFetch(CENTRAL+'/api/admin-session',{cache:'no-store',headers:{Authorization:'Bearer '+token}}));if(version!==refreshVersion||stored()?.token!==token)return;session={...session,...data};validated=true;try{sessionStorage.setItem(KEY,JSON.stringify(session));}catch{}message='';changed();}
   catch(error){if(version!==refreshVersion||stored()?.token!==token)return;message=error.message;if(error.status===401){clear();}else changed();}
  }
  async function loginMicrosoft(remember=false){
@@ -117,6 +117,6 @@
  root.EduvizeAdminAuth=Object.freeze({ready,refresh,getToken,fetch:authorizedFetch,login,loginMicrosoft,logout,handoff,selectProfile,loginUrl,need,failure,status:()=>({connected:!!getToken(),profileId:validated?session?.profileId||'':'',scopes:validated?[...session.scopes]:[],expiresAt:session?.expiresAt||0,message}),CENTRAL,DOCS,HUB,ACCOUNT});
  const linkLibrary=document.createElement('script');linkLibrary.src='https://pborovicka72-dotcom.github.io/eduvize-styly/design-system/generated-links.js?v=20261102-day-progress-5';document.head.append(linkLibrary);
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',renderBanner,{once:true});else renderBanner();
- root.addEventListener('storage',e=>{if(e.key===KEY){console.warn('Eduvize auth storage event',{removed:!e.newValue});refresh();}});
+ root.addEventListener('storage',e=>{if(e.key===KEY){refresh();}});
 })(window);
 
