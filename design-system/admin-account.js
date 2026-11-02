@@ -45,12 +45,12 @@
  async function returnToApp(){if(!auth.status().profileId)throw Error('Nejprve se přihlaste k účtu školy.');const url=await auth.handoff(requested);try{sessionStorage.removeItem('eduvize-account-return');}catch{}location.replace(url);}
  $('account-form').onsubmit=e=>{e.preventDefault();work('Ověřuji přihlášení…',async()=>{const key=$('account-key').value.trim();if(!key)throw Error('Vyplňte klíč správce služby.');await auth.login(key,key,$('account-remember').checked);$('account-key').value='';say('');await connection();if(requested&&(!needsDrive()||driveConnected))await returnToApp();});};
  $('account-microsoft-login').onclick=()=>work('Otevírám přihlášení Microsoft…',()=>auth.loginMicrosoft($('account-remember').checked));
- $('account-logout').onclick=()=>{signingOut=true;status();work('Odhlašuji…',async()=>{try{await auth.logout();}finally{signingOut=false;driveConnected=false;status();}say('Odhlášení proběhlo úspěšně.');});};
+ $('account-logout').onclick=()=>{signingOut=true;status();work('Odhlašuji…',async()=>{try{await auth.logout();}finally{signingOut=false;driveConnected=false;$('account-onedrive').textContent='Ověřuji připojení…';status();}say('Odhlášení proběhlo úspěšně.');});};
  $('account-check').onclick=()=>work('Ověřuji OneDrive…',async()=>{say(await connection()?'Připojení bylo ověřeno.':'Připojení nyní nelze ověřit. Zkuste to znovu.');});
  $('account-microsoft').onclick=()=>work('Otevírám připojení OneDrive…',async()=>{const r=await auth.fetch(auth.DOCS+'/api/admin/microsoft/start',{method:'POST'},'documents'),data=await r.json();if(!r.ok)throw Error(data.detail||'Připojení nelze otevřít.');const u=new URL(data.url);if(u.origin!==auth.DOCS||u.pathname!=='/auth/microsoft/storage/start')throw Error('Neplatná adresa připojení OneDrive.');location.assign(u.href);});
  $('account-return').onclick=()=>work('Otevírám administraci…',returnToApp);
  root.addEventListener('eduvize-admin-auth-change',()=>{status();if(!initializing&&!auth.status().connected){driveConnected=false;say(auth.status().message||'');}});
  root.addEventListener('eduvize-admin-request-progress',event=>{if(event.detail?.text)say(event.detail.text);});
  status();
- auth.ready.then(async()=>{initializing=false;status();if(!auth.status().connected){say(auth.status().message||'');return;}await connection();if(requested&&!manage&&auth.status().connected&&(!needsDrive()||driveConnected)){try{await returnToApp();}catch(e){say(e.message);}}}).catch(e=>{initializing=false;status();say(e.message);});
+ auth.ready.then(async()=>{initializing=false;status();if(!auth.status().connected){say(auth.status().message||'');return;}await connection();if(auth.status().connected)say('');if(requested&&!manage&&auth.status().connected&&(!needsDrive()||driveConnected)){try{await returnToApp();}catch(e){say(e.message);}}}).catch(e=>{initializing=false;status();say(e.message);});
 })(window);
