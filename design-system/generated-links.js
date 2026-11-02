@@ -3,9 +3,9 @@
  'use strict';if(root.EduvizeGeneratedLinks)return;
  const BASE='https://pborovicka72-dotcom.github.io/eduvize-styly/',API='https://eduvize-dokumenty-api.onrender.com/api/admin/configuration-profiles';
  const PENDING='eduvize-generated-links-pending-v1',SELECTION='eduvize-profile-selection-v1';
- const names={kiosk:'Kiosek',documents:'Dokumenty školy',weather:'Počasí',holidays:'Svátky a jmeniny',transport:'Jízdní řády',wisdom:'Moudrost dne',news:'Aktuality školy','school-systems':'Školní informační systémy',menu:'Jídelníček'};
- const hosts={'eduvize-kiosek.onrender.com':'kiosk','eduvize-dokumenty-api.onrender.com':'documents','eduvize-weather.onrender.com':'weather','eduvize-aktuality.onrender.com':'news','eduvize-skolni-systemy.onrender.com':'school-systems','eduvize-jidelnicek.onrender.com':'menu'};
- const repos={'eduvize-kiosek':'kiosk','eduvize-dokumenty':'documents','eduvize-pocasi':'weather','eduvize-aktuality':'news','eduvize-svatky':'holidays','eduvize-jizdni-rady':'transport','eduvize-moudrost-dne':'wisdom','eduvize-skolni-systemy':'school-systems','eduvize-jidelnicek':'menu'};
+ const names={'day-progress':'Průběh dne',kiosk:'Kiosek',documents:'Dokumenty školy',weather:'Počasí',holidays:'Svátky a jmeniny',transport:'Jízdní řády',wisdom:'Moudrost dne',news:'Aktuality školy','school-systems':'Školní informační systémy',menu:'Jídelníček'};
+ const hosts={'eduvize-prubeh-dne.onrender.com':'day-progress','eduvize-kiosek.onrender.com':'kiosk','eduvize-dokumenty-api.onrender.com':'documents','eduvize-weather.onrender.com':'weather','eduvize-aktuality.onrender.com':'news','eduvize-skolni-systemy.onrender.com':'school-systems','eduvize-jidelnicek.onrender.com':'menu'};
+ const repos={'eduvize-prubeh-dne':'day-progress','eduvize-kiosek':'kiosk','eduvize-dokumenty':'documents','eduvize-pocasi':'weather','eduvize-aktuality':'news','eduvize-svatky':'holidays','eduvize-jizdni-rady':'transport','eduvize-moudrost-dne':'wisdom','eduvize-skolni-systemy':'school-systems','eduvize-jidelnicek':'menu'};
  const outputs={nsp:'Newline Signage Pro',web:'Běžná stránka',kiosk:'Kiosek'};
  let panel,items=[],profileName='',lastButton,feedback,serial=Promise.resolve(),loading=false,reloadTimer;
  const el=(tag,text,cls)=>{const node=document.createElement(tag);if(text!==undefined)node.textContent=text;if(cls)node.className=cls;return node;};

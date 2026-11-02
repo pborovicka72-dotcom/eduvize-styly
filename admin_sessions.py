@@ -15,6 +15,7 @@ HUB_ORIGIN='https://pborovicka72-dotcom.github.io'
 TTL=8*60*60
 REMEMBER_TTL=30*24*60*60
 TARGETS={
+ ('https://eduvize-prubeh-dne.onrender.com','/config.html'):None,
  ('https://eduvize-jidelnicek.onrender.com','/config.html'):None,
  ('http://127.0.0.1:8790','/config.html'):None,
  ('https://eduvize-design-system-api.onrender.com','/'):'styles',
