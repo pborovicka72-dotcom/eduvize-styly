@@ -52,9 +52,31 @@
   try{const data=await json(await sessionFetch(CENTRAL+'/api/admin-session',{cache:'no-store',headers:{Authorization:'Bearer '+token}}));if(version!==refreshVersion||stored()?.token!==token)return;session={...session,...data};validated=true;message='';changed();}
   catch(error){if(version!==refreshVersion||stored()?.token!==token)return;message=error.message;if(error.status===401){clear();}else changed();}
  }
+ async function loginMicrosoft(remember=false){
+  if(!isAccount)throw Error('Přihlášení Microsoftem otevřete na stránce účtu.');
+  const verifier=btoa(String.fromCharCode(...crypto.getRandomValues(new Uint8Array(48)))).replaceAll('+','-').replaceAll('/','_').replaceAll('=','');
+  const bytes=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(verifier));
+  const proof=btoa(String.fromCharCode(...new Uint8Array(bytes))).replaceAll('+','-').replaceAll('/','_').replaceAll('=','');
+  sessionStorage.setItem('eduvize-ms-login-v1',JSON.stringify({verifier,createdAt:Date.now()}));
+  const url=new URL(DOCS+'/auth/microsoft/login');url.searchParams.set('proof',proof);url.searchParams.set('remember',remember?'true':'false');location.assign(url.href);
+ }
  async function initialize(){
   try{sessionStorage.removeItem('eduvize-documents-admin-token');}catch{}
   const u=new URL(location.href),hash=new URLSearchParams(u.hash.slice(1)),code=hash.get('edu-auth-code');
+  const msError=hash.get('edu-ms-error');
+  if(msError&&isAccount){u.hash='account';history.replaceState(null,'',u.href);sessionStorage.removeItem('eduvize-ms-login-v1');message=msError.slice(0,400);changed();return;}
+  const msTicket=hash.get('edu-ms-ticket');
+  if(msTicket){
+   u.hash='account';history.replaceState(null,'',u.href);
+   try{
+    if(!isAccount)throw Error('Přihlášení otevřete na stránce účtu.');
+    const pending=JSON.parse(sessionStorage.getItem('eduvize-ms-login-v1')||'null');sessionStorage.removeItem('eduvize-ms-login-v1');
+    if(!pending?.verifier||Date.now()-pending.createdAt>12*60*1000)throw Error('Přihlášení nebylo zahájeno v tomto prohlížeči nebo vypršelo.');
+    const existing=stored();
+    const data=await json(await sessionFetch(CENTRAL+'/api/admin-session/microsoft',{method:'POST',cache:'no-store',headers:{'Content-Type':'application/json',...(existing?.token?{Authorization:'Bearer '+existing.token}:{})},body:JSON.stringify({ticket:msTicket,verifier:pending.verifier})}));
+    message='';save(data,true);return;
+   }catch(error){message=error.message;changed();return;}
+  }
   if(code){
    u.hash=hash.get('edu-return-hash')||'';history.replaceState(null,'',u.href);
    try{save(await json(await sessionFetch(CENTRAL+'/api/admin-session/redeem',{method:'POST',cache:'no-store',headers:{'Content-Type':'application/json'},body:JSON.stringify({code})})));if(location.origin==='https://pborovicka72-dotcom.github.io'&&read(localStorage))await refresh();return;}
@@ -91,7 +113,7 @@
   banner.querySelector('span').textContent=message||(getToken()?'Přihlášeno do správy Eduvize.':'Přihlášení a připojení OneDrive se spravuje na stránce Účet a konfigurace.');const a=banner.querySelector('a');a.href=loginUrl();a.textContent=getToken()?'Účet a připojení':'Přejít na přihlášení';
  }
  const ready=initialize();
- root.EduvizeAdminAuth=Object.freeze({ready,refresh,getToken,fetch:authorizedFetch,login,logout,handoff,selectProfile,loginUrl,need,failure,status:()=>({connected:!!getToken(),profileId:validated?session?.profileId||'':'',scopes:validated?[...session.scopes]:[],expiresAt:session?.expiresAt||0,message}),CENTRAL,DOCS,HUB,ACCOUNT});
+ root.EduvizeAdminAuth=Object.freeze({ready,refresh,getToken,fetch:authorizedFetch,login,loginMicrosoft,logout,handoff,selectProfile,loginUrl,need,failure,status:()=>({connected:!!getToken(),profileId:validated?session?.profileId||'':'',scopes:validated?[...session.scopes]:[],expiresAt:session?.expiresAt||0,message}),CENTRAL,DOCS,HUB,ACCOUNT});
  const linkLibrary=document.createElement('script');linkLibrary.src='https://pborovicka72-dotcom.github.io/eduvize-styly/design-system/generated-links.js?v=20261102-day-progress-5';document.head.append(linkLibrary);
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',renderBanner,{once:true});else renderBanner();
  root.addEventListener('storage',e=>{if(e.key===KEY)refresh();});

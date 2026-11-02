@@ -36,6 +36,33 @@ class SessionTests(unittest.TestCase):
   self.client=TestClient(app)
  def tearDown(self):self.temp.cleanup()
  def auth(self,token=None):return {'Authorization':'Bearer '+(token or self.root['token'])}
+ def test_microsoft_login_uses_verified_ticket_and_preserves_profile(self):
+  self.store.select_profile(self.root['token'],'a'*32)
+  class Client:
+   def __init__(self,**kw):pass
+   async def __aenter__(self):return self
+   async def __aexit__(self,*a):pass
+   async def post(self,url,**kw):
+    self.assertion=url
+    return sessions.httpx.Response(200,json={'authenticated':True,'accountId':'verified-owner','remember':True})
+  with patch.object(sessions.httpx,'AsyncClient',Client):
+   response=self.client.post('/api/admin-session/microsoft',json={'ticket':'t'*43,'verifier':'v'*64},headers={**self.auth(),'Origin':sessions.HUB_ORIGIN})
+  self.assertEqual(response.status_code,200);data=response.json()
+  self.assertEqual(data['scopes'],['documents','styles']);self.assertEqual(data['profileId'],'a'*32)
+  self.assertGreater(data['expiresAt']-sessions.time.time(),sessions.TTL)
+  with self.assertRaises(HTTPException):self.store.read(self.root['token'])
+ def test_microsoft_login_rejects_origin_and_unverified_identity(self):
+  payload={'ticket':'t'*43,'verifier':'v'*64}
+  self.assertEqual(self.client.post('/api/admin-session/microsoft',json=payload,headers={'Origin':'https://evil.example'}).status_code,403)
+  self.assertEqual(self.client.post('/api/admin-session/microsoft',json={},headers={'Origin':sessions.HUB_ORIGIN}).status_code,401)
+  class Client:
+   def __init__(self,**kw):pass
+   async def __aenter__(self):return self
+   async def __aexit__(self,*a):pass
+   async def post(self,*a,**kw):return sessions.httpx.Response(200,json={'authenticated':False,'accountId':'spoofed','remember':True})
+  with patch.object(sessions.httpx,'AsyncClient',Client):
+   self.assertEqual(self.client.post('/api/admin-session/microsoft',json=payload,headers={'Origin':sessions.HUB_ORIGIN}).status_code,401)
+  self.assertEqual(self.store.read(self.root['token'])['scopes'],['documents','styles'])
  def test_tokens_are_not_stored_in_plaintext(self):
   conn=sqlite3.connect(self.path);blob=' '.join(str(row) for row in conn.execute('SELECT * FROM eduvize_admin_sessions_v1'));conn.close()
   self.assertNotIn(self.root['token'],blob);self.assertIn(sessions.digest(self.root['token']),blob)

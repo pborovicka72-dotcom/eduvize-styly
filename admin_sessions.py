@@ -109,6 +109,29 @@ def session_router(store,styles_key,documents_url=DOCUMENTS):
  router=APIRouter(dependencies=[Depends(no_store)])
  def hub_origin(request):
   if request.headers.get('origin')!=HUB_ORIGIN:raise HTTPException(403,'Přihlášení otevřete na rozcestníku Eduvize.')
+ @router.post('/api/admin-session/microsoft')
+ async def microsoft_login(request:Request,authorization:str=Header(default='')):
+  hub_origin(request);body=await request.json()
+  ticket=body.get('ticket');verifier=body.get('verifier')
+  if not isinstance(ticket,str) or not re.fullmatch(r'[A-Za-z0-9_-]{43}',ticket) or not isinstance(verifier,str) or not re.fullmatch(r'[A-Za-z0-9_-]{43,128}',verifier):raise HTTPException(401,'Neplatné předání Microsoft přihlášení.')
+  try:
+   async with httpx.AsyncClient(timeout=30,follow_redirects=False) as client:
+    response=await client.post(documents_url+'/auth/microsoft/login/exchange',json={'ticket':ticket,'verifier':verifier})
+  except httpx.HTTPError:raise HTTPException(503,'Přihlášení nyní nelze ověřit. Spusťte je znovu.')
+  if response.status_code in (400,401,403):raise HTTPException(401,'Microsoft přihlášení vypršelo nebo není platné. Spusťte je znovu.')
+  if not response.is_success:raise HTTPException(503,'Služba přihlášení není dostupná. Spusťte přihlášení znovu.')
+  try:data=response.json()
+  except ValueError:raise HTTPException(503,'Služba přihlášení nevrátila platnou odpověď.')
+  if not isinstance(data,dict):raise HTTPException(401,'Microsoft identita nebyla ověřena.')
+  if data.get('authenticated') is not True or not isinstance(data.get('accountId'),str) or not data['accountId'] or not isinstance(data.get('remember'),bool):raise HTTPException(401,'Microsoft identita nebyla ověřena.')
+  result=store.create({'styles','documents'},remember=data['remember'])
+  if authorization:
+   try:
+    old=require_session(store,authorization)
+    if old.get('profileId'):store.select_profile(result['token'],old['profileId']);result['profileId']=old['profileId']
+    store.revoke(bearer(authorization))
+   except HTTPException:pass
+  return result
  @router.post('/api/admin-session')
  async def login(request:Request,authorization:str=Header(default='')):
   hub_origin(request);data=await request.json();scopes=set()

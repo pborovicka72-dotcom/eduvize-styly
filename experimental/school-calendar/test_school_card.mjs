@@ -22,5 +22,6 @@ const events=JSON.parse(fs.readFileSync(new URL('events.json',base)));
 assert.ok(scope.EduvizeCalendar.select(events,{...found,calendar_district:api.calendarDistrict(found.district)}).some(x=>x.id.startsWith('spring-')));
 const html=fs.readFileSync(new URL('../../ucet.html',base),'utf8');
 assert.ok(!/href="index.html"|id="lat"|id="lon"|<select id="district"/.test(html));
-assert.ok(html.includes('./aplikace.html'));assert.ok(html.includes('admin-components.css'));
+assert.ok(!html.includes('Správa aplikací →'));assert.ok(html.includes('admin-components.css'));
+for(const [n,text] of [[0,'Nalezeno 0 škol'],[1,'Nalezena 1 škola'],[2,'Nalezeny 2 školy'],[4,'Nalezeny 4 školy'],[5,'Nalezeno 5 škol'],[21,'Nalezeno 21 škol']])assert.equal(api.countSchools(n),text);
 console.log('School search, identifiers, district, calendar compatibility and central layout checks passed.');
