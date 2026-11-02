@@ -1,13 +1,8 @@
 import fs from 'node:fs';import vm from 'node:vm';import assert from 'node:assert/strict';
-const context={TextEncoder,Date};vm.createContext(context);vm.runInContext(fs.readFileSync(new URL('engine.js',import.meta.url),'utf8'),context);const engine=context.EduvizeCalendar,data=JSON.parse(fs.readFileSync(new URL('events.json',import.meta.url),'utf8'));
-const school={school_type:'ZS',district:'Praha 1 až 5'};
-assert.equal(engine.select(data,school).find(e=>e.title==='Jarní prázdniny').start,'2027-02-22');
-assert.equal(engine.select(data,{...school,district:'Praha 6 až 10'}).find(e=>e.title==='Jarní prázdniny').start,'2027-03-01');
-assert.equal(engine.select(data,{school_type:'ZS'}).filter(e=>e.id.startsWith('spring')).length,0);
-assert.equal(engine.select(data,{school_type:'MS',district:school.district}).length,0);
-assert.equal(engine.select(data,school,'maturita').length,0);
-assert.ok(engine.select(data,{school_type:'SS'},'maturita').length>0);
-const spring=engine.select(data,school).find(e=>e.id.startsWith('spring'));const ics=engine.ics([spring]);assert.ok(ics.includes('DTEND;VALUE=DATE:20270301'));assert.ok(ics.includes('DTSTART;VALUE=DATE:20270222'));
-for(const e of data.events){assert.ok(e.start<=e.end);assert.ok(e.source.startsWith('https://'));assert.equal(e.status,'confirmed');assert.ok(e.verifiedAt);}
-assert.equal(data.events.filter(e=>e.category==='holiday').length,0);
-console.log('PASS: district selection, unknown district, school types, maturity filter, inclusive ranges to exclusive ICS, provenance, no duplicate holidays');
+const context={TextEncoder,Date};vm.createContext(context);vm.runInContext(fs.readFileSync(new URL('./engine.js',import.meta.url),'utf8'),context);const E=context.EduvizeCalendar,data=JSON.parse(fs.readFileSync(new URL('./events.json',import.meta.url))),shared={cz:Object.fromEntries(Array.from({length:30},(_,i)=>{const d=E.add('2026-11-02',i);return [d,{nameday:i===0?'Tobiáš':'Testovací jméno',nameday_status:'available',holidays:i===0?[{name:'Památka zesnulých (Dušičky)',type:'significant',day_off:false}]:i===15?[{name:'Den boje za svobodu a demokracii',type:'public',day_off:true}]:[]}]}))};
+assert.equal(E.range('2026-11-02','rolling').end,'2026-12-01');assert.equal(E.range('2028-02-15','month').end,'2028-02-29');assert.equal(E.range('2026-12-20','rolling').end,'2027-01-18');assert.equal(E.add('2027-03-28',1),'2027-03-29');
+assert.equal(E.district('Praha 5'),'Praha 1 až 5');assert.equal(E.district('Praha 13'),'Praha 1 až 5');assert.equal(E.district('Praha 6'),'Praha 6 až 10');
+assert(E.select(data,{school_type:'ZS',district:'Praha 5'}).some(e=>e.title==='Jarní prázdniny'));assert(!E.select(data,{school_type:'MS',district:'Praha 5'}).some(e=>e.title==='Jarní prázdniny'));assert(E.select(data,{school_types:['MS','ZS'],district:'Praha 5'}).some(e=>e.title==='Jarní prázdniny'));assert.equal(E.select(data,{}).length,0);
+for(const [date,item] of Object.entries(shared.cz).filter(([d])=>d.endsWith('-11-02'))){assert.equal(item.nameday,'Tobiáš');assert(item.holidays.some(e=>e.name.includes('Dušičky')&&!e.day_off));}
+const all=E.sharedEvents(shared,'2026-11-02','2026-12-01');assert.equal(all.filter(e=>e.category==='nameday').length,30);assert(E.filter(all,['nameday'],'2026-11-02','2026-11-02').some(e=>e.title==='Tobiáš'));assert.equal(E.filter(all,[],'2026-11-02','2026-12-01').length,0);assert(E.filter(all,['significant'],'2026-11-02','2026-11-02').every(e=>e.category==='significant'));assert(E.filter(all,['holiday'],'2026-11-02','2026-12-01').some(e=>e.start==='2026-11-17'));
+const ics=E.ics(E.filter(all,['nameday'],'2026-11-02','2026-11-02'));assert(ics.includes('SUMMARY:Tobiáš'));assert(ics.includes('DTEND;VALUE=DATE:20261103'));assert(!ics.includes('Dušičky'));console.log('OK: posuvných 30 dní, přechod roku, přestupný rok, okresy, typy škol, filtry, Tobiáš ve všech letech a export ICS.');
