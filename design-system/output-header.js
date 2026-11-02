@@ -59,6 +59,8 @@
   for(const [name,value] of Object.entries(metrics))html.style.setProperty('--edu-header-'+name,value+'px');
   for(const [name,value] of Object.entries(api.text?.(geometry,mode)||{}))html.style.setProperty('--edu-text-'+name,value+'px');
   document.querySelectorAll('.edu-output-header').forEach(header=>{
+   // Hidden source headers must not mutate values observed by alternate views.
+   if(!header.getBoundingClientRect().width)return;
    for(const name of ['height','min-height','max-height'])header.style.setProperty(name,metrics.height+'px','important');
    const textInset=mode==='kiosk'?contentInset(header,html.dataset.kioskApp,inset):inset;
    if(mode==='kiosk'){
