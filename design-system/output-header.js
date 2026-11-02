@@ -1,7 +1,10 @@
 /* One physical header and text scale for equal viewport dimensions. */
 (function(root){
- let parentHeight=null,queued=false;const headerStates=new WeakMap();
- function headerStyle(value){document.documentElement.dataset.kioskHeader=value==='light'?'light':'dark';}
+ let parentHeight=null,queued=false,lastParentLayout='';const headerStates=new WeakMap();
+ function writeStyle(node,name,value,priority=''){
+  value=String(value);if(node.style.getPropertyValue(name)!==value||node.style.getPropertyPriority(name)!==priority)node.style.setProperty(name,value,priority);
+ }
+ function headerStyle(value){const next=value==='light'?'light':'dark';if(document.documentElement.dataset.kioskHeader!==next)document.documentElement.dataset.kioskHeader=next;}
  headerStyle(new URLSearchParams(root.location.search).get('kiosk_header'));
  function fitTitles(header){
   for(const node of header.querySelectorAll('.edu-header-title,.edu-header-meta')){
@@ -12,7 +15,7 @@
    for(let attempt=0;attempt<12&&node.scrollWidth>node.clientWidth+1;attempt++){
     available=node.clientWidth;
     size*=available/node.scrollWidth;
-    node.style.setProperty('font-size',Math.max(1,size-.2)+'px','important');
+    writeStyle(node,'font-size',Math.max(1,size-.2)+'px','important');
    }
   }
  }
@@ -55,32 +58,32 @@
   if(weatherCompact){const height=geometry.height-Math.min(24,Math.max(8,geometry.short*.012))*2;metrics={height,icon:Math.min(height*.55,geometry.width*.16),title:geometry.width*.11,meta:geometry.width*.045,padding:height*.05,gap:geometry.width*.025};}
   const inset=weatherCompact?metrics.padding:(metrics.height-metrics.icon)/2;
   metrics={...metrics,gap:inset};
-  const html=document.documentElement;html.style.setProperty('--edu-header-inset',inset+'px');
-  for(const [name,value] of Object.entries(metrics))html.style.setProperty('--edu-header-'+name,value+'px');
-  for(const [name,value] of Object.entries(api.text?.(geometry,mode)||{}))html.style.setProperty('--edu-text-'+name,value+'px');
+  const html=document.documentElement;writeStyle(html,'--edu-header-inset',inset+'px');
+  for(const [name,value] of Object.entries(metrics))writeStyle(html,'--edu-header-'+name,value+'px');
+  for(const [name,value] of Object.entries(api.text?.(geometry,mode)||{}))writeStyle(html,'--edu-text-'+name,value+'px');
   document.querySelectorAll('.edu-output-header').forEach(header=>{
    // Hidden source headers must not mutate values observed by alternate views.
    if(!header.getBoundingClientRect().width)return;
    const textInset=mode==='kiosk'?contentInset(header,html.dataset.kioskApp,inset):inset;
    const state=JSON.stringify([metrics,textInset,mode,header.clientWidth,header.textContent]);if(headerStates.get(header)===state)return;
-   for(const name of ['height','min-height','max-height'])header.style.setProperty(name,metrics.height+'px','important');
+   for(const name of ['height','min-height','max-height'])writeStyle(header,name,metrics.height+'px','important');
    if(mode==='kiosk'){
-    html.style.setProperty('--edu-kiosk-text-inset',textInset+'px');
+    writeStyle(html,'--edu-kiosk-text-inset',textInset+'px');
     const textLeft=header.getBoundingClientRect().left+textInset;
     for(const section of document.querySelectorAll('.section-heading')){
      const rect=section.getBoundingClientRect();
      if(!rect.width||!section.offsetWidth)continue;
      const scale=rect.width/section.offsetWidth;
-     section.style.setProperty('--edu-kiosk-section-inset',Math.max(0,(textLeft-rect.left)/scale)+'px');
+     writeStyle(section,'--edu-kiosk-section-inset',Math.max(0,(textLeft-rect.left)/scale)+'px');
     }
 
-    if(html.dataset.kioskApp==='holidays')html.style.setProperty('--edu-calendar-text-inset',textInset+'px');
+    if(html.dataset.kioskApp==='holidays')writeStyle(html,'--edu-calendar-text-inset',textInset+'px');
    }
-   header.style.setProperty('padding',metrics.padding+'px '+textInset+'px','important');
-   header.style.setProperty('gap',metrics.gap+'px','important');
-   header.style.setProperty('flex-shrink','0','important');
-   for(const node of header.querySelectorAll('.edu-header-title'))node.style.setProperty('font-size',metrics.title+'px','important');
-   for(const node of header.querySelectorAll('.edu-header-meta'))node.style.setProperty('font-size',metrics.meta+'px','important');
+   writeStyle(header,'padding',metrics.padding+'px '+textInset+'px','important');
+   writeStyle(header,'gap',metrics.gap+'px','important');
+   writeStyle(header,'flex-shrink','0','important');
+   for(const node of header.querySelectorAll('.edu-header-title'))writeStyle(node,'font-size',metrics.title+'px','important');
+   for(const node of header.querySelectorAll('.edu-header-meta'))writeStyle(node,'font-size',metrics.meta+'px','important');
    for(const group of header.querySelectorAll('.hero-details')){
     group.hidden=false;
     const nodes=group.querySelectorAll('.feels-like,.hero-meta');
@@ -101,7 +104,7 @@
  }
  function schedule(){if(queued)return;queued=true;requestAnimationFrame(update);}
  root.addEventListener('resize',schedule);
- root.addEventListener('message',event=>{if(event.source!==root.parent||root.parent===root||!root.EduvizeOutputModes?.isKiosk?.())return;if(event.data?.type==='eduvize-kiosk-layout'){headerStyle(event.data.headerStyle||(event.data.menuLayout?'light':'dark'));if(event.data.parentMode)document.documentElement.classList.toggle('edu-kiosk-header-legacy',event.data.parentMode!=='kiosk');document.documentElement.classList.toggle('edu-menu-app-header',event.data.menuLayout===true);schedule();}const h=Number(event.data?.headerHeight);if(event.data?.type==='eduvize-kiosk-layout'&&Number.isFinite(h)&&h>=44&&h<=root.innerHeight*.4){parentHeight=h;schedule();}});
+ root.addEventListener('message',event=>{if(event.source!==root.parent||root.parent===root||!root.EduvizeOutputModes?.isKiosk?.())return;if(event.data?.type==='eduvize-kiosk-layout'){const state=JSON.stringify([event.data.headerStyle,event.data.menuLayout,event.data.parentMode,event.data.headerHeight,event.data.headerInset]);if(state===lastParentLayout)return;lastParentLayout=state;headerStyle(event.data.headerStyle||(event.data.menuLayout?'light':'dark'));if(event.data.parentMode)document.documentElement.classList.toggle('edu-kiosk-header-legacy',event.data.parentMode!=='kiosk');document.documentElement.classList.toggle('edu-menu-app-header',event.data.menuLayout===true);schedule();}const h=Number(event.data?.headerHeight);if(event.data?.type==='eduvize-kiosk-layout'&&Number.isFinite(h)&&h>=44&&h<=root.innerHeight*.4){parentHeight=h;schedule();}});
  function start(){
   if(root.EduvizeOutputModes?.mode?.()==='kiosk'&&document.documentElement.dataset.kioskApp==='weather'){
    const transforms=new WeakMap();
