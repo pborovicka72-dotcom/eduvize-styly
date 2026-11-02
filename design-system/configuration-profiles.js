@@ -166,7 +166,7 @@
         const field=['input','change'].includes(event.type)&&event.target.matches?.('input,select,textarea,[contenteditable]')&&!event.target.readOnly&&!event.target.disabled;
         const action=event.type==='click'&&event.target.closest?.('button')&&!event.target.closest('.edu-output-actions,.toolbar,.theme-action-buttons,.sis-admin-actions,.day-actions');
         if((event.isTrusted&&(field||action))||event.type==='eduvize-profile-change')userChanged=true;
-        if(!userChanged&&editBaseline)editBaseline=fingerprint(adapter.read());
+        if(!userChanged&&editBaseline&&!event.isTrusted&&event.type!=='click')editBaseline=fingerprint(adapter.read());
         showEditState();
       }
       if(panel.contains(event.target)||event.target===save||busy||needsReload)return;clearTimeout(timer);timer=setTimeout(()=>{if(!baseline)return;if(dirty()){errorText='';say('Změny nejsou uložené na OneDrive.','dirty');}else if(!errorText)say(loaded?'Uloženo na OneDrive.':'Dosud neuloženo na OneDrive.',loaded?'saved':'');},200);}
