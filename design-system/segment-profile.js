@@ -6,6 +6,7 @@
   const kind=ratio>=2.7?'panoramic':short<720?'compact':ratio<.8?'portrait':ratio<1.4?'square':'landscape';
   return Object.freeze({width,height,short,ratio,kind,scale:short/720});
  }
+ function schoolOverviewAllowed(width,height,mode='nsp'){return mode==='kiosk'||mode==='nsp'&&width>=1200&&height>=1000&&width*height>=1900000&&width/height>=.55&&width/height<=2.65;}
  function header(geometry,mode='nsp'){
   const height=mode==='web'?96:geometry.short<=720?192:geometry.short<=1200?288:Math.round(geometry.short*.22/32)*32;
   return Object.freeze({height,icon:height*.64,title:height*.36,meta:height*.18,padding:height*.05,gap:height*.08});
@@ -37,5 +38,5 @@
   const rows=Math.max(1,Math.min(Math.ceil(count/columns),Math.floor((height+gap)/(cardHeight+gap))||1));
   return Object.freeze({columns,rows,title,label,gap,pad:clamp(title*.55,14,36),icon:clamp(title*1.35,40,96),cardHeight,gridWidth:width});
  }
- root.EduvizeSegmentProfile=Object.freeze({resolve,header,text,holidays,documentCatalog});
+ root.EduvizeSegmentProfile=Object.freeze({resolve,header,text,holidays,documentCatalog,schoolOverviewAllowed});
 })(typeof window==='undefined'?globalThis:window);

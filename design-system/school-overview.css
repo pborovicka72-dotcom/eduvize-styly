@@ -1,0 +1,29 @@
+/* School overview: shared theme surfaces, baseline-aligned content and whole-section pages. */
+.edu-school-overview{height:100%;min-height:0;display:flex;flex-direction:column;font-size:var(--overview-font,24px);line-height:1.4;container-type:inline-size}
+.edu-school-overview__area{position:relative;flex:1;min-height:0}
+.edu-school-overview__grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));align-items:stretch;gap:.8em;min-width:0}
+.edu-school-overview__card{padding:.9em 1em;border:1px solid var(--ev-border,#dce7eb);border-radius:var(--ev-card-radius,14px);background:var(--ev-surface,#fff);color:var(--ev-text,#18394b);min-width:0;break-inside:avoid}
+.edu-school-overview__card[data-section=alerts]{grid-column:1/-1;border-inline-start:4px solid var(--edu-change-ink,#79500b)}
+.edu-school-overview__heading{display:flex;align-items:baseline;gap:1em;justify-content:space-between;margin-bottom:.7em}
+.edu-school-overview__heading h2{font-size:1.15em;line-height:1.25;font-weight:650;margin:0}
+.edu-school-overview__heading small{font-size:.7em;color:var(--ev-muted);white-space:nowrap}
+.edu-school-overview__list{display:flex;flex-direction:column;gap:.6em}
+.edu-school-overview__lessons{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));align-items:stretch}
+.edu-school-overview__lesson{display:grid;grid-template-rows:1.4em 1.3em minmax(1.5em,auto) auto auto;align-content:start;gap:.25em;border:1px solid var(--ev-border);border-inline-start:3px solid var(--change-ink,var(--ev-border));border-radius:var(--ev-control-radius,8px);padding:.7em;min-width:0}
+.edu-school-overview__kicker{display:flex;gap:.7em;justify-content:space-between;align-items:baseline;font-size:.7em}
+.edu-school-overview__lesson time{font-size:.75em;color:var(--ev-muted)}
+.edu-school-overview h3{font-size:1em;line-height:1.35;font-weight:650;margin:0;overflow-wrap:anywhere}
+.edu-school-overview p{font-size:.8em;line-height:1.45;margin:0;overflow-wrap:anywhere}
+.edu-school-overview small{font-size:.7em;color:var(--ev-muted)}
+.edu-school-overview__change{display:grid;grid-template-columns:3.4em 2.8em minmax(0,1fr);align-items:baseline;gap:.5em;padding:.6em .7em;border:1px solid var(--ev-border);border-inline-start:3px solid var(--change-ink);border-radius:var(--ev-control-radius);min-width:0}
+.edu-school-overview__change>time,.edu-school-overview__change>b{font-size:.85em;font-weight:600}
+.edu-school-overview__change>.edu-change-badge{grid-column:3;font-size:.65em;justify-self:start}
+.edu-school-overview__meal{display:grid;grid-template-columns:4em minmax(0,1fr);align-items:baseline;gap:.7em;border-bottom:1px solid var(--ev-border);padding:.35em 0}
+.edu-school-overview__meal>span{font-size:.75em;color:var(--ev-muted)}
+.edu-school-overview__notice+.edu-school-overview__notice{border-top:1px solid var(--ev-border);padding-top:.6em}
+.edu-school-overview__notice small{display:block;margin-bottom:.25em}
+.edu-school-overview__empty{color:var(--ev-muted);font-size:.8em}
+.edu-school-overview__probe{position:absolute;inset:0 auto auto 0;visibility:hidden;pointer-events:none;height:auto}
+@container(max-width:1100px){.edu-school-overview__grid{grid-template-columns:1fr}.edu-school-overview__card[data-section=alerts]{grid-column:auto}}
+
+@container(min-width:1500px){.edu-school-overview__lessons{grid-template-columns:repeat(4,minmax(0,1fr))}}
