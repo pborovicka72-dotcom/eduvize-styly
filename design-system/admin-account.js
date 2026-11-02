@@ -28,5 +28,6 @@
  $('account-microsoft').onclick=()=>work(async()=>{const r=await auth.fetch(auth.DOCS+'/api/admin/microsoft/start',{method:'POST'},'documents');const data=await r.json();if(!r.ok)throw Error(data.detail||'Přihlášení nelze otevřít.');const u=new URL(data.url);if(u.origin!=='https://login.microsoftonline.com')throw Error('Neplatná přihlašovací adresa Microsoftu.');location.assign(u.href);});
  $('account-return').onclick=()=>work(returnToApp);
  root.addEventListener('eduvize-admin-auth-change',status);
- auth.ready.then(async()=>{status();await connection();revealAccount();if(requested&&!manage&&auth.status().connected&&(!needsDrive()||driveConnected)){try{await returnToApp();}catch(e){say(e.message);}}});
+ root.addEventListener('eduvize-admin-request-progress',event=>{if(event.detail?.text)say(event.detail.text);});
+ auth.ready.then(async()=>{status();say('Ověřuji přihlášení a připojení…');await connection();say('');revealAccount();if(requested&&!manage&&auth.status().connected&&(!needsDrive()||driveConnected)){try{await returnToApp();}catch(e){say(e.message);}}});
 })(window);

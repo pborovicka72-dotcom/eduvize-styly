@@ -7,7 +7,35 @@
  const isAccount=location.origin==='https://pborovicka72-dotcom.github.io'&&location.pathname==='/eduvize-styly/ucet.html';
  const isHub=location.origin==='https://pborovicka72-dotcom.github.io'&&location.pathname==='/eduvize-styly/aplikace.html';
  let session=null,validated=false,message='',expiryTimer,banner,refreshVersion=0,lastState='';
- async function sessionFetch(url,options={}){const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),25000);try{return await fetch(url,{...options,redirect:'error',signal:controller.signal});}catch(error){if(error.name==='AbortError')throw Error('Ověření přihlášení trvá příliš dlouho. Zkuste to znovu.');throw error;}finally{clearTimeout(timer);}}
+
+ function requestProgress(text){root.dispatchEvent(new CustomEvent('eduvize-admin-request-progress',{detail:{text}}));}
+ async function sessionFetch(url,options={}){
+  const method=(options.method||'GET').toUpperCase(),safe=method==='GET'||method==='HEAD';
+  const deadline=Date.now()+180000;
+  for(let attempt=0;;attempt++){
+   const controller=new AbortController();
+   const remaining=deadline-Date.now();
+   if(remaining<=0)throw Error('Služba se zatím neprobudila. Uložené přihlášení zůstává zachované; zkuste to znovu.');
+   const timer=setTimeout(()=>controller.abort(),Math.min(safe?45000:180000,remaining));
+   const progress=setTimeout(()=>requestProgress('Čekám na službu. Pokud je uspaná, probouzí se; chvíli prosím počkejte…'),8000);
+   let response;
+   try{
+    response=await fetch(url,{...options,redirect:'error',signal:controller.signal});
+    const transient=[502,503,504].includes(response.status);
+    // Repeat reads and an explicitly rejected login, never an ambiguous mutation.
+    const login=method==='POST'&&new URL(url).pathname==='/api/admin-session';
+    if(!transient||(!safe&&!login)||attempt>=3||Date.now()>=deadline)return response;
+   }catch(error){
+    if(!safe||attempt>=3||Date.now()>=deadline){
+     if(error.name==='AbortError'||error instanceof TypeError)throw Error('Služba nyní neodpovídá. Uložené přihlášení zůstává zachované; zkuste to znovu.');
+     throw error;
+    }
+   }finally{clearTimeout(timer);clearTimeout(progress);}
+   requestProgress('Čekám na spuštění služby a automaticky opakuji ověření…');
+   await new Promise(resolve=>setTimeout(resolve,Math.min(3000,Math.max(0,deadline-Date.now()))));
+  }
+ }
+
  function read(storage){try{const s=JSON.parse(storage.getItem(KEY)||'null');return s&&typeof s.token==='string'&&s.token.startsWith('edu_')&&Number.isFinite(s.expiresAt)&&s.expiresAt*1000>Date.now()?s:null;}catch{return null}}
  function stored(){try{return location.origin==='https://pborovicka72-dotcom.github.io'?read(localStorage)||read(sessionStorage):read(sessionStorage)}catch{return null}}
  function save(s,central=false){refreshVersion++;session=s;validated=true;try{(central?localStorage:sessionStorage).setItem(KEY,JSON.stringify(s));}catch{}changed();}
@@ -44,7 +72,7 @@
   await ready;const token=getToken(scope);if(!token)throw Error(need(scope));
   const u=new URL(value,location.href),allowed=scope==='styles'?u.origin===CENTRAL&&u.pathname.startsWith('/api/design-system/'):u.origin===DOCS&&u.pathname.startsWith('/api/admin/');
   if(!allowed)throw Error('Nepovolená adresa administračního požadavku.');
-  const response=await fetch(u.href,{...options,cache:'no-store',redirect:'error',headers:{...(options.headers||{}),Authorization:'Bearer '+token}});
+  const response=await sessionFetch(u.href,{...options,cache:'no-store',redirect:'error',headers:{...(options.headers||{}),Authorization:'Bearer '+token}});
   if(!response.ok){const data=await response.clone().json().catch(()=>({}));failure(response.status,typeof data.detail==='string'?data.detail:'');}
   return response;
  }
