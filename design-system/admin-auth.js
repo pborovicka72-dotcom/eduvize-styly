@@ -39,7 +39,7 @@
  function read(storage){try{const s=JSON.parse(storage.getItem(KEY)||'null');return s&&typeof s.token==='string'&&s.token.startsWith('edu_')&&Number.isFinite(s.expiresAt)&&s.expiresAt*1000>Date.now()?s:null;}catch{return null}}
  function stored(){try{return location.origin==='https://pborovicka72-dotcom.github.io'?read(localStorage)||read(sessionStorage):read(sessionStorage)}catch{return null}}
  function save(s,central=false){refreshVersion++;session=s;validated=true;try{(central?localStorage:sessionStorage).setItem(KEY,JSON.stringify(s));}catch{}changed();}
- function clear(all=false){refreshVersion++;const previous=session?.token;session=null;validated=false;try{sessionStorage.removeItem(KEY);if(isAccount||all||(location.origin==='https://pborovicka72-dotcom.github.io'&&read(localStorage)?.token===previous))localStorage.removeItem(KEY);}catch{}changed();}
+ function clear(all=false){refreshVersion++;const previous=session?.token;session=null;validated=false;try{if(all||read(sessionStorage)?.token===previous)sessionStorage.removeItem(KEY);if(all||read(localStorage)?.token===previous)localStorage.removeItem(KEY);}catch{}changed();}
  function getToken(scope){return validated&&session?.expiresAt*1000>Date.now()&&(!scope||session.scopes.includes(scope))?session.token:''}
  function cleanUrl(){const u=new URL(location.href);const hash=new URLSearchParams(u.hash.slice(1));if(hash.has('edu-auth-code'))u.hash=hash.get('edu-return-hash')||'';return u;}
  function loginUrl(returnTo=cleanUrl().href){const u=new URL(ACCOUNT);if(!isAccount){u.searchParams.set('returnTo',returnTo);if(getToken())u.searchParams.set('manage','1');}u.hash='account';return u.href}
@@ -95,7 +95,7 @@
   const u=new URL(value,location.href),allowed=scope==='styles'?u.origin===CENTRAL&&u.pathname.startsWith('/api/design-system/'):u.origin===DOCS&&u.pathname.startsWith('/api/admin/');
   if(!allowed)throw Error('Nepovolená adresa administračního požadavku.');
   const response=await sessionFetch(u.href,{...options,cache:'no-store',redirect:'error',headers:{...(options.headers||{}),Authorization:'Bearer '+token}});
-  if(!response.ok){const data=await response.clone().json().catch(()=>({}));failure(response.status,typeof data.detail==='string'?data.detail:'');}
+  if(!response.ok){const data=await response.clone().json().catch(()=>({}));if(session?.token===token&&stored()?.token===token)failure(response.status,typeof data.detail==='string'?data.detail:'');}
   return response;
  }
  async function login(stylesKey,documentsKey,remember=false){
