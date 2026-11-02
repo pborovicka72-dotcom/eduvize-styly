@@ -141,10 +141,11 @@
     for(const event of ['input','change','click','eduvize-profile-change'])document.addEventListener(event,changed);
     // Automatic preview/profile refreshes must never create an exit warning.
     if(['kiosk','transport'].includes(adapter.app)){
-      const edited=event=>{if(event.isTrusted&&!panel.contains(event.target)&&!event.target.readOnly&&!event.target.disabled)kioskEdited=true;};
+      const edited=event=>{if(!event.isTrusted||panel.contains(event.target)||event.target.readOnly||event.target.disabled)return;if(adapter.app==='transport'&&!event.target.matches('#source,#minutes,#limit,#pageSeconds,#nearbyKm,#viewMode,#transport input'))return;kioskEdited=true;};
       for(const type of ['input','change'])document.addEventListener(type,edited,true);
       document.addEventListener('click',event=>{if(event.isTrusted&&event.target.closest('#addButton,#newPage,#deletePage,.edu-item-editor__actions'))kioskEdited=true;},true);
-      if(adapter.app==='transport')document.addEventListener('click',event=>{if(event.isTrusted&&event.target.closest('#selectedStops,#selected-stops,.selected-stops,.stop-chip'))kioskEdited=true;},true);
+      if(adapter.app==='transport')document.addEventListener('click',event=>{if(event.isTrusted&&event.target.closest('#selected button,#suggestions button,#nearby button[data-stop],#selectedStops,#selected-stops,.selected-stops,.stop-chip'))kioskEdited=true;},true);
+      document.addEventListener('eduvize-configuration-saved',()=>{browserBaseline=departureFingerprint(adapter.read());kioskEdited=false;});
       local.addEventListener('click',()=>queueMicrotask(()=>{browserBaseline=departureFingerprint(adapter.read());kioskEdited=false;}));
       // The kiosk's share handler saves the native local configuration before copying.
       if(adapter.app==='kiosk'&&copy)copy.addEventListener('click',()=>queueMicrotask(()=>{browserBaseline=departureFingerprint(adapter.read());kioskEdited=false;}));
