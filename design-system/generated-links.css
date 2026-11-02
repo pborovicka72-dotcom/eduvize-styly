@@ -24,3 +24,8 @@
 .edu-link-segment__cell{position:absolute;display:grid;place-items:center;border:1px solid var(--ev-border,#bccce0);box-sizing:border-box;background:var(--ev-bg,#edf2fa)}
 .edu-link-segment__cell.is-selected{background:var(--ev-primary,#132c50);color:var(--ev-primary-text,#fff)}
 @media(max-width:600px){.edu-link-card__top{grid-template-columns:64px minmax(0,1fr)}.edu-link-segment{width:64px}.edu-link-segment[role=img]{max-width:64px}.edu-link-quick{grid-column:2;flex-wrap:wrap}.edu-link-group>summary{padding:16px}}
+
+.edu-link-kiosk__screen{display:flex;gap:3px;width:88px;height:50px;border:2px solid var(--ev-primary,#132c50);border-radius:5px;padding:3px;background:var(--ev-bg,#edf2fa);box-sizing:border-box}
+.edu-link-kiosk__menu{display:grid;gap:3px;width:22%;}.edu-link-kiosk__menu>span{border-radius:2px;background:var(--ev-primary,#132c50)}
+.edu-link-kiosk__content{flex:1;background:var(--ev-secondary,#f8d344);border-radius:2px}
+@media(max-width:600px){.edu-link-kiosk__screen{width:60px;height:40px}}
