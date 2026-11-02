@@ -3,3 +3,5 @@
 .display.interactive-display .controls.card{display:block;padding:1vmin;margin:0 0 1vmin}.display.interactive-display .controls .filters,.display.interactive-display #schoolStatus,.display.interactive-display legend{display:none}.display.interactive-display fieldset{margin:0;gap:1vmin 2vmin}.display.interactive-display fieldset label{font-size:1.5vmin;min-height:44px}.display.interactive-display .navigation{display:flex}.display.interactive-display .navigation button{min-height:44px;font-size:1.5vmin}.display.interactive-display .day{touch-action:manipulation}
 
 .day-event{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:3;overflow:hidden;flex-shrink:0}.day.multiple .day-event{-webkit-line-clamp:1}.display .day-event{-webkit-line-clamp:2}.display .day.multiple .day-event{-webkit-line-clamp:1}.display .day{gap:.4vmin}
+/* The public calendar uses its own account link; authentication banners belong to administration. */
+body .edu-admin-session{display:none!important}
