@@ -70,3 +70,16 @@
  window.addEventListener('eduvize-profile-adapter-ready',start);
 })();
 
+
+/* Visible release numbers belong in diagnostics, not application surfaces. */
+(function(){
+ const version=/\bv\d{4}\.\d{1,2}\.\d{1,2}(?:\.\d+)*\b/g;
+ function clean(node){
+  if(node.nodeType===3){if(node.parentElement?.closest('script,style,textarea,input,code,pre'))return;const old=node.nodeValue;if(!/\bv\d{4}\./.test(old))return;node.nodeValue=old.replace(version,'').replace(/\s*·\s*·/g,' · ').replace(/\s*·\s*$/,'').trim();return;}
+  if(node.nodeType!==1)return;
+  if(node.matches('.edu-build-marker,#version')){node.hidden=true;node.style.display='none';return;}
+  for(const child of [...node.childNodes])clean(child);
+ }
+ function start(){clean(document.body);new MutationObserver(records=>{for(const record of records){if(record.type==='characterData')clean(record.target);else for(const node of record.addedNodes)clean(node);}}).observe(document.body,{subtree:true,childList:true,characterData:true});}
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});else start();
+})();

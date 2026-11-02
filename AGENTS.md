@@ -5,7 +5,7 @@
 - Keep repeated cards equal in height, including across rows, and use the whole available content area.
 - Before shipping a kiosk style, compare NSP and kiosk at identical viewport sizes and verify computed text sizes, icons, spacing, complete content and equal card heights. Verify both orientations in the actual administration preview as well as the app output.
 - Check long names, events, empty/hidden cards and the no-upcoming-days case. Preserve ordinary web document flow and existing NSP segment behavior.
-- Increase the visible application version at the bottom right and asset versions when publishing changes.
+- Keep release versions only in diagnostics and asset URLs; never render release numbers in application or administration UI. Refresh asset versions when publishing changes.
 
 - In NSP and kiosk long horizontal strips (aspect ratio >= 2.7) and small tiles (width <= 1200px and height <= 720px), hide secondary source details. Mark provenance/work/source metadata with `data-edu-source-details`. Keep authors, primary content and pagination/touch controls visible. Tall portrait columns and ordinary web pages retain source metadata.
 
