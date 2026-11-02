@@ -43,7 +43,7 @@
  function getToken(scope){return validated&&session?.expiresAt*1000>Date.now()&&(!scope||session.scopes.includes(scope))?session.token:''}
  function cleanUrl(){const u=new URL(location.href);const hash=new URLSearchParams(u.hash.slice(1));if(hash.has('edu-auth-code'))u.hash=hash.get('edu-return-hash')||'';return u;}
  function loginUrl(returnTo=cleanUrl().href){const u=new URL(ACCOUNT);if(!isAccount){u.searchParams.set('returnTo',returnTo);if(getToken())u.searchParams.set('manage','1');}u.hash='account';return u.href}
- function changed(){clearTimeout(expiryTimer);if(session){expiryTimer=setTimeout(()=>{if(session?.expiresAt*1000>Date.now()){changed();return;}message='Přihlášení vypršelo. Obnovte je na stránce Účet a konfigurace.';clear();},Math.max(1,Math.min(2147483647,session.expiresAt*1000-Date.now())));}renderBanner();const state=JSON.stringify([!!getToken(),validated?session?.scopes:[],validated?session?.profileId||'':'',session?.expiresAt||0,message]);if(state!==lastState){lastState=state;root.dispatchEvent(new CustomEvent('eduvize-admin-auth-change'));}}
+ function changed(){clearTimeout(expiryTimer);if(session){expiryTimer=setTimeout(()=>{if(session?.expiresAt*1000>Date.now()){changed();return;}message='Přihlášení vypršelo. Obnovte je na stránce Účet a konfigurace.';clear();},Math.max(1,Math.min(2147483647,session.expiresAt*1000-Date.now())));}renderBanner();const state=JSON.stringify([!!getToken(),validated?session?.scopes:[],validated?session?.profileId||'':'',validated?session?.schoolId||'':'',session?.expiresAt||0,message]);if(state!==lastState){lastState=state;root.dispatchEvent(new CustomEvent('eduvize-admin-auth-change'));}}
  async function json(response){const data=await response.json().catch(()=>({}));if(!response.ok){const e=Error(typeof data.detail==='string'?data.detail:'Služba není dostupná ('+response.status+').');e.status=response.status;throw e;}return data;}
  async function refresh(){
   const version=++refreshVersion,candidate=stored(),sameToken=session?.token===candidate?.token;session=candidate;if(!sameToken)validated=false;
@@ -64,7 +64,7 @@
   try{sessionStorage.removeItem('eduvize-documents-admin-token');}catch{}
   const u=new URL(location.href),hash=new URLSearchParams(u.hash.slice(1)),code=hash.get('edu-auth-code');
   const msError=hash.get('edu-ms-error');
-  if(msError&&isAccount){u.hash='account';history.replaceState(null,'',u.href);sessionStorage.removeItem('eduvize-ms-login-v1');message=msError.slice(0,400);changed();return;}
+  if(msError&&isAccount){u.hash='account';history.replaceState(null,'',u.href);sessionStorage.removeItem('eduvize-ms-login-v1');await refresh();message=msError.slice(0,400);changed();return;}
   const msTicket=hash.get('edu-ms-ticket');
   if(msTicket)u.searchParams.delete('edu-login-return');
   if(msTicket){
@@ -107,15 +107,15 @@
  }
  async function selectProfile(profileId){await ready;if(!getToken())throw Error(need());const data=await json(await sessionFetch(CENTRAL+'/api/admin-session/profile',{method:'PUT',cache:'no-store',headers:{Authorization:'Bearer '+session.token,'Content-Type':'application/json'},body:JSON.stringify({profileId})}));save({...session,profileId:data.profileId},true);return data.profileId;}
  async function logout(){try{if(session)await json(await sessionFetch(CENTRAL+'/api/admin-session',{method:'DELETE',cache:'no-store',headers:{Authorization:'Bearer '+session.token}}));}finally{message='Odhlášeno ze správy Eduvize.';clear(true);}}
- async function handoff(returnTo){await ready;if(!getToken())throw Error(need());const data=await json(await sessionFetch(CENTRAL+'/api/admin-session/handoff',{method:'POST',cache:'no-store',headers:{Authorization:'Bearer '+session.token,'Content-Type':'application/json'},body:JSON.stringify({returnTo})}));const u=new URL(returnTo),hash=u.hash;u.hash=new URLSearchParams({'edu-auth-code':data.code,...(hash?{'edu-return-hash':hash}:{})}).toString();return u.href;}
+ async function handoff(returnTo){await ready;if(!getToken())throw Error(need());const data=await json(await sessionFetch(CENTRAL+'/api/admin-session/handoff',{method:'POST',cache:'no-store',headers:{Authorization:'Bearer '+session.token,'Content-Type':'application/json'},body:JSON.stringify({returnTo})}));const u=new URL(returnTo),hash=u.hash;if(session?.profileId)u.searchParams.set('edu-profile',session.profileId);u.hash=new URLSearchParams({'edu-auth-code':data.code,...(hash?{'edu-return-hash':hash}:{})}).toString();return u.href;}
  function renderBanner(){
   if(isAccount||isHub||!document.body)return;
   if(!banner){banner=document.createElement('aside');banner.className='edu-admin-session';banner.setAttribute('role','status');const title=document.createElement('span'),link=document.createElement('a');title.className='edu-admin-session__status';link.className='edu-admin__button edu-admin__button--secondary';banner.append(title,link);const header=document.querySelector('main .edu-page-header');if(header)header.after(banner);else document.querySelector('main')?.prepend(banner);}
   banner.querySelector('span').textContent=message||(getToken()?'Přihlášeno do správy Eduvize.':'Přihlášení a připojení OneDrive se spravuje na stránce Účet a konfigurace.');const a=banner.querySelector('a');a.href=loginUrl();a.textContent=getToken()?'Účet a připojení':'Přejít na přihlášení';
  }
  const ready=initialize();
- root.EduvizeAdminAuth=Object.freeze({ready,refresh,getToken,fetch:authorizedFetch,login,loginMicrosoft,logout,handoff,selectProfile,loginUrl,need,failure,status:()=>({connected:!!getToken(),profileId:validated?session?.profileId||'':'',scopes:validated?[...session.scopes]:[],expiresAt:session?.expiresAt||0,message}),CENTRAL,DOCS,HUB,ACCOUNT});
- const linkLibrary=document.createElement('script');linkLibrary.src='https://pborovicka72-dotcom.github.io/eduvize-styly/design-system/generated-links.js?v=20261102-day-progress-5';document.head.append(linkLibrary);
+ root.EduvizeAdminAuth=Object.freeze({ready,refresh,getToken,fetch:authorizedFetch,login,loginMicrosoft,logout,handoff,selectProfile,loginUrl,need,failure,status:()=>({connected:!!getToken(),profileId:validated?session?.profileId||'':'',schoolId:validated?session?.schoolId||'':'',scopes:validated?[...session.scopes]:[],expiresAt:session?.expiresAt||0,message}),CENTRAL,DOCS,HUB,ACCOUNT});
+ const linkLibrary=document.createElement('script');linkLibrary.src='https://pborovicka72-dotcom.github.io/eduvize-styly/design-system/generated-links.js?v=20261102-schools-1';document.head.append(linkLibrary);
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',renderBanner,{once:true});else renderBanner();
  root.addEventListener('storage',e=>{if(e.key===KEY){refresh();}});
 })(window);

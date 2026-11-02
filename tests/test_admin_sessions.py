@@ -36,7 +36,7 @@ class SessionTests(unittest.TestCase):
   self.client=TestClient(app)
  def tearDown(self):self.temp.cleanup()
  def auth(self,token=None):return {'Authorization':'Bearer '+(token or self.root['token'])}
- def test_microsoft_login_uses_verified_ticket_and_preserves_profile(self):
+ def test_microsoft_login_uses_own_school_and_never_inherits_operator_profile(self):
   self.store.select_profile(self.root['token'],'a'*32)
   class Client:
    def __init__(self,**kw):pass
@@ -44,11 +44,11 @@ class SessionTests(unittest.TestCase):
    async def __aexit__(self,*a):pass
    async def post(self,url,**kw):
     self.assertion=url
-    return sessions.httpx.Response(200,json={'authenticated':True,'accountId':'verified-owner','remember':True})
+    return sessions.httpx.Response(200,json={'authenticated':True,'accountId':'verified-owner','remember':True,'schoolId':'b'*32,'profileId':'c'*32})
   with patch.object(sessions.httpx,'AsyncClient',Client):
    response=self.client.post('/api/admin-session/microsoft',json={'ticket':'t'*43,'verifier':'v'*64},headers={**self.auth(),'Origin':sessions.HUB_ORIGIN})
   self.assertEqual(response.status_code,200);data=response.json()
-  self.assertEqual(data['scopes'],['documents','styles']);self.assertEqual(data['profileId'],'a'*32)
+  self.assertEqual(data['scopes'],['configurations','documents']);self.assertEqual(data['profileId'],'c'*32);self.assertEqual(data['schoolId'],'b'*32)
   self.assertGreater(data['expiresAt']-sessions.time.time(),sessions.TTL)
   with self.assertRaises(HTTPException):self.store.read(self.root['token'])
  def test_microsoft_login_rejects_origin_and_unverified_identity(self):
@@ -63,6 +63,15 @@ class SessionTests(unittest.TestCase):
   with patch.object(sessions.httpx,'AsyncClient',Client):
    self.assertEqual(self.client.post('/api/admin-session/microsoft',json=payload,headers={'Origin':sessions.HUB_ORIGIN}).status_code,401)
   self.assertEqual(self.store.read(self.root['token'])['scopes'],['documents','styles'])
+ def test_school_cannot_select_another_profile_and_handoff_retains_ownership(self):
+  token=self.store.create({'documents','configurations'})['token'];self.store.bind_school(token,'a'*32,'b'*32)
+  child=self.store.redeem(self.store.handoff(token,'https://eduvize-weather.onrender.com/config'),'https://eduvize-weather.onrender.com')
+  self.assertEqual(child['schoolId'],'a'*32);self.assertEqual(child['profileId'],'b'*32)
+  result=self.client.get('/api/admin-session/validate?scope=configurations',headers=self.auth(child['token'])).json()
+  self.assertEqual(result['schoolId'],'a'*32)
+  with self.assertRaises(HTTPException):self.store.select_profile(token,'c'*32)
+  self.assertEqual(self.client.get('/api/admin-session/validate?scope=styles',headers=self.auth(token)).status_code,403)
+  self.assertEqual(self.client.post('/api/admin-session',json={'stylesKey':'test-only-styles-key'},headers={**self.auth(token),'Origin':sessions.HUB_ORIGIN}).status_code,403)
  def test_tokens_are_not_stored_in_plaintext(self):
   conn=sqlite3.connect(self.path);blob=' '.join(str(row) for row in conn.execute('SELECT * FROM eduvize_admin_sessions_v1'));conn.close()
   self.assertNotIn(self.root['token'],blob);self.assertIn(sessions.digest(self.root['token']),blob)

@@ -17,7 +17,7 @@ def check_admin(auth):
     if not ADMIN:raise HTTPException(503,"DESIGN_SYSTEM_ADMIN_TOKEN is not configured")
     if not auth or not secrets.compare_digest(auth,"Bearer "+ADMIN):raise HTTPException(401,"Neplatný administrační klíč")
 @app.get("/health")
-def health():return {"status":"ok","central_admin_sessions":True,"database_configured":bool(DATABASE_URL),"admin_configured":bool(ADMIN)}
+def health():return {"status":"ok","central_admin_sessions":True,"school_accounts":True,"database_configured":bool(DATABASE_URL),"admin_configured":bool(ADMIN)}
 @app.get("/")
 @app.get("/design-system")
 @app.get("/design-system/")

@@ -15,7 +15,7 @@
   if(document.documentElement.dataset?.kioskApp==='kiosk')return 'kiosk';
   return 'web';
  }
- function url(value,mode){const u=new URL(value,root.location.href);if(mode==='kiosk'){
+ function url(value,mode){const u=new URL(value,root.location.href);const pid=root.EduvizeAdminAuth?.status().profileId||new URL(root.location.href).searchParams.get('edu-profile');if(/^[a-f0-9]{32}$/.test(pid||'')&&(u.hostname.endsWith('.onrender.com')&&u.hostname.startsWith('eduvize-')||u.hostname==='pborovicka72-dotcom.github.io'&&u.pathname.startsWith('/eduvize-')))u.searchParams.set('edu-profile',pid);if(mode==='kiosk'){
   for(const key of segmentKeys)u.searchParams.delete(key);
   // layout can also be a numeric legacy NSP template.
   u.searchParams.delete('layout');u.searchParams.set('viewMode','kiosk');u.searchParams.set('output','kiosk');if(!['0','1'].includes(u.searchParams.get('paging')))u.searchParams.set('paging','auto');

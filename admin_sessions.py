@@ -52,6 +52,7 @@ class SessionStore:
    conn.execute('CREATE TABLE IF NOT EXISTS eduvize_admin_sessions_v1 (token_hash TEXT PRIMARY KEY, scopes JSONB NOT NULL, expires DOUBLE PRECISION NOT NULL, parent_hash TEXT REFERENCES eduvize_admin_sessions_v1(token_hash) ON DELETE CASCADE)')
    conn.execute('CREATE TABLE IF NOT EXISTS eduvize_admin_handoffs_v1 (code_hash TEXT PRIMARY KEY, root_hash TEXT NOT NULL REFERENCES eduvize_admin_sessions_v1(token_hash) ON DELETE CASCADE, origin TEXT NOT NULL, scopes JSONB NOT NULL, expires DOUBLE PRECISION NOT NULL)')
    conn.execute('CREATE TABLE IF NOT EXISTS eduvize_admin_profile_selection_v1 (root_hash TEXT PRIMARY KEY REFERENCES eduvize_admin_sessions_v1(token_hash) ON DELETE CASCADE, profile_id TEXT NOT NULL)')
+   conn.execute('CREATE TABLE IF NOT EXISTS eduvize_session_schools_v1 (root_hash TEXT PRIMARY KEY REFERENCES eduvize_admin_sessions_v1(token_hash) ON DELETE CASCADE, school_id TEXT NOT NULL, profile_id TEXT NOT NULL)')
    yield conn
  def read(self,token):
   with self.db() as conn:
@@ -59,9 +60,11 @@ class SessionStore:
   if not row or row[1]<=time.time():raise HTTPException(401,'Přihlášení vypršelo. Obnovte je na rozcestníku Eduvize.')
   root=row[2] or digest(token)
   with self.db() as conn:profile=conn.execute('SELECT profile_id FROM eduvize_admin_profile_selection_v1 WHERE root_hash=%s',(root,)).fetchone()
-  return {'scopes':row[0], 'expiresAt':row[1], 'root':root, 'profileId':profile[0] if profile else ''}
+  with self.db() as conn:school=conn.execute('SELECT school_id,profile_id FROM eduvize_session_schools_v1 WHERE root_hash=%s',(root,)).fetchone()
+  return {'scopes':row[0], 'expiresAt':row[1], 'root':root, 'schoolId':school[0] if school else '', 'profileId':school[1] if school else profile[0] if profile else ''}
  def select_profile(self,token,profile_id):
   row=self.read(token)
+  if row.get('schoolId') and profile_id!=row['profileId']:raise HTTPException(403,'Škola má jeden vlastní profil.')
   if digest(token)!=row['root']:raise HTTPException(403,'Profil vyberte na stránce Účet a konfigurace.')
   if not isinstance(profile_id,str) or (profile_id and not re.fullmatch(r'[a-f0-9]{32}',profile_id)):raise HTTPException(422,'Neplatný profil.')
   with self.db() as conn:
@@ -75,6 +78,9 @@ class SessionStore:
    conn.execute('DELETE FROM eduvize_admin_handoffs_v1 WHERE expires<=%s',(time.time(),))
    conn.execute('INSERT INTO eduvize_admin_sessions_v1 (token_hash,scopes,expires) VALUES (%s,%s::jsonb,%s)',(digest(token),json.dumps(sorted(scopes)),expires))
   return {'token':token,'scopes':sorted(scopes),'expiresAt':expires}
+ def bind_school(self,token,school_id,profile_id):
+  if not re.fullmatch(r'[a-f0-9]{32}',school_id or '') or not re.fullmatch(r'[a-f0-9]{32}',profile_id or ''):raise HTTPException(401,'Neplatná identita školy.')
+  with self.db() as conn:conn.execute('INSERT INTO eduvize_session_schools_v1 VALUES (%s,%s,%s)',(digest(token),school_id,profile_id))
  def revoke(self,token):
   row=self.read(token)
   with self.db() as conn:conn.execute('DELETE FROM eduvize_admin_sessions_v1 WHERE token_hash=%s',(row['root'],))
@@ -95,7 +101,7 @@ class SessionStore:
    if not parent or parent[0]<=time.time():raise HTTPException(401,'Přihlášení vypršelo.')
    token='edu_'+secrets.token_urlsafe(32)
    conn.execute('INSERT INTO eduvize_admin_sessions_v1 (token_hash,scopes,expires,parent_hash) VALUES (%s,%s::jsonb,%s,%s)',(digest(token),json.dumps(row[1]),parent[0],row[0]))
-  return {'token':token,'scopes':row[1],'expiresAt':parent[0],'profileId':self.read(token)['profileId']}
+  return {'token':token,'scopes':row[1],'expiresAt':parent[0],'profileId':self.read(token)['profileId'],'schoolId':self.read(token)['schoolId']}
 
 def require_session(store,auth,scope=None):
  row=store.read(bearer(auth))
@@ -124,12 +130,13 @@ def session_router(store,styles_key,documents_url=DOCUMENTS):
   except ValueError:raise HTTPException(503,'Služba přihlášení nevrátila platnou odpověď.')
   if not isinstance(data,dict):raise HTTPException(401,'Microsoft identita nebyla ověřena.')
   if data.get('authenticated') is not True or not isinstance(data.get('accountId'),str) or not data['accountId'] or not isinstance(data.get('remember'),bool):raise HTTPException(401,'Microsoft identita nebyla ověřena.')
-  result=store.create({'styles','documents'},remember=data['remember'])
+  school_id=data.get('schoolId');profile_id=data.get('profileId')
+  if not isinstance(school_id,str) or not re.fullmatch(r'[a-f0-9]{32}',school_id) or not isinstance(profile_id,str) or not re.fullmatch(r'[a-f0-9]{32}',profile_id):raise HTTPException(401,'Přihlášení neobsahuje platnou školu.')
+  result=store.create({'documents','configurations'},remember=data['remember'])
+  store.bind_school(result['token'],school_id,profile_id)
+  result.update(schoolId=school_id,profileId=profile_id)
   if authorization:
-   try:
-    old=require_session(store,authorization)
-    if old.get('profileId'):store.select_profile(result['token'],old['profileId']);result['profileId']=old['profileId']
-    store.revoke(bearer(authorization))
+   try:store.revoke(bearer(authorization))
    except HTTPException:pass
   return result
  @router.post('/api/admin-session')
@@ -137,8 +144,12 @@ def session_router(store,styles_key,documents_url=DOCUMENTS):
   hub_origin(request);data=await request.json();scopes=set()
   old=None
   if authorization:
-   try:old=require_session(store,authorization);scopes.update(old['scopes'])
-   except HTTPException:pass
+   try:
+    old=require_session(store,authorization)
+    if old.get('schoolId'):raise HTTPException(403,'Před přihlášením správce se odhlaste z účtu školy.')
+    scopes.update(old['scopes'])
+   except HTTPException as error:
+    if error.status_code!=401:raise
   sk=data.get('stylesKey','');dk=data.get('documentsKey','')
   if not isinstance(sk,str) or not isinstance(dk,str) or len(sk)>4096 or len(dk)>4096:raise HTTPException(422,'Neplatný přihlašovací klíč.')
   if not sk and not dk:raise HTTPException(422,'Vyplňte alespoň jeden administrační klíč.')
@@ -163,7 +174,7 @@ def session_router(store,styles_key,documents_url=DOCUMENTS):
   return result
  @router.get('/api/admin-session')
  def status(authorization:str=Header(default='')):
-  row=require_session(store,authorization);return {'scopes':row['scopes'],'expiresAt':row['expiresAt'],'profileId':row['profileId']}
+  row=require_session(store,authorization);return {'scopes':row['scopes'],'expiresAt':row['expiresAt'],'profileId':row['profileId'],'schoolId':row['schoolId']}
  @router.put('/api/admin-session/profile')
  async def select_profile(request:Request,authorization:str=Header(default='')):
   hub_origin(request);data=await request.json()
@@ -173,7 +184,7 @@ def session_router(store,styles_key,documents_url=DOCUMENTS):
   if scope not in ('styles','documents','configurations'):raise HTTPException(422,'Neplatná administrace.')
   row=require_session(store,authorization)
   if scope not in row['scopes'] and not (scope=='configurations' and 'documents' in row['scopes']):raise HTTPException(403,'Pro tuto administraci doplňte přihlášení na rozcestníku.')
-  return {'valid':True,'scope':scope,'expiresAt':row['expiresAt']}
+  return {'valid':True,'scope':scope,'expiresAt':row['expiresAt'],'schoolId':row['schoolId'],'profileId':row['profileId']}
  @router.delete('/api/admin-session')
  def logout(authorization:str=Header(default='')):
   try:store.revoke(bearer(authorization))

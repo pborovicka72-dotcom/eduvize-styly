@@ -22,13 +22,13 @@
   const make=(tag,text,cls)=>{const e=document.createElement(tag);if(text)e.textContent=text;if(cls)e.className=cls;return e;};
   const button=(text,secondary=true)=>{const e=make('button',text,'edu-admin__button'+(secondary?' edu-admin__button--secondary':''));e.type='button';return e;};
   const fingerprint=value=>JSON.stringify(value,(_,v)=>v&&typeof v==='object'&&!Array.isArray(v)?Object.fromEntries(Object.entries(v).sort(([a],[b])=>a.localeCompare(b))):v);
-  function selection(){const query=new URL(location.href).searchParams.get('edu-profile');if(query&&/^[a-f0-9]{32}$/.test(query))return query;try{const id=localStorage.getItem(SELECTION);return /^[a-f0-9]{32}$/.test(id||'')?id:'';}catch{return '';}}
+  function selection(){const own=root.EduvizeAdminAuth?.status();if(own?.schoolId)return own.profileId;const query=new URL(location.href).searchParams.get('edu-profile');if(query&&/^[a-f0-9]{32}$/.test(query))return query;try{const id=localStorage.getItem(SELECTION);return /^[a-f0-9]{32}$/.test(id||'')?id:'';}catch{return '';}}
   function select(id){try{if(id)localStorage.setItem(SELECTION,id);else localStorage.removeItem(SELECTION);}catch{}const u=new URL(location.href);if(id)u.searchParams.set('edu-profile',id);else u.searchParams.delete('edu-profile');history.replaceState(null,'',u.href);}
   function manageUrl(id){const u=new URL(ACCOUNT);if(id)u.searchParams.set('edu-profile',id);u.hash='configurations';return u.href;}
   // Short-lived read cache survives navigation in this tab. Never caches credentials.
   const CACHE_KEY='eduvize-profile-reads-v1',CACHE_TTL=90000;
   let reads={identity:0,entries:{}};
-  try{const value=JSON.parse(sessionStorage.getItem(CACHE_KEY)||'null');if(value&&typeof value.identity==='number'&&value.entries&&typeof value.entries==='object')reads=value;}catch{}
+  try{const value=JSON.parse(sessionStorage.getItem(CACHE_KEY)||'null');if(value&&['number','string'].includes(typeof value.identity)&&value.entries&&typeof value.entries==='object')reads=value;}catch{}
   function readCache(identity,path){if(reads.identity!==identity){reads={identity,entries:{}};return;}const entry=reads.entries[path];if(entry&&Date.now()-entry.time>=0&&Date.now()-entry.time<CACHE_TTL)return structuredClone(entry.value);}
   function remember(identity,path,value){if(reads.identity!==identity)reads={identity,entries:{}};reads.entries[path]={time:Date.now(),value:structuredClone(value)};const ordered=Object.entries(reads.entries).sort((a,b)=>b[1].time-a[1].time);reads.entries=Object.fromEntries(ordered.slice(0,9));try{sessionStorage.setItem(CACHE_KEY,JSON.stringify(reads));}catch{}}
   function forgetReads(){reads={identity:0,entries:{}};try{sessionStorage.removeItem(CACHE_KEY);}catch{}}
@@ -37,7 +37,7 @@
     const auth=root.EduvizeAdminAuth;if(!auth)throw Error('Společné přihlášení se nepodařilo načíst.');await auth.ready;
     const scope=auth.getToken('configurations')?'configurations':'documents';
     if(!auth.getToken(scope))throw Error('Přihlaste se na stránce Účet a konfigurace pro přístup k nastavení školy na OneDrive.');
-    const {fresh=false,...fetchOptions}=options,method=(fetchOptions.method||'GET').toUpperCase(),identity=auth.status().expiresAt;
+    const {fresh=false,...fetchOptions}=options,method=(fetchOptions.method||'GET').toUpperCase(),identity=auth.status().schoolId+':'+auth.status().expiresAt;
     const cacheable=method==='GET'&&(path===''||/^\/[a-f0-9]{32}$/.test(path));
     if(cacheable&&!fresh){const value=readCache(identity,path);if(value!==undefined)return value;}
     const response=await auth.fetch(API+path,{...fetchOptions,headers:{...(fetchOptions.body?{'Content-Type':'application/json'}:{}),...fetchOptions.headers}},scope);
@@ -128,6 +128,7 @@
     async function readProfile(apply=false){
       const p=await request('/'+profileId,{fresh:manualLoad}),entry=p.apps[adapter.app],incoming=entry?.revision||0;profileTitle=p.name;
       if(!apply&&tracked===profileId){if(incoming!==revision){needsReload=true;say('Na OneDrive je novější nastavení. Před uložením je načtěte.','error');return;}say(dirty()?'Neuložené změny.':loaded?'Uloženo na OneDrive.':'Dosud neuloženo na OneDrive.',dirty()?'dirty':'saved');return;}
+      if(!entry&&apply&&adapter.app==='school-identity')await adapter.apply({schemaVersion:1,data:{}});
       if(entry&&!entry.config.empty&&apply){const before=structuredClone(adapter.read());try{await adapter.apply(structuredClone(entry.config));}catch(error){try{await adapter.apply(before);}catch{}throw error;}if(manualLoad){backup=before;undo.hidden=false;}}
       revision=incoming;tracked=profileId;needsReload=false;loaded=!!entry&&!entry.config.empty;baseline=fingerprint(apply||!loaded?adapter.read():entry.config);
       say(loaded?(apply?(adapter.loadedMessage||'Nastavení načteno z OneDrive.'):dirty()?'Neuložené změny.':'Uloženo na OneDrive.'):'Dosud neuloženo na OneDrive.',dirty()?'dirty':'saved');
@@ -135,7 +136,7 @@
     async function list(initial=false){
       if(!canSave()){say('Pro uložení na OneDrive se přihlaste. Rozpracované změny zůstanou zachované.');return;}
       const active=await schoolConfiguration();
-      if(!active){profileId='';profileTitle='';say('Vyberte profil na stránce Účet a konfigurace.');return;}
+      if(!active){profileId='';profileTitle='';say('Přihlaste se k účtu školy.');return;}
       if(tracked&&active!==profileId&&!restored){needsReload=true;say('Změnilo se připojení školy. Před uložením načtěte nastavení.','error');return;}
       if(active!==profileId){profileId=active;revision=0;tracked='';}
       needsLogin=false;select(profileId);await readProfile(initial);
