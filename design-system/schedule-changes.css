@@ -14,3 +14,7 @@
 .edu-substitution-row>*{min-width:0}.edu-substitution-time{font-weight:650}.edu-substitution-time small{display:block;color:var(--ev-muted);font-size:.8em;font-weight:400;margin-top:.25em}
 .edu-substitution-class{font-weight:650}.edu-substitution-subject{font-weight:650;font-size:1.15em;overflow-wrap:anywhere}
 @container(max-width:1000px){.edu-substitution-row{grid-template-columns:6em 4em minmax(0,1fr)}.edu-substitution-subject{grid-column:1}.edu-substitution-detail{grid-column:2/-1}}
+
+/* The timetable uses the same calm card surface as the substitution overview. */
+.edu-schedule-card{box-sizing:border-box;padding:.6em .7em;border:1px solid var(--ev-border,#dce7eb);border-inline-start:3px solid var(--ev-border,#dce7eb);border-radius:var(--ev-card-radius,14px);background:var(--ev-surface,#fff);color:var(--ev-text,#17354b);overflow-wrap:anywhere}
+.edu-schedule-card.edu-schedule-change{border-inline-start-color:var(--change-ink)}
