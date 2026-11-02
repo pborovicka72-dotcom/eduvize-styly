@@ -17,3 +17,12 @@ for(const app of ['documents','weather','transport','holidays','wisdom','news','
  assert.equal(scope.changeStatus.dataset.state,'saved',app+': automatic refresh after local save');
 }
 console.log('Shared edit status passes for all 12 administration adapters.');
+
+const changeStart=source.indexOf('function changed(event)'),changeEnd=source.indexOf("    for(const event of ['input','change','click','eduvize-profile-change'])",changeStart);
+let checked=false;
+const scope={changeStatus:{dataset:{}},fingerprint:JSON.stringify,adapter:{read:()=>({checked})},panel:{contains:()=>false},save:{},local:{},busy:false,needsReload:false,baseline:'',timer:null,clearTimeout(){},setTimeout(){return 1;}};
+vm.runInNewContext(source.slice(start,end)+source.slice(changeStart,changeEnd)+';this.reset=resetEditState;this.change=changed;',scope);
+const target={matches:()=>true,closest:()=>null,readOnly:false,disabled:false};
+scope.reset();checked=true;scope.change({type:'click',isTrusted:true,target});scope.change({type:'input',isTrusted:true,target});
+assert.equal(scope.changeStatus.textContent,'Neuložené změny.','checkbox click must not replace the pre-edit baseline');
+checked=false;scope.change({type:'input',isTrusted:true,target});assert.equal(scope.changeStatus.textContent,'Bez neuložených změn.','reverting the checkbox clears the warning');
