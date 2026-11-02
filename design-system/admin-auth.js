@@ -37,8 +37,8 @@
  }
 
  function read(storage){try{const s=JSON.parse(storage.getItem(KEY)||'null');return s&&typeof s.token==='string'&&s.token.startsWith('edu_')&&Number.isFinite(s.expiresAt)&&s.expiresAt*1000>Date.now()?s:null;}catch{return null}}
- function stored(){try{return location.origin==='https://pborovicka72-dotcom.github.io'?read(localStorage)||read(sessionStorage):read(sessionStorage)}catch{return null}}
- function save(s,central=false){refreshVersion++;session=s;validated=true;try{(central?localStorage:sessionStorage).setItem(KEY,JSON.stringify(s));}catch{}changed();}
+ function stored(){try{return location.origin==='https://pborovicka72-dotcom.github.io'?(sessionStorage.getItem('eduvize-admin-session-fallback')==='1'?read(sessionStorage)||read(localStorage):read(localStorage)||read(sessionStorage)):read(sessionStorage)}catch{return null}}
+ function save(s,central=false){refreshVersion++;session=s;validated=true;try{(central?localStorage:sessionStorage).setItem(KEY,JSON.stringify(s));if(central){sessionStorage.removeItem(KEY);sessionStorage.removeItem('eduvize-admin-session-fallback');}}catch{try{sessionStorage.setItem(KEY,JSON.stringify(s));sessionStorage.setItem('eduvize-admin-session-fallback','1');message='Prohlížeč nepovolil trvalé zapamatování. Přihlášení platí v této kartě.';}catch{message='Prohlížeč nepovolil zapamatování přihlášení.';}}changed();}
  function clear(all=false){refreshVersion++;const previous=session?.token;session=null;validated=false;try{if(all||read(sessionStorage)?.token===previous)sessionStorage.removeItem(KEY);if(all||read(localStorage)?.token===previous)localStorage.removeItem(KEY);}catch{}changed();}
  function getToken(scope){return validated&&session?.expiresAt*1000>Date.now()&&(!scope||session.scopes.includes(scope))?session.token:''}
  function cleanUrl(){const u=new URL(location.href);const hash=new URLSearchParams(u.hash.slice(1));if(hash.has('edu-auth-code'))u.hash=hash.get('edu-return-hash')||'';return u;}
