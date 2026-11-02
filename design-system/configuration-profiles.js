@@ -90,7 +90,21 @@
     const activeId=()=>auth()?.status().profileId||'';
     function profileName(){return profileTitle||'vybraný profil';}
     function say(text,state=''){status.textContent=text;status.dataset.state=state;}
-    function dirty(){return baseline&&fingerprint(adapter.read())!==baseline;}
+    let segmentEdited=false;
+    function dirty(){
+      if(!baseline)return false;
+      const current=adapter.read(),saved=JSON.parse(baseline);
+      if(adapter.app==='documents'&&!segmentEdited){
+        const {segment:currentSegment,...currentValues}=current;
+        const {segment:savedSegment,...savedValues}=saved;
+        return fingerprint(currentValues)!==fingerprint(savedValues);
+      }
+      return fingerprint(current)!==baseline;
+    }
+    if(adapter.app==='documents'){
+      document.addEventListener('click',event=>{if(event.isTrusted&&event.target.closest('.ev-segments button'))segmentEdited=true;},true);
+      document.addEventListener('change',event=>{if(event.isTrusted&&event.target.closest('.ev-segments'))segmentEdited=true;},true);
+    }
     // Choosing a preview segment is persisted, but is not a reason to block navigation.
     function departureFingerprint(value){if(!value||typeof value!=='object')return fingerprint(value);const {segment,...content}=value;if(adapter.app==='kiosk'&&content.data){const {newsSources,layoutOrientation,layoutStyle,layoutBlock,previewPage,previewView,previewRevision,previewReset,...data}=content.data;content.data=data;}return fingerprint(content);}
     function state(){save.disabled=busy||!ready||needsReload;load.disabled=busy||!ready||!canSave();load.hidden=!needsReload;undo.disabled=busy;actions.hidden=load.hidden&&undo.hidden;manage.hidden=true;profileText.hidden=true;}
