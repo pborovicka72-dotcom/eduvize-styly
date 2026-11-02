@@ -127,6 +127,7 @@
     }
     load.onclick=()=>work('Načítám uložené nastavení…',async()=>{if(dirty()&&!confirm('Nahradit rozpracované změny uloženým nastavením? Původní místní stav půjde vrátit.'))return;await auth().refresh();if(!activeId())throw Error('Nejprve vyberte profil na stránce Účet a konfigurace.');profileId=activeId();tracked='';manualLoad=true;try{await readProfile(true);}finally{manualLoad=false;}});
     save.onclick=()=>work('Připravuji uložení…',async()=>{
+      adapter.validate?.();
       // Keep both the shared recovery snapshot and each app's native local format.
       localStorage.setItem(localKey,JSON.stringify(adapter.read()));
       local.click();
