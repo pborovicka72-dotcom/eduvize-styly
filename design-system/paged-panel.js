@@ -17,7 +17,7 @@
     function draw(){sheet.replaceChildren();if(root.EduvizeOutputModes?.mode?.()==='web'){items.forEach((item,i)=>{const section=document.createElement('div');section.className='edu-web-flow-section';options.render(section,item,i);sheet.append(section);});}else if(items.length)options.render(sheet,items[state.index],state.index);previous.disabled=state.index===0;next.disabled=state.index>=items.length-1;status.textContent=(state.index+1)+' / '+items.length;options.onPageChange?.(state.index);root.EduvizeFitPanel?.refresh();}
     previous.onclick=()=>{if(state.index>0){state.index--;draw();}};
     next.onclick=()=>{if(state.index<items.length-1){state.index++;draw();}};
-    draw();
+    draw();root.EduvizeOutputModes?.pager?.(nav,options.seconds||12);
   }
   // Pack complete content blocks using their rendered height, rather than one block per page.
   function mountFlow(host,items,options){

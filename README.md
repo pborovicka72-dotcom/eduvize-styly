@@ -56,3 +56,12 @@ Jediné zadávání administračních klíčů a připojení Microsoftu je naho�
 `design-system/admin-auth.js` poskytuje stav, návratový odkaz na centrum a autorizované požadavky. `admin-account.js/css` vlastní panel rozcestníku. Na stejné důvěryhodné GitHub Pages doméně se sdílí centrální relace; jiné domény dostávají vlastní podřízenou relaci. Odhlášení zruší rodičovskou relaci i všechny podřízené. Připojení OneDrive pro běžící výstupy zůstává na serveru Dokumentů. Při vypršení administrace nebo OneDrivu aplikace odkáže na rozcestník.
 
 Původní hlavičkové klíče zůstávají podporované na API pro stávající automatizace. Ve formulářích jednotlivých aplikací už nejsou. Při nasazení se nejprve zveřejní moduly a API obou služeb, poté panel a napojené administrace. Integrační testy: `python -m unittest discover -s tests -p 'test_admin_sessions.py'`; klient: `node design-system/tests/admin-auth.test.mjs`.
+
+
+## Výslovné ovládání výstupu
+
+Generátor ukládá `interaction=interactive` nebo `interaction=display` do každého nového odkazu. Rozložení `web`, `nsp` a `kiosk` je samostatná volba; žádná detekce zařízení, dotyku ani typu ukazatele se neprovádí. Kiosek i jeho obsahové aplikace vždy používají interaktivní režim, i pokud dodaný odkaz tvrdí opak.
+
+Společná komponenta `output-modes.js` nabízí volbu v administracích, předává ji do náhledů a ukládání konfigurace a řídí ruční či časované stránkování. Statické webové výstupy se automaticky posouvají v běžném dokumentovém toku. Staré odkazy bez parametru zachovávají deterministickou kompatibilitu: web a kiosek interaktivní, NSP pouze zobrazování. Pro změnu režimu staré obrazovky vygenerujte nový odkaz.
+
+Knihovna odkazů ukazuje ikonu ruky nebo obrazovky a textový popis. Server metadata odvozuje z URL; obě varianty stejného NSP segmentu se uchovávají samostatně.

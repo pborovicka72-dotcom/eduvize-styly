@@ -29,3 +29,5 @@
 .edu-link-kiosk__menu{display:grid;gap:3px;width:22%;}.edu-link-kiosk__menu>span{border-radius:2px;background:var(--ev-primary,#132c50)}
 .edu-link-kiosk__content{flex:1;background:var(--ev-secondary,#f8d344);border-radius:2px}
 @media(max-width:600px){.edu-link-kiosk__screen{width:60px;height:40px}}
+
+.edu-link-interaction{display:inline-flex;align-items:center;gap:6px;padding:4px 8px;margin:4px 0;border:1px solid var(--ev-border,#ccdae1);border-radius:6px;color:var(--ev-text,#183047);font-size:13px;font-weight:600;background:var(--ev-surface,#fff)}.edu-link-interaction svg{width:20px;height:20px;flex:none}.edu-link-interaction[data-interaction=interactive]{color:var(--ev-primary,#087d91)}
