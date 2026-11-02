@@ -66,6 +66,7 @@
   const msError=hash.get('edu-ms-error');
   if(msError&&isAccount){u.hash='account';history.replaceState(null,'',u.href);sessionStorage.removeItem('eduvize-ms-login-v1');message=msError.slice(0,400);changed();return;}
   const msTicket=hash.get('edu-ms-ticket');
+  if(msTicket)u.searchParams.delete('edu-login-return');
   if(msTicket){
    u.hash='account';history.replaceState(null,'',u.href);
    try{
