@@ -27,3 +27,5 @@
 .edu-profile-current>.edu-admin__actions:not(:has(:not([hidden]))){display:none}
 
 .ev-admin :is(button,a).edu-admin__button[data-edu-output-action=secondary]{background:var(--edu-admin-secondary)!important;color:var(--edu-admin-secondary-text)!important}
+
+.edu-profile-change-status{margin:0;font-size:14px;line-height:1.5;color:var(--ev-muted)}.edu-profile-change-status[data-state=dirty],.edu-profile-change-status[data-state=error]{color:var(--ev-text);font-weight:650}
