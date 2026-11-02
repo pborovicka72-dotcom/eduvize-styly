@@ -1,0 +1,22 @@
+<!doctype html><meta charset="utf-8"><title>Persistent segment preview regression</title>
+<style>#ev-preview{position:relative;width:800px;height:450px}#ev-preview .ev-box{position:absolute}iframe{border:0}</style>
+<h1>Persistent segment preview regression</h1><output id="result">Running…</output><div id="picker"></div>
+<script src="../nsp-geometry.js"></script><script src="../preview-viewport.js"></script><script src="../nsp-segments.js"></script>
+<script>
+(async()=>{
+ const check=(value,message)=>{if(!value)throw Error(message)};
+ let loaded;const firstLoad=new Promise(resolve=>loaded=resolve);
+ const picker=EduvizeNSPPicker.mount(document.getElementById('picker'),{preservePreview:true,previewUrl:s=>'preview-content.html?orientation='+s.orientation+'&style='+s.style+'&block='+s.block,onPreviewLoad:f=>{if(f.contentDocument?.getElementById('instance'))requestAnimationFrame(()=>loaded())}});
+ const frame=document.querySelector('#ev-preview iframe');let loads=0;frame.addEventListener('load',()=>loads++);
+ await firstLoad;const documentBefore=frame.contentDocument;
+ for(const next of [{style:2,block:2},{style:4,block:2},{orientation:'portrait',style:1,block:1},{orientation:'landscape',style:8,block:1}]){
+  const done=new Promise(resolve=>loaded=resolve);picker.set(next);await done;
+  check(document.querySelector('#ev-preview iframe')===frame,'iframe was replaced');
+  check(frame.contentDocument===documentBefore,'iframe document reloaded');
+  const current=picker.get(),size=EduvizeNSPLayouts.layouts[current.orientation][current.style][current.block-1];
+  check(Number(frame.dataset.previewWidth)===size[0]&&Number(frame.dataset.previewHeight)===size[1],'wrong physical resolution');
+ }
+ check(loads===1,'unexpected iframe load');
+ document.getElementById('result').textContent='PASS: four segment/orientation changes, one initial load, same iframe and document, correct resolutions.';
+})().catch(error=>{document.getElementById('result').textContent='FAIL: '+error.message;throw error});
+</script>

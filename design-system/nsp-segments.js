@@ -6,7 +6,7 @@ host.innerHTML='<strong class="ev-picker-title"></strong><p class="ev-picker-hin
 host.querySelector('.ev-picker-title').textContent=window.EduvizeNSPSelectorText.title;
 host.querySelector('.ev-picker-hint').textContent=window.EduvizeNSPSelectorText.hint;
 const q=x=>host.querySelector(x);const initialParams=new URLSearchParams(location.search);
-let state={...window.EduvizeNSPPicker.defaultSelection},outputMode='nsp';
+let state={...window.EduvizeNSPPicker.defaultSelection},outputMode='nsp',persistentPreview=null;
 for(const field of ['orientation','style','block']){const value=initialParams.get('segment_'+field)||initialParams.get(field);if(value!==null)state[field]=field==='orientation'?value:Number(value);}
 
 function allowed(w,h,o,st,b){return !options.allowed||options.allowed(w,h,o,st,b)}
@@ -24,16 +24,45 @@ q('h3').hidden=web;
 host.querySelectorAll('.edu-web-preview-controls').forEach(control=>control.remove());
 previewNode.style.cssText='';
 if(web){
+persistentPreview=null;
 previewNode.closest('#ev-segments')?.querySelector('.edu-web-preview-controls')?.remove();previewNode.querySelectorAll('iframe').forEach(frame=>window.EduvizePreviewViewport?.unmount(frame));previewNode.replaceChildren();previewNode.className='web-preview';previewNode.style.cssText='width:100%;max-width:none;aspect-ratio:auto';
 if(options.previewUrl){const frame=document.createElement('iframe');frame.classList.add('ev-interactive-preview');frame.title=kiosk?'Náhled kiosku':'Náhled běžné stránky';frame.src=window.EduvizeOutputModes?.url(options.previewUrl({...state}),kiosk?'kiosk':'web').href||options.previewUrl({...state});frame.style.cssText='display:block;border:0;width:100%;height:420px;max-height:none';if(!kiosk){frame.dataset.eduWebPreview='';frame.setAttribute('scrolling','no');}frame.onload=()=>options.onPreviewLoad?.(frame);previewNode.append(frame);if(!kiosk){previewNode.style.setProperty('aspect-ratio','auto','important');previewNode.style.height='auto';frame.style.position='static';frame.style.transform='none';}if(kiosk){const toolbar=document.createElement('div');toolbar.className='edu-admin-preview__controls edu-web-preview-controls';for(const [label,width,height] of [['Na šířku',3840,2160],['Na výšku',2160,3840]]){const button=document.createElement('button');button.type='button';button.textContent=label;button.setAttribute('aria-pressed',String(width===3840));button.onclick=()=>{toolbar.querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',String(b===button)));previewNode.style.setProperty('width',width<height?'31.640625%':'100%');previewNode.style.marginInline='auto';previewReady.then(api=>api.mount(frame,{host:previewNode,width,height}));};toolbar.append(button);}previewNode.parentElement.before(toolbar);previewNode.classList.remove('web-preview');previewNode.classList.add('kiosk-preview');previewNode.style.cssText='position:relative;width:100%;max-width:none;aspect-ratio:16 / 9;overflow:hidden';previewReady.then(api=>{if(frame.isConnected)api.mount(frame,{host:previewNode,width:3840,height:2160})});}}
 return;
 }
 if(!L[state.orientation])state.orientation=window.EduvizeNSPPicker.defaultSelection.orientation;if(!L[state.orientation][state.style])state.style=1;if(!L[state.orientation][state.style].some((rect,i)=>allowed(...rect,state.orientation,state.style,i+1)))state.style=Number(Object.keys(L[state.orientation]).find(st=>L[state.orientation][st].some((rect,i)=>allowed(...rect,state.orientation,Number(st),i+1)))||1);const entries=L[state.orientation][state.style];if(!entries[state.block-1]||!allowed(...entries[state.block-1],state.orientation,state.style,state.block))state.block=entries.findIndex((r,i)=>allowed(...r,state.orientation,state.style,i+1))+1||1;
-q('#ev-tabs').querySelectorAll('button').forEach(b=>b.classList.toggle('active',b.dataset.o===state.orientation));const cards=q('#ev-cards'),blocks=q('#ev-blocks'),preview=q('#ev-preview');cards.replaceChildren();blocks.replaceChildren();preview.querySelectorAll('iframe').forEach(frame=>window.EduvizePreviewViewport?.unmount(frame));preview.replaceChildren();
+q('#ev-tabs').querySelectorAll('button').forEach(b=>b.classList.toggle('active',b.dataset.o===state.orientation));const cards=q('#ev-cards'),blocks=q('#ev-blocks'),preview=q('#ev-preview');cards.replaceChildren();blocks.replaceChildren();const keep=options.preservePreview===true&&persistentPreview?.host.parentNode===preview?persistentPreview:null;
+preview.querySelectorAll('iframe').forEach(frame=>{if(frame!==keep?.frame)window.EduvizePreviewViewport?.unmount(frame)});
+for(const node of [...preview.childNodes])if(node!==keep?.host)node.remove();
+if(!keep)persistentPreview=null;
 Object.entries(L[state.orientation]).forEach(([key,rects])=>{const st=+key,btn=document.createElement('button');btn.type='button';btn.className=st===state.style?'active':'';btn.disabled=!rects.some((rect,i)=>allowed(...rect,state.orientation,st,i+1));btn.append(document.createTextNode('Styl '+st));const mini=document.createElement('div');mini.className='ev-mini'+(state.orientation==='portrait'?' portrait':'');boxes(mini,st);btn.append(mini);btn.onclick=()=>{const first=rects.findIndex((rect,i)=>allowed(...rect,state.orientation,st,i+1));if(first>=0)choose({style:st,block:first+1})};cards.append(btn)});
 q('#ev-block-title').textContent='Vyberte segment';entries.forEach(([w,h],i)=>{const btn=document.createElement('button');btn.type='button';btn.textContent='Segment '+(i+1)+': '+w+' × '+h+' px';btn.disabled=!allowed(w,h,state.orientation,state.style,i+1);btn.className=state.block===i+1?'active':'';btn.onclick=()=>choose({block:i+1});blocks.append(btn)});
 preview.className=state.orientation==='portrait'?'portrait':'';boxes(preview,state.style);
-const cell=preview.children[state.block-1];if(cell&&options.previewUrl){cell.textContent='';const frame=document.createElement('iframe');frame.allowFullscreen=true;frame.allow='fullscreen';frame.title='Náhled vybraného segmentu';const previewUrl=new URL(options.previewUrl({...state}),location.href);previewUrl.searchParams.set('ev_inner','1');previewUrl.searchParams.set('viewMode','nsp');const [width,height]=entries[state.block-1];frame.style.cssText='border:0;display:block;width:'+width+'px;height:'+height+'px;visibility:hidden';frame.classList.add('ev-interactive-preview');{cell.tabIndex=-1;cell.onclick=null;cell.onkeydown=null;}frame.onload=()=>{options.onPreviewLoad?.(frame);requestAnimationFrame(()=>{frame.style.visibility='visible'})};cell.append(frame);const mountPreview=api=>{if(frame.isConnected)api.mount(frame,{host:cell,width,height,aspect:false})};if(window.EduvizePreviewViewport)mountPreview(window.EduvizePreviewViewport);else previewReady.then(mountPreview);frame.src=previewUrl.href}}
+const cell=preview.querySelectorAll(':scope > .ev-box')[state.block-1];
+if(cell&&options.previewUrl){
+ cell.textContent='';cell.tabIndex=-1;cell.onclick=null;cell.onkeydown=null;
+ const previewUrl=new URL(options.previewUrl({...state}),location.href);previewUrl.searchParams.set('ev_inner','1');previewUrl.searchParams.set('viewMode','nsp');
+ const [width,height]=entries[state.block-1];
+ let frame,viewport=cell,reused=false;
+ if(options.preservePreview===true){
+  // Keep the browsing context attached to one parent while the selected segment moves.
+  // Moving an iframe between the segment cells reloads its entire application tree.
+  if(!persistentPreview){const overlay=document.createElement('div');overlay.className='ev-persistent-preview';preview.append(overlay);persistentPreview={host:overlay,frame:document.createElement('iframe'),key:''};overlay.append(persistentPreview.frame);}
+  viewport=persistentPreview.host;frame=persistentPreview.frame;
+  const [x,y]=P[state.orientation][state.style][state.block-1],W=state.orientation==='portrait'?2160:3840,H=state.orientation==='portrait'?3840:2160;
+  viewport.style.cssText='position:absolute;z-index:3;left:'+(x/W*100)+'%;top:'+(y/H*100)+'%;width:'+(width/W*100)+'%;height:'+(height/H*100)+'%';
+  const identity=new URL(previewUrl);for(const name of ['orientation','style','block','segment_orientation','segment_style','segment_block'])identity.searchParams.delete(name);
+  reused=persistentPreview.key===identity.href;persistentPreview.key=identity.href;
+ }else frame=document.createElement('iframe');
+ frame.allowFullscreen=true;frame.allow='fullscreen';frame.title='Náhled vybraného segmentu';frame.classList.add('ev-interactive-preview');
+ if(!frame.classList.contains('edu-preview-frame'))frame.style.cssText='border:0;display:block;width:'+width+'px;height:'+height+'px;visibility:hidden';else if(!reused)frame.style.visibility='hidden';
+ frame.onload=()=>{options.onPreviewLoad?.(frame);requestAnimationFrame(()=>{frame.style.visibility='visible'})};
+ if(options.preservePreview!==true)cell.append(frame);
+ const mountPreview=api=>{if(frame.isConnected)api.mount(frame,{host:viewport,width,height,aspect:false})};
+ if(window.EduvizePreviewViewport)mountPreview(window.EduvizePreviewViewport);else previewReady.then(mountPreview);
+ if(!reused)frame.src=previewUrl.href;
+ else queueMicrotask(()=>options.onPreviewLoad?.(frame));
+}}
+
 q('#ev-tabs').querySelectorAll('button').forEach(b=>b.onclick=()=>choose({orientation:b.dataset.o,style:1,block:1}));draw();queueMicrotask(()=>options.onChange?.({...state}));return {set(next){state={...state,...next};draw()},get(){return {...state}},setMode(next){const value=['web','kiosk'].includes(next)?next:'nsp';if(value!==outputMode){outputMode=value;if(value==='nsp')state={...window.EduvizeNSPPicker.defaultSelection};draw();if(value==='nsp')options.onChange?.({...state})}}}
 }};function autoMount(){if(document.body.dataset.editorialAdmin==='true')return;const mode=document.getElementById('setting-output')||document.getElementById('viewMode')||document.getElementById('layout');if(!mode)return;
 const isWeather=mode.id==='setting-output',isDocuments=mode.id==='layout',params=new URLSearchParams(location.search);
