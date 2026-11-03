@@ -15,7 +15,8 @@
   $('account-loading').hidden=!initializing;
   $('account-login-view').hidden=initializing||connected;
   $('account-connected-view').hidden=!connected;
-  document.querySelectorAll('[data-account-private]').forEach(node=>{node.hidden=!connected||node.id==='configurations';});
+  document.querySelectorAll('[data-account-private]').forEach(node=>{node.hidden=!connected||node.id==='configurations'||(node.hasAttribute('data-account-school')&&!s.schoolId);});
+  $('account-connected-title').textContent=s.schoolId?'Účet a úložiště školy':'Účet správce Eduvize';
   $('account-session').textContent=connected?(s.schoolId?'Přihlášeno do správy školy.':'Přihlášeno jako správce služby.') : '';
   $('account-microsoft-login').disabled=busy||initializing;
   $('account-login').disabled=busy||initializing;
