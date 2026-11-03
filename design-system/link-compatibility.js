@@ -13,7 +13,7 @@
    if(!data||typeof data.message!=='string'||typeof data.id!=='string')throw Error();
    release.textContent=data.message;
    const key='eduvize-link-notice:'+data.id;let seen=false;try{seen=localStorage.getItem(key)==='seen';}catch{}
-   if(!seen){panel.open=true;const dismiss=el('button','Beru na vědomí');dismiss.type='button';dismiss.className='edu-admin__button edu-admin__button--secondary';dismiss.onclick=()=>{try{localStorage.setItem(key,'seen');}catch{}dismiss.remove();};release.after(dismiss);}
+   if(!seen){panel.open=true;const dismiss=el('button','Beru na vědomí');dismiss.type='button';dismiss.className='edu-admin__button edu-admin__button--secondary';dismiss.onclick=()=>{try{localStorage.setItem(key,'seen');}catch{}dismiss.remove();panel.open=false;heading.focus();};release.after(dismiss);}
   }).catch(()=>{release.textContent='Oznámení změn nyní nelze načíst. To neznamená, že je nutné měnit odkazy. Místní kontrola formátu zůstává dostupná.';});
   body.append(el('p','Aktualizace aplikace sama nevyžaduje nový odkaz. Starší odkazy bez označení formátu se nemažou ani automaticky nepřepisují.'));
   const note=el('p','Kontrola ověřuje adresu, formát odkazu a segment. Neověřuje dostupnost dat, oprávnění ani výsledný vzhled. Odkazy zůstávají pouze v této stránce; nevkládejte přístupové klíče.');body.append(note);
