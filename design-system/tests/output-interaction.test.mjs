@@ -35,3 +35,19 @@ const passive=environment('https://example.test/?viewMode=nsp&interaction=displa
 const active=environment('https://example.test/?viewMode=nsp&interaction=interactive');active.api.autoplay({isConnected:true},()=>{throw Error('must not rotate');});assert.equal(active.intervals.size,0);
 assert.doesNotMatch(source,/matchMedia|navigator\.(?:userAgent|maxTouchPoints)|ontouchstart/);
 console.log('Output interaction: explicit URLs, manual NSP, forced kiosk, restored choice and timer lifecycle OK');
+// A native accessible switch preserves the established interaction value contract.
+const switchControl=e.document.getElementById('edu-output-interaction');
+assert.equal(switchControl.type,'checkbox');assert.equal(switchControl.role,'switch');
+switchControl.checked=false;switchControl.dispatchEvent({type:'change'});assert.equal(e.api.selection(),'display');
+switchControl.checked=true;switchControl.dispatchEvent({type:'change'});assert.equal(e.api.selection(),'interactive');
+select.value='kiosk';select.dispatchEvent({type:'change'});assert.equal(switchControl.checked,true);assert.equal(switchControl.disabled,true);
+for(const [layout,header] of [['menu','light'],['tiles','dark']]){
+ e.api.setKioskLayout(layout);
+ const output=e.api.url('https://example.test/display','kiosk');
+ assert.equal(output.searchParams.get('kiosk_layout'),layout);assert.equal(output.searchParams.get('kiosk_header'),header);
+ assert.equal(e.document.getElementById('edu-output-kiosk-layout').value,layout);
+ for(const other of ['web','nsp']){const url=e.api.url(output,other);assert.equal(url.searchParams.has('kiosk_header'),false);assert.equal(url.searchParams.has('kiosk_layout'),false);}
+}
+assert.equal(environment('https://example.test/display').api.url('https://example.test/display?kiosk_header=light','kiosk').searchParams.get('kiosk_layout'),'menu');
+assert.equal(environment('https://example.test/display').api.url('https://example.test/display?kiosk_header=dark','kiosk').searchParams.get('kiosk_layout'),'tiles');
+console.log('Accessible switch and menu/light, tiles/dark kiosk output links OK');

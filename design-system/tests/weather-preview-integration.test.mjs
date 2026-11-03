@@ -8,7 +8,7 @@ function integration(id,value,weatherStyle){
  const section={querySelector:()=>({before(){}})};
  const root={};
  const document={readyState:'loading',body:{dataset:{}},getElementById:key=>key===id?mode:key==='setting-weather-style'?{value:weatherStyle}:null,createElement:()=>root,addEventListener:(type,fn)=>{if(type==='DOMContentLoaded')ready.push(fn);}};
- const window={EduvizePreviewViewport:{},EduvizeNSPLayouts:{layouts:{},positions:{}},EduvizeOutputModes:{isKiosk:()=>false},addEventListener(){}};
+ const window={EduvizePreviewViewport:{},EduvizeNSPLayouts:{layouts:{},positions:{}},EduvizeOutputModes:{isKiosk:()=>false,url:u=>new URL(u)},addEventListener(){}};
  vm.runInNewContext(source,{window,document,location:{search:'',origin:'https://example.test',href:'https://example.test/config'},localStorage:{getItem:()=>null},URL,URLSearchParams,queueMicrotask(){},setTimeout,clearTimeout});
  window.EduvizeNSPPicker.mount=(host,opts)=>{options=opts;return{get:()=>({orientation:'landscape',style:1,block:1}),setMode(){}}};
  for(const start of ready)start();
