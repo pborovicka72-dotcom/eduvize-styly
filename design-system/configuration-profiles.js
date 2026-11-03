@@ -6,6 +6,7 @@
   const DOCS='https://eduvize-dokumenty-api.onrender.com';
   const API=DOCS+'/api/admin/configuration-profiles',SELECTION='eduvize-profile-selection-v1';
   const apps=Object.freeze([
+    {id:'school-calendar',name:'Školní kalendář',url:'https://pborovicka72-dotcom.github.io/eduvize-styly/experimental/school-calendar/config.html'},
     {id:'school-identity',name:'Karta školy',url:ACCOUNT+'#school-card'},
     {id:'kiosk',name:'Kiosek',url:'https://pborovicka72-dotcom.github.io/eduvize-kiosek/config.html'},
     {id:'documents',name:'Dokumenty',url:DOCS+'/config'},
@@ -64,9 +65,9 @@
     if(!adapter||document.querySelector('[data-edu-profile-panel]'))return;
     if(root.EduvizeOutputModes&&!adapter.outputInteractionWrapped){const read=adapter.read.bind(adapter),apply=adapter.apply.bind(adapter);adapter.read=()=>{const value=read();return value?{...value,outputInteraction:root.EduvizeOutputModes.selection(),outputKioskLayout:root.EduvizeOutputModes.layoutSelection?.()}:value;};adapter.apply=async value=>{if(value.outputKioskLayout)root.EduvizeOutputModes.setKioskLayout?.(value.outputKioskLayout,{notify:false});if(value.outputInteraction)root.EduvizeOutputModes.setInteraction(value.outputInteraction,{notify:false});await apply(value);if(value.outputKioskLayout)root.EduvizeOutputModes.setKioskLayout?.(value.outputKioskLayout);if(value.outputInteraction)root.EduvizeOutputModes.setInteraction(value.outputInteraction);};adapter.outputInteractionWrapped=true;}
     const main=document.querySelector('main.edu-admin-page,main .edu-admin-page,.edu-admin-page');if(!main)return;
-    const ids={'school-identity':'schoolSaveLocal','day-progress':'save',menu:'saveLocal',kiosk:'save',documents:'save-settings',weather:'weather-save-settings',holidays:'saveSettings',transport:'saveSettings',news:'saveLocal',wisdom:'saveLocal',styles:'saveLocal','school-systems':'save'};
-    const opens={'day-progress':'#open',menu:'#open',kiosk:'#openKiosk',documents:'#open',weather:'button[form="location-settings"][type="submit"]',holidays:'#save',transport:'button[form="form"][type="submit"]',news:'#save',wisdom:'#openOutput','school-systems':'#open'};
-    const copies={'day-progress':'copy',menu:'copy',kiosk:'shareTouch',documents:'copy',weather:'location-settings-cancel',holidays:'openOutput',transport:'copy',news:'copyUrl',wisdom:'copyOutput','school-systems':'copy'};
+    const ids={'school-calendar':'save','school-identity':'schoolSaveLocal','day-progress':'save',menu:'saveLocal',kiosk:'save',documents:'save-settings',weather:'weather-save-settings',holidays:'saveSettings',transport:'saveSettings',news:'saveLocal',wisdom:'saveLocal',styles:'saveLocal','school-systems':'save'};
+    const opens={'school-calendar':'#open','day-progress':'#open',menu:'#open',kiosk:'#openKiosk',documents:'#open',weather:'button[form="location-settings"][type="submit"]',holidays:'#save',transport:'button[form="form"][type="submit"]',news:'#save',wisdom:'#openOutput','school-systems':'#open'};
+    const copies={'school-calendar':'copy','day-progress':'copy',menu:'copy',kiosk:'shareTouch',documents:'copy',weather:'location-settings-cancel',holidays:'openOutput',transport:'copy',news:'copyUrl',wisdom:'copyOutput','school-systems':'copy'};
     const localKey='eduvize-local-configuration-v1:'+adapter.app;
     let local=document.getElementById(ids[adapter.app]);
     const copy=document.getElementById(copies[adapter.app]),open=document.querySelector(opens[adapter.app]||':not(*)');
