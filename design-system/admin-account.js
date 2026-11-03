@@ -5,7 +5,7 @@
  const $=id=>host.querySelector('#'+id),message=$('account-message');
  let initializing=true,busy=false,driveConnected=false,signingOut=false;
  const params=new URL(location.href).searchParams;
- let requested=params.get('returnTo'),manage=params.get('manage')==='1';
+ let requested=params.get('returnTo'),manage=params.get('manage')==='1'||params.get('edu-link-pending')==='1'||new URLSearchParams(location.hash.slice(1)).has('edu-confirm');
  try{if(requested)sessionStorage.setItem('eduvize-account-return',requested);else if(params.get('onedrive')==='connected'){requested=sessionStorage.getItem('eduvize-account-return');manage=!!requested;}}catch{}
  function say(text){message.textContent=text;}
  function status(){
@@ -21,6 +21,7 @@
   $('account-login').disabled=busy||initializing;
   $('account-logout').disabled=busy||!connected;
   $('account-drive').hidden=!s.scopes.includes('documents');
+  if($('account-link-microsoft'))$('account-link-microsoft').hidden=!connected||!s.schoolId;
   $('account-microsoft').disabled=busy||!connected||!s.scopes.includes('documents');
   $('account-microsoft').textContent=driveConnected?'Obnovit připojení':'Připojit OneDrive';
   $('account-microsoft').classList.toggle('edu-admin__button--secondary',driveConnected);
@@ -45,6 +46,7 @@
  async function returnToApp(){if(!auth.status().profileId)throw Error('Nejprve se přihlaste k účtu školy.');const url=await auth.handoff(requested);try{sessionStorage.removeItem('eduvize-account-return');}catch{}location.replace(url);}
  $('account-form').onsubmit=e=>{e.preventDefault();work('Ověřuji přihlášení…',async()=>{const key=$('account-key').value.trim();if(!key)throw Error('Vyplňte klíč správce služby.');await auth.login(key,key,$('account-remember').checked);$('account-key').value='';say('');await connection();if(requested&&(!needsDrive()||driveConnected))await returnToApp();});};
  $('account-microsoft-login').onclick=()=>work('Otevírám přihlášení Microsoft…',()=>auth.loginMicrosoft($('account-remember').checked));
+ if($('account-link-microsoft'))$('account-link-microsoft').onclick=()=>work('Otevírám propojení Microsoft…',()=>auth.loginMicrosoft($('account-remember').checked));
  $('account-logout').onclick=()=>{signingOut=true;status();work('Odhlašuji…',async()=>{try{await auth.logout();}finally{signingOut=false;driveConnected=false;$('account-onedrive').textContent='Ověřuji připojení…';status();}say('Odhlášení proběhlo úspěšně.');});};
  $('account-check').onclick=()=>work('Ověřuji OneDrive…',async()=>{say(await connection()?'Připojení bylo ověřeno.':'Připojení nyní nelze ověřit. Zkuste to znovu.');});
  $('account-microsoft').onclick=()=>work('Otevírám připojení OneDrive…',async()=>{const r=await auth.fetch(auth.DOCS+'/api/admin/microsoft/start',{method:'POST'},'documents'),data=await r.json();if(!r.ok)throw Error(data.detail||'Připojení nelze otevřít.');const u=new URL(data.url);if(u.origin!==auth.DOCS||u.pathname!=='/auth/microsoft/storage/start')throw Error('Neplatná adresa připojení OneDrive.');location.assign(u.href);});

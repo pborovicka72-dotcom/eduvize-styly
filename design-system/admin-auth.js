@@ -65,16 +65,16 @@
   const u=new URL(location.href),hash=new URLSearchParams(u.hash.slice(1)),code=hash.get('edu-auth-code');
   const msError=hash.get('edu-ms-error');
   if(msError&&isAccount){u.hash='account';history.replaceState(null,'',u.href);sessionStorage.removeItem('eduvize-ms-login-v1');await refresh();message=msError.slice(0,400);changed();return;}
-  const msTicket=hash.get('edu-ms-ticket');
-  if(msTicket)u.searchParams.delete('edu-login-return');
-  if(msTicket){
+  const msTicket=hash.get('edu-ms-ticket'),emailTicket=hash.get('edu-email-ticket'),loginTicket=emailTicket||msTicket,loginKind=emailTicket?'email':'microsoft',pendingKey=emailTicket?'eduvize-email-login-v1':'eduvize-ms-login-v1';
+  if(loginTicket)u.searchParams.delete('edu-login-return');
+  if(loginTicket){
    u.hash='account';history.replaceState(null,'',u.href);
    try{
     if(!isAccount)throw Error('Přihlášení otevřete na stránce účtu.');
-    const pending=JSON.parse(sessionStorage.getItem('eduvize-ms-login-v1')||'null');sessionStorage.removeItem('eduvize-ms-login-v1');
+    const pending=JSON.parse(sessionStorage.getItem(pendingKey)||'null');sessionStorage.removeItem(pendingKey);
     if(!pending?.verifier||Date.now()-pending.createdAt>12*60*1000)throw Error('Přihlášení nebylo zahájeno v tomto prohlížeči nebo vypršelo.');
     const existing=stored();
-    const data=await json(await sessionFetch(CENTRAL+'/api/admin-session/microsoft',{method:'POST',cache:'no-store',headers:{'Content-Type':'application/json',...(existing?.token?{Authorization:'Bearer '+existing.token}:{})},body:JSON.stringify({ticket:msTicket,verifier:pending.verifier})}));
+    const data=await json(await sessionFetch(CENTRAL+'/api/admin-session/'+loginKind,{method:'POST',cache:'no-store',headers:{'Content-Type':'application/json',...(existing?.token?{Authorization:'Bearer '+existing.token}:{})},body:JSON.stringify({ticket:loginTicket,verifier:pending.verifier})}));
     message='';save(data,true);return;
    }catch(error){message=error.message;changed();return;}
   }
