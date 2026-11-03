@@ -12,7 +12,7 @@
   if(!header){header=document.createElement('header');document.body.prepend(header);}
   header.classList.add('edu-web-header');header.replaceChildren(logo());
   const title=document.createElement('span');title.className='edu-web-heading';
-  title.textContent=({menu:'Jídelníček',weather:'Počasí ČHMÚ',transport:'Jízdní řády',documents:'Dokumenty školy',news:'Aktuality školy',wisdom:'Moudrost dne',holidays:'Svátky a jmeniny'})[app]||'';header.append(title);
+  title.textContent=html.dataset.eduOutputTitle||({menu:'Jídelníček',weather:'Počasí ČHMÚ',transport:'Jízdní řády',documents:'Dokumenty školy',news:'Aktuality školy',wisdom:'Moudrost dne',holidays:'Svátky a jmeniny'})[app]||'';header.append(title);
  }
  root.EduvizeBrand=Object.freeze({mount,source});
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',mount,{once:true});else mount();
