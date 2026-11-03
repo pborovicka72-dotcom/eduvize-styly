@@ -22,6 +22,27 @@
  function lookup(inputId,listId,onSelect){let timer,version=0;const input=$(inputId),list=$(listId);input.addEventListener('input',()=>{onSelect('');clearTimeout(timer);const current=++version;list.replaceChildren();if(input.value.trim().length<2)return;timer=setTimeout(async()=>{try{const data=await request('/api/registration/schools?q='+encodeURIComponent(input.value.trim()));if(current!==version)return;list.replaceChildren();for(const item of data.items){const button=text('button',item.name+' · '+item.municipality+' · RED IZO '+item.red_izo);button.type='button';button.className='edu-license-result';button.onclick=()=>{++version;input.value=item.name;onSelect(item.red_izo);list.replaceChildren();};list.append(button);}if(!data.items.length)list.append(text('p','Žádná škola nenalezena.'));}catch(e){if(current===version)list.replaceChildren(text('p',e.message));}},250);});}
  lookup('license-school-query','license-school-results',key=>{selectedIssue=key;});
  lookup('register-school-query','register-school-results',key=>{selectedRegister=key;});
+
+ function recipientMode(){
+  const manual=$('license-recipient-type').value==='organization';
+  $('license-school-fields').hidden=manual;$('license-school-query').disabled=manual;
+  $('license-organization-fields').hidden=!manual;$('license-organization-fields').disabled=!manual;
+ }
+ $('license-recipient-type').onchange=recipientMode;recipientMode();
+ function registerMode(){
+  const manual=$('register-recipient-type').value==='organization';
+  $('register-school-fields').hidden=manual;$('register-school-query').disabled=manual;
+  $('register-org-field').hidden=!manual;$('register-org-ico').disabled=!manual;
+ }
+ $('register-recipient-type').onchange=registerMode;registerMode();
+ function validIco(input){
+  const value=input.value.trim();input.setCustomValidity('');
+  if(!/^[0-9]{8}$/.test(value)||value==='00000000'||Number(value[7])!==(11-[...value.slice(0,7)].reduce((sum,n,i)=>sum+Number(n)*(8-i),0)%11)%10){
+   input.setCustomValidity('Zadejte platné osmimístné IČO včetně počátečních nul.');input.reportValidity();throw Error('Zkontrolujte IČO organizace.');
+  }return value;
+ }
+ for(const id of ['license-org-ico','register-org-ico'])$(id).addEventListener('input',()=>$(id).setCustomValidity(''));
+
  function showCode(result){$('license-code-value').value=result.code;$('license-code-result').hidden=false;say('license-issue-status','Licence byla vytvořena. Kód se zobrazuje pouze nyní. Předejte jej správci školy.');}
  $('license-copy-code').onclick=async()=>{try{await navigator.clipboard.writeText($('license-code-value').value);say('license-issue-status','Licenční kód zkopírován.');}catch{say('license-issue-status','Označte a zkopírujte kód v poli.');}};
  async function loadLicenses(){
@@ -37,7 +58,7 @@
    const state=text('strong',names[item.status]||item.status);state.dataset.status=item.status;state.className='edu-license-state';overview.append(state);
    const validity=text('p',item.status==='issued'?(item.months===null?'Trvalá licence od aktivace':'Platnost '+item.months+' měsíců od aktivace'):'Aktivace '+date(item.activatedAt)+' · '+(item.expiresAt?'Platnost do '+date(item.expiresAt):'Bez konce platnosti'));validity.className='edu-license-validity';overview.append(validity);card.append(overview);
    const details=document.createElement('details');details.className='edu-license-details';details.append(text('summary','Podrobnosti a správa licence'));
-   const body=document.createElement('div');body.className='edu-admin__flow';body.append(text('p','RED IZO '+item.schoolKey+' · IČO '+item.school.ico));details.append(body);card.append(details);
+   const body=document.createElement('div');body.className='edu-admin__flow';body.append(text('p',(item.school.entity_type==='organization'?'Organizace · IČO '+item.school.ico:'RED IZO '+item.schoolKey+' · IČO '+item.school.ico)+(item.school.address?' · '+item.school.address:'')+(item.school.municipality?' · '+item.school.municipality:'')));details.append(body);card.append(details);
    const feedback=text('p','');feedback.setAttribute('role','status');
    if(item.months!==null){
     const form=document.createElement('form'),label=text('label','Prodloužit o počet měsíců'),input=document.createElement('input'),button=text('button','Prodloužit');input.type='number';input.min='1';input.max='1200';input.required=true;input.value='12';button.type='submit';button.className='edu-admin__button edu-admin__button--secondary';label.append(input);form.className='edu-license-renew';form.append(label,button);
@@ -48,18 +69,22 @@
    }
    body.append(feedback);host.append(card);
   }
-  say('license-list-status','Načteno '+data.items.length+' licencí.');
+  say('license-list-status','Načtené licence: '+data.items.length+'.');
  }
  work($('license-issue-form'),'license-issue-status',async()=>{
-  if(!selectedIssue)throw Error('Vyberte školu z nabídky rejstříku.');const token=auth.getToken('styles');
-  const result=await request('/api/operator/licenses',{method:'POST',body:JSON.stringify({schoolKey:selectedIssue,months:$('license-term').value==='permanent'?null:Number($('license-term').value)})},'operator');
+  const manual=$('license-recipient-type').value==='organization';
+  if(!manual&&!selectedIssue)throw Error('Vyberte školu z nabídky rejstříku.');
+  const recipient=manual?{organization:{name:$('license-org-name').value.trim(),ico:validIco($('license-org-ico')),address:$('license-org-address').value.trim(),municipality:$('license-org-municipality').value.trim(),postal_code:$('license-org-postal').value.trim()}}:{schoolKey:selectedIssue};const token=auth.getToken('styles');
+  const result=await request('/api/operator/licenses',{method:'POST',body:JSON.stringify({...recipient,months:$('license-term').value==='permanent'?null:Number($('license-term').value)})},'operator');
   if(!operator()||token!==auth.getToken('styles'))return;showCode(result);await loadLicenses();
  });
  $('license-reload').onclick=()=>loadLicenses().catch(e=>say('license-list-status',e.message));
  let filterTimer;$('license-filter').oninput=()=>{clearTimeout(filterTimer);filterTimer=setTimeout(()=>$('license-reload').click(),250);};
  work($('school-register-form'),'register-status',async()=>{
-  if(!selectedRegister)throw Error('Vyberte školu z nabídky rejstříku.');
-  await request('/api/registration',{method:'POST',body:JSON.stringify({schoolKey:selectedRegister,email:$('register-email').value,code:$('register-license').value})});
+  const manual=$('register-recipient-type').value==='organization';
+  if(!manual&&!selectedRegister)throw Error('Vyberte školu z nabídky rejstříku.');
+  const recipient=manual?{organizationIco:validIco($('register-org-ico'))}:{schoolKey:selectedRegister};
+  await request('/api/registration',{method:'POST',body:JSON.stringify({...recipient,email:$('register-email').value,code:$('register-license').value})});
   $('register-license').value='';say('register-status','Potvrďte registraci odkazem v e-mailu. Licence se aktivuje až po potvrzení.');
  });
  work($('email-login-form'),'email-login-status',async()=>{
