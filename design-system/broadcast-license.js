@@ -1,0 +1,40 @@
+/* Every output checks its school entitlement independently of the notice job. */
+(function(root){
+ 'use strict';
+ if(root.EduvizeBroadcastLicense||!document.documentElement.dataset.kioskApp||/\/(?:config(?:\.html)?|editor\.html|admin)\/?$/.test(location.pathname))return;
+ const html=document.documentElement,profile=new URL(location.href).searchParams.get('edu-profile')||'';
+ const nativeInterval=root.setInterval.bind(root),nativeTimeout=root.setTimeout.bind(root);
+ let state='checking',screen,title,detail,checking=false,lease=0,expiry=null,wasSuspended=false;
+ html.dataset.eduLicense=state;
+ const css=document.createElement('style');css.textContent='html[data-edu-license]:not([data-edu-license="active"]) body>:not(#edu-license-screen),html[data-edu-license]:not([data-edu-license="active"]) body>:not(#edu-license-screen) *{visibility:hidden!important}#edu-license-screen{position:fixed!important;inset:0!important;z-index:2147483647!important;display:flex!important;box-sizing:border-box!important;align-items:center!important;justify-content:center!important;padding:clamp(20px,5vmin,100px)!important;background:var(--ev-bg,#eaf3f6)!important;color:var(--ev-text,#18394b)!important;text-align:center!important;font-family:Arial,sans-serif!important}#edu-license-screen[hidden]{display:none!important}#edu-license-screen>div{max-width:1000px}#edu-license-screen h1{margin:0 0 .6em!important;font-size:clamp(28px,5vmin,80px)!important;line-height:1.2!important}#edu-license-screen p{margin:0!important;font-size:clamp(18px,3vmin,44px)!important;line-height:1.5!important}';document.head.append(css);
+ function panel(){
+  if(!document.body)return;
+  if(!screen){screen=document.createElement('section');screen.id='edu-license-screen';screen.setAttribute('role','status');screen.setAttribute('aria-live','polite');const box=document.createElement('div');title=document.createElement('h1');detail=document.createElement('p');box.append(title,detail);screen.append(box);document.body.append(screen);}
+  screen.hidden=state==='active';
+  title.textContent=state==='suspended'?'Vysílání pozastaveno':state==='checking'?'Ověřuji licenci…':'Vysílání dočasně nedostupné';
+  detail.textContent=state==='suspended'?'Škola nemá platnou licenci Eduvize.':state==='checking'?'Načítám stav vysílání školy.':'Čekám na ověření licence školy.';
+ }
+ function stopMedia(){if(state==='active')return;for(const media of document.querySelectorAll('video,audio'))media.pause();if(state!=='checking')for(const frame of document.querySelectorAll('iframe'))frame.remove();}
+ function set(value){const old=state;state=value;html.dataset.eduLicense=value;panel();stopMedia();if(value==='suspended'||value==='unavailable')wasSuspended=true;if(value==='active'&&wasSuspended&&old!=='active')location.reload();root.dispatchEvent(new CustomEvent('eduvize-broadcast-state',{detail:{state:value}}));}
+ async function check(){
+  if(checking)return;checking=true;
+  try{
+   const response=await fetch('https://eduvize-admin.onrender.com/api/public/broadcast-status'+(profile?'?profile='+encodeURIComponent(profile):''),{cache:'no-store',redirect:'error',signal:AbortSignal.timeout(25000)});
+   if(!response.ok)throw Error('License unavailable');const data=await response.json();
+   if(typeof data.active!=='boolean'||!Number.isFinite(data.serverTime)||(data.expiresAt!==null&&!Number.isFinite(data.expiresAt)))throw Error('Invalid license');
+   if(expiry)clearTimeout(expiry);
+   if(!data.active){lease=0;set('suspended');return;}
+   const remaining=data.expiresAt===null?Infinity:(data.expiresAt-data.serverTime)*1000;
+   if(remaining<=0){lease=0;set('suspended');return;}
+   lease=performance.now()+Math.min(90000,remaining);set('active');
+   if(Number.isFinite(remaining))expiry=nativeTimeout(()=>{lease=0;set('suspended');check();},Math.min(remaining,2147483647));
+  }catch{if(performance.now()>=lease)set('unavailable');}
+  finally{checking=false;}
+ }
+ root.EduvizeBroadcastLicense=Object.freeze({check,status:()=>state});
+ document.addEventListener('play',event=>{if(state!=='active'&&typeof event.target.pause==='function')event.target.pause();},true);
+ function start(){panel();new MutationObserver(()=>{if(state!=='active')stopMedia();}).observe(document.body,{childList:true,subtree:true});}
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});else start();
+ check();nativeInterval(check,60000);nativeInterval(()=>{if(state==='active'&&performance.now()>=lease)set('unavailable');},1000);
+ root.addEventListener('online',check);document.addEventListener('visibilitychange',()=>{if(!document.hidden)check();});
+})(window);
