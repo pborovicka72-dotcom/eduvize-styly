@@ -105,8 +105,8 @@
     if(adapter.app!=='school-identity')mountLinkAudit(panel);
     const changeStatus=make('p','Bez neuložených změn.','edu-profile-change-status');changeStatus.dataset.eduChangeStatus='';changeStatus.setAttribute('role','status');changeStatus.setAttribute('aria-live','polite');panel.prepend(changeStatus);
     let editBaseline='',userChanged=false;
-    function resetEditState(message='Bez neuložených změn.'){userChanged=false;editBaseline=fingerprint(adapter.read());changeStatus.textContent=message;changeStatus.dataset.state='saved';}
-    function showEditState(){if(!editBaseline)return;const changed=fingerprint(adapter.read())!==editBaseline;changeStatus.textContent=userChanged&&changed?'Neuložené změny.':'Bez neuložených změn.';changeStatus.dataset.state=userChanged&&changed?'dirty':'saved';}
+    function resetEditState(message='Bez neuložených změn.'){changeStatus.hidden=false;userChanged=false;editBaseline=fingerprint(adapter.read());changeStatus.textContent=message;changeStatus.dataset.state='saved';}
+    function showEditState(){if(!editBaseline)return;changeStatus.hidden=false;const changed=fingerprint(adapter.read())!==editBaseline;changeStatus.textContent=userChanged&&changed?'Neuložené změny.':'Bez neuložených změn.';changeStatus.dataset.state=userChanged&&changed?'dirty':'saved';}
     const ui={status};
     const draftKey='eduvize-profile-save-draft-v1:'+adapter.app+':'+location.pathname;
     let busy=false,profileId='',profileTitle='',revision=0,baseline='',backup=null,errorText='',loaded=false,ready=false,initialized=false,tracked='',needsLogin=false,restored=false,needsReload=false,manualLoad=false,timer,kioskEdited=false,browserBaseline='';
@@ -114,7 +114,7 @@
     const canSave=()=>!!(auth()?.getToken('configurations')||auth()?.getToken('documents'));
     const activeId=()=>auth()?.status().profileId||'';
     function profileName(){return profileTitle||'vybraný profil';}
-    function say(text,state=''){status.textContent=text;status.dataset.state=state;}
+    function say(text,state=''){status.textContent=text;status.dataset.state=state;changeStatus.hidden=state==='saved'&&/^Uloženo na OneDrive/.test(text);}
     let segmentEdited=false;
     function dirty(){
       if(!baseline||!userChanged)return false;
