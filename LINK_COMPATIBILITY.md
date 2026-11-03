@@ -20,7 +20,7 @@ U každé skutečné nekompatibilní změny musí oznámení před nasazením uv
 
 ## Kontrola v administraci
 
-Kontrola je místní a ověřuje pouze evidované adresy, společné parametry, číslo formátu a existenci segmentu podle načtené geometrie. Neslouží jako potvrzení dostupnosti zdroje, API, účtu nebo správného vzhledu. Neznámý formát či cesta znamenají „nelze posoudit / vyžaduje ověření“, nikoliv nefunkční odkaz. Historický odkaz není automaticky označen jako chybný. Žádné vložené URL se neposílá ani neukládá; výpis neodráží jejich obsah do DOM. Aktuální implementace neposkytuje úplný seznam školních odkazů ani jejich síťový monitoring.
+Kontrola je místní a ověřuje pouze evidované adresy, společné parametry, číslo formátu a existenci segmentu podle načtené geometrie. Neslouží jako potvrzení dostupnosti zdroje, API, účtu nebo správného vzhledu. Neznámý formát či cesta znamenají „nelze posoudit / vyžaduje ověření“, nikoliv nefunkční odkaz. Historický odkaz není automaticky označen jako chybný. Žádné vložené URL se neposílá ani neukládá; výpis neodráží jejich obsah do DOM. Evidované odkazy ve správě aplikací mají stejnou kontrolu u každé položky. Kontrola nevyhledává odkazy, které dosud nejsou v evidenci, a neprovádí síťový monitoring jejich výstupů.
 
 ## Povinná kontrola před vydáním
 
