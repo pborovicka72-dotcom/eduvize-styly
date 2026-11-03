@@ -133,3 +133,9 @@ html[data-kiosk-app="wisdom"].web-output .edu-wisdom-output .attribution .author
  padding:clamp(12px,3vmin,48px)!important;gap:clamp(8px,2vmin,24px)!important;min-height:0!important;
  }
 }
+
+/* Keep the news identity row full-width, including WebKit intrinsic flex sizing. */
+html[data-kiosk-app="news"][data-output-mode] .edu-news-output .header.edu-output-header{display:flex!important;flex-wrap:nowrap!important;align-self:stretch!important;width:100%!important;min-width:0!important;max-width:100%;box-sizing:border-box}
+html[data-kiosk-app="news"][data-output-mode] .edu-news-output .header.edu-output-header>.brand{display:flex!important;flex:1 1 0%!important;align-items:center;min-width:0;max-width:100%;overflow:hidden}
+html[data-kiosk-app="news"][data-output-mode] .edu-news-output .header.edu-output-header .edu-app-label{flex:0 1 auto;min-width:0;max-width:100%}
+html[data-kiosk-app="news"][data-output-mode] .edu-news-output .header.edu-output-header>.status{flex:0 1 auto;min-width:0}
