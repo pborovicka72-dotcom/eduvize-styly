@@ -28,7 +28,7 @@
   $('account-microsoft').classList.toggle('edu-admin__button--secondary',driveConnected);
   $('account-check').disabled=busy||!connected||!s.scopes.includes('documents');
   $('account-return').hidden=!requested||!connected;
-  $('account-return').disabled=busy||!s.profileId;
+  $('account-return').disabled=busy||!connected;
  }
  async function connection(){
   if(!auth.getToken('documents')){driveConnected=false;status();return false;}
@@ -44,7 +44,7 @@
  }
  async function work(text,fn){if(busy)return;busy=true;say(text);status();try{await fn();}catch(e){say(e.message);}finally{busy=false;status();}}
  function needsDrive(){try{const u=new URL(requested);return u.searchParams.get('edu-require-drive')==='1'||u.searchParams.has('edu-profile')||u.origin===auth.DOCS||/\/eduvize-(?:kiosek|dokumenty)\/config.html$/.test(u.pathname);}catch{return true;}}
- async function returnToApp(){if(!auth.status().profileId)throw Error('Nejprve se přihlaste k účtu školy.');const url=await auth.handoff(requested);try{sessionStorage.removeItem('eduvize-account-return');}catch{}location.replace(url);}
+ async function returnToApp(){if(!auth.status().connected)throw Error('Nejprve se přihlaste do Eduvize.');const url=await auth.handoff(requested);try{sessionStorage.removeItem('eduvize-account-return');}catch{}location.replace(url);}
  $('account-form').onsubmit=e=>{e.preventDefault();work('Ověřuji přihlášení…',async()=>{const key=$('account-key').value.trim();if(!key)throw Error('Vyplňte klíč správce služby.');await auth.login(key,key,$('account-remember').checked);$('account-key').value='';say('');await connection();if(requested&&(!needsDrive()||driveConnected))await returnToApp();});};
  $('account-microsoft-login').onclick=()=>work('Otevírám přihlášení Microsoft…',()=>auth.loginMicrosoft($('account-remember').checked));
  if($('account-link-microsoft'))$('account-link-microsoft').onclick=()=>work('Otevírám propojení Microsoft…',()=>auth.loginMicrosoft($('account-remember').checked));
