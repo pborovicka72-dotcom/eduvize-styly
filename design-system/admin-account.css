@@ -42,3 +42,15 @@ body[data-account-state="signed-out"] :is(.edu-account-panel,#school-registratio
 .edu-account-method-icon{display:block;width:1.25em;height:1.25em;flex:0 0 1.25em}
 .edu-account-panel :is(#email-login-form button,#account-microsoft-login,#account-login){display:inline-flex;align-items:center;justify-content:center;gap:.65em}
 #school-registration .edu-account-heading{margin-bottom:12px}
+
+/* Confirmation links present one focused action before account details. */
+body[data-confirmation-active="true"] main>:not(.edu-page-header):not(#license-confirmation){display:none!important}
+#license-confirmation{max-width:720px;margin:24px auto}
+#license-confirmation h2{margin-top:0}
+#license-confirm-intro{line-height:1.6}
+#license-confirm-continue{display:inline-flex;margin-top:16px}
+#license-confirm-continue[hidden]{display:none!important}
+
+#license-confirm-button[hidden],#license-confirmation[hidden]{display:none!important}
+
+#license-confirmation .edu-admin__button{max-width:100%;white-space:normal;overflow-wrap:anywhere}
