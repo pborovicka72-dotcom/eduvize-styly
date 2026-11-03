@@ -12,12 +12,18 @@
    const [info,capability]=await Promise.all([request('/api/account',{},true),request('/api/registration/status')]);
    if(version!==generation||!own())return;
    mailReady=capability.emailConfigured===true;
-   $('school-account-identity').textContent=info.school.name;
+   $('school-account-identity').textContent=info.school.name==='Profil školy'?'':info.school.name;
+   $('school-account-identity').hidden=!$('school-account-identity').textContent;
+   root.dispatchEvent(new CustomEvent('eduvize-school-account-loaded',{detail:{schoolId:info.school.id,microsoftLinked:info.microsoftLinked===true}}));
+   $('school-email-label').textContent=info.email?'Nový přihlašovací e-mail':'Přihlašovací e-mail školy';
+   $('school-email-submit').textContent=info.email?'Poslat potvrzení změny':'Poslat potvrzení e-mailu';
+   $('school-email-help').textContent=info.email?'Změnu potvrďte odkazem v původní i nové schránce. Do dokončení platí současná adresa.':'Přidejte první přihlašovací e-mail ke stávajícímu účtu školy. Stačí potvrdit odkaz v této schránce.';
    $('school-account-email').textContent=info.email||'Přihlašovací e-mail zatím není nastavený.';
    $('school-email-pending').hidden=!info.pending;
    if(info.pending){
-    const confirmed=[info.pending.oldConfirmed?'původní adresa potvrzena':'čeká na původní adresu',info.pending.newConfirmed?'nová adresa potvrzena':'čeká na novou adresu'];
-    $('school-email-pending-text').textContent='Změna na '+info.pending.newEmail+' · '+confirmed.join(' · ')+'.';
+    const first=info.pending.requiresPreviousConfirmation===false;
+    const confirmed=first?['Čekáme na potvrzení této adresy.']:[info.pending.oldConfirmed?'Původní adresa je potvrzená.':'Čekáme na potvrzení původní adresy.',info.pending.newConfirmed?'Nová adresa je potvrzená.':'Čekáme na potvrzení nové adresy.'];
+    $('school-email-pending-text').textContent=(first?'Nastavení přihlašovacího e-mailu: ':'Změna přihlašovacího e-mailu na ')+info.pending.newEmail+'. '+confirmed.join(' ');
    }
    say('school-email-status',mailReady?'':'Změna e-mailu čeká na nastavení potvrzovacích e-mailů. Současné přihlášení zůstává dostupné.');
   }catch(error){if(version===generation)say('school-email-status',error.message);}
