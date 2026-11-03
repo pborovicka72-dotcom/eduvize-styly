@@ -1,4 +1,4 @@
-@import url("kiosk-reading.css?v=20261103-kiosk-reading-1");
+@import url("kiosk-reading.css?v=20261103-kiosk-reading-2");
 /* Shared sizing only: colors, surfaces and corner radii continue to come from the active theme. */
 .edu-output-header{box-sizing:border-box;height:var(--edu-header-height,16vmin);min-height:var(--edu-header-height,16vmin);max-height:var(--edu-header-height,16vmin);flex:0 0 auto;padding:var(--edu-header-padding,1.92vmin) var(--edu-header-inset,2.88vmin);gap:var(--edu-header-gap,1.92vmin);align-items:center;overflow:hidden}
 .edu-output-header .edu-app-icon{--edu-icon-size:var(--edu-header-icon,9.6vmin);width:var(--edu-icon-size);height:var(--edu-icon-size);flex:0 0 var(--edu-icon-size);padding:0}

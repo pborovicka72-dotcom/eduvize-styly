@@ -38,6 +38,7 @@ html[data-kiosk-app="weather"].kiosk-output.weather-station .station-temperature
 html[data-kiosk-app="weather"].kiosk-output.weather-station .station-symbol{width:calc(var(--station-body)*3);height:calc(var(--station-body)*3)}
 html[data-kiosk-app="weather"].kiosk-output.weather-station .station-dashboard{--edu-text-value:calc(var(--station-body)*2.4)}
 html[data-kiosk-app="weather"].kiosk-output.weather-station .station-dashboard{overflow:auto;overscroll-behavior:contain}
+html[data-kiosk-app="weather"].kiosk-output.weather-station .station-instruments .station-card h2{font-size:var(--station-body);line-height:1.15}
 html[data-kiosk-app="weather"].kiosk-output.weather-station .station-place{font-size:var(--station-body)}
 html[data-kiosk-app="weather"].kiosk-output.weather-station :is(.station-note,.station-extra,.station-hours .station-hour-condition,.station-hours .station-hour-time){font-size:max(14px,calc(var(--station-body)*.6))}
 
