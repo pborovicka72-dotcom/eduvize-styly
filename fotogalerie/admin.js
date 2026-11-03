@@ -1,5 +1,5 @@
 (async()=>{
- const G=EduvizeGallery,$=id=>document.getElementById(id),fields=['style','count','seconds','crop','transition','smart','header','videos','videoSound','music','volume','whole','viewMode'];
+ const G=EduvizeGallery,$=id=>document.getElementById(id),fields=['style','count','seconds','crop','transition','smart','header','videos','videoSound','music','volume','whole','viewMode','sort'];
  let albums=[],album=null,busy=false,previewId=0;const status=t=>{$('status').textContent=t;};
  const values=()=>({...G.defaults,...Object.fromEntries(fields.map(id=>{const e=$(id);return [id,e.type==='checkbox'?e.checked:['count','seconds','crop','volume'].includes(id)?Number(e.value):e.value];})),selection:album?.settings.selection||[],segment:{orientation:$('segment-orientation').value,style:Number($('segment-style').value),block:Number($('segment-block').value)}});
  function apply(s){for(const id of fields)$(id).type==='checkbox'?$(id).checked=s[id]:$(id).value=s[id];$('volume-label').textContent=$('volume').value+' %';$('segment-orientation').value=s.segment?.orientation||'landscape';drawSegments(s.segment);}
