@@ -32,18 +32,21 @@
   if(!data.items.length)host.append(text('p','Zatím nejsou evidované žádné licence.'));
   for(const item of data.items){
    const card=document.createElement('article');card.className='edu-license-card';
-   card.append(text('h3',item.school.name),text('p','RED IZO '+item.schoolKey+' · IČO '+item.school.ico));
-   const state=text('strong',names[item.status]||item.status);state.dataset.status=item.status;card.append(state);
-   card.append(text('p',item.status==='issued'?(item.months===null?'Trvalá licence od aktivace':'Platnost '+item.months+' měsíců od aktivace'):'Aktivace '+date(item.activatedAt)+' · '+(item.expiresAt?'Platnost do '+date(item.expiresAt):'Bez konce platnosti')));
+   const overview=document.createElement('div');overview.className='edu-license-overview';
+   const identity=document.createElement('div');identity.className='edu-license-identity';identity.append(text('h4',item.school.name));overview.append(identity);
+   const state=text('strong',names[item.status]||item.status);state.dataset.status=item.status;state.className='edu-license-state';overview.append(state);
+   const validity=text('p',item.status==='issued'?(item.months===null?'Trvalá licence od aktivace':'Platnost '+item.months+' měsíců od aktivace'):'Aktivace '+date(item.activatedAt)+' · '+(item.expiresAt?'Platnost do '+date(item.expiresAt):'Bez konce platnosti'));validity.className='edu-license-validity';overview.append(validity);card.append(overview);
+   const details=document.createElement('details');details.className='edu-license-details';details.append(text('summary','Podrobnosti a správa licence'));
+   const body=document.createElement('div');body.className='edu-admin__flow';body.append(text('p','RED IZO '+item.schoolKey+' · IČO '+item.school.ico));details.append(body);card.append(details);
    const feedback=text('p','');feedback.setAttribute('role','status');
    if(item.months!==null){
     const form=document.createElement('form'),label=text('label','Prodloužit o počet měsíců'),input=document.createElement('input'),button=text('button','Prodloužit');input.type='number';input.min='1';input.max='1200';input.required=true;input.value='12';button.type='submit';button.className='edu-admin__button edu-admin__button--secondary';label.append(input);form.className='edu-license-renew';form.append(label,button);
-    form.onsubmit=async event=>{event.preventDefault();button.disabled=true;try{await request('/api/operator/licenses/'+item.id+'/extend',{method:'POST',body:JSON.stringify({months:Number(input.value)})},'operator');await loadLicenses();}catch(e){feedback.textContent=e.message;}finally{button.disabled=false;}};card.append(form);
+    form.onsubmit=async event=>{event.preventDefault();button.disabled=true;try{await request('/api/operator/licenses/'+item.id+'/extend',{method:'POST',body:JSON.stringify({months:Number(input.value)})},'operator');await loadLicenses();}catch(e){feedback.textContent=e.message;}finally{button.disabled=false;}};body.append(form);
    }
    if(item.status==='issued'){
-    const button=text('button','Vystavit náhradní kód');button.type='button';button.className='edu-admin__button edu-admin__button--secondary';button.onclick=async()=>{button.disabled=true;try{const token=auth.getToken('styles'),result=await request('/api/operator/licenses/'+item.id+'/code',{method:'POST'},'operator');if(operator()&&token===auth.getToken('styles')){showCode(result);say('license-issue-status','Náhradní kód je připravený. Původní kód a rozpracované aktivace přestaly platit.');}}catch(e){feedback.textContent=e.message;}finally{button.disabled=false;}};card.append(button);
+    const button=text('button','Vystavit náhradní kód');button.type='button';button.className='edu-admin__button edu-admin__button--secondary';button.onclick=async()=>{button.disabled=true;try{const token=auth.getToken('styles'),result=await request('/api/operator/licenses/'+item.id+'/code',{method:'POST'},'operator');if(operator()&&token===auth.getToken('styles')){showCode(result);say('license-issue-status','Náhradní kód je připravený. Původní kód a rozpracované aktivace přestaly platit.');}}catch(e){feedback.textContent=e.message;}finally{button.disabled=false;}};body.append(button);
    }
-   card.append(feedback);host.append(card);
+   body.append(feedback);host.append(card);
   }
   say('license-list-status','Načteno '+data.items.length+' licencí.');
  }
