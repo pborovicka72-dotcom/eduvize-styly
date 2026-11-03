@@ -22,6 +22,13 @@
  function schedule(){if(!queued){queued=true;requestAnimationFrame(fit);}}
  function start(){
   const content=document.querySelector('.edu-wisdom-output .content');if(!content)return;
+  const topic=document.querySelector('.edu-wisdom-output #topic');
+  if(topic){
+   const category=document.createElement('div');category.className='wisdom-category';
+   content.prepend(category);
+   const syncTopic=()=>{const text=topic.textContent.trim();if(category.textContent!==text)category.textContent=text;};
+   new MutationObserver(syncTopic).observe(topic,{childList:true,characterData:true,subtree:true});syncTopic();
+  }
   new MutationObserver(schedule).observe(content,{childList:true,characterData:true,subtree:true});
   const observer=new ResizeObserver(schedule);observer.observe(content);
   const header=document.querySelector('.edu-output-header');if(header)observer.observe(header);

@@ -83,3 +83,53 @@ html[data-kiosk-app="news"][data-output-mode].kiosk-output #news :is(.title,.sum
 /* Choose image placement from the actual card geometry, shared by NSP and kiosk. */
 html[data-kiosk-app="news"][data-output-mode]:not(.web-output) #news .card.side-media{flex-direction:row!important}
 html[data-kiosk-app="news"][data-output-mode]:not(.web-output) #news .card.side-media .media{flex:0 0 42%;width:42%;height:min(100cqh,42cqw);align-self:center;min-height:0}
+
+/* Wisdom feature card: shared by web, kiosk and every Newline segment.
+   Header colors and geometry remain owned by the shared header/theme system. */
+html[data-kiosk-app="wisdom"][data-output-mode] .edu-wisdom-output .wisdom-quotation{
+ position:relative;isolation:isolate;overflow:hidden!important;justify-content:center;
+ padding:clamp(20px,5vmin,96px)!important;gap:clamp(16px,3vmin,48px)!important;
+ box-shadow:0 12px 36px color-mix(in srgb,var(--ev-text) 4%,transparent);
+}
+html[data-kiosk-app="wisdom"][data-output-mode] .wisdom-quotation::before{
+ content:"“";position:absolute;z-index:-1;pointer-events:none;right:4%;top:-.2em;
+ font-family:Georgia,serif;font-size:clamp(180px,35vmin,640px);line-height:1;
+ color:var(--ev-primary);opacity:.07;
+}
+html[data-kiosk-app="wisdom"][data-output-mode] .wisdom-category{
+ display:flex;align-items:center;gap:.7em;flex:none;min-width:0;
+ font-size:clamp(14px,1.8vmin,36px);line-height:1.3;font-weight:700;
+ letter-spacing:.09em;text-transform:uppercase;color:var(--ev-primary);
+}
+html[data-kiosk-app="wisdom"][data-output-mode] .wisdom-category::before{
+ content:"";width:2em;height:3px;flex:none;background:currentColor;
+}
+html[data-kiosk-app="wisdom"][data-output-mode] .wisdom-category:empty{display:none}
+html[data-kiosk-app="wisdom"][data-output-mode] .wisdom-heading .topic{display:none}
+html[data-kiosk-app="wisdom"][data-output-mode] .edu-wisdom-output .content>.quote{
+ font-size:clamp(38px,6vmin,144px)!important;line-height:1.18!important;
+ font-weight:650;letter-spacing:-.025em;max-width:22em;
+}
+html[data-kiosk-app="wisdom"][data-output-mode] .edu-wisdom-output .content>.quote[data-length="long"]{
+ font-size:clamp(28px,4.5vmin,100px)!important;
+}
+html[data-kiosk-app="wisdom"][data-output-mode] .edu-wisdom-output .attribution{
+ border-inline-start:4px solid var(--ev-primary);padding-inline-start:.8em;
+}
+html[data-kiosk-app="wisdom"][data-output-mode] .edu-wisdom-output .attribution .author{
+ font-size:clamp(22px,2.8vmin,64px)!important;
+}
+html[data-kiosk-app="wisdom"].web-output .edu-wisdom-output .wisdom-quotation{
+ min-height:clamp(360px,56vh,760px)!important;margin-block:24px;
+}
+html[data-kiosk-app="wisdom"].web-output .edu-wisdom-output #display .content>.quote{
+ font-size:clamp(34px,5vw,76px)!important;
+}
+html[data-kiosk-app="wisdom"].web-output .edu-wisdom-output .attribution .author{
+ font-size:clamp(22px,2.4vw,32px)!important;
+}
+@media(min-aspect-ratio:27/10){
+ html[data-kiosk-app="wisdom"][data-output-mode]:not(.web-output) .edu-wisdom-output .wisdom-quotation{
+ padding:clamp(12px,3vmin,48px)!important;gap:clamp(8px,2vmin,24px)!important;min-height:0!important;
+ }
+}
