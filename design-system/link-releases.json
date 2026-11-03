@@ -1,0 +1,5 @@
+{
+  "id": "link-contract-2026-11-03",
+  "publishedAt": "2026-11-03",
+  "message": "Nově zavádíme označení formátu nových odkazů a kontrolu jejich společných parametrů. Kvůli této změně není potřeba již používané odkazy nahrazovat. Verze aplikace a formát odkazu jsou dvě různé věci. Před změnou používaného odkazu uchovejte jeho původní podobu a porovnejte nový výstup v náhledu."
+}
