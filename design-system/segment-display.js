@@ -8,10 +8,20 @@
  const style=Number(p.get('segment_style')||p.get('style')||(p.get('layout')!=='signage'?p.get('layout'):1)||1);
  const block=Number(p.get('segment_block')||p.get('block')||1);
  const rect=root.EduvizeNSPLayouts.layouts[orientation]?.[style]?.[block-1];if(!rect)return;
+ if(document.getElementById('edu-segment-host'))return;
+ // The segment owns its layout dependency; apps need only include this script.
+ const stylesheet=document.createElement('link');
+ stylesheet.rel='stylesheet';
+ stylesheet.href=new URL('segment-display.css?v=20261103-viewport-1',document.currentScript.src).href;
+ stylesheet.addEventListener('load',mount,{once:true});
+ document.head.append(stylesheet);
+ function mount(){
+ if(document.getElementById('edu-segment-host'))return;
  const host=document.createElement('div');host.id='edu-segment-host';
  const frame=document.createElement('iframe'),u=new URL(location.href);u.searchParams.set('ev_inner','1');u.searchParams.set('segment_orientation',orientation);u.searchParams.set('segment_style',style);u.searchParams.set('segment_block',block);
  frame.src=u.href;frame.title='Eduvize – vybraný segment';frame.allow='autoplay; fullscreen';frame.allowFullscreen=true;frame.style.width=rect[0]+'px';frame.style.height=rect[1]+'px';
  host.append(frame);document.body.classList.add('edu-segment-wrapper');document.body.append(host);
  function fit(){const scale=Math.min(innerWidth/rect[0],innerHeight/rect[1]);frame.style.transform='translate(-50%,-50%) scale('+scale+')';}
  root.addEventListener('resize',fit);fit();
+ }
 })(window);

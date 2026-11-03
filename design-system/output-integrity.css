@@ -1,3 +1,4 @@
+@import url('./segment-display.css?v=20261103-viewport-1');
 @import url('https://pborovicka72-dotcom.github.io/eduvize-styly/design-system/card-layout.css?v=1');
 @import url('./web-brand.css?v=20261031-integrity-1');
 /* Shared roles, applied after app components: identical viewport = identical typography. */
@@ -41,11 +42,6 @@ html.web-output .body{height:auto!important;overflow:visible!important;flex:none
 html.web-output .weather-page{display:block!important;margin:0;height:auto!important;overflow:visible!important}
 html.web-output .weather-page[hidden]{display:none!important}
 html.web-output .header:not(.edu-web-header):not(.edu-output-header){display:none!important}
-/* Exact segment frames are isolated from the ordinary responsive document. */
-body.edu-segment-wrapper{margin:0!important;width:100%!important;height:100%!important;overflow:hidden!important}
-body.edu-segment-wrapper>:not(#edu-segment-host){display:none!important}
-#edu-segment-host{position:fixed;inset:0;overflow:hidden;background:var(--ev-bg);z-index:2147483640}
-#edu-segment-host iframe{position:absolute;left:50%;top:50%;border:0;transform-origin:center;background:var(--ev-bg)}
 
 html.nsp-output .edu-kiosk-stage{flex:1 1 0%;min-height:0;overflow:hidden;scrollbar-width:none}
 .edu-auto-pagination{min-height:24px;padding:2px 0;background:transparent;font-size:var(--edu-text-footnote,16px)}

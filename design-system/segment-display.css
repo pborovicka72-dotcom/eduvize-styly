@@ -1,0 +1,5 @@
+/* Exact segment frames are isolated from the ordinary responsive document. */
+body.edu-segment-wrapper{margin:0!important;width:100%!important;height:100%!important;overflow:hidden!important}
+body.edu-segment-wrapper>:not(#edu-segment-host){display:none!important}
+#edu-segment-host{position:fixed;inset:0;overflow:hidden;background:var(--ev-bg);z-index:2147483640}
+#edu-segment-host iframe{position:absolute;left:50%;top:50%;border:0;transform-origin:center;background:var(--ev-bg)}
