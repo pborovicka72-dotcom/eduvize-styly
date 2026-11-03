@@ -23,3 +23,10 @@
 
 /* Empty search results must not leave a gap in shared form stacks. */
 .edu-license-results:empty{display:none}
+
+.edu-license-manual{min-width:0;margin:0;padding:20px;border:1px solid var(--ev-border);border-radius:var(--ev-card-radius)}
+.edu-license-manual legend{padding:0 8px;font-weight:700}
+.edu-license-term{max-width:360px}
+.edu-license-recipient{margin-bottom:20px}
+#register-org-field{margin-bottom:20px}
+#license-organization-fields[hidden],#license-school-fields[hidden],#register-school-fields[hidden],#register-org-field[hidden]{display:none!important}
