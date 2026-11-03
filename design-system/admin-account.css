@@ -28,3 +28,9 @@ body[data-account-state="signed-out"] .edu-account-panel,body[data-account-state
 .edu-account-panel .edu-account-message:empty{display:none}
 .edu-account-panel .edu-account-message{margin:20px 0 0;line-height:1.5}
 @media(max-width:600px){body[data-account-state="signed-out"] .edu-account-panel,body[data-account-state="loading"] .edu-account-panel{margin:20px auto;padding:24px}.edu-account-heading{flex-direction:column;gap:12px}}
+
+/* Keep the e-mail field and its action on separate rows inside the sign-in card. */
+#email-login-form{display:grid;grid-template-columns:minmax(0,1fr);gap:12px;margin:16px 0;min-width:0}
+#email-login-form .edu-admin__field{min-width:0}
+#email-login-form #email-login-address{box-sizing:border-box;width:100%;max-width:100%;min-width:0}
+#email-login-form .edu-admin__button{width:100%;min-width:0;white-space:normal;overflow-wrap:anywhere}
