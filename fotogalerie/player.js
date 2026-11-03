@@ -1,5 +1,5 @@
 (async()=>{
- const G=EduvizeGallery,L=EduvizeGalleryLayout,p=new URLSearchParams(location.search),$=id=>document.getElementById(id);if(EduvizeOutputModes.mode()==='nsp'&&p.has('segment_style')&&p.get('ev_inner')!=='1')return;
+ const G=EduvizeGallery,L=EduvizeGalleryLayout,p=new URLSearchParams(location.search),$=id=>document.getElementById(id);if((window.EduvizeOutputModes?.mode?.()||p.get('viewMode'))==='nsp'&&p.has('segment_style')&&p.get('ev_inner')!=='1')return;
  let album=null,items=[],pages=[],page=0,paused=false,elapsed=0,last=performance.now(),minSeconds=8,generation=0,activeVideos=[],soundGranted=false,music=null,fadeFrame=0,loading=false,currentFrame=null;
  const message=t=>{$('message')?.remove();const e=document.createElement('p');e.id='message';e.className='gallery-message';e.textContent=t;$('stage').append(e);};
  function config(){const s={...G.defaults,...album.settings};s.count=Math.max(1,Math.min(6,Number(s.count)||4));s.seconds=Math.max(3,Math.min(120,Number(s.seconds)||8));s.crop=Math.max(0,Math.min(15,Number(s.crop)||0));return s;}
