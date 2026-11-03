@@ -3,8 +3,15 @@
  'use strict';
  const client=root.EduvizeLicensing,host=document.getElementById('school-account');if(!client||!host)return;
  const {auth,$,request,say}=client;let generation=0,busy=false,mailReady=false;
+ const resendButtons=['old','new'].map(side=>{
+  const button=document.createElement('button');button.type='button';
+  button.className='edu-admin__button edu-admin__button--secondary';
+  button.textContent=side==='old'?'Znovu poslat na původní adresu':'Znovu poslat na novou adresu';
+  button.hidden=true;button.dataset.confirmationKind='email-change-'+side;
+  $('school-email-cancel').before(button);return button;
+ });
  function own(){return auth.status().connected&&!!auth.status().schoolId;}
- function buttons(){ $('school-email-submit').disabled=busy||!mailReady;$('school-email-cancel').disabled=busy;}
+ function buttons(){ $('school-email-submit').disabled=busy||!mailReady;$('school-email-cancel').disabled=busy;for(const button of resendButtons)button.disabled=busy||!mailReady;}
  async function load(){
   const version=++generation;host.hidden=!own();if(!own()){$('school-email-new').value='';$('school-account-email').textContent='';$('school-email-pending').hidden=true;return;}
   say('school-email-status','Načítám údaje účtu…');buttons();
@@ -20,6 +27,8 @@
    $('school-email-help').textContent=info.email?'Změnu potvrďte odkazem v původní i nové schránce. Do dokončení platí současná adresa.':'Přidejte první přihlašovací e-mail ke stávajícímu účtu školy. Stačí potvrdit odkaz v této schránce.';
    $('school-account-email').textContent=info.email||'Přihlašovací e-mail zatím není nastavený.';
    $('school-email-pending').hidden=!info.pending;
+   resendButtons[0].hidden=!info.pending||info.pending.requiresPreviousConfirmation===false||info.pending.oldConfirmed;
+   resendButtons[1].hidden=!info.pending||info.pending.newConfirmed;
    if(info.pending){
     const first=info.pending.requiresPreviousConfirmation===false;
     const confirmed=first?['Čekáme na potvrzení této adresy.']:[info.pending.oldConfirmed?'Původní adresa je potvrzená.':'Čekáme na potvrzení původní adresy.',info.pending.newConfirmed?'Nová adresa je potvrzená.':'Čekáme na potvrzení nové adresy.'];
@@ -42,6 +51,15 @@
   if(busy||!own())return;busy=true;buttons();say('school-email-status','Ruším rozpracovanou změnu…');
   try{await request('/api/account/email-change',{method:'DELETE'},true);await load();say('school-email-status','Rozpracovaná změna byla zrušena. Přihlašovací e-mail se nezměnil.');}
   catch(error){if(own())say('school-email-status',error.message);}
+  finally{busy=false;buttons();}
+ };
+ for(const button of resendButtons)button.onclick=async()=>{
+  if(busy||!own())return;const version=generation;busy=true;buttons();say('school-email-status','Znovu odesílám chybějící potvrzení…');
+  try{
+   const result=await request('/api/account/email-change/resend',{method:'POST',body:JSON.stringify({kind:button.dataset.confirmationKind})},true);
+   if(version!==generation||!own())return;
+   say('school-email-status','Potvrzení bylo předáno k odeslání. Již provedená potvrzení zůstávají zachovaná. Odkaz platí do '+new Intl.DateTimeFormat('cs-CZ',{hour:'2-digit',minute:'2-digit',timeZone:'Europe/Prague'}).format(new Date(result.expiresAt*1000))+'.');
+  }catch(error){if(version===generation&&own())say('school-email-status',error.message);}
   finally{busy=false;buttons();}
  };
  root.addEventListener('eduvize-admin-auth-change',load);root.addEventListener('eduvize-school-account-change',load);auth.ready.then(load);
