@@ -6,11 +6,11 @@ html.kiosk-output .edu-output-header .edu-header-meta{font-size:var(--edu-header
 html.kiosk-output :is(.edu-pagination-button,.edu-kiosk-pagination button,.edu-document-tool,.navigation button,.gallery-controls button){min-height:max(44px,calc(var(--edu-text-body,24px)*1.6))!important;font-size:var(--edu-text-caption,18px)!important}
 html.kiosk-output :is(.edu-pagination-status,.edu-kiosk-pagination>span){font-size:var(--edu-text-caption,18px)!important}
 
-html[data-kiosk-app="wisdom"].kiosk-output .edu-wisdom-output .content>.quote{font-size:calc(var(--edu-text-body)*1.35)!important;max-width:42em;line-height:1.4!important}
-html[data-kiosk-app="wisdom"].kiosk-output .edu-wisdom-output .content>.quote[data-length="long"]{font-size:var(--edu-text-body)!important}
-html[data-kiosk-app="wisdom"].kiosk-output .attribution .author{font-size:var(--edu-text-body)!important}
+html[data-kiosk-app="wisdom"].kiosk-output .edu-wisdom-output .content>.quote{font-size:clamp(44px,6vmin,144px)!important;max-width:24em;line-height:1.25!important}
+html[data-kiosk-app="wisdom"].kiosk-output .edu-wisdom-output .content>.quote[data-length="long"]{font-size:clamp(32px,4.5vmin,100px)!important}
+html[data-kiosk-app="wisdom"].kiosk-output .attribution .author{font-size:clamp(24px,2.8vmin,64px)!important}
 html[data-kiosk-app="wisdom"].kiosk-output .attribution :is(.work,.source-link){font-size:var(--edu-text-caption)!important}
-html[data-kiosk-app="wisdom"].kiosk-output .wisdom-quotation{padding:var(--edu-kiosk-space)!important;gap:var(--edu-kiosk-space)!important;justify-content:center;flex:0 1 auto!important;min-height:min(60vh,calc(var(--edu-text-body)*9));max-height:100%;overflow:hidden}
+html[data-kiosk-app="wisdom"].kiosk-output .wisdom-quotation{padding:var(--edu-kiosk-space)!important;gap:var(--edu-kiosk-space)!important;justify-content:center;flex:0 1 auto!important;min-height: min(56vh,900px)!important;max-height:100%;overflow:hidden}
 html[data-kiosk-app="wisdom"].kiosk-output #display>.panel{gap:var(--edu-kiosk-space)!important}
 
 html[data-kiosk-app="holidays"].kiosk-output body.ev-modern :is(.upcoming-name,.upcoming-event,.upcoming-date){font-size:var(--edu-text-body)!important}
@@ -35,7 +35,7 @@ html[data-kiosk-app="menu"].kiosk-output .edu-meal-course[data-kind=lunch]{flex:
 html[data-kiosk-app="menu"].kiosk-output .edu-meal-allergens{font-size:max(14px,.6em)}
 
 html[data-kiosk-app="weather"].kiosk-output.weather-station .station-temperature{font-size:var(--edu-text-value,64px)!important}
-html[data-kiosk-app="weather"].kiosk-output.weather-station .station-symbol{width:calc(var(--station-body)*3);height:calc(var(--station-body)*3)}
+html[data-kiosk-app="weather"].kiosk-output.weather-station .station-symbol{width:min(38%,calc(var(--station-body)*6));height:auto;aspect-ratio:1}
 html[data-kiosk-app="weather"].kiosk-output.weather-station .station-dashboard{--edu-text-value:calc(var(--station-body)*2.4)}
 html[data-kiosk-app="weather"].kiosk-output.weather-station .station-dashboard{overflow:auto;overscroll-behavior:contain}
 html[data-kiosk-app="weather"].kiosk-output.weather-station .station-instruments .station-card h2{font-size:var(--station-body);line-height:1.15}
