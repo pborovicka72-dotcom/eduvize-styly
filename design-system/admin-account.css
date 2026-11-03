@@ -12,7 +12,7 @@
 
 /* Account states: private content is hidden before authentication is verified. */
 .edu-account-panel [hidden],[data-account-private][hidden]{display:none!important}
-body[data-account-state="signed-out"] .edu-account-panel,body[data-account-state="loading"] .edu-account-panel{max-width:520px;margin:32px auto;padding:32px}
+body[data-account-state="signed-out"] :is(.edu-account-panel,#school-registration),body[data-account-state="loading"] :is(.edu-account-panel,#school-registration){max-width:520px;margin:32px auto;padding:32px}
 .edu-account-panel .edu-account-signin{width:100%;justify-content:center;margin:0}
 .edu-account-panel .edu-account-intro{margin:0 0 20px;color:var(--edu-admin-muted)}
 .edu-account-remember{margin-top:20px}
@@ -27,7 +27,7 @@ body[data-account-state="signed-out"] .edu-account-panel,body[data-account-state
 .edu-account-panel .edu-account-signout-note{margin-top:24px}
 .edu-account-panel .edu-account-message:empty{display:none}
 .edu-account-panel .edu-account-message{margin:20px 0 0;line-height:1.5}
-@media(max-width:600px){body[data-account-state="signed-out"] .edu-account-panel,body[data-account-state="loading"] .edu-account-panel{margin:20px auto;padding:24px}.edu-account-heading{flex-direction:column;gap:12px}}
+@media(max-width:600px){body[data-account-state="signed-out"] :is(.edu-account-panel,#school-registration),body[data-account-state="loading"] :is(.edu-account-panel,#school-registration){margin:20px auto;padding:24px}.edu-account-heading{flex-direction:column;gap:12px}}
 
 /* Keep the e-mail field and its action on separate rows inside the sign-in card. */
 #email-login-form{display:grid;grid-template-columns:minmax(0,1fr);gap:12px;margin:0;min-width:0}
