@@ -12,6 +12,8 @@
   if(!document.body)return;
   if(!screen){screen=document.createElement('section');screen.id='edu-license-screen';screen.setAttribute('role','status');screen.setAttribute('aria-live','polite');const box=document.createElement('div');title=document.createElement('h1');detail=document.createElement('p');box.append(title,detail);screen.append(box);document.body.append(screen);}
   screen.hidden=state==='active';
+  screen.style.setProperty('display',state==='active'?'none':'flex','important');
+  screen.style.setProperty('visibility','visible','important');
   title.textContent=state==='suspended'?'Vysílání pozastaveno':state==='checking'?'Ověřuji licenci…':'Vysílání dočasně nedostupné';
   detail.textContent=state==='suspended'?'Škola nemá platnou licenci Eduvize.':state==='checking'?'Načítám stav vysílání školy.':'Čekám na ověření licence školy.';
  }
