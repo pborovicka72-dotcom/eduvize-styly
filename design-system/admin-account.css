@@ -13,9 +13,9 @@
 /* Account states: private content is hidden before authentication is verified. */
 .edu-account-panel [hidden],[data-account-private][hidden]{display:none!important}
 body[data-account-state="signed-out"] .edu-account-panel,body[data-account-state="loading"] .edu-account-panel{max-width:520px;margin:32px auto;padding:32px}
-.edu-account-panel .edu-account-signin{width:100%;justify-content:center;margin:8px 0 20px}
+.edu-account-panel .edu-account-signin{width:100%;justify-content:center;margin:0}
 .edu-account-panel .edu-account-intro{margin:0 0 20px;color:var(--edu-admin-muted)}
-.edu-account-remember{margin-top:4px}
+.edu-account-remember{margin-top:20px}
 .edu-account-panel .edu-account-explanation{margin:24px 0;color:var(--edu-admin-muted);line-height:1.5}
 .edu-account-operator{border-top:1px solid var(--edu-admin-border);padding-top:20px;margin-top:24px}
 .edu-account-operator summary{cursor:pointer;color:var(--edu-admin-muted);font-size:.875rem}
@@ -30,7 +30,15 @@ body[data-account-state="signed-out"] .edu-account-panel,body[data-account-state
 @media(max-width:600px){body[data-account-state="signed-out"] .edu-account-panel,body[data-account-state="loading"] .edu-account-panel{margin:20px auto;padding:24px}.edu-account-heading{flex-direction:column;gap:12px}}
 
 /* Keep the e-mail field and its action on separate rows inside the sign-in card. */
-#email-login-form{display:grid;grid-template-columns:minmax(0,1fr);gap:12px;margin:16px 0;min-width:0}
+#email-login-form{display:grid;grid-template-columns:minmax(0,1fr);gap:12px;margin:0;min-width:0}
 #email-login-form .edu-admin__field{min-width:0}
 #email-login-form #email-login-address{box-sizing:border-box;width:100%;max-width:100%;min-width:0}
 #email-login-form .edu-admin__button{width:100%;min-width:0;white-space:normal;overflow-wrap:anywhere}
+
+/* Related sign-in methods form one compact stack; empty messages reserve no space. */
+.edu-account-methods{display:flex;flex-direction:column;align-items:stretch;gap:var(--edu-admin-related-gap,12px);margin-block:20px}
+.edu-account-panel .edu-account-methods>#email-login-status{margin:0;min-height:0}
+.edu-account-methods>#email-login-status:empty{display:none}
+.edu-account-method-icon{display:block;width:1.25em;height:1.25em;flex:0 0 1.25em}
+.edu-account-panel :is(#email-login-form button,#account-microsoft-login,#account-login){display:inline-flex;align-items:center;justify-content:center;gap:.65em}
+#school-registration .edu-account-heading{margin-bottom:12px}

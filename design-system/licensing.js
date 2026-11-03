@@ -3,7 +3,21 @@
  'use strict';
  const client=root.EduvizeLicensing;if(!client||!document.getElementById('school-registration'))return;
  const {auth,$,names,date,say,request,work,lookup,validIco}=client;
- let selectedRegister='',loadedToken='',generation=0;
+ let selectedRegister='',loadedToken='',generation=0,registrationRequested=false,registrationStatusLoaded=false;
+ const registrationButton=$('account-registration-request');
+ function registrationView(connected){
+  if(connected)registrationRequested=false;
+  $('school-registration').hidden=connected||!registrationRequested;
+  registrationButton.setAttribute('aria-expanded',String(!connected&&registrationRequested));
+ }
+ registrationButton.onclick=()=>{
+  registrationRequested=true;registrationView(auth.status().connected);
+  if($('school-registration').hidden)return;
+  $('school-registration').scrollIntoView({block:'start'});
+  $('register-recipient-type').focus({preventScroll:true});
+  if(!registrationStatusLoaded){registrationStatusLoaded=true;request('/api/registration/status').then(data=>{if(!data.emailConfigured)say('register-status','Potvrzovací e-maily čekají na nastavení Microsoft 365. Do té doby nelze dokončit novou registraci.');}).catch(e=>say('register-status',e.message));}
+ };
+ $('registration-close').onclick=()=>{registrationRequested=false;registrationView(auth.status().connected);registrationButton.focus();};
  lookup('register-school-query','register-school-results',key=>{selectedRegister=key;});
  function registerMode(){
   const manual=$('register-recipient-type').value==='organization';
@@ -32,7 +46,7 @@
   $('license-confirm-button').onclick=async()=>{const button=$('license-confirm-button');button.disabled=true;try{const result=await request('/api/registration/confirm',{method:'POST',body:JSON.stringify({kind,token:confirmation})});if(kind==='email-change-old'||kind==='email-change-new'){say('license-confirm-status',result.emailChanged?'Přihlašovací e-mail byl změněn. Při dalším přihlášení použijte novou adresu.':'Potvrzení bylo přijato. Pro dokončení změny potvrďte také odkaz ve druhé schránce.');button.hidden=true;root.dispatchEvent(new Event('eduvize-school-account-change'));return;}if(result.registered){say('license-confirm-status','Registrace školy je dokončená a licence aktivovaná. Nyní se můžete přihlásit e-mailem nebo propojit Microsoft účet.');button.hidden=true;}else{location.replace(auth.ACCOUNT+'#'+new URLSearchParams(result.microsoftTicket?{'edu-ms-ticket':result.microsoftTicket}:{'edu-email-ticket':result.emailTicket}));}}catch(e){say('license-confirm-status',e.message);button.disabled=false;}};
  }
  async function state(){
-  const s=auth.status(),version=++generation;$('school-registration').hidden=s.connected;$('account-license').hidden=!s.schoolId;
+  const s=auth.status(),version=++generation;registrationView(s.connected);$('account-license').hidden=!s.schoolId;
   if(new URL(location.href).searchParams.get('edu-link-pending')==='1')say('account-message','Propojení Microsoft účtu potvrďte odkazem v e-mailu správce školy.');
   const token=auth.getToken();if(token===loadedToken)return;loadedToken=token;
   if(s.schoolId){try{const data=await request('/api/account/license',{},true);if(version!==generation)return;const license=data.license;
@@ -42,6 +56,5 @@
    }catch(e){say('account-license-status',e.message);}}
  }
  root.addEventListener('eduvize-admin-auth-change',state);auth.ready.then(state);
- request('/api/registration/status').then(data=>{if(!data.emailConfigured)say('register-status','Potvrzovací e-maily čekají na nastavení Microsoft 365. Do té doby nelze dokončit novou registraci.');}).catch(e=>say('register-status',e.message));
 })(window);
 
