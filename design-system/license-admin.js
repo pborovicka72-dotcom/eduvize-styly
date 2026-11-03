@@ -3,7 +3,7 @@
  'use strict';
  const client=root.EduvizeLicensing;if(!client||!document.getElementById('license-admin'))return;
  const {auth,$,names,date,operator,text,say,request,work,lookup,validIco}=client;
- let selectedIssue='',generation=0,loadedToken='';
+ let selectedIssue='',generation=0,loadedToken='',latestLoad=0;
  lookup('license-school-query','license-school-results',key=>{selectedIssue=key;});
  function recipientMode(){
   const manual=$('license-recipient-type').value==='organization';
@@ -15,9 +15,10 @@
  function showCode(result){$('license-code-value').value=result.code;$('license-code-result').hidden=false;say('license-issue-status','Licence byla vytvořena. Kód se zobrazuje pouze nyní. Předejte jej správci školy.');}
  $('license-copy-code').onclick=async()=>{try{await navigator.clipboard.writeText($('license-code-value').value);say('license-issue-status','Licenční kód zkopírován.');}catch{say('license-issue-status','Označte a zkopírujte kód v poli.');}};
  async function loadLicenses(){
-  if(!operator())return;const token=auth.getToken('styles'),version=generation;
-  const data=await request('/api/operator/licenses?q='+encodeURIComponent($('license-filter').value),{},'operator');
-  if(version!==generation||token!==auth.getToken('styles'))return;
+  if(!operator())return;const token=auth.getToken('styles'),version=generation,requestId=++latestLoad;
+  say('license-list-status','Načítám licence…');
+  let data;try{data=await request('/api/operator/licenses?q='+encodeURIComponent($('license-filter').value),{},'operator');}catch(error){if(version!==generation||requestId!==latestLoad||token!==auth.getToken('styles'))return;throw error;}
+  if(version!==generation||requestId!==latestLoad||token!==auth.getToken('styles'))return;
   const host=$('license-items');host.replaceChildren();
   if(!data.items.length)host.append(text('p','Zatím nejsou evidované žádné licence.'));
   for(const item of data.items){
@@ -50,11 +51,11 @@
  $('license-reload').onclick=()=>loadLicenses().catch(e=>say('license-list-status',e.message));
  let filterTimer;$('license-filter').oninput=()=>{clearTimeout(filterTimer);filterTimer=setTimeout(()=>$('license-reload').click(),250);};
  async function state(){
-  ++generation;const allowed=operator();$('license-admin').hidden=!allowed;$('license-access').hidden=allowed;
+  const allowed=operator();$('license-admin').hidden=!allowed;$('license-access').hidden=allowed;
   $('license-code-value').value='';$('license-code-result').hidden=true;
-  if(!allowed){$('license-items').replaceChildren();loadedToken='';return;}
-  const token=auth.getToken('styles');if(token===loadedToken)return;loadedToken=token;
-  say('license-list-status','Načítám licence…');loadLicenses().catch(error=>say('license-list-status',error.message));
+  if(!allowed){++generation;++latestLoad;$('license-items').replaceChildren();loadedToken='';say('license-list-status','');return;}
+  const token=auth.getToken('styles');if(token===loadedToken)return;loadedToken=token;const version=++generation;
+  try{await loadLicenses();}catch(error){if(version===generation&&token===auth.getToken('styles')){loadedToken='';say('license-list-status',error.message);}}
  }
  root.addEventListener('eduvize-admin-auth-change',state);auth.ready.then(state);
 })(window);
