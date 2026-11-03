@@ -108,7 +108,7 @@ html[data-kiosk-app="wisdom"][data-output-mode] .wisdom-category:empty{display:n
 html[data-kiosk-app="wisdom"][data-output-mode] .wisdom-heading .topic{display:none}
 html[data-kiosk-app="wisdom"][data-output-mode] .edu-wisdom-output .content>.quote{
  font-size:clamp(38px,6vmin,144px)!important;line-height:1.18!important;
- font-weight:650;letter-spacing:-.025em;max-width:22em;
+ font-weight:650;letter-spacing:-.025em;max-width:100%;
 }
 html[data-kiosk-app="wisdom"][data-output-mode] .edu-wisdom-output .content>.quote[data-length="long"]{
  font-size:clamp(28px,4.5vmin,100px)!important;
