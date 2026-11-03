@@ -1,6 +1,6 @@
 (function(root){
  const API='https://eduvize-dokumenty-api.onrender.com';
- const defaults={count:4,seconds:8,crop:10,volume:30,style:'mosaic',transition:'fade',smart:true,header:true,videos:true,videoSound:false,music:'',selection:[],whole:true,viewMode:'nsp',segment:{orientation:'landscape',style:1,block:1}};
+ const defaults={count:4,seconds:8,crop:10,volume:30,style:'mosaic',transition:'fade',smart:true,header:true,videos:true,videoSound:false,music:'',selection:[],whole:true,sort:'date',viewMode:'nsp',segment:{orientation:'landscape',style:1,block:1}};
  let dbPromise;const urls=new Map(),pending=new Map();
  addEventListener("message",e=>{if(e.source!==parent||e.origin!==location.origin||e.data?.type!=="eduvize-gallery-media-response")return;const task=pending.get(e.data.requestId);if(task){pending.delete(e.data.requestId);clearTimeout(task.timer);e.data.url?task.resolve(e.data.url):task.reject(Error(e.data.error||"Soubor není dostupný."));}});
  function previewMedia(item){return new Promise((resolve,reject)=>{const requestId=crypto.randomUUID(),timer=setTimeout(()=>{pending.delete(requestId);reject(Error("Náhled souboru není dostupný."));},20000);pending.set(requestId,{resolve,reject,timer});parent.postMessage({type:"eduvize-gallery-media-request",requestId,itemId:item.id},location.origin);});}
