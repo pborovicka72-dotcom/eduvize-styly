@@ -21,6 +21,13 @@
     {id:'school-systems',name:'Školní informační systémy',url:'https://eduvize-skolni-systemy.onrender.com/config.html'}
   ]);
   let updatesScript;
+  let linkAuditScript;
+  function mountLinkAudit(host){
+    if(!linkAuditScript)linkAuditScript=(async()=>{
+      for(const file of ['link-contract.js','link-compatibility.js'])await new Promise((resolve,reject)=>{const script=document.createElement('script');script.src='https://pborovicka72-dotcom.github.io/eduvize-styly/design-system/'+file+'?v=20261103-link-contract-1';script.onload=resolve;script.onerror=reject;document.head.append(script);});
+    })();
+    linkAuditScript.then(()=>root.EduvizeLinkCompatibility.mount(host)).catch(()=>{const note=document.createElement('p');note.textContent='Kontrola kompatibility odkazů se nepodařila načíst. Nastavení aplikace zůstává dostupné.';host.append(note);});
+  }
   function mountUpdates(app,host){
     if(!updatesScript)updatesScript=new Promise((resolve,reject)=>{
       const script=document.createElement('script');
@@ -94,6 +101,7 @@
     const profileText=make('p','Profil není vybrán.','edu-profile-current__name'),status=make('p',null,'edu-profile-panel__status');status.setAttribute('role','status');status.setAttribute('aria-live','polite');
     const manage=make('a','Účet a připojení','edu-admin__button edu-admin__button--secondary');manage.href=manageUrl('');const actions=make('div',null,'edu-admin__actions'),load=button('Načíst uložené nastavení'),undo=button('Vrátit před načtením');undo.hidden=true;load.hidden=true;actions.append(load,undo);panel.append(profileText,status,manage,actions);if(row)row.after(panel);else save.after(panel);
     mountUpdates(adapter.app,panel);
+    mountLinkAudit(panel);
     const changeStatus=make('p','Bez neuložených změn.','edu-profile-change-status');changeStatus.dataset.eduChangeStatus='';changeStatus.setAttribute('role','status');changeStatus.setAttribute('aria-live','polite');panel.prepend(changeStatus);
     let editBaseline='',userChanged=false;
     function resetEditState(message='Bez neuložených změn.'){userChanged=false;editBaseline=fingerprint(adapter.read());changeStatus.textContent=message;changeStatus.dataset.state='saved';}
