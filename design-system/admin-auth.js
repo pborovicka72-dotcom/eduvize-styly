@@ -57,7 +57,8 @@
   const verifier=btoa(String.fromCharCode(...crypto.getRandomValues(new Uint8Array(48)))).replaceAll('+','-').replaceAll('/','_').replaceAll('=','');
   const bytes=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(verifier));
   const proof=btoa(String.fromCharCode(...new Uint8Array(bytes))).replaceAll('+','-').replaceAll('/','_').replaceAll('=','');
-  sessionStorage.setItem('eduvize-ms-login-v1',JSON.stringify({verifier,createdAt:Date.now()}));
+  const pending=JSON.stringify({verifier,createdAt:Date.now()});
+  sessionStorage.setItem('eduvize-ms-login-v1',pending);try{localStorage.setItem('eduvize-ms-login-v1',pending);}catch{}
   const url=new URL(DOCS+'/auth/microsoft/login');url.searchParams.set('proof',proof);url.searchParams.set('remember',remember?'true':'false');location.assign(url.href);
  }
  async function initialize(){
@@ -71,7 +72,8 @@
    u.hash='account';history.replaceState(null,'',u.href);
    try{
     if(!isAccount)throw Error('Přihlášení otevřete na stránce účtu.');
-    const pending=JSON.parse(sessionStorage.getItem(pendingKey)||'null');sessionStorage.removeItem(pendingKey);
+    let raw=sessionStorage.getItem(pendingKey);try{raw=raw||localStorage.getItem(pendingKey);localStorage.removeItem(pendingKey);}catch{}
+    const pending=JSON.parse(raw||'null');sessionStorage.removeItem(pendingKey);
     if(!pending?.verifier||Date.now()-pending.createdAt>12*60*1000)throw Error('Přihlášení nebylo zahájeno v tomto prohlížeči nebo vypršelo.');
     const existing=stored();
     const data=await json(await sessionFetch(CENTRAL+'/api/admin-session/'+loginKind,{method:'POST',cache:'no-store',headers:{'Content-Type':'application/json',...(existing?.token?{Authorization:'Bearer '+existing.token}:{})},body:JSON.stringify({ticket:loginTicket,verifier:pending.verifier})}));

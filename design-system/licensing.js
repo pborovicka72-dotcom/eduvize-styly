@@ -62,7 +62,7 @@
  work($('email-login-form'),'email-login-status',async()=>{
   const verifier=btoa(String.fromCharCode(...crypto.getRandomValues(new Uint8Array(48)))).replaceAll('+','-').replaceAll('/','_').replaceAll('=','');
   const bytes=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(verifier));const proof=btoa(String.fromCharCode(...new Uint8Array(bytes))).replaceAll('+','-').replaceAll('/','_').replaceAll('=','');
-  sessionStorage.setItem('eduvize-email-login-v1',JSON.stringify({verifier,createdAt:Date.now()}));
+  const pending=JSON.stringify({verifier,createdAt:Date.now()});sessionStorage.setItem('eduvize-email-login-v1',pending);try{localStorage.setItem('eduvize-email-login-v1',pending);}catch{}
   await request('/auth/email/start',{method:'POST',body:JSON.stringify({email:$('email-login-address').value,proof,remember:$('account-remember').checked})});
   say('email-login-status','Pokud je e-mail registrovaný, obdržíte přihlašovací odkaz. Otevřete ho v tomto prohlížeči.');
  });
