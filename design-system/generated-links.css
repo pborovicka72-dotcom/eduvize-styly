@@ -32,3 +32,7 @@
 
 .edu-link-interaction{display:inline-flex;align-items:center;gap:6px;padding:4px 8px;margin:4px 0;border:1px solid var(--ev-border,#ccdae1);border-radius:6px;color:var(--ev-text,#183047);font-size:13px;font-weight:600;background:var(--ev-surface,#fff)}.edu-link-interaction svg{width:20px;height:20px;flex:none}.edu-link-interaction[data-interaction=interactive]{color:var(--ev-primary,#087d91)}
 
+
+/* Clipboard feedback never participates in document flow or scroll anchoring. */
+body>.edu-link-feedback{position:fixed;inset-inline-end:20px;bottom:20px;z-index:1000;max-width:min(460px,calc(100vw - 40px));margin:0!important;padding:14px 18px;border:1px solid var(--ev-border);border-radius:var(--ev-control-radius,10px);background:var(--ev-surface);color:var(--ev-text);box-shadow:0 4px 20px #0002;line-height:1.5;pointer-events:none}
+body>.edu-link-feedback[hidden]{display:none!important}
