@@ -1,6 +1,6 @@
 .edu-license-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}.edu-license-grid label,.edu-license-renew label{display:grid;gap:6px}.edu-license-result{display:block;width:100%;padding:12px;text-align:left;border:1px solid var(--ev-border,#dce7eb);background:var(--ev-surface,#fff);color:var(--ev-text,#18394b);cursor:pointer}.edu-license-card{border:1px solid var(--ev-border,#dce7eb);border-radius:12px;padding:18px;margin-top:14px}.edu-license-card h3{margin-top:0}.edu-license-card [data-status=expired],#account-license[data-warning=true]{border-inline-start:4px solid #ae5915;padding-inline-start:12px}.edu-license-renew{display:flex;align-items:end;gap:12px;flex-wrap:wrap;margin:16px 0}.edu-license-renew input[type=number]{max-width:130px}#email-login-address{min-width:min(320px,70vw)}#license-code-result{padding:16px;background:var(--ev-bg,#eaf3f6);border-radius:10px;margin-top:16px}#license-code-value{font-family:monospace;width:100%;margin-bottom:10px}#license-filter{max-width:600px}#school-registration summary{font-size:1.2rem;font-weight:650;cursor:pointer}#school-registration details>form{margin-top:20px}#license-admin[hidden],#school-registration[hidden],#account-license[hidden],#license-confirmation[hidden],#license-code-result[hidden]{display:none!important}@media(max-width:700px){.edu-license-grid{grid-template-columns:1fr}}
 
-#license-issue-form .edu-license-grid,#school-register-form .edu-license-grid{margin-bottom:18px}.edu-license-renew .edu-admin__field{flex:1;min-width:220px}.edu-license-renew input[type=search]{width:100%}
+#license-issue-form:not(.edu-admin__flow) .edu-license-grid,#school-register-form:not(.edu-admin__flow) .edu-license-grid{margin-bottom:18px}.edu-license-renew .edu-admin__field{flex:1;min-width:220px}.edu-license-renew input[type=search]{width:100%}
 
 /* A scalable license register: compact overview, management on demand. */
 #license-items{display:flex;flex-direction:column;gap:12px}
@@ -20,3 +20,6 @@
 #license-code-value{margin-bottom:0}
 @media(max-width:760px){.edu-license-overview{grid-template-columns:minmax(0,1fr) auto;gap:10px 16px}.edu-license-validity{grid-column:1/-1}}
 @media(max-width:420px){.edu-license-overview{grid-template-columns:1fr}.edu-license-validity{grid-column:auto}}
+
+/* Empty search results must not leave a gap in shared form stacks. */
+.edu-license-results:empty{display:none}
