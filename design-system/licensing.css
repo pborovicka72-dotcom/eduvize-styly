@@ -30,3 +30,9 @@
 .edu-license-recipient{margin-bottom:20px}
 #register-org-field{margin-bottom:20px}
 #license-organization-fields[hidden],#license-school-fields[hidden],#register-school-fields[hidden],#register-org-field[hidden]{display:none!important}
+
+
+/* Account settings reuse the canonical vertical flow and action rows. */
+#school-account[hidden],#school-email-pending[hidden]{display:none!important}
+#school-email-form .edu-admin__field{max-width:640px}
+#school-account-email{margin:0;font-weight:400}

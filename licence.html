@@ -1,0 +1,30 @@
+<!doctype html><html lang="cs"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Eduvize | Správa licencí</title>
+<link rel="stylesheet" href="./design-system/admin-tokens.css">
+<link rel="stylesheet" href="./design-system/admin-components.css?v=20261103-link-spacing-1">
+<link rel="stylesheet" href="./design-system/admin-shell.css?v=20261103-school-account-1">
+
+<link rel="stylesheet" href="./design-system/licensing.css?v=20261103-1">
+<link rel="stylesheet" href="./design-system/app-icons.css?v=20261031-identity-gap-1">
+<link rel="icon" type="image/svg+xml" href="./design-system/assets/eduvize-favicon-monochrome.svg?v=20261031-account-mono-1">
+<script src="./design-system/theme-first-paint.js?v=2"></script>
+<script src="./design-system/admin-auth.js?v=20261103-licenses-2"></script>
+<script defer src="./design-system/active-theme.js?v=20261102-school-search-2"></script>
+<script defer src="./design-system/admin-header.js?v=6"></script>
+<script defer src="./design-system/admin-navigation.js?v=1"></script>
+
+</head><body class="ev-admin"><main class="edu-admin-page"><header class="edu-page-header"><div class="edu-page-header__identity"><span class="edu-app-icon"><img src="./design-system/assets/eduvize-symbol-white.svg" alt="Eduvize" width="32" height="32"></span><div class="edu-page-header__titles"><div class="edu-page-header__eyebrow">EDUVIZE · SPRÁVA</div><h1 class="edu-page-header__title">Správa licencí</h1></div></div><p class="edu-page-header__description">Vystavení a evidence licencí škol a organizací, jejich platnost a prodloužení.</p></header><section id="license-access" class="edu-admin__card"><h2>Přístup správce Eduvize</h2><p>Pro správu licencí se přihlaste účtem správce služby.</p><a class="edu-admin__button" href="./ucet.html?returnTo=https%3A%2F%2Fpborovicka72-dotcom.github.io%2Feduvize-styly%2Flicence.html">Přejít na přihlášení</a></section><section id="license-admin" hidden class="edu-admin__card edu-admin__flow"><h2>Vystavit licenci</h2><p class="edu-admin__hint">Pouze pro administrátora Eduvize. Licence je přiřazená ke konkrétní škole nebo organizaci a začne platit po potvrzení její registrace.</p>
+<form id="license-issue-form" class="edu-admin__flow">
+<label class="edu-admin__field">Příjemce licence<select id="license-recipient-type"><option value="school">Škola z rejstříku</option><option value="organization">Jiná organizace · ruční zadání</option></select></label>
+<div id="license-school-fields"><label class="edu-admin__field">Vyhledat školu<input id="license-school-query" type="search" required autocomplete="off" placeholder="Název školy, obec, RED IZO nebo IČO"></label><div id="license-school-results" class="edu-license-results"></div></div>
+<fieldset id="license-organization-fields" class="edu-license-manual edu-admin__flow" hidden disabled><legend>Údaje organizace</legend><div class="edu-license-grid">
+<label class="edu-admin__field">Název organizace<input id="license-org-name" required maxlength="300" autocomplete="organization"></label>
+<label class="edu-admin__field">IČO<input id="license-org-ico" required inputmode="numeric" pattern="[0-9]{8}" minlength="8" maxlength="8" aria-describedby="license-ico-hint" placeholder="Osm číslic včetně počátečních nul"></label>
+<label class="edu-admin__field">Adresa<input id="license-org-address" maxlength="300" autocomplete="street-address"></label>
+<label class="edu-admin__field">Obec<input id="license-org-municipality" maxlength="100" autocomplete="address-level2"></label>
+<label class="edu-admin__field">PSČ<input id="license-org-postal" maxlength="20" autocomplete="postal-code"></label></div>
+<p id="license-ico-hint" class="edu-admin__hint">IČO je povinné a používá se pro přesné spárování organizace s Raynetem.</p></fieldset>
+<label class="edu-admin__field edu-license-term">Platnost od aktivace<select id="license-term"><option value="12">1 rok</option><option value="36">3 roky</option><option value="60">5 let</option><option value="permanent">Trvalá</option></select></label>
+<button type="submit" class="edu-admin__button">Vygenerovat licenci</button><p id="license-issue-status" role="status" aria-live="polite"></p></form>
+<div id="license-code-result" hidden class="edu-license-code edu-admin__flow"><label class="edu-admin__field">Nový licenční kód<input id="license-code-value" readonly autocomplete="off" spellcheck="false"></label><button id="license-copy-code" class="edu-admin__button" type="button">Kopírovat kód</button><p class="edu-admin__hint">Kód se zobrazuje pouze nyní. Při ztrátě lze před aktivací vystavit náhradní.</p></div>
+<h3>Evidence licencí</h3><div class="edu-license-renew"><label class="edu-admin__field">Vyhledat v licencích<input id="license-filter" type="search" placeholder="Škola, obec, RED IZO nebo IČO"></label><button id="license-reload" type="button" class="edu-admin__button edu-admin__button--secondary">Obnovit seznam</button></div><p id="license-list-status" role="status" aria-live="polite"></p><div id="license-items" class="edu-license-grid"></div></section></main><script src="./design-system/licensing-client.js?v=20261103-school-account-1"></script><script src="./design-system/license-admin.js?v=20261103-school-account-1"></script></body></html>

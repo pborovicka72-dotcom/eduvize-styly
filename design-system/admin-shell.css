@@ -20,7 +20,8 @@ html.ev-theme-pending body{visibility:hidden}
 .ev-admin .edu-output-section{border:1px solid var(--ev-border);background:var(--ev-surface);border-radius:var(--ev-panel-radius,20px);padding:22px}
 .ev-admin .edu-output-section .edu-output-mode-row{display:flex;flex-direction:column;gap:16px;min-width:0}
 .ev-admin .edu-output-actions{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-top:20px}
-.ev-admin .edu-admin__card h2{font-size:clamp(19px,1.6vw,26px);line-height:1.25;margin:0 0 17px}
+.ev-admin .edu-admin__card h2{font-size:clamp(19px,1.6vw,26px);line-height:1.25}
+.ev-admin .edu-admin__card h2:not(:where(.edu-admin__flow>h2)){margin:0 0 17px}
 /* Cards with a leading application icon retain a clear icon-to-title gap. */
 .ev-admin .edu-admin__card>[data-edu-app-icon]+h2{margin-block-start:16px}
 .ev-admin .edu-admin__stack>h2{margin:0}
@@ -84,11 +85,11 @@ html.ev-theme-pending body{visibility:hidden}
 .ev-admin .edu-admin__card button:not(.edu-search-choice):not(.edu-choice):not(.edu-item-editor__drag):not(.ev-app-tile){font-family:var(--edu-admin-font);font-size:13px;font-weight:700}
 
 /* Separate checkbox sections from preceding fields or explanatory text. */
-.ev-admin .edu-admin__card :is(.edu-admin__field-grid,.preview-form-grid,.edu-admin__field,p)+.edu-checkbox-options{margin-block-start:16px}
-.ev-admin .edu-admin__card :is(p,.edu-admin__hint,.edu-checkbox-group-title)+:is(.edu-checkbox-options,label.edu-admin__checkbox){margin-block-start:12px}
+.ev-admin .edu-admin__card :is(.edu-admin__field-grid,.preview-form-grid,.edu-admin__field,p)+.edu-checkbox-options:not(:where(.edu-admin__flow>*,.edu-admin__disclosure-body>*)){margin-block-start:16px}
+.ev-admin .edu-admin__card :is(p,.edu-admin__hint,.edu-checkbox-group-title)+:is(.edu-checkbox-options,label.edu-admin__checkbox):not(:where(.edu-admin__flow>*,.edu-admin__disclosure-body>*)){margin-block-start:12px}
 
 /* Shared section rhythm: explanations and status text stay clear of action rows. */
-.ev-admin :is(.edu-admin__card,.edu-output-section) :is(.edu-admin__actions,.edu-output-actions,.actions)+:is(p,.help,.edu-admin__hint){margin-block-start:16px}
+.ev-admin :is(.edu-admin__card,.edu-output-section) :is(.edu-admin__actions,.edu-output-actions,.actions)+:is(p,.help,.edu-admin__hint):not(:where(.edu-admin__flow>*,.edu-admin__disclosure-body>*)){margin-block-start:16px}
 .ev-admin .edu-output-section>.edu-output-actions~:is(p,.edu-admin__hint):not(:empty){margin-block-start:16px;margin-block-end:0}
 .ev-admin .edu-output-section>.edu-admin__hint:empty{display:none}
 
@@ -98,7 +99,8 @@ html.ev-theme-pending body{visibility:hidden}
 .ev-admin .edu-admin__flow>*{margin-block:0}
 .ev-admin .edu-admin__flow>:is(button,a.edu-admin__button){align-self:flex-start}
 .ev-admin .edu-admin__flow>[role=status]:empty{display:none}
-.ev-admin .edu-admin__card :is(p,.edu-admin__hint)+:is(form,.edu-admin__field,.edu-admin__field-grid,.edu-admin__actions){margin-block-start:var(--edu-admin-flow-gap)}
-.ev-admin .edu-admin__card :is(button,.edu-admin__button)+:is(p,.edu-admin__hint){margin-block-start:var(--edu-admin-related-gap)}
-.ev-admin .edu-admin__card :is(.edu-admin__field-grid,.edu-admin__control-row)+:is(button,.edu-admin__button){margin-block-start:var(--edu-admin-flow-gap)}
-.ev-admin .edu-admin__card h3+:is(form,.edu-admin__field,.edu-admin__control-row){margin-block-start:var(--edu-admin-flow-gap)}
+.ev-admin .edu-admin__card :is(p,.edu-admin__hint)+:is(form,.edu-admin__field,.edu-admin__field-grid,.edu-admin__actions):not(:where(.edu-admin__flow>*,.edu-admin__disclosure-body>*)){margin-block-start:var(--edu-admin-flow-gap)}
+.ev-admin .edu-admin__card :is(button,.edu-admin__button)+:is(p,.edu-admin__hint):not(:where(.edu-admin__flow>*,.edu-admin__disclosure-body>*)){margin-block-start:var(--edu-admin-related-gap)}
+.ev-admin .edu-admin__card :is(.edu-admin__field-grid,.edu-admin__control-row)+:is(button,.edu-admin__button):not(:where(.edu-admin__flow>*,.edu-admin__disclosure-body>*)){margin-block-start:var(--edu-admin-flow-gap)}
+.ev-admin .edu-admin__card h3+:is(form,.edu-admin__field,.edu-admin__control-row):not(:where(.edu-admin__flow>*,.edu-admin__disclosure-body>*)){margin-block-start:var(--edu-admin-flow-gap)}
+
