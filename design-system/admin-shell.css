@@ -91,3 +91,14 @@ html.ev-theme-pending body{visibility:hidden}
 .ev-admin :is(.edu-admin__card,.edu-output-section) :is(.edu-admin__actions,.edu-output-actions,.actions)+:is(p,.help,.edu-admin__hint){margin-block-start:16px}
 .ev-admin .edu-output-section>.edu-output-actions~:is(p,.edu-admin__hint):not(:empty){margin-block-start:16px;margin-block-end:0}
 .ev-admin .edu-output-section>.edu-admin__hint:empty{display:none}
+
+/* Vertical rhythm is a shared contract, including nested forms and status hints. */
+.ev-admin{--edu-admin-flow-gap:20px;--edu-admin-related-gap:12px}
+.ev-admin .edu-admin__flow{display:flex;flex-direction:column;align-items:stretch;gap:var(--edu-admin-flow-gap)}
+.ev-admin .edu-admin__flow>*{margin-block:0}
+.ev-admin .edu-admin__flow>:is(button,a.edu-admin__button){align-self:flex-start}
+.ev-admin .edu-admin__flow>[role=status]:empty{display:none}
+.ev-admin .edu-admin__card :is(p,.edu-admin__hint)+:is(form,.edu-admin__field,.edu-admin__field-grid,.edu-admin__actions){margin-block-start:var(--edu-admin-flow-gap)}
+.ev-admin .edu-admin__card :is(button,.edu-admin__button)+:is(p,.edu-admin__hint){margin-block-start:var(--edu-admin-related-gap)}
+.ev-admin .edu-admin__card :is(.edu-admin__field-grid,.edu-admin__control-row)+:is(button,.edu-admin__button){margin-block-start:var(--edu-admin-flow-gap)}
+.ev-admin .edu-admin__card h3+:is(form,.edu-admin__field,.edu-admin__control-row){margin-block-start:var(--edu-admin-flow-gap)}
