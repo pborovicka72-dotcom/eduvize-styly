@@ -1,0 +1,18 @@
+name: Link compatibility
+on:
+  push:
+    paths: ['design-system/link-contract.js', 'design-system/output-modes.js', 'design-system/link-compatibility.js', 'design-system/nsp-geometry.js', 'tests/link-contract.test.cjs', '.github/workflows/link-compatibility.yml']
+  pull_request:
+    paths: ['design-system/link-contract.js', 'design-system/output-modes.js', 'design-system/link-compatibility.js', 'design-system/nsp-geometry.js', 'tests/link-contract.test.cjs', '.github/workflows/link-compatibility.yml']
+permissions:
+  contents: read
+jobs:
+  links:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node tests/link-contract.test.cjs
+      - run: node --check design-system/link-compatibility.js
