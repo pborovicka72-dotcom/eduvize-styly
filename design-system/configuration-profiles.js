@@ -19,6 +19,15 @@
     {id:'day-progress',name:'Průběh dne',url:'https://eduvize-prubeh-dne.onrender.com/config.html'},
     {id:'school-systems',name:'Školní informační systémy',url:'https://eduvize-skolni-systemy.onrender.com/config.html'}
   ]);
+  let updatesScript;
+  function mountUpdates(app,host){
+    if(!updatesScript)updatesScript=new Promise((resolve,reject)=>{
+      const script=document.createElement('script');
+      script.src='https://pborovicka72-dotcom.github.io/eduvize-styly/design-system/update-settings.js?v=20261103-1';
+      script.onload=resolve;script.onerror=reject;document.head.append(script);
+    });
+    updatesScript.then(()=>root.EduvizeUpdateSettings.mount(app,host)).catch(()=>{const message=document.createElement('p');message.className='edu-admin__hint';message.textContent='Modul aktualizací se nepodařilo načíst.';host.append(message);});
+  }
   const make=(tag,text,cls)=>{const e=document.createElement(tag);if(text)e.textContent=text;if(cls)e.className=cls;return e;};
   const button=(text,secondary=true)=>{const e=make('button',text,'edu-admin__button'+(secondary?' edu-admin__button--secondary':''));e.type='button';return e;};
   const fingerprint=value=>JSON.stringify(value,(_,v)=>v&&typeof v==='object'&&!Array.isArray(v)?Object.fromEntries(Object.entries(v).sort(([a],[b])=>a.localeCompare(b))):v);
@@ -83,6 +92,7 @@
     const panel=make('div',null,'edu-profile-current');panel.dataset.eduProfilePanel=adapter.app;panel.id='edu-profile-save';
     const profileText=make('p','Profil není vybrán.','edu-profile-current__name'),status=make('p',null,'edu-profile-panel__status');status.setAttribute('role','status');status.setAttribute('aria-live','polite');
     const manage=make('a','Účet a připojení','edu-admin__button edu-admin__button--secondary');manage.href=manageUrl('');const actions=make('div',null,'edu-admin__actions'),load=button('Načíst uložené nastavení'),undo=button('Vrátit před načtením');undo.hidden=true;load.hidden=true;actions.append(load,undo);panel.append(profileText,status,manage,actions);if(row)row.after(panel);else save.after(panel);
+    mountUpdates(adapter.app,panel);
     const changeStatus=make('p','Bez neuložených změn.','edu-profile-change-status');changeStatus.dataset.eduChangeStatus='';changeStatus.setAttribute('role','status');changeStatus.setAttribute('aria-live','polite');panel.prepend(changeStatus);
     let editBaseline='',userChanged=false;
     function resetEditState(message='Bez neuložených změn.'){userChanged=false;editBaseline=fingerprint(adapter.read());changeStatus.textContent=message;changeStatus.dataset.state='saved';}

@@ -1,0 +1,13 @@
+import fs from 'node:fs';import vm from 'node:vm';import assert from 'node:assert/strict';
+const scheduled=new Map();let id=0,time=0,events=[];const DateMock=class extends Date {static now(){return time}};
+const scope={setInterval:(fn,delay)=>{scheduled.set(++id,{fn,delay});return id},clearInterval:id=>scheduled.delete(id),Date:DateMock,CustomEvent:class{constructor(type,{detail}){this.type=type;this.detail=detail}},dispatchEvent:e=>events.push(e),document:{createElement:()=>({}),head:{append(){}}}};scope.window=scope;scope.parent=scope;
+vm.runInNewContext(fs.readFileSync(new URL('../refresh-clock.js',import.meta.url),'utf8'),scope);
+let refreshes=0,clock=0;const handle=scope.setInterval(()=>refreshes++,300000),clockHandle=scope.setInterval(()=>clock++,1000);
+assert.equal(scope.EduvizeRefreshClock.status().scheduled,true);
+scope.EduvizeRefreshClock.configure(60);assert.ok([...scheduled.values()].some(t=>t.delay===60000));assert.ok([...scheduled.values()].some(t=>t.delay===1000));
+[...scheduled.values()].find(t=>t.delay===60000).fn();assert.equal(refreshes,1);
+scope.EduvizeRefreshClock.configure(0);assert.equal(scope.EduvizeRefreshClock.status().scheduled,false);assert.equal(scheduled.size,1);
+scope.EduvizeRefreshClock.configure(null);assert.ok([...scheduled.values()].some(t=>t.delay===300000));
+scope.clearInterval(handle);assert.equal(scheduled.size,1);scope.clearInterval(clockHandle);assert.equal(scheduled.size,0);
+let pageIndex=0;const pager=scope.setInterval(()=>pageIndex++,60000);scope.EduvizeRefreshClock.configure(0);assert.equal(scheduled.size,1);[...scheduled.values()][0].fn();assert.equal(pageIndex,1);scope.clearInterval(pager);
+console.log('Changing/stopping refresh preserves fast clocks and stable clearInterval handles');

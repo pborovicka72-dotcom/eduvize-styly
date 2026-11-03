@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "apps": {
+    "holidays": {
+      "state": "ok",
+      "lastSuccess": "2026-11-02T22:03:20.429920+00:00",
+      "message": "Úplný import a validace 366 dat českých jmenin; 4017 kalendářních záznamů.",
+      "record": "https://github.com/pborovicka72-dotcom/eduvize-svatky/blob/main/data/namedays-cz.json"
+    }
+  }
+}
