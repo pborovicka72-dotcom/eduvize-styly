@@ -18,8 +18,8 @@
   const summary=node('summary'),summaryText=node('span','Aktualizace'),brief=node('span','Ověřuji plán…','edu-update-settings__summary-state');summary.append(summaryText,brief);panel.append(summary);
   const body=node('div',null,'edu-update-settings__body'),content=node('section',null,'edu-update-settings__section'),maintenance=node('section',null,'edu-update-settings__section');
   function select(title,entries,parent){const label=node('label',title,'edu-admin__field'),input=node('select');for(const[value,text]of entries){const option=node('option',text);option.value=String(value);input.append(option);}label.append(input);parent.append(label);return input;}
-  content.append(node('h3','Obnovování obsahu'),node('p','Probíhá při otevřeném výstupu. Čas, odpočty a stránkování zůstávají nezávislé.'));
-  const refresh=select('Četnost obnovování',[['default','Výchozí intervaly aplikace'],[0,'Vypnuto'],[30,'Každých 30 sekund'],[60,'Každou minutu'],[120,'Každé 2 minuty'],[300,'Každých 5 minut'],[600,'Každých 10 minut'],[900,'Každých 15 minut'],[1800,'Každých 30 minut'],[3600,'Každou hodinu']],content);
+  content.append(node('h3','Automatická aktualizace zobrazovaných dat'),node('p','Načítá aktuální data, dokud je stránka zobrazená na obrazovce, v kiosku nebo v náhledu. Po zavření stránky se zastaví. Hodiny a stránkování mají vlastní časování.'));
+  const refresh=select('Četnost aktualizace dat',[['default','Výchozí intervaly aplikace'],[0,'Vypnuto'],[30,'Každých 30 sekund'],[60,'Každou minutu'],[120,'Každé 2 minuty'],[300,'Každých 5 minut'],[600,'Každých 10 minut'],[900,'Každých 15 minut'],[1800,'Každých 30 minut'],[3600,'Každou hodinu']],content);
   const refreshState=node('p','Stav načítám…');content.append(refreshState);
   maintenance.append(node('h3','Údržba zdrojů'),node('p',app==='holidays'?'Kontrola úplného kalendáře jmenin a import změn po ověření.':'Pravidelná kontrola dostupnosti a formátu zdrojů aplikace; případné změny se zveřejní po ověření.'));
   const cadence=select('Četnost kontroly',Object.entries(frequency),maintenance),next=node('p'),last=node('p');maintenance.append(next,last,node('p','Plánovač: Codex · kontroly v 9:00, časové pásmo Praha.','edu-update-settings__hint'));
@@ -31,10 +31,10 @@
   function state(){save.disabled=busy||!plan;reload.disabled=busy;cadence.disabled=busy||!plan;refresh.disabled=busy||!plan||app==='styles';}
   function show(value){plan=value;refresh.value=value.refreshSeconds===null?'default':String(value.refreshSeconds);cadence.value=value.maintenanceFrequency;unsaved=false;
    const seconds=value.refreshSeconds===null?value.defaultRefreshSeconds:value.refreshSeconds;
-   refreshState.textContent=seconds===0?'Automatické obnovování obsahu je vypnuté.':'Další obnova ve výstupu: podle jeho běžícího intervalu. Výchozí nejkratší interval: '+seconds+' s.';
+   refreshState.textContent=seconds===0?'Automatická aktualizace zobrazovaných dat je vypnutá.':'Další aktualizace dat: podle intervalu otevřeného výstupu. Nastavený nejkratší interval: '+seconds+' s.';
    next.textContent=value.maintenanceNextRun?'Další kontrola: '+date(value.maintenanceNextRun)+'.':'Pravidelná údržba není naplánována.';
    last.textContent='Poslední úspěšná kontrola: '+date(value.lastMaintenanceCheck)+(value.maintenanceStatus==='error'?' · Poslední pokus selhal.':'');
-   brief.textContent=(seconds===0?'Obsah: vypnuto':'Obsah: '+(value.refreshSeconds===null?'výchozí interval':seconds+' s'))+' · Údržba: '+frequency[value.maintenanceFrequency].toLocaleLowerCase('cs');
+   brief.textContent=(seconds===0?'Data: vypnuto':'Data: '+(value.refreshSeconds===null?'výchozí interval':seconds+' s'))+' · Údržba: '+frequency[value.maintenanceFrequency].toLocaleLowerCase('cs');
    if(app==='styles')refreshState.textContent='Správa stylů nemá vlastní datový výstup. Aktivní vzhled přebírají jednotlivé aplikace automaticky.';panel.dataset.revision=String(value.revision);state();
   }
   async function load(){if(busy)return;busy=true;plan=null;state();try{await root.EduvizeAdminAuth?.ready;const before=activeIdentity(),value=await request(app);if(before!==activeIdentity())throw Error('Změnil se účet školy. Obnovte stav.');identity=before;show(value);say('');}catch(error){brief.textContent='Plán nelze ověřit';say(error.message,true);}finally{busy=false;state();}}
@@ -48,7 +48,7 @@
   root.addEventListener('message',event=>{
    if(event.data?.type!=='eduvize-refresh-state'||!event.data.nextRun||!plan)return;
    const frame=[...document.querySelectorAll('iframe')].find(f=>f.contentWindow===event.source);if(!frame)return;
-   refreshState.textContent='Další obnova v živém náhledu: '+date(event.data.nextRun)+(event.data.lastTriggered?' · naposledy spuštěno '+date(event.data.lastTriggered):'')+'.';
+   refreshState.textContent='Další aktualizace dat v živém náhledu: '+date(event.data.nextRun)+(event.data.lastTriggered?' · naposledy spuštěno '+date(event.data.lastTriggered):'')+'.';
   });
   state();load();
  }
