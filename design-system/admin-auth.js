@@ -113,6 +113,7 @@
  async function handoff(returnTo){await ready;if(!getToken())throw Error(need());const data=await json(await sessionFetch(CENTRAL+'/api/admin-session/handoff',{method:'POST',cache:'no-store',headers:{Authorization:'Bearer '+session.token,'Content-Type':'application/json'},body:JSON.stringify({returnTo})}));const u=new URL(returnTo),hash=u.hash;if(session?.profileId)u.searchParams.set('edu-profile',session.profileId);u.hash=new URLSearchParams({'edu-auth-code':data.code,...(hash?{'edu-return-hash':hash}:{})}).toString();return u.href;}
  function renderBanner(){
   if(isAccount||isHub||!document.body)return;
+  if(document.body.dataset.eduAuthBanner==='signed-in'&&!getToken()){banner?.remove();banner=null;return;}
   if(!banner){banner=document.createElement('aside');banner.className='edu-admin-session';banner.setAttribute('role','status');const title=document.createElement('span'),link=document.createElement('a');title.className='edu-admin-session__status';link.className='edu-admin__button edu-admin__button--secondary';banner.append(title,link);const header=document.querySelector('main .edu-page-header');if(header)header.after(banner);else document.querySelector('main')?.prepend(banner);}
   banner.querySelector('span').textContent=message||(getToken()?'Přihlášeno do správy Eduvize.':'Přihlášení a připojení OneDrive se spravuje na stránce Účet a konfigurace.');const a=banner.querySelector('a');a.href=loginUrl();a.textContent=getToken()?'Účet a připojení':'Přejít na přihlášení';
  }
