@@ -9,5 +9,5 @@ scope.EduvizeRefreshClock.configure(60);assert.ok([...scheduled.values()].some(t
 scope.EduvizeRefreshClock.configure(0);assert.equal(scope.EduvizeRefreshClock.status().scheduled,false);assert.equal(scheduled.size,1);
 scope.EduvizeRefreshClock.configure(null);assert.ok([...scheduled.values()].some(t=>t.delay===300000));
 scope.clearInterval(handle);assert.equal(scheduled.size,1);scope.clearInterval(clockHandle);assert.equal(scheduled.size,0);
-let pageIndex=0;const pager=scope.setInterval(()=>pageIndex++,60000);scope.EduvizeRefreshClock.configure(0);assert.equal(scheduled.size,1);[...scheduled.values()][0].fn();assert.equal(pageIndex,1);scope.clearInterval(pager);
+let pageIndex=0;const pager=scope.setInterval(()=>pageIndex++,60000);scope.EduvizeRefreshClock.configure(0);assert.equal(scheduled.size,1);[...scheduled.values()][0].fn();assert.equal(pageIndex,1);scope.clearInterval(pager);function advance(){}const auto=scope.setInterval(()=>advance(),60000);assert.equal(scheduled.size,1);scope.clearInterval(auto);
 console.log('Changing/stopping refresh preserves fast clocks and stable clearInterval handles');

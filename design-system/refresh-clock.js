@@ -10,7 +10,7 @@
   t.next=Date.now()+delay;t.actual=start(()=>{lastTriggered=new Date().toISOString();t.next=Date.now()+delay;emit();t.callback(...t.args);},delay);
  }
  root.setInterval=function(callback,delay,...args){
-  if(typeof callback!=='function'||Number(delay)<30000||/^(updateClock|clock|fit|render)$/i.test(callback.name||'')||/pageIndex|pageSeconds|nextPage|previousPage|currentPage|rotate|pagination|slideIndex/i.test(String(callback)))return start(callback,delay,...args);
+  if(typeof callback!=='function'||Number(delay)<30000||/^(updateClock|clock|fit|render)$/i.test(callback.name||'')||/pageIndex|pageSeconds|nextPage|previousPage|currentPage|rotate|pagination|slideIndex|advance\s*\(/i.test(String(callback)))return start(callback,delay,...args);
   const t={callback,args,original:Number(delay),actual:null,next:null};arm(t);
   // Keep a stable handle even after changing the underlying native interval.
   const handle=t.actual||start(()=>{},2147483647);if(!t.actual)stop(handle);timers.set(handle,t);emit();return handle;
