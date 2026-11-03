@@ -37,7 +37,7 @@
    brief.textContent=(seconds===0?'Obsah: vypnuto':'Obsah: '+(value.refreshSeconds===null?'výchozí interval':seconds+' s'))+' · Údržba: '+frequency[value.maintenanceFrequency].toLocaleLowerCase('cs');
    if(app==='styles')refreshState.textContent='Správa stylů nemá vlastní datový výstup. Aktivní vzhled přebírají jednotlivé aplikace automaticky.';panel.dataset.revision=String(value.revision);state();
   }
-  async function load(){if(busy)return;busy=true;plan=null;state();try{const before=activeIdentity(),value=await request(app);if(before!==activeIdentity())throw Error('Změnil se účet školy. Obnovte stav.');identity=before;show(value);say('');}catch(error){brief.textContent='Plán nelze ověřit';say(error.message,true);}finally{busy=false;state();}}
+  async function load(){if(busy)return;busy=true;plan=null;state();try{await root.EduvizeAdminAuth?.ready;const before=activeIdentity(),value=await request(app);if(before!==activeIdentity())throw Error('Změnil se účet školy. Obnovte stav.');identity=before;show(value);say('');}catch(error){brief.textContent='Plán nelze ověřit';say(error.message,true);}finally{busy=false;state();}}
   save.onclick=async()=>{if(busy||!plan)return;if(identity!==activeIdentity()){say('Změnil se účet školy. Nejprve obnovte stav.',true);return;}busy=true;state();say('Ukládám plán…');try{
    const value=await request(app,{method:'PUT',body:JSON.stringify({expectedRevision:plan.revision,refreshSeconds:refresh.value==='default'?null:Number(refresh.value),maintenanceFrequency:cadence.value})});
    show(value);say('Plán uložen pro školu. Běžící výstupy jej převezmou do minuty.');root.dispatchEvent(new CustomEvent('eduvize-update-plan-saved',{detail:value}));
