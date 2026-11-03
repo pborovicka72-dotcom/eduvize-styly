@@ -13,7 +13,7 @@
   const base=parseFloat(getComputedStyle(quote).fontSize);if(available<=0)return;
   function fits(size){quote.style.setProperty('font-size',size+'px','important');return quote.scrollHeight<=available+1&&quote.scrollWidth<=quote.clientWidth+1;}
   const length=quote.textContent.trim().length;
-  const target=length<=180?Math.max(base,Math.min(220,content.clientWidth/9,available*.38)):base;
+  const target=root.EduvizeOutputModes?.mode?.()==='kiosk'?base:length<=180?Math.max(base,Math.min(220,content.clientWidth/9,available*.38)):base;
   if(fits(target))return;
   let low=Math.min(12,base),high=target;
   for(let step=0;step<12;step++){const mid=(low+high)/2;if(fits(mid))low=mid;else high=mid;}
@@ -45,7 +45,7 @@
   const gap=clamp(Math.min(width,height)*.014,10,28);
   const cardWidth=(width-gap*(columns-1))/columns;
   const cardHeight=(height-gap*(rows-1))/rows;
-  const font=signage?clamp(Math.min(cardWidth/24,cardHeight/15),20,58):(root.EduvizeOutputModes?.mode?.()==='kiosk'?clamp(width/100,20,32):16);
+  const font=root.EduvizeOutputModes?.mode?.()==='kiosk'?root.EduvizeSegmentProfile.text(root.EduvizeSegmentProfile.resolve(width,height),'kiosk').body:signage?clamp(Math.min(cardWidth/24,cardHeight/15),20,58):(root.EduvizeOutputModes?.mode?.()==='kiosk'?clamp(width/100,20,32):16);
   return {columns,rows,capacity,side:signage&&images&&cardWidth>=520&&cardWidth/cardHeight>=1.45,font,pad:clamp(font*.65,14,32),gap};
  }
  function apply(body,grid,options){

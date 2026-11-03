@@ -1,0 +1,75 @@
+/* Nearby touch reading. Geometry sets the scale; item count never enlarges text.
+   These bindings only affect kiosk output. NSP and ordinary document flow stay independent. */
+html.kiosk-output{--edu-kiosk-space:clamp(12px,1.8vmin,24px)}
+html.kiosk-output :is(.edu-build-marker,.edu-kiosk-style-version,#kiosk-build-marker){display:none!important}
+html.kiosk-output .edu-output-header .edu-header-meta{font-size:var(--edu-header-meta)!important}
+html.kiosk-output :is(.edu-pagination-button,.edu-kiosk-pagination button,.edu-document-tool,.navigation button,.gallery-controls button){min-height:max(44px,calc(var(--edu-text-body,24px)*1.6))!important;font-size:var(--edu-text-caption,18px)!important}
+html.kiosk-output :is(.edu-pagination-status,.edu-kiosk-pagination>span){font-size:var(--edu-text-caption,18px)!important}
+
+html[data-kiosk-app="wisdom"].kiosk-output .edu-wisdom-output .content>.quote{font-size:calc(var(--edu-text-body)*1.35)!important;max-width:42em;line-height:1.4!important}
+html[data-kiosk-app="wisdom"].kiosk-output .edu-wisdom-output .content>.quote[data-length="long"]{font-size:var(--edu-text-body)!important}
+html[data-kiosk-app="wisdom"].kiosk-output .attribution .author{font-size:var(--edu-text-body)!important}
+html[data-kiosk-app="wisdom"].kiosk-output .attribution :is(.work,.source-link){font-size:var(--edu-text-caption)!important}
+html[data-kiosk-app="wisdom"].kiosk-output .wisdom-quotation{padding:var(--edu-kiosk-space)!important;gap:var(--edu-kiosk-space)!important;justify-content:center;flex:0 1 auto!important;min-height:min(60vh,calc(var(--edu-text-body)*9));max-height:100%;overflow:hidden}
+html[data-kiosk-app="wisdom"].kiosk-output #display>.panel{gap:var(--edu-kiosk-space)!important}
+
+html[data-kiosk-app="holidays"].kiosk-output body.ev-modern :is(.upcoming-name,.upcoming-event,.upcoming-date){font-size:var(--edu-text-body)!important}
+html[data-kiosk-app="holidays"].kiosk-output body.ev-modern .upcoming-date{font-size:var(--edu-text-caption)!important}
+html[data-kiosk-app="holidays"].kiosk-output body.ev-modern .upcoming-event{font-size:var(--edu-text-label)!important}
+html[data-kiosk-app="holidays"].kiosk-output body.ev-modern .metric-value{font-size:var(--edu-text-value)!important}
+html[data-kiosk-app="holidays"].kiosk-output body.ev-modern :is(.metric-name,.metric-note){font-size:var(--edu-text-label)!important}
+html[data-kiosk-app="holidays"].kiosk-output body.ev-modern .upcoming-grid{flex:0 1 auto!important;grid-template-rows:none!important;grid-auto-rows:minmax(min-content,1fr)!important;align-content:start}
+html[data-kiosk-app="holidays"].kiosk-output body.ev-modern .upcoming-day{container-type:normal;gap:.4em;min-height:calc(var(--edu-text-body)*5);padding:var(--edu-kiosk-space)!important}
+html[data-kiosk-app="holidays"].kiosk-output body.ev-modern .calendar-metrics{flex:0 1 auto!important;max-height:none!important}
+html[data-kiosk-app="holidays"].kiosk-output body.ev-modern .calendar-card{padding:var(--edu-kiosk-space);min-height:0}
+html[data-kiosk-app="holidays"].kiosk-output body.calendar-reading #upcoming>.calendar-details{font-size:var(--edu-text-body)}
+html[data-kiosk-app="holidays"].kiosk-output body.calendar-reading #upcoming>.section-heading h2{font-size:var(--edu-text-title)!important}
+html[data-kiosk-app="holidays"].kiosk-output body.calendar-reading.ev-modern .shell>#upcoming{grid-template-rows:minmax(0,auto) auto minmax(0,auto)!important;align-content:start}
+html[data-kiosk-app="holidays"].kiosk-output body.calendar-reading.ev-modern .name-profile{height:auto!important;min-height:calc(var(--edu-text-body)*10);max-height:calc(var(--edu-text-body)*22)}
+html[data-kiosk-app="holidays"].kiosk-output body.calendar-reading .name-profile-text{flex:0 1 auto!important}
+html[data-kiosk-app="holidays"].kiosk-output body.calendar-reading .name-profile-art svg{max-height:calc(var(--edu-text-body)*7)}
+
+html[data-kiosk-app="menu"].kiosk-output .edu-meal-board{height:auto;max-height:100%;align-items:stretch}
+html[data-kiosk-app="menu"].kiosk-output .edu-meal-day-body{flex:0 1 auto;padding-bottom:1em}
+html[data-kiosk-app="menu"].kiosk-output .edu-meal-course[data-kind=lunch]{flex:none}
+html[data-kiosk-app="menu"].kiosk-output .edu-meal-allergens{font-size:max(14px,.6em)}
+
+html[data-kiosk-app="weather"].kiosk-output.weather-station .station-temperature{font-size:var(--edu-text-value,64px)!important}
+html[data-kiosk-app="weather"].kiosk-output.weather-station .station-symbol{width:calc(var(--station-body)*3);height:calc(var(--station-body)*3)}
+html[data-kiosk-app="weather"].kiosk-output.weather-station .station-dashboard{--edu-text-value:calc(var(--station-body)*2.4)}
+html[data-kiosk-app="weather"].kiosk-output.weather-station .station-dashboard{overflow:auto;overscroll-behavior:contain}
+html[data-kiosk-app="weather"].kiosk-output.weather-station .station-place{font-size:var(--station-body)}
+html[data-kiosk-app="weather"].kiosk-output.weather-station :is(.station-note,.station-extra,.station-hours .station-hour-condition,.station-hours .station-hour-time){font-size:max(14px,calc(var(--station-body)*.6))}
+
+html[data-kiosk-app="day-progress"].kiosk-output #day-app .day-header-title{font-size:var(--edu-header-title)}
+html[data-kiosk-app="day-progress"].kiosk-output #day-app .hero{grid-template-rows:auto auto;align-content:start}
+html[data-kiosk-app="day-progress"].kiosk-output #day-app .count-block{min-height:0}
+html[data-kiosk-app="day-progress"].kiosk-output #day-app .day-content{flex:0 1 auto;min-height:0}
+html[data-kiosk-app="day-progress"].kiosk-output #day-app .day-aside{align-content:start}
+html[data-kiosk-app="day-progress"].kiosk-output #day-app :is(.next-panel,.end-panel){flex:0 1 auto}
+
+html[data-kiosk-app="gallery"].kiosk-output .gallery-controls button{min-width:44px}
+html[data-kiosk-app="gallery"].kiosk-output .gallery-message{font-size:var(--edu-text-body)}
+html[data-kiosk-app="gallery"].kiosk-output footer{font-size:var(--edu-text-caption)}
+html[data-kiosk-app="gallery"].kiosk-output header img{max-height:var(--edu-header-icon);width:auto;max-width:22%}
+
+html[data-kiosk-app="school-calendar"].kiosk-output .calendar-header{margin-bottom:var(--edu-kiosk-space);border-radius:var(--ev-card-radius)}
+html[data-kiosk-app="school-calendar"].kiosk-output .calendar-header h1{font-size:var(--edu-header-title)}
+html[data-kiosk-app="school-calendar"].kiosk-output .header-icon{width:var(--edu-header-icon);height:var(--edu-header-icon);border-radius:var(--ev-icon-radius)}
+html[data-kiosk-app="school-calendar"].kiosk-output .header-icon svg{width:60%;height:60%}
+html[data-kiosk-app="school-calendar"].kiosk-output .header-clock{max-width:40%;min-width:0}
+html[data-kiosk-app="school-calendar"].kiosk-output .header-clock strong{font-size:var(--edu-header-title)}
+html[data-kiosk-app="school-calendar"].kiosk-output .rangebar h2{font-size:var(--edu-text-title)}
+html[data-kiosk-app="school-calendar"].kiosk-output :is(.legend,.weekday,.nameday,.day-event,.day-number small,.today-label,.extra){font-size:max(14px,calc(var(--edu-text-body)*.6))}
+html[data-kiosk-app="school-calendar"].kiosk-output .day-number{font-size:var(--edu-text-body)}
+html[data-kiosk-app="school-calendar"].kiosk-output .agenda{flex:0 1 auto;grid-auto-rows:1fr;align-content:start}
+html[data-kiosk-app="school-calendar"].kiosk-output .agenda-event{min-height:calc(var(--edu-text-body)*4);padding:var(--edu-kiosk-space)}
+html[data-kiosk-app="school-calendar"].kiosk-output :is(.agenda-event h3,.focus h3,.detail-event h4,.day-detail h3){font-size:var(--edu-text-title)}
+html[data-kiosk-app="school-calendar"].kiosk-output :is(.agenda-event strong,.focus p,.detail-event p){font-size:var(--edu-text-label)}
+html[data-kiosk-app="school-calendar"].kiosk-output :is(.agenda-event small,.eyebrow,.focus-category,.count span,.detail-event small,.detail-event a,footer){font-size:var(--edu-text-footnote)}
+html[data-kiosk-app="school-calendar"].kiosk-output .count strong{font-size:var(--edu-text-value)}
+html[data-kiosk-app="school-calendar"].kiosk-output #warning{font-size:var(--edu-text-footnote)}
+
+/* Sparse home/menu tiles retain the same icon and label hierarchy. */
+html[data-kiosk-app="kiosk"].kiosk-output body:is(.menu-layout,.tiles-home) #tiles .tile{--tile-icon-size:min(48cqmin,calc(var(--edu-text-body,24px)*3))}
+html[data-kiosk-app="kiosk"].kiosk-output body:is(.menu-layout,.tiles-home) #tiles .tile strong{font-size:clamp(14px,calc(var(--tile-icon-size)*.28),var(--edu-text-title,30px))}

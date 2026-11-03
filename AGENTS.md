@@ -1,9 +1,9 @@
 # Eduvize output rules
 
-- Kiosk content must reuse the Newline/NSP geometry and typography calculations for its actual available content viewport. Kiosk changes framing, navigation and interaction, not the content reading scale.
-- Preserve the shared kiosk header and calculate layout in the remaining available space. Never recreate the NSP appearance using independent smaller fonts, fixed card heights or accumulated kiosk-only overrides.
-- Keep repeated cards equal in height, including across rows, and use the whole available content area.
-- Before shipping a kiosk style, compare NSP and kiosk at identical viewport sizes and verify computed text sizes, icons, spacing, complete content and equal card heights. Verify both orientations in the actual administration preview as well as the app output.
+- Kiosk uses the shared geometry and semantic text roles for its actual available content viewport. For nearby touch reading use `EduvizeSegmentProfile.kiosk`, `header(geometry,'kiosk')` and `text(geometry,'kiosk')` in every application. The kiosk reading scale is bounded (body 24–40px, header 88–160px), independent of item count or empty space. NSP and ordinary web keep their existing scales. This supersedes the earlier requirement for identical NSP/kiosk physical font sizes.
+- Preserve the shared kiosk header and calculate layout in the remaining available space. Bind application roles to the common kiosk metrics; do not add independent per-app font scales or enlarge short quotations, clocks, icons or cards just to fill the display. Fitters may reduce overflowing content, never enlarge it beyond its semantic role.
+- Keep repeated cards equal in height, including across rows. Kiosk cards may use their natural height and leave unused space when content is sparse. Photos, charts and timetable matrices may use available area without enlarging their text.
+- Before shipping a kiosk style, compare applications at identical kiosk viewport sizes and verify shared role sizes, icons, spacing, complete content and equal repeated-card heights. Separately verify NSP/web regressions. Verify both orientations in the actual administration preview as well as the app output.
 - Check long names, events, empty/hidden cards and the no-upcoming-days case. Preserve ordinary web document flow and existing NSP segment behavior.
 - Keep release versions only in diagnostics and asset URLs; never render release numbers in application or administration UI. Refresh asset versions when publishing changes.
 

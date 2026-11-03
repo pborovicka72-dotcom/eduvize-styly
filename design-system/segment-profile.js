@@ -7,11 +7,19 @@
   return Object.freeze({width,height,short,ratio,kind,scale:short/720});
  }
  function schoolOverviewAllowed(width,height,mode='nsp'){return mode==='kiosk'||mode==='nsp'&&width>=1200&&height>=1000&&width*height>=1900000&&width/height>=.55&&width/height<=2.65;}
+ // A touch screen is read nearby. Size by viewport, never by item count or empty space.
+ function kiosk(geometry){
+  const clamp=(n,a,b)=>Math.max(a,Math.min(b,n));
+  const body=clamp(geometry.short*.03,24,40),height=clamp(geometry.short*.12,88,160);
+  return Object.freeze({body,height,gap:clamp(body*.6,12,24),value:body*2.4,display:body*4});
+ }
  function header(geometry,mode='nsp'){
+  if(mode==='kiosk'){const {height}=kiosk(geometry);return Object.freeze({height,icon:height*.6,title:height*.34,meta:height*.18,padding:height*.1,gap:height*.15});}
   const height=mode==='web'?96:geometry.short<=720?192:geometry.short<=1200?288:Math.round(geometry.short*.22/32)*32;
   return Object.freeze({height,icon:height*.64,title:height*.36,meta:height*.18,padding:height*.05,gap:height*.08});
  }
  function text(geometry,mode='nsp'){
+  if(mode==='kiosk'){const {body,value}=kiosk(geometry);return Object.freeze({body,title:body*1.25,label:body*.85,caption:body*.75,footnote:Math.max(14,body*.6),value});}
   const stripBoost=geometry.ratio>=3&&geometry.short<=600?48:40;
   const body=mode==='web'?18:Math.max(stripBoost,Math.min(112,geometry.short*.052));
   const footnote=mode==='web'?14:Math.max(16,Math.min(40,geometry.short*.02));
@@ -30,7 +38,9 @@
 
  function documentCatalog(width,height,{heading=64,count=1,folder=true}={}){
   const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
-  const title=clamp(heading*.48,22,68),label=clamp(title*.55,16,38);
+  const touch=root.EduvizeOutputModes?.mode?.()==='kiosk';
+  const body=touch?kiosk(resolve(root.innerWidth,root.innerHeight)).body:0;
+  const title=touch?body:clamp(heading*.48,22,68),label=touch?Math.max(14,body*.7):clamp(title*.55,16,38);
   const gap=clamp(title*.4,12,28),maxWidth=clamp(title*12,300,720);
   let columns=Math.max(1,Math.ceil((width+gap)/(maxWidth+gap))||1);
   const cardWidth=(width-gap*(columns-1))/columns;
@@ -38,5 +48,5 @@
   const rows=Math.max(1,Math.min(Math.ceil(count/columns),Math.floor((height+gap)/(cardHeight+gap))||1));
   return Object.freeze({columns,rows,title,label,gap,pad:clamp(title*.55,14,36),icon:clamp(title*1.35,40,96),cardHeight,gridWidth:width});
  }
- root.EduvizeSegmentProfile=Object.freeze({resolve,header,text,holidays,documentCatalog,schoolOverviewAllowed});
+ root.EduvizeSegmentProfile=Object.freeze({resolve,header,text,kiosk,holidays,documentCatalog,schoolOverviewAllowed});
 })(typeof window==='undefined'?globalThis:window);
