@@ -14,3 +14,5 @@
 - Weather station layouts in NSP must use the canonical `EduvizeNSPLayouts.kioskAllowed` predicate, shared with kiosk administration. Disable unsupported segments in the picker and enforce the same rule on direct output URLs.
 
 - Keep school application cards in application management sorted by their visible Czech names using Czech alphabetical order (locale cs). Insert every new application at its alphabetical position. Keep central management (styles and kiosk) separate from school applications.
+
+- Treat published output URLs as a stable public API. Preserve historical routes, aliases, omitted-parameter defaults and unknown content parameters. Read LINK_COMPATIBILITY.md before changing URL parsing, generation or configuration schemas. Version application releases independently of the link schema; do not force schools to replace links for routine updates. Add legacy URL regression cases and a precise administration notice before any incompatible change. Never show migration notices on public output screens or automatically rewrite school links.
