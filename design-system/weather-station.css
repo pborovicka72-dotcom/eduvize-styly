@@ -109,3 +109,9 @@ html.weather-station.kiosk-output .station-dashboard[data-station-shape="portrai
 
 html.weather-station.kiosk-output .station-readings{gap:.2em}
 html.weather-station.kiosk-output .station-feels{line-height:1.15}
+
+/* In narrow instrument cards retain the full text before decorative gauges. */
+html.weather-station.kiosk-output .station-instruments{container-type:inline-size}
+@container(max-width:640px){html.weather-station.kiosk-output .station-instruments .station-card{padding-right:clamp(10px,1cqw,32px)}html.weather-station.kiosk-output .station-instruments .station-gauge{display:none}}
+html.weather-station.kiosk-output .station-hero{container-type:inline-size}
+@container(max-width:480px){html.weather-station.kiosk-output .station-current{flex-direction:column;gap:6px}html.weather-station.kiosk-output .station-symbol{width:48px;height:48px}html.weather-station.kiosk-output .station-readings{text-align:center}html.weather-station.kiosk-output .station-feels{white-space:normal}}
