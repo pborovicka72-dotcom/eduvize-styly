@@ -42,45 +42,21 @@ html[data-weather-strip] :is(.footer,.edu-auto-pagination,.page-indicator){displ
 html[data-weather-strip] #weather-pages :is(.hourly-grid,.metrics,.forecast-grid){align-items:stretch}
 html[data-weather-header-only] :is(#weather-pages,.footer,.edu-kiosk-pagination,.page-indicator,.weather-alerts){display:none!important}
 html[data-weather-header-only] .shell{justify-content:center}
-html[data-kiosk-app="weather"][data-output-mode][data-weather-header-only] .hero.edu-output-header{display:grid!important;grid-template-columns:auto minmax(0,1fr) 25%;grid-template-rows:1fr 1fr;align-content:center}
-html[data-weather-header-only] .hero>.edu-app-icon{grid-column:1;grid-row:1;align-self:end}
-html[data-weather-header-only] .weather-current{display:contents}
-html[data-weather-header-only] .temperature{grid-column:2;grid-row:1;align-self:end}
-html[data-weather-header-only] .hero-details{grid-column:1 / 3;grid-row:2;align-self:start;padding-top:var(--edu-header-gap);gap:12px}
-html[data-weather-header-only] .hero-art{grid-column:3;grid-row:1 / 3;width:100%!important;height:auto!important;min-width:0!important;align-self:center}
-html[data-kiosk-app="weather"][data-output-mode][data-weather-header-only] .edu-output-header .hero-art>svg{width:90%!important;height:auto!important;max-height:none!important;aspect-ratio:1}
-
-
-html[data-weather-header-only] .edu-output-header .edu-header-art .condition-label{font-size:calc(var(--edu-header-meta)*.65);max-width:100%;overflow-wrap:break-word}
-
 /* Daily cards always share the entire section width, independently of hourly density. */
 html[data-kiosk-app="weather"][data-output-mode] #weather-pages .daily-hourly-grid{grid-template-columns:repeat(var(--weather-daily,3),minmax(0,1fr))!important}
 
-/* Tall weather panels reserve independent header cells and use vertical card tracks. */
-html[data-kiosk-app="weather"][data-weather-portrait]:not([data-weather-header-only]) .hero.edu-output-header{display:grid!important;grid-template-columns:auto minmax(0,1fr) auto;grid-template-rows:1fr}
-html[data-weather-portrait] .weather-current{display:flex;grid-column:2;grid-row:1;gap:calc(var(--edu-header-meta)*.5);justify-content:flex-start;min-width:0}
-html[data-weather-portrait] .hero>.edu-app-icon{grid-column:1;grid-row:1}
-html[data-weather-portrait] .temperature{flex:0 0 auto}
-html[data-weather-portrait] .hero-details{flex:0 0 auto;min-width:0}
-html[data-weather-portrait] .hero-art{grid-column:3;grid-row:1}
-html[data-weather-portrait] .edu-output-header .hero-art .condition-label{max-width:100%;font-size:calc(var(--edu-header-meta)*.65);overflow-wrap:break-word}
-html[data-weather-portrait] :is(.feels-like,.hero-meta){flex-wrap:nowrap;white-space:nowrap}
-html[data-weather-portrait] .metric{display:flex;flex-direction:column;justify-content:center}
-html[data-weather-portrait] .hour-cell{justify-content:center}
-
-/* Weather state is primary content: shared text roles and a complete glyph box. */
-html[data-kiosk-app="weather"][data-output-mode] .hero.edu-output-header{--weather-header-text:max(calc(var(--edu-header-meta)*1.5),var(--edu-text-label))}
-html[data-kiosk-app="weather"][data-output-mode] .hero.edu-output-header .hero-details{font-size:var(--weather-header-text);gap:.2em}
-html[data-kiosk-app="weather"][data-output-mode] .hero.edu-output-header :is(.feels-like,.hero-meta){font-size:var(--weather-header-text)!important;line-height:1.2}
-/* Narrow columns keep a vertical state field and stack the primary readings. */
-html[data-kiosk-app="weather"][data-weather-portrait]:not([data-weather-header-only]) .hero.edu-output-header{grid-template-columns:minmax(0,1fr) auto!important;--weather-header-text:max(calc(var(--edu-header-meta)*1.25),var(--edu-text-label))}
-html[data-kiosk-app="weather"][data-weather-portrait]:not([data-weather-header-only]) .hero>.edu-app-icon{display:none!important}
-html[data-weather-portrait]:not([data-weather-header-only]) .hero.edu-output-header .weather-current{grid-column:1;flex-direction:column;align-items:flex-start;justify-content:center;gap:.15em}
-html[data-weather-portrait]:not([data-weather-header-only]) .hero.edu-output-header .hero-art{grid-column:2}
-html[data-weather-portrait]:not([data-weather-header-only]) .hero.edu-output-header .hero-meta{display:none}
-html[data-kiosk-app="weather"][data-output-mode][data-weather-header-only] .hero.edu-output-header .hero-art.edu-header-art{width:100%!important}
-/* Keep the glyph and readable caption together as one vertically centred group. */
-html[data-kiosk-app="weather"][data-output-mode] .hero.edu-output-header .hero-art.edu-header-art{display:flex!important;flex-direction:column;justify-content:center;width:calc(var(--edu-header-icon)*1.5)!important;flex:0 0 calc(var(--edu-header-icon)*1.5)!important;height:100%!important;min-width:0;min-height:0;gap:calc(var(--edu-header-icon)*.025);align-items:center}
-html[data-kiosk-app="weather"][data-output-mode] .hero.edu-output-header .hero-art.edu-header-art>svg{display:block;width:100%!important;height:var(--edu-header-icon)!important;flex:0 1 var(--edu-header-icon);max-width:var(--edu-header-icon)!important;max-height:100%!important;min-height:0;aspect-ratio:1}
-html[data-kiosk-app="weather"][data-output-mode] .hero.edu-output-header .condition-label{font-size:max(12px,calc(var(--weather-header-text)*.6))!important;line-height:1.15;text-align:center;box-sizing:border-box;flex:0 0 auto;min-width:0;width:100%;max-width:100%;padding-inline:max(8px,.5em);white-space:normal;overflow-wrap:anywhere;word-break:normal;text-wrap:balance}
-html[data-kiosk-app="weather"][data-output-mode][data-weather-header-only] .hero.edu-output-header .hero-art.edu-header-art{width:100%!important}
+/* Approved weather header: central identity and semantic sizes, independent cells. */
+html[data-kiosk-app="weather"] .hero.edu-output-header{display:flex!important;align-items:center!important;justify-content:space-between;min-width:0;overflow:hidden}
+html[data-kiosk-app="weather"] .hero.edu-output-header>.edu-app-icon{display:inline-grid!important;place-items:center!important;flex-shrink:0!important;align-self:center;background:var(--ev-secondary)!important;color:var(--ev-secondary-text)!important;border-radius:var(--ev-icon-radius,10px)!important}
+html[data-kiosk-app="weather"] .hero.edu-output-header>.edu-app-icon>svg{width:60%!important;height:60%!important;max-height:60%!important;display:block!important;transform:none!important}
+html[data-kiosk-app="weather"] .hero.edu-output-header .weather-current{display:flex!important;flex:1 1 0;min-width:0;flex-direction:column!important;align-items:flex-start!important;justify-content:center!important;gap:calc(var(--edu-header-height)*.035)!important}
+html[data-kiosk-app="weather"] .hero.edu-output-header .temperature{flex:none;max-width:100%;line-height:1.05!important}
+html[data-kiosk-app="weather"] .hero.edu-output-header .hero-details{display:flex!important;flex:none;flex-direction:column!important;align-items:flex-start!important;min-width:0;gap:calc(var(--edu-header-height)*.025)!important;padding:0!important;text-align:left}
+html[data-kiosk-app="weather"] .hero.edu-output-header .hero-details :is(.feels-like,.hero-meta){display:flex;align-items:center;font-size:var(--edu-header-meta)!important;line-height:1.2!important;white-space:normal;flex-wrap:wrap;max-width:100%;margin:0}
+html[data-kiosk-app="weather"] .hero.edu-output-header .hero-details .hero-meta{flex-wrap:nowrap}
+html[data-kiosk-app="weather"] .hero.edu-output-header .hero-art.edu-header-art{display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;flex:0 0 calc(var(--edu-header-icon)*1.45)!important;width:calc(var(--edu-header-icon)*1.45)!important;height:100%!important;min-width:0!important;gap:calc(var(--edu-header-height)*.025);padding:0 calc(var(--edu-header-height)*.025);overflow:hidden}
+html[data-kiosk-app="weather"] .hero.edu-output-header .hero-art.edu-header-art>svg{display:block!important;flex:0 1 auto!important;width:calc(var(--edu-header-icon)*.72)!important;height:calc(var(--edu-header-icon)*.72)!important;max-width:100%!important;max-height:65%!important;aspect-ratio:1}
+html[data-kiosk-app="weather"] .hero.edu-output-header .condition-label{flex:none;width:100%;max-width:100%;font-size:max(12px,calc(var(--edu-header-meta)*.75))!important;line-height:1.15!important;text-align:center;white-space:normal;overflow-wrap:anywhere;text-wrap:balance;padding:0;margin:0}
+html[data-kiosk-app="weather"][data-weather-header-layout="low"] .hero.edu-output-header .weather-current{flex-direction:row!important;align-items:center!important;justify-content:flex-start!important;gap:var(--edu-header-gap)!important}
+/* The kiosk menu already displays the application identity. */
+html[data-kiosk-app="weather"].edu-menu-app-header .hero.edu-output-header>.edu-app-icon{display:none!important}

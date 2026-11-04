@@ -44,6 +44,7 @@
   }
   return fallback;
  }
+ function htmlWeather(){return document.documentElement.dataset.kioskApp==='weather';}
  function update(){
   queued=false;if(document.documentElement.classList.contains('weather-station'))return;const api=root.EduvizeSegmentProfile;if(!api||root.innerWidth<1||root.innerHeight<1)return;
   const geometry=api.resolve(root.innerWidth,root.innerHeight),mode=root.EduvizeOutputModes?.mode?.()||(root.EduvizeOutputModes?.isKiosk?.()?'kiosk':'nsp');
@@ -56,6 +57,12 @@
 
   const weatherCompact=mode==='nsp'&&document.documentElement.dataset.kioskApp==='weather'&&geometry.kind==='compact';
   if(weatherCompact){const height=geometry.height-Math.min(24,Math.max(8,geometry.short*.012))*2;metrics={height,icon:Math.min(height*.55,geometry.width*.16),title:geometry.width*.11,meta:geometry.width*.045,padding:height*.05,gap:geometry.width*.025};}
+  const weather=htmlWeather();
+  if(weather){
+   const low=geometry.ratio>=2.7||(metrics.height<=120&&geometry.width>=700);
+   document.documentElement.dataset.weatherHeaderLayout=low?'low':'stacked';
+   metrics={...metrics,title:metrics.height*(low?.36:.30),meta:metrics.height*(low?.18:.14)};
+  }
   const inset=weatherCompact?metrics.padding:(metrics.height-metrics.icon)/2;
   metrics={...metrics,gap:inset};
   const html=document.documentElement;writeStyle(html,'--edu-header-inset',inset+'px');
@@ -88,15 +95,7 @@
     group.hidden=false;
     const nodes=group.querySelectorAll('.feels-like,.hero-meta');
     for(const node of nodes)node.style.fontSize=metrics.meta+'px';
-    const current=header.querySelector('.weather-current'),temperature=header.querySelector('.temperature');
-    if(current&&temperature&&getComputedStyle(current).display!=='contents'&&getComputedStyle(current).flexDirection!=='column'){
-     const gap=parseFloat(getComputedStyle(current).gap)||0;
-     const needed=Math.max(group.scrollWidth,...Array.from(nodes,node=>node.scrollWidth));
-     const available=current.clientWidth-temperature.getBoundingClientRect().width-gap;
-     const scale=Math.min(1,available/Math.max(1,needed));
-     if(scale<.8)group.hidden=true;
-     else for(const node of nodes)node.style.fontSize=(metrics.meta*scale)+'px';
-    }
+
    }
    fitTitles(header);
    header.dataset.eduHeader='shared';headerStates.set(header,state);
@@ -121,5 +120,6 @@
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});else start();
  update();root.EduvizeOutputHeader=Object.freeze({update:schedule,setStyle:headerStyle});
 })(window);
+
 
 

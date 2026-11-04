@@ -129,3 +129,8 @@ html.weather-station:is(.nsp-output,.kiosk-output) .station-symbol{width:3em;hei
 
 html.weather-station:is(.nsp-output,.kiosk-output) .station-dashboard{-webkit-text-size-adjust:100%;text-size-adjust:100%}
 html.weather-station:is(.nsp-output,.kiosk-output) body main.shell .station-dashboard .station-temperature{font-size:min(calc(var(--station-body)*3),max(32px,38cqh))!important}
+
+
+/* Approved station weather glyph: twenty percent above the shared reading size. */
+html.weather-station:is(.nsp-output,.kiosk-output) .station-symbol{width:3.6em!important;height:3.6em!important;flex:0 0 3.6em!important;max-height:80%!important}
+html.weather-station:is(.nsp-output,.kiosk-output) .station-readings{align-items:flex-start;text-align:left}
