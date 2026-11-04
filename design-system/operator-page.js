@@ -1,17 +1,18 @@
-/* Operator page bodies are returned only after server-side authorization. */
+/* Styles are available to schools; license management requires operator authorization. */
 (function(root){
  'use strict';
  const name=document.documentElement.dataset.eduOperatorPage,auth=root.EduvizeAdminAuth;
  const message=document.getElementById('operator-access-message'),login=document.getElementById('operator-access-login');
  let loading=false,opened=false;
- const allowed=()=>{const state=auth?.status();return state?.connected===true&&!state.schoolId&&state.scopes?.includes('styles')===true;};
+ const allowed=()=>{if(name==='styles')return true;const state=auth?.status();return state?.connected===true&&!state.schoolId&&state.scopes?.includes('styles')===true;};
  async function open(){
   if(loading||opened)return;
   login.href=auth?.loginUrl(location.href)||'https://pborovicka72-dotcom.github.io/eduvize-styly/ucet.html#account';
   if(!allowed()){message.textContent='Přístup je povolen pouze administrátorovi Eduvize.';login.hidden=false;return;}
   loading=true;login.hidden=true;message.textContent='Ověřuji přístup správce…';
   try{
-   const response=await auth.fetch('https://eduvize-design-system-api.onrender.com/api/design-system/operator-pages/'+name,{method:'GET'},'styles');
+   const endpoint='https://eduvize-design-system-api.onrender.com/api/design-system/operator-pages/'+name;
+   const response=name==='styles'?await fetch(endpoint,{cache:'no-store'}):await auth.fetch(endpoint,{method:'GET'},'styles');
    if(!response.ok)throw Error('Přístup ke správě je zamítnut.');
    const html=await response.text();if(!allowed())throw Error('Přihlášení správce již není platné.');
    opened=true;
