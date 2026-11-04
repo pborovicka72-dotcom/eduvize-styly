@@ -20,6 +20,8 @@ class Page(HTMLParser):
 
 def check(root):
     rows=[];errors=[]
+    canonical=Path(__file__).resolve().parents[1]/'design-system'/'theme-first-paint.js'
+    bootstrap=canonical.read_text().strip() if canonical.exists() else None
     for path in sorted(root.rglob('*.html')):
         relative=path.relative_to(root)
         if any(part in ('experimental','.git','node_modules','tests','preview','before','latest') for part in relative.parts):continue
@@ -29,6 +31,9 @@ def check(root):
         if 'admin-tokens.css' not in source:errors.append(prefix+': missing global tokens')
         if not page.favicon:errors.append(prefix+': missing shared favicon')
         if 'data-edu-theme-first-paint=' not in source:errors.append(prefix+': missing cached-theme bootstrap')
+        elif bootstrap is not None:
+            inline=re.search(r'<script\b[^>]*data-edu-theme-first-paint=[^>]*>([\s\S]*?)</script>',source)
+            if not inline or inline[1].strip()!=bootstrap:errors.append(prefix+': cached-theme bootstrap differs from canonical source')
         if re.search(r'ev-theme-pending\s+body[^}]*visibility\s*:\s*hidden',source):errors.append(prefix+': blank-page theme gate')
         seen=set()
         for kind,url,attributes in page.assets:
