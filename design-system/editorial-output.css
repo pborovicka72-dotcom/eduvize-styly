@@ -134,8 +134,25 @@ html[data-kiosk-app="wisdom"].web-output .edu-wisdom-output .attribution .author
  }
 }
 
-/* Keep the news identity row full-width, including WebKit intrinsic flex sizing. */
-html[data-kiosk-app="news"][data-output-mode] .edu-news-output .header.edu-output-header{display:flex!important;flex-wrap:nowrap!important;align-self:stretch!important;width:100%!important;min-width:0!important;max-width:100%;box-sizing:border-box}
-html[data-kiosk-app="news"][data-output-mode] .edu-news-output .header.edu-output-header>.brand{display:flex!important;flex:1 1 0%!important;align-items:center;min-width:0;max-width:100%;overflow:hidden}
-html[data-kiosk-app="news"][data-output-mode] .edu-news-output .header.edu-output-header .edu-app-label{flex:0 1 auto;min-width:0;max-width:100%}
-html[data-kiosk-app="news"][data-output-mode] .edu-news-output .header.edu-output-header>.status{flex:0 1 auto;min-width:0}
+/* Stable identity geometry and painting inside scaled administration iframes. */
+html[data-kiosk-app="news"][data-output-mode] .edu-news-output .header.edu-output-header{
+ display:grid!important;grid-template-columns:minmax(0,1fr) auto;align-items:center!important;
+ align-self:stretch!important;width:100%!important;min-width:0!important;max-width:100%;
+ box-sizing:border-box;position:relative;isolation:isolate;transform:translateZ(0);
+}
+html[data-kiosk-app="news"][data-output-mode] .edu-news-output .header.edu-output-header>.brand{
+ display:grid!important;grid-template-columns:var(--edu-header-icon) minmax(0,1fr);
+ align-items:center!important;align-content:center;min-width:0;max-width:100%;height:100%;
+ overflow:visible;
+}
+html[data-kiosk-app="news"][data-output-mode] .edu-news-output .header.edu-output-header .edu-app-icon{
+ align-self:center;justify-self:start;
+}
+html[data-kiosk-app="news"][data-output-mode] .edu-news-output .header.edu-output-header .edu-app-label{
+ align-self:center;min-width:0;max-width:100%;
+}
+html[data-kiosk-app="news"][data-output-mode] .edu-news-output .header.edu-output-header>.status{
+ align-self:center;min-width:0;margin:0;
+}
+html[data-kiosk-app="news"][data-output-mode] .edu-news-output .header.edu-output-header>.status:empty{display:none!important}
+html[data-kiosk-app="news"].edu-menu-app-header .edu-news-output .header.edu-output-header>.brand{grid-template-columns:minmax(0,1fr)}
