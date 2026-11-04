@@ -40,7 +40,7 @@
 /* News cards adapt to their available content area; shared headers keep their geometry. */
 (function(root){
  const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
- function resolve(width,height,{signage=true,images=true,count=6}={}){
+ function resolve(width,height,{signage=true,images=true,count=6,portrait=height>width}={}){
   let columns=signage?(width>=2600?3:width>=1500?2:1):(width>=780?2:1);
   let rows=signage?clamp(Math.floor(height/(images?480:380)),1,3):1;
   // Near-square portrait segments need wider cards, rather than six shallow photo strips.
@@ -53,10 +53,10 @@
   const cardWidth=(width-gap*(columns-1))/columns;
   const cardHeight=(height-gap*(rows-1))/rows;
   const font=root.EduvizeOutputModes?.mode?.()==='kiosk'?root.EduvizeSegmentProfile.text(root.EduvizeSegmentProfile.resolve(width,height),'kiosk').body:signage?clamp(Math.min(cardWidth/24,cardHeight/15),20,58):(root.EduvizeOutputModes?.mode?.()==='kiosk'?clamp(width/100,20,32):16);
-  return {columns,rows,capacity,side:signage&&images&&cardWidth>=520&&cardWidth/cardHeight>=1.45,font,pad:clamp(font*.65,14,32),gap};
+  return {columns,rows,capacity,side:images&&!portrait,font,pad:clamp(font*.65,14,32),gap};
  }
  function apply(body,grid,options){
-  const policy=resolve(grid.clientWidth,grid.clientHeight||root.innerHeight*.78,options);
+  const policy=resolve(grid.clientWidth,grid.clientHeight||root.innerHeight*.78,{portrait:root.innerHeight>root.innerWidth,...options});
   for(const [key,value] of Object.entries({body:policy.font,title:policy.font*1.25,meta:Math.max(14,policy.font*.68),pad:policy.pad,gap:policy.gap}))body.style.setProperty('--news-card-'+key,value+'px');
   return policy;
  }

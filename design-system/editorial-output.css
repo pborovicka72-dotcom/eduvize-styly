@@ -35,7 +35,9 @@ html[data-kiosk-app="news"][data-output-mode].web-output #news .card{display:fle
 html[data-kiosk-app="news"][data-output-mode].web-output #news .media{height:clamp(160px,30vw,320px)!important;flex:none!important;width:100%!important}
 html[data-kiosk-app="news"][data-output-mode].web-output #news .content{flex:none!important;min-width:0;overflow:visible!important}
 html[data-kiosk-app="news"][data-output-mode].web-output #news :is(.title,.summary){max-height:none!important;white-space:normal!important;overflow:visible!important}
-@media(min-width:850px){html[data-kiosk-app="news"][data-output-mode].web-output #news .card.has-photo{display:grid!important;grid-template-columns:minmax(220px,30%) minmax(0,1fr)!important}html[data-kiosk-app="news"][data-output-mode].web-output #news .card.has-photo .media{height:100%!important;min-height:240px!important}}
+/* Source-independent placement: portrait is above, all other viewports are left. */
+html[data-kiosk-app="news"][data-output-mode].web-output #news .card.side-media.has-photo{display:grid!important;grid-template-columns:minmax(0,32%) minmax(0,1fr)!important}
+html[data-kiosk-app="news"][data-output-mode].web-output #news .card.side-media.has-photo .media{height:auto!important;aspect-ratio:4/5;min-height:0!important;max-height:360px;width:calc(100% - var(--news-card-pad,20px))!important;margin:var(--news-card-pad,20px) 0 var(--news-card-pad,20px) var(--news-card-pad,20px);align-self:start;border-radius:var(--ev-control-radius,10px)}
 
 
 
@@ -82,7 +84,7 @@ html[data-kiosk-app="news"][data-output-mode].kiosk-output #news :is(.title,.sum
 
 /* Choose image placement from the actual card geometry, shared by NSP and kiosk. */
 html[data-kiosk-app="news"][data-output-mode]:not(.web-output) #news .card.side-media{flex-direction:row!important}
-html[data-kiosk-app="news"][data-output-mode]:not(.web-output) #news .card.side-media .media{flex:0 0 42%;width:42%;height:min(100cqh,42cqw);align-self:center;min-height:0}
+html[data-kiosk-app="news"][data-output-mode]:not(.web-output) #news .card.side-media .media{flex:0 0 32%;width:32%;height:max(0px,min(calc(100cqh - 2*var(--news-card-pad,20px)),40cqw));align-self:flex-start;min-height:0;margin:var(--news-card-pad,20px) 0 var(--news-card-pad,20px) var(--news-card-pad,20px);border-radius:var(--ev-control-radius,10px)}
 
 /* Wisdom feature card: shared by web, kiosk and every Newline segment.
    Header colors and geometry remain owned by the shared header/theme system. */

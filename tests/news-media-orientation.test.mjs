@@ -1,0 +1,12 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import vm from 'node:vm';
+const root={EduvizeOutputModes:{mode:()=> 'nsp'}};
+vm.runInNewContext(fs.readFileSync(new URL('../design-system/editorial-output.js',import.meta.url),'utf8'),{window:root,document:{readyState:'loading',addEventListener(){}}});
+const layout=root.EduvizeNewsLayout;
+for(const signage of [true,false])for(const [w,h] of [[3840,2160],[1920,1080],[872,488],[2968,488],[1080,1080]])assert.equal(layout.resolve(w,h,{signage,images:true}).side,true,w+'x'+h);
+for(const signage of [true,false])for(const [w,h] of [[960,2160],[1200,2160],[1080,1920]])assert.equal(layout.resolve(w,h,{signage,images:true}).side,false,w+'x'+h);
+assert.equal(layout.resolve(1400,600,{portrait:true}).side,false);
+assert.equal(layout.resolve(700,900,{portrait:false}).side,true);
+assert.equal(layout.resolve(1920,1080,{images:false}).side,false);
+console.log('Image placement: landscape, square, strip, portrait, explicit viewport orientation and no-image mode passed.');
