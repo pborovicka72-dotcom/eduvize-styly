@@ -126,3 +126,6 @@ html.weather-station:is(.nsp-output,.kiosk-output) .station-feels{font-size:1.2e
 html.weather-station:is(.nsp-output,.kiosk-output) .station-condition{font-size:1em;line-height:1.2}
 html.weather-station:is(.nsp-output,.kiosk-output) .station-readings{gap:.3em}
 html.weather-station:is(.nsp-output,.kiosk-output) .station-symbol{width:3em;height:3em;max-height:80%}
+
+html.weather-station:is(.nsp-output,.kiosk-output) .station-dashboard{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+html.weather-station:is(.nsp-output,.kiosk-output) body main.shell .station-dashboard .station-temperature{font-size:min(calc(var(--station-body)*3),max(32px,38cqh))!important}
