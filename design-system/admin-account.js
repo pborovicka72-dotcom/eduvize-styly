@@ -7,7 +7,9 @@
  const params=new URL(location.href).searchParams;
  let requested=params.get('returnTo'),manage=params.get('manage')==='1'||params.get('edu-link-pending')==='1'||new URLSearchParams(location.hash.slice(1)).has('edu-confirm');
  try{if(requested)sessionStorage.setItem('eduvize-account-return',requested);else if(params.get('onedrive')==='connected'){requested=sessionStorage.getItem('eduvize-account-return');manage=!!requested;}}catch{}
- function say(text){message.textContent=text;}
+ let accountMessage='',pendingProgress=new Map();
+ function showMessage(){message.textContent=[...pendingProgress.values()].at(-1)||accountMessage;}
+ function say(text){accountMessage=text;showMessage();}
  function status(){
   const s=auth.status(),connected=s.connected&&!initializing&&!signingOut;
   host.setAttribute('aria-labelledby',connected?'account-connected-title':'account');
@@ -54,7 +56,7 @@
  $('account-return').onclick=()=>work('Otevírám administraci…',returnToApp);
  root.addEventListener('eduvize-school-account-loaded',event=>{linkSchoolId=event.detail.schoolId;microsoftLinked=event.detail.microsoftLinked;status();});
  root.addEventListener('eduvize-admin-auth-change',()=>{status();if(!initializing&&!auth.status().connected){driveConnected=false;say(auth.status().message||'');}});
- root.addEventListener('eduvize-admin-request-progress',event=>{if(event.detail?.text)say(event.detail.text);});
+ root.addEventListener('eduvize-admin-request-progress',event=>{const d=event.detail;if(!d||!Number.isInteger(d.requestId))return;if(d.finished)pendingProgress.delete(d.requestId);else if(d.text)pendingProgress.set(d.requestId,d.text);showMessage();});
  status();
  auth.ready.then(async()=>{initializing=false;status();if(!auth.status().connected){say(auth.status().message||'');return;}await connection();if(auth.status().connected)say('');if(requested&&!manage&&auth.status().connected&&(!needsDrive()||driveConnected)){try{await returnToApp();}catch(e){say(e.message);}}}).catch(e=>{initializing=false;status();say(e.message);});
 })(window);
