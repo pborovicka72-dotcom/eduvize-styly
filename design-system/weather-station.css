@@ -115,3 +115,6 @@ html.weather-station.kiosk-output .station-instruments{container-type:inline-siz
 @container(max-width:640px){html.weather-station.kiosk-output .station-instruments .station-card{padding-right:clamp(10px,1cqw,32px)}html.weather-station.kiosk-output .station-instruments .station-gauge{display:none}}
 html.weather-station.kiosk-output .station-hero{container-type:inline-size}
 @container(max-width:480px){html.weather-station.kiosk-output .station-current{flex-direction:column;gap:6px}html.weather-station.kiosk-output .station-symbol{width:48px;height:48px}html.weather-station.kiosk-output .station-readings{text-align:center}html.weather-station.kiosk-output .station-feels{white-space:normal}}
+
+html.weather-station.kiosk-output .station-temperature{font-size:min(calc(var(--station-body)*3),max(48px,42cqh))!important}
+@container(max-width:480px){html.weather-station.kiosk-output .station-symbol{width:48px!important;height:48px!important;max-height:48px!important;flex:0 0 48px!important}}
