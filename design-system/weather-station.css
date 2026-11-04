@@ -118,3 +118,11 @@ html.weather-station.kiosk-output .station-hero{container-type:inline-size}
 
 html.weather-station.kiosk-output .station-temperature{font-size:min(calc(var(--station-body)*3),max(48px,42cqh))!important}
 @container(max-width:480px){html.weather-station.kiosk-output .station-symbol{width:48px!important;height:48px!important;max-height:48px!important;flex:0 0 48px!important}}
+
+/* NSP station readings use the station text scale, not dashboard-sized container units. */
+html.weather-station.nsp-output .station-current{container-type:size;gap:1em;padding-block:.5em}
+html.weather-station.nsp-output .station-temperature{font-size:min(calc(var(--station-body)*3),max(32px,38cqh))!important;line-height:1.05}
+html.weather-station.nsp-output .station-feels{font-size:1.2em;line-height:1.2}
+html.weather-station.nsp-output .station-condition{font-size:1em;line-height:1.2}
+html.weather-station.nsp-output .station-readings{gap:.3em}
+html.weather-station.nsp-output .station-symbol{width:3em;height:3em;max-height:80%}
