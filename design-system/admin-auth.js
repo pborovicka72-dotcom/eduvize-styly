@@ -130,6 +130,15 @@
  }
  function renderBanner(){
   if(isAccount||isHub||!document.body)return;
+  if(!document.getElementById('edu-admin-session-style')){
+   const style=document.createElement('style');style.id='edu-admin-session-style';
+   style.textContent=`
+    .edu-admin-session{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px 20px;padding:12px 16px;border:1px solid var(--ev-border,var(--edu-admin-border));border-radius:var(--ev-card-radius,var(--edu-admin-card-radius));background:var(--ev-surface,var(--edu-admin-surface));color:var(--ev-muted,var(--edu-admin-muted));font-family:var(--edu-admin-font,system-ui,sans-serif)}
+    .edu-admin-session>.edu-admin-session__status{flex:1 1 240px;min-width:0;margin:0;font-size:13px;line-height:1.5;overflow-wrap:anywhere}
+    .edu-admin-session>.edu-admin__button{flex:0 0 auto;margin:0;max-width:100%;font-size:13px;line-height:1.4;white-space:normal}
+    @media(max-width:480px){.edu-admin-session{align-items:flex-start}.edu-admin-session>.edu-admin-session__status{flex-basis:100%}}
+   `;document.head.append(style);
+  }
   if(document.body.dataset.eduAuthBanner==='signed-in'&&!getToken()){banner?.remove();banner=null;return;}
   if(!banner||!banner.isConnected){banner=document.createElement('aside');banner.className='edu-admin-session';banner.setAttribute('role','status');const title=document.createElement('span'),link=document.createElement('a');title.className='edu-admin-session__status';link.className='edu-admin__button edu-admin__button--secondary';banner.append(title,link);const header=document.querySelector('main .edu-page-header');if(header)header.after(banner);else document.querySelector('main')?.prepend(banner);}
   banner.querySelector('span').textContent=message||(getToken()?'Přihlášeno do správy Eduvize.':'Přihlášení a připojení OneDrive se spravuje na stránce Účet a konfigurace.');const a=banner.querySelector('a');a.href=loginUrl();a.textContent=getToken()?'Účet a připojení':'Přejít na přihlášení';
