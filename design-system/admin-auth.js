@@ -8,16 +8,17 @@
  const isHub=location.origin==='https://pborovicka72-dotcom.github.io'&&location.pathname==='/eduvize-styly/aplikace.html';
  let session=null,validated=false,message='',expiryTimer,banner,refreshVersion=0,lastState='';
 
- function requestProgress(text){root.dispatchEvent(new CustomEvent('eduvize-admin-request-progress',{detail:{text}}));}
+ let nextRequestId=0;
+ function requestProgress(text,requestId,finished=false){root.dispatchEvent(new CustomEvent('eduvize-admin-request-progress',{detail:{text,requestId,finished}}));}
  async function sessionFetch(url,options={}){
   const method=(options.method||'GET').toUpperCase(),safe=method==='GET'||method==='HEAD';
-  const deadline=Date.now()+180000;
-  for(let attempt=0;;attempt++){
+  const deadline=Date.now()+180000,requestId=++nextRequestId;
+  try{for(let attempt=0;;attempt++){
    const controller=new AbortController();
    const remaining=deadline-Date.now();
    if(remaining<=0)throw Error('Služba se zatím neprobudila. Uložené přihlášení zůstává zachované; zkuste to znovu.');
    const timer=setTimeout(()=>controller.abort(),Math.min(safe?45000:180000,remaining));
-   const progress=setTimeout(()=>requestProgress('Čekám na službu. Pokud je uspaná, probouzí se; chvíli prosím počkejte…'),8000);
+   const progress=setTimeout(()=>requestProgress('Čekám na službu. Pokud je uspaná, probouzí se; chvíli prosím počkejte…',requestId),8000);
    let response;
    try{
     response=await fetch(url,{...options,redirect:'error',signal:controller.signal});
@@ -31,9 +32,9 @@
      throw error;
     }
    }finally{clearTimeout(timer);clearTimeout(progress);}
-   requestProgress('Čekám na spuštění služby a automaticky opakuji ověření…');
+   requestProgress('Čekám na spuštění služby a automaticky opakuji ověření…',requestId);
    await new Promise(resolve=>setTimeout(resolve,Math.min(3000,Math.max(0,deadline-Date.now()))));
-  }
+  }}finally{requestProgress('',requestId,true);}
  }
 
  function read(storage){try{const s=JSON.parse(storage.getItem(KEY)||'null');return s&&typeof s.token==='string'&&s.token.startsWith('edu_')&&Number.isFinite(s.expiresAt)&&s.expiresAt*1000>Date.now()?s:null;}catch{return null}}
