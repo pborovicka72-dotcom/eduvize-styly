@@ -1,20 +1,38 @@
-<!doctype html><html lang="cs"><head><script src="https://pborovicka72-dotcom.github.io/eduvize-styly/design-system/admin-navigation.js?v=20261104-single-tab-2"></script><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<!doctype html><html lang="cs"><head><script src="https://pborovicka72-dotcom.github.io/eduvize-styly/design-system/admin-navigation.js?v=20261104-design-audit-1"></script><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Eduvize | Správa licencí</title>
-<link rel="stylesheet" href="./design-system/admin-tokens.css">
-<link rel="stylesheet" href="./design-system/admin-account.css?v=20261103-license-session-1">
-<link rel="stylesheet" href="./design-system/admin-components.css?v=20261103-link-spacing-1">
-<link rel="stylesheet" href="./design-system/admin-shell.css?v=20261103-school-account-1">
+<link rel="stylesheet" href="./design-system/admin-tokens.css?v=20261104-design-audit-1">
+<link rel="stylesheet" href="./design-system/admin-account.css?v=20261104-design-audit-1">
+<link rel="stylesheet" href="./design-system/admin-components.css?v=20261104-design-audit-1">
+<link rel="stylesheet" href="./design-system/admin-shell.css?v=20261104-design-audit-1">
 
-<link rel="stylesheet" href="./design-system/licensing.css?v=20261103-1">
-<link rel="stylesheet" href="./design-system/app-icons.css?v=20261031-identity-gap-1">
-<link rel="icon" type="image/svg+xml" href="./design-system/assets/eduvize-favicon-monochrome.svg?v=20261031-account-mono-1">
-<script src="./design-system/theme-first-paint.js?v=2"></script>
-<script src="./design-system/admin-auth.js?v=20261104-operator-only-1"></script>
-<script defer src="./design-system/active-theme.js?v=20261102-school-search-2"></script>
-<script defer src="./design-system/admin-header.js?v=6"></script>
+<link rel="stylesheet" href="./design-system/licensing.css?v=20261104-design-audit-1">
+<link rel="stylesheet" href="./design-system/app-icons.css?v=20261104-design-audit-1">
+<link rel="icon" type="image/svg+xml" href="https://pborovicka72-dotcom.github.io/eduvize-styly/design-system/assets/eduvize-favicon.svg?v=20261031-unified-1">
+<script data-edu-theme-first-paint="20261104-design-audit-1">/* Apply only the selected school's cached theme before painting.
+   A missing cache uses the shared CSS baseline immediately, never a blank page. */
+(function(){
+ var key='eduvize-active-theme-v1', map={background:'bg',text:'text',surface:'surface',muted:'muted',primary:'primary',primaryText:'primary-text',secondary:'secondary',secondaryText:'secondary-text',accent:'accent',border:'border'};
+ try{
+  if(document.documentElement.dataset.eduTheme==='standard')return;
+  var profile=new URL(location.href).searchParams.get('edu-profile')||window.EduvizeAdminAuth?.status().profileId||localStorage.getItem('eduvize-profile-selection-v1')||'';
+  profile=/^[a-f0-9]{32}$/.test(profile)?profile:'';
+  var theme=JSON.parse(localStorage.getItem(key+':'+(profile||'global'))||'null');
+  if(!theme?.colors)return;
+  var style=document.documentElement.style;
+  for(var name in map){var value=theme.colors[name];if(/^#[0-9a-f]{6}$/i.test(value||''))style.setProperty('--ev-'+map[name],value);}
+  for(var item of [['controls','heightPx','control-height'],['controls','radiusPx','control-radius'],['cards','radiusPx','card-radius']]){
+   var value=theme[item[0]]?.[item[1]];if(Number.isFinite(value))style.setProperty('--ev-'+item[2],value+'px');
+  }
+  var radius=theme.icons?.radiusPx;style.setProperty('--ev-icon-radius',(Number.isFinite(radius)?Math.max(0,Math.min(24,radius)):10)+'px');
+ }catch(_){}
+})();
+</script>
+<script src="./design-system/admin-auth.js?v=20261104-design-audit-1"></script>
+<script defer src="./design-system/active-theme.js?v=20261104-design-audit-1"></script>
+<script defer src="./design-system/admin-header.js?v=20261104-design-audit-1"></script>
 
 
-</head><body class="ev-admin" data-edu-auth-banner="signed-in"><main class="edu-admin-page"><header class="edu-page-header"><div class="edu-page-header__identity"><span class="edu-app-icon"><img src="./design-system/assets/eduvize-symbol-white.svg" alt="Eduvize" width="32" height="32"></span><div class="edu-page-header__titles"><div class="edu-page-header__eyebrow">EDUVIZE · SPRÁVA</div><h1 class="edu-page-header__title">Správa licencí</h1></div></div><p class="edu-page-header__description">Vystavení a evidence licencí škol a organizací, jejich platnost a prodloužení.</p></header><section id="license-access" class="edu-admin__card"><h2>Přístup správce Eduvize</h2><p>Pro správu licencí se přihlaste účtem správce služby.</p><a class="edu-admin__button" href="./ucet.html?returnTo=https%3A%2F%2Fpborovicka72-dotcom.github.io%2Feduvize-styly%2Flicence.html">Přejít na přihlášení</a></section><section id="license-admin" hidden class="edu-admin__card edu-admin__flow"><h2>Vystavit licenci</h2><p class="edu-admin__hint">Pouze pro administrátora Eduvize. Licence je určená konkrétní škole nebo organizaci. Aktivuje se potvrzením registrace nebo přiřazením původnímu účtu školy.</p>
+<link rel="preconnect" href="https://pborovicka72-dotcom.github.io"><link rel="preconnect" href="https://eduvize-design-system-api.onrender.com" crossorigin></head><body class="ev-admin" data-edu-auth-banner="signed-in"><main class="edu-admin-page"><header class="edu-page-header"><div class="edu-page-header__identity"><span class="edu-app-icon"><img src="./design-system/assets/eduvize-symbol-white.svg" alt="Eduvize" width="32" height="32"></span><div class="edu-page-header__titles"><div class="edu-page-header__eyebrow">EDUVIZE · SPRÁVA</div><h1 class="edu-page-header__title">Správa licencí</h1></div></div><p class="edu-page-header__description">Vystavení a evidence licencí škol a organizací, jejich platnost a prodloužení.</p></header><section id="license-access" class="edu-admin__card"><h2>Přístup správce Eduvize</h2><p>Pro správu licencí se přihlaste účtem správce služby.</p><a class="edu-admin__button" href="./ucet.html?returnTo=https%3A%2F%2Fpborovicka72-dotcom.github.io%2Feduvize-styly%2Flicence.html">Přejít na přihlášení</a></section><section id="license-admin" hidden class="edu-admin__card edu-admin__flow"><h2>Vystavit licenci</h2><p class="edu-admin__hint">Pouze pro administrátora Eduvize. Licence je určená konkrétní škole nebo organizaci. Aktivuje se potvrzením registrace nebo přiřazením původnímu účtu školy.</p>
 <form id="license-issue-form" class="edu-admin__flow">
 <label class="edu-admin__field">Příjemce licence<select id="license-recipient-type"><option value="school">Škola z rejstříku</option><option value="organization">Jiná organizace · ruční zadání</option></select></label>
 <div id="license-school-fields"><label class="edu-admin__field">Vyhledat školu<input id="license-school-query" type="search" required autocomplete="off" placeholder="Název školy, obec, RED IZO nebo IČO"></label><div id="license-school-results" class="edu-license-results"></div></div>
@@ -28,4 +46,4 @@
 <label class="edu-admin__field edu-license-term">Platnost od aktivace<select id="license-term"><option value="12">1 rok</option><option value="36">3 roky</option><option value="60">5 let</option><option value="permanent">Trvalá</option></select></label>
 <button type="submit" class="edu-admin__button">Vygenerovat licenci</button><p id="license-issue-status" role="status" aria-live="polite"></p></form>
 <div id="license-code-result" hidden class="edu-license-code edu-admin__flow"><label class="edu-admin__field">Nový licenční kód<input id="license-code-value" readonly autocomplete="off" spellcheck="false"></label><button id="license-copy-code" class="edu-admin__button" type="button">Kopírovat kód</button><p class="edu-admin__hint">Kód se zobrazuje pouze nyní. Při ztrátě lze před aktivací vystavit náhradní.</p></div>
-<h3>Evidence licencí</h3><div class="edu-license-renew"><label class="edu-admin__field">Vyhledat v licencích<input id="license-filter" type="search" placeholder="Škola, obec, RED IZO nebo IČO"></label><button id="license-reload" type="button" class="edu-admin__button edu-admin__button--secondary">Obnovit seznam</button></div><p id="license-list-status" role="status" aria-live="polite"></p><div id="license-items" class="edu-license-grid"></div></section></main><script src="./design-system/licensing-client.js?v=20261103-school-account-1"></script><script src="./design-system/license-admin.js?v=20261104-legacy-profile-1"></script></body></html>
+<h3>Evidence licencí</h3><div class="edu-license-renew"><label class="edu-admin__field">Vyhledat v licencích<input id="license-filter" type="search" placeholder="Škola, obec, RED IZO nebo IČO"></label><button id="license-reload" type="button" class="edu-admin__button edu-admin__button--secondary">Obnovit seznam</button></div><p id="license-list-status" role="status" aria-live="polite"></p><div id="license-items" class="edu-license-grid"></div></section></main><script src="./design-system/licensing-client.js?v=20261104-design-audit-1"></script><script src="./design-system/license-admin.js?v=20261104-design-audit-1"></script></body></html>

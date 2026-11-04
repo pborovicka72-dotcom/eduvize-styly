@@ -40,8 +40,8 @@
   }
   function start() {
     refresh();
-    new MutationObserver(schedule).observe(document, {subtree:true,childList:true,characterData:true});
-    document.addEventListener('load', schedule, true);
+    new MutationObserver(records=>{if(records.some(record=>record.target.parentElement?.closest('[data-edu-fit]')||record.target.closest?.('[data-edu-fit]')||[...record.addedNodes].some(node=>node.nodeType===1&&(node.matches('[data-edu-fit]')||node.querySelector('[data-edu-fit]')))))schedule();}).observe(document, {subtree:true,childList:true,characterData:true});
+    document.addEventListener('load', event=>{if(event.target.closest?.('[data-edu-fit]'))schedule();}, true);
     document.fonts?.ready.then(schedule);
   }
   window.EduvizeFitPanel = Object.freeze({refresh:schedule});

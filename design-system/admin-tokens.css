@@ -36,3 +36,8 @@
   --ev-field-radius: var(--edu-admin-field-radius);
   --ev-card-radius: var(--edu-admin-card-radius);
 }
+
+/* Visibility is part of the global contract, including outputs without form scripts. */
+[hidden]:not([hidden="until-found"]){display:none!important}
+
+.edu-build-marker,.edu-kiosk-style-version{display:none!important}

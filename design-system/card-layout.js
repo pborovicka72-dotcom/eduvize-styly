@@ -17,7 +17,7 @@
  }}
  function schedule(){if(!queued){queued=true;requestAnimationFrame(refresh);}}
  const resize=new ResizeObserver(entries=>{for(const {target,contentRect} of entries){if(widths.get(target)!==contentRect.width){widths.set(target,contentRect.width);schedule();}}});
- function start(){schedule();new MutationObserver(schedule).observe(document.body,{subtree:true,childList:true,characterData:true});document.fonts?.ready.then(schedule);document.fonts?.addEventListener('loadingdone',schedule);root.addEventListener('resize',schedule);}
+ function start(){schedule();new MutationObserver(records=>{if(records.some(record=>record.target.parentElement?.closest(groups)||record.target.closest?.(groups)||[...record.addedNodes].some(node=>node.nodeType===1&&(node.matches(groups)||node.querySelector(groups)))))schedule();}).observe(document.body,{subtree:true,childList:true,characterData:true});document.fonts?.ready.then(schedule);document.fonts?.addEventListener('loadingdone',schedule);root.addEventListener('resize',schedule);}
  root.EduvizeCardLayout=Object.freeze({refresh:schedule});
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});else start();
 })(window);

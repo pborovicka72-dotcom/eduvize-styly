@@ -1,3 +1,5 @@
+/* Idempotent even when a legacy page includes the theme runtime twice. */
+(function(){if(window.EduvizeSharedThemeLoaded)return;window.EduvizeSharedThemeLoaded=true;
 /* A page refresh starts at the top; explicit section links still work on navigation. */
 (function(root){
  if(root.EduvizePageStart)return;root.EduvizePageStart=true;
@@ -6,17 +8,29 @@
  function top(){if(reload||!location.hash)requestAnimationFrame(()=>root.scrollTo({top:0,left:0,behavior:'instant'}));}
  root.addEventListener('pageshow',top);root.addEventListener('load',top,{once:true});top();
 })(window);
-/* Bootstrap shared controls for all consumers of the design system. */
+/* Load shared components once; output-only screens do not need form observers. */
 (function(){
- if(document.querySelector('script[data-edu-form-fields]'))return;
  const base=new URL('.',document.currentScript.src);
- const cardsCss=document.createElement('link');cardsCss.rel='stylesheet';cardsCss.href=new URL('card-layout.css?v=20261101-card-borders-19',base);document.head.append(cardsCss);
- const cardsScript=document.createElement('script');cardsScript.src=new URL('card-layout.js?v=catalog-natural-20261031',base);document.head.append(cardsScript);
- const css=document.createElement('link');css.rel='stylesheet';css.href=new URL('form-fields.css?v=3',base);document.head.append(css);
- const script=document.createElement('script');script.src=new URL('form-fields.js?v=https-inputs-20261101-1',base);script.dataset.eduFormFields='';document.head.append(script);
- const typographyCss=document.createElement('link');typographyCss.rel='stylesheet';typographyCss.href=new URL('typography.css?v=20261031-whole-words-1',base);document.head.append(typographyCss);
- const typography=document.createElement('script');typography.src=new URL('typography.js?v=3',base);document.head.append(typography);
- const fit=document.createElement('script');fit.src=new URL('fit-panel.js?v=2',base);document.head.append(fit);
+ function exists(tag,attribute,url){return [...document.querySelectorAll(tag+'['+attribute+']')].some(node=>{try{const value=new URL(node.getAttribute(attribute),location.href);return value.origin===url.origin&&value.pathname===url.pathname;}catch{return false;}});}
+ function asset(file,script=false){
+  const url=new URL(file,base),tag=script?'script':'link',attribute=script?'src':'href';
+  if(exists(tag,attribute,url))return;
+  const node=document.createElement(tag);
+  if(script){node.src=url.href;node.async=false;}else{node.rel='stylesheet';node.href=url.href;}
+  document.head.append(node);
+ }
+ asset('card-layout.css?v=20261104-design-audit-1');
+ asset('card-layout.js?v=20261104-design-audit-1',true);
+ asset('typography.css?v=20261104-design-audit-1');
+ asset('typography.js?v=20261104-design-audit-1',true);
+ asset('fit-panel.js?v=20261104-design-audit-1',true);
+ function forms(){if(!document.querySelector('.ev-admin,.edu-admin-page,.edu-admin,input,textarea,select'))return;asset('form-fields.css?v=20261104-design-audit-1');asset('form-fields.js?v=20261104-design-audit-1',true);return true;}
+ function start(){
+  if(forms())return;
+  const observer=new MutationObserver(records=>{if(records.some(record=>[...record.addedNodes].some(node=>node.nodeType===1&&(node.matches('input,textarea,select,form')||node.querySelector('input,textarea,select'))))&&forms())observer.disconnect();});
+  observer.observe(document.body,{childList:true,subtree:true});
+ }
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});else start();
 })();
 /* Shared Eduvize active theme loader. No local theme definitions. */
 (function(){ // The theme editor keeps the default shell; selections affect its preview only.
@@ -24,7 +38,8 @@
  const endpoint='https://eduvize-design-system-api.onrender.com/api/design-system/themes';
  const cacheKey='eduvize-active-theme-v1';
  function themeProfile(){let selected='';try{selected=localStorage.getItem('eduvize-profile-selection-v1')||'';}catch{}const value=new URL(location.href).searchParams.get('edu-profile')||window.EduvizeAdminAuth?.status().profileId||selected;return /^[a-f0-9]{32}$/.test(value||'')?value:'';}
- const scopedCache=profile=>cacheKey+(profile?':'+profile:'');
+ const scopedCache=profile=>cacheKey+':'+(profile||'global');
+ const inFlight=new Map();
  const names={background:'--ev-bg',text:'--ev-text',surface:'--ev-surface',muted:'--ev-muted',primary:'--ev-primary',primaryText:'--ev-primary-text',secondary:'--ev-secondary',secondaryText:'--ev-secondary-text',accent:'--ev-accent',border:'--ev-border'};
  function apply(theme){
   if(!theme?.colors)return false;
@@ -42,17 +57,19 @@
  }
  try{const cached=JSON.parse(localStorage.getItem(scopedCache(themeProfile()))||'null');if(cached)apply(cached)}catch(_){}
  async function refresh(){
-  try{
-   const profile=themeProfile(),url=new URL(endpoint);if(profile)url.searchParams.set('profileId',profile);
-   const response=await fetch(url,{cache:'no-store'});
+  const profile=themeProfile();if(inFlight.has(profile))return inFlight.get(profile);
+  const operation=(async()=>{try{
+   const url=new URL(endpoint);if(profile)url.searchParams.set('profileId',profile);
+   const response=await fetch(url,{cache:'no-store',signal:AbortSignal.timeout(12000)});
    if(!response.ok)throw Error('HTTP '+response.status);
    const themes=await response.json();
    if(!Array.isArray(themes))throw Error('Neplatné styly');
    const theme=(themes.find(x=>x.active)||themes.find(x=>x.id==='standard'))?.config;
    if(!theme?.colors||profile!==themeProfile())return;
-   if(apply(theme)){try{localStorage.setItem(scopedCache(profile),JSON.stringify(theme));localStorage.setItem(cacheKey,JSON.stringify(theme))}catch(_){}}
+   if(apply(theme)){try{localStorage.setItem(scopedCache(profile),JSON.stringify(theme))}catch(_){}}
   }catch(error){console.warn('Eduvize: aktivní styl se nepodařilo načíst',error)}
   finally{document.documentElement.classList.remove('ev-theme-pending')}
+  })();inFlight.set(profile,operation);try{return await operation;}finally{inFlight.delete(profile);}
  }
  refresh();
  window.addEventListener('eduvize-admin-auth-change',refresh);
@@ -66,10 +83,10 @@
  const base=new URL('.',document.currentScript.src);
  function start(){
   if(!document.querySelector('.edu-admin-page')||(!window.EduvizeProfileAdapter&&!document.getElementById('configurations')))return;
-  if(document.querySelector('script[data-edu-profiles]'))return;
-  const css=document.createElement('link');css.rel='stylesheet';css.href=new URL('configuration-profiles.css?v=20261102-all-admin-status-9',base);document.head.append(css);
-  const load=()=>{const script=document.createElement('script');script.src=new URL('configuration-profiles.js?v=20261104-shared-notice-1',base);script.dataset.eduProfiles='';document.head.append(script);};
-  if(window.EduvizeAdminAuth)load();else{const auth=document.createElement('script');auth.src=new URL('admin-auth.js?v=20261104-single-tab-2',base);auth.onload=load;document.head.append(auth);}
+  if(document.querySelector('script[data-edu-profiles],script[src*="configuration-profiles.js"]'))return;
+  const css=document.createElement('link');css.rel='stylesheet';css.href=new URL('configuration-profiles.css?v=20261104-design-audit-1',base);document.head.append(css);
+  const load=()=>{const script=document.createElement('script');script.src=new URL('configuration-profiles.js?v=20261104-design-audit-1',base);script.dataset.eduProfiles='';document.head.append(script);};
+  if(window.EduvizeAdminAuth)load();else{const auth=document.createElement('script');auth.src=new URL('admin-auth.js?v=20261104-design-audit-1',base);auth.onload=load;document.head.append(auth);}
  }
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});else start();
  window.addEventListener('eduvize-profile-adapter-ready',start);
@@ -91,3 +108,5 @@
 
 /* Load centrally managed vector branding in every shared-style consumer. */
 (function(){if(window.EduvizeBranding||document.querySelector('script[data-edu-branding]'))return;const script=document.createElement('script');script.src='https://pborovicka72-dotcom.github.io/eduvize-styly/design-system/branding.js?v=20261104-vector-1';script.dataset.eduBranding='';document.head.append(script);})();
+
+})();

@@ -1,2 +1,18 @@
-/* Apply cached design tokens before the administration paints. */
-(function(){var k='eduvize-active-theme-v1',m={background:'--ev-bg',text:'--ev-text',surface:'--ev-surface',muted:'--ev-muted',primary:'--ev-primary',primaryText:'--ev-primary-text',secondary:'--ev-secondary',secondaryText:'--ev-secondary-text',accent:'--ev-accent',border:'--ev-border'};try{var t=JSON.parse(localStorage.getItem(k)||'null');if(t&&t.colors){for(var n in m){var v=t.colors[n];if(/^#[0-9a-fA-F]{6}$/.test(v||''))document.documentElement.style.setProperty(m[n],v)}if(t.controls){if(Number.isFinite(t.controls.heightPx))document.documentElement.style.setProperty('--ev-control-height',t.controls.heightPx+'px');if(Number.isFinite(t.controls.radiusPx))document.documentElement.style.setProperty('--ev-control-radius',t.controls.radiusPx+'px')}document.documentElement.style.setProperty('--ev-icon-radius',(Number.isFinite(t.icons&&t.icons.radiusPx)?Math.max(0,Math.min(24,t.icons.radiusPx)):10)+'px');if(Number.isFinite(t.cards&&t.cards.radiusPx))document.documentElement.style.setProperty('--ev-card-radius',t.cards.radiusPx+'px');return}}catch(e){}document.documentElement.classList.add('ev-theme-pending');setTimeout(function(){document.documentElement.classList.remove('ev-theme-pending')},2500)})();
+/* Apply only the selected school's cached theme before painting.
+   A missing cache uses the shared CSS baseline immediately, never a blank page. */
+(function(){
+ var key='eduvize-active-theme-v1', map={background:'bg',text:'text',surface:'surface',muted:'muted',primary:'primary',primaryText:'primary-text',secondary:'secondary',secondaryText:'secondary-text',accent:'accent',border:'border'};
+ try{
+  if(document.documentElement.dataset.eduTheme==='standard')return;
+  var profile=new URL(location.href).searchParams.get('edu-profile')||window.EduvizeAdminAuth?.status().profileId||localStorage.getItem('eduvize-profile-selection-v1')||'';
+  profile=/^[a-f0-9]{32}$/.test(profile)?profile:'';
+  var theme=JSON.parse(localStorage.getItem(key+':'+(profile||'global'))||'null');
+  if(!theme?.colors)return;
+  var style=document.documentElement.style;
+  for(var name in map){var value=theme.colors[name];if(/^#[0-9a-f]{6}$/i.test(value||''))style.setProperty('--ev-'+map[name],value);}
+  for(var item of [['controls','heightPx','control-height'],['controls','radiusPx','control-radius'],['cards','radiusPx','card-radius']]){
+   var value=theme[item[0]]?.[item[1]];if(Number.isFinite(value))style.setProperty('--ev-'+item[2],value+'px');
+  }
+  var radius=theme.icons?.radiusPx;style.setProperty('--ev-icon-radius',(Number.isFinite(radius)?Math.max(0,Math.min(24,radius)):10)+'px');
+ }catch(_){}
+})();
