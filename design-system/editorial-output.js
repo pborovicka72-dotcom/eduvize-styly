@@ -26,7 +26,7 @@
   if(topic){
    const category=document.createElement('div');category.className='wisdom-category';
    content.prepend(category);
-   const syncTopic=()=>{const text=topic.textContent.trim();if(category.textContent!==text)category.textContent=text;};
+   const syncTopic=()=>{const text=topic.textContent.trim()?'Citát':'';if(category.textContent!==text)category.textContent=text;};
    new MutationObserver(syncTopic).observe(topic,{childList:true,characterData:true,subtree:true});syncTopic();
   }
   new MutationObserver(schedule).observe(content,{childList:true,characterData:true,subtree:true});
