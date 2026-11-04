@@ -100,3 +100,8 @@ html.weather-station.kiosk-output[data-kiosk-header="light"]{
 .station-hourly .station-hours .station-hour-condition{font-size:.85em;line-height:1.2}
 .station-hourly .station-hours .station-hour-time{font-size:.9em;line-height:1.25;padding-bottom:0}
 .station-hourly .station-extra{font-size:.7em}
+
+/* Size the current reading against its own card, not the entire dashboard. */
+.station-current{container-type:size}
+.station-temperature{font-size:clamp(48px,min(18cqw,42cqh),360px)}
+.station-dashboard[data-station-shape="portrait"] .station-temperature{font-size:clamp(48px,min(22cqw,42cqh),360px)}
