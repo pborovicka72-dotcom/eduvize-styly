@@ -64,7 +64,7 @@
   if(document.querySelector('script[data-edu-profiles]'))return;
   const css=document.createElement('link');css.rel='stylesheet';css.href=new URL('configuration-profiles.css?v=20261102-all-admin-status-9',base);document.head.append(css);
   const load=()=>{const script=document.createElement('script');script.src=new URL('configuration-profiles.js?v=20261104-shared-notice-1',base);script.dataset.eduProfiles='';document.head.append(script);};
-  if(window.EduvizeAdminAuth)load();else{const auth=document.createElement('script');auth.src=new URL('admin-auth.js?v=20261102-interaction-1',base);auth.onload=load;document.head.append(auth);}
+  if(window.EduvizeAdminAuth)load();else{const auth=document.createElement('script');auth.src=new URL('admin-auth.js?v=20261104-single-tab-2',base);auth.onload=load;document.head.append(auth);}
  }
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});else start();
  window.addEventListener('eduvize-profile-adapter-ready',start);
