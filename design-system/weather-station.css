@@ -100,3 +100,9 @@ html.weather-station.kiosk-output[data-kiosk-header="light"]{
 .station-hourly .station-hours .station-hour-condition{font-size:.85em;line-height:1.2}
 .station-hourly .station-hours .station-hour-time{font-size:.9em;line-height:1.25;padding-bottom:0}
 .station-hourly .station-extra{font-size:.7em}
+
+/* Prevent short kiosk viewports from crushing forecast rows. */
+html.weather-station.kiosk-output .station-dashboard{overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;scrollbar-gutter:stable}
+html.weather-station.kiosk-output .station-current{container-type:size}
+html.weather-station.kiosk-output .station-temperature{font-size:clamp(48px,min(18cqw,42cqh),360px)}
+html.weather-station.kiosk-output .station-dashboard[data-station-shape="portrait"] .station-temperature{font-size:clamp(48px,min(22cqw,42cqh),360px)}
