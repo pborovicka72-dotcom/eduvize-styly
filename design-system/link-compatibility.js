@@ -12,8 +12,39 @@
   fetch(new URL('link-releases.json',base),{cache:'no-store'}).then(response=>{if(!response.ok)throw Error();return response.json();}).then(data=>{
    if(!data||typeof data.message!=='string'||typeof data.id!=='string')throw Error();
    release.textContent=data.message;
-   const key='eduvize-link-notice:'+data.id;let seen=false;try{seen=localStorage.getItem(key)==='seen';}catch{}
-   if(!seen){panel.open=true;const dismiss=el('button','Beru na vědomí');dismiss.type='button';dismiss.className='edu-admin__button edu-admin__button--secondary';dismiss.onclick=()=>{try{localStorage.setItem(key,'seen');}catch{}dismiss.remove();panel.open=false;heading.focus();};release.after(dismiss);}
+   const auth=root.EduvizeAdminAuth;
+   const identity=()=>{const s=auth?.status();return s?.connected?(s.schoolId?'school:'+s.schoolId:'operator'):'';};
+   const localKey=()=>identity()?'eduvize-link-notice:'+identity()+':'+data.id:'eduvize-link-notice:'+data.id;
+   let dismissed=false,requestVersion=0;
+   const dismiss=el('button','Beru na vědomí');dismiss.type='button';dismiss.className='edu-admin__button edu-admin__button--secondary';dismiss.hidden=true;release.after(dismiss);
+   const feedback=el('p');feedback.className='edu-admin__hint';feedback.setAttribute('role','status');dismiss.after(feedback);
+   function apply(seen){dismissed=seen;dismiss.hidden=seen;dismiss.disabled=false;dismiss.textContent='Beru na vědomí';panel.open=!seen;}
+   async function shared(method='GET'){
+    const scope=auth?.getToken('configurations')?'configurations':auth?.getToken('documents')?'documents':'';
+    if(!scope)throw Error('Pro společné potvrzení se přihlaste do Eduvize.');
+    const response=await auth.fetch('https://eduvize-dokumenty-api.onrender.com/api/admin/notices/'+encodeURIComponent(data.id),{method},scope);
+    const result=await response.json();if(!response.ok)throw Error();return result.acknowledged===true;
+   }
+   async function sync(){
+    const version=++requestVersion,before=identity();let seen=false;
+    try{seen=localStorage.getItem(localKey())==='seen';}catch{}
+    if(seen){apply(true);return;}
+    if(before){try{seen=await shared();}catch{/* An unavailable service must not imply confirmation. */}}
+    if(version!==requestVersion||before!==identity())return;apply(seen);
+   }
+   dismiss.onclick=async()=>{
+    const before=identity(),key=localKey();++requestVersion;dismiss.disabled=true;dismiss.textContent='Ukládám…';feedback.textContent='';
+    try{
+     if(before)await shared('PUT');
+     if(before!==identity()){await sync();return;}
+     try{localStorage.setItem(key,'seen');}catch{}apply(true);heading.focus();
+     if(!before)feedback.textContent='Potvrzení je uložené v tomto prohlížeči. Pro sdílení mezi aplikacemi se přihlaste do Eduvize.';
+    }catch{dismiss.disabled=false;dismiss.textContent='Beru na vědomí';feedback.textContent='Potvrzení se nepodařilo uložit pro ostatní aplikace. Zkuste to znovu.';}
+   };
+   root.addEventListener('storage',event=>{if(event.key===localKey())void sync();});
+   root.addEventListener('focus',()=>{if(!dismissed)void sync();});
+   root.addEventListener('eduvize-admin-auth-change',()=>{feedback.textContent='';void sync();});
+   Promise.resolve(auth?.ready).then(sync);
   }).catch(()=>{release.textContent='Oznámení změn nyní nelze načíst. To neznamená, že je nutné měnit odkazy. Místní kontrola formátu zůstává dostupná.';});
   body.append(el('p','Aktualizace aplikace sama nevyžaduje nový odkaz. Starší odkazy bez označení formátu se nemažou ani automaticky nepřepisují.'));
   const note=el('p','Kontrola ověřuje adresu, formát odkazu a segment. Neověřuje dostupnost dat, oprávnění ani výsledný vzhled. Odkazy zůstávají pouze v této stránce; nevkládejte přístupové klíče.');body.append(note);
