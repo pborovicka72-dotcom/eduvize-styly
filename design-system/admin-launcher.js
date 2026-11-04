@@ -5,6 +5,13 @@
  function legacyAccount(){const current=new URL(location.href);if(!['#account','#edu-account-panel','#configurations'].includes(current.hash)&&!['returnTo','manage','onedrive'].some(key=>current.searchParams.has(key)))return false;const target=new URL(ACCOUNT);target.search=current.search;target.hash=current.hash==='#edu-account-panel'?'#account':current.hash||'#account';location.replace(target.href);return true;}
  if(legacyAccount())return;
  root.addEventListener('hashchange',legacyAccount);
+ function operatorActions(){
+  const state=root.EduvizeAdminAuth?.status();
+  const allowed=state?.connected===true&&!state.schoolId&&Array.isArray(state.scopes)&&state.scopes.includes('styles');
+  for(const link of document.querySelectorAll('[data-edu-operator-only]'))link.hidden=!allowed;
+ }
+ root.addEventListener('eduvize-admin-auth-change',operatorActions);
+ operatorActions();root.EduvizeAdminAuth?.ready?.then(operatorActions,operatorActions);
  document.addEventListener('click',async event=>{
   if(event.defaultPrevented||event.ctrlKey||event.metaKey||event.shiftKey||event.altKey||event.button!==0)return;
   const link=event.target.closest('a[href]'),auth=root.EduvizeAdminAuth;if(!link||!auth?.status().connected)return;
