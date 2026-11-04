@@ -147,4 +147,4 @@ read:()=>theme?{schemaVersion:1,data:{theme:deep(theme),selected,name:document.g
 apply:async config=>{if(!config.data?.theme?.colors||!config.data.theme.controls)throw Error('Profil neobsahuje platný styl.');if(themes.some(t=>t.id===config.data.selected))selectTheme(config.data.selected);theme=deep(config.data.theme);if(selected!=='standard')document.getElementById('theme-name').value=config.data.name||'';fields();msg('Styl byl načten z profilu do náhledu.');}};
 window.dispatchEvent(new Event("eduvize-profile-adapter-ready"));
 </script>
-</body></html>
+<script src="https://pborovicka72-dotcom.github.io/eduvize-styly/design-system/branding-admin.js?v=20261104-vector-1"></script></body></html>

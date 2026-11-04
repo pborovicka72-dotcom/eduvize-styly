@@ -83,3 +83,6 @@
  function start(){clean(document.body);new MutationObserver(records=>{for(const record of records){if(record.type==='characterData')clean(record.target);else for(const node of record.addedNodes)clean(node);}}).observe(document.body,{subtree:true,childList:true,characterData:true});}
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});else start();
 })();
+
+/* Load centrally managed vector branding in every shared-style consumer. */
+(function(){if(window.EduvizeBranding||document.querySelector('script[data-edu-branding]'))return;const script=document.createElement('script');script.src='https://pborovicka72-dotcom.github.io/eduvize-styly/design-system/branding.js?v=20261104-vector-1';script.dataset.eduBranding='';document.head.append(script);})();
