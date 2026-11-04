@@ -49,11 +49,11 @@
   queued=false;if(document.documentElement.classList.contains('weather-station'))return;const api=root.EduvizeSegmentProfile;if(!api||root.innerWidth<1||root.innerHeight<1)return;
   const geometry=api.resolve(root.innerWidth,root.innerHeight),mode=root.EduvizeOutputModes?.mode?.()||(root.EduvizeOutputModes?.isKiosk?.()?'kiosk':'nsp');
   let metrics=api.header(geometry,mode);
-  if(mode!=='web'&&document.documentElement.dataset.eduHeaderDensity==='compact'){
+  if(mode==='nsp'&&document.documentElement.dataset.eduHeaderDensity==='compact'){
    const height=Math.max(80,Math.min(200,geometry.short*.12));
    metrics={height,icon:height*.64,title:height*.34,meta:height*.18,padding:height*.08,gap:height*.1};
   }
-  if(mode==='kiosk'&&parentHeight){const h=Math.min(parentHeight,metrics.height);metrics={height:h,icon:h*.64,title:h*.36,meta:h*.18,padding:h*.05,gap:h*.08};}
+  if(mode==='kiosk'&&parentHeight){const h=Math.min(parentHeight,metrics.height);metrics={...metrics,height:h,icon:h*.6,title:h*.34,meta:h*.18,padding:h*.1,gap:h*.15};}
 
   const weatherCompact=mode==='nsp'&&document.documentElement.dataset.kioskApp==='weather'&&geometry.kind==='compact';
   if(weatherCompact){const height=geometry.height-Math.min(24,Math.max(8,geometry.short*.012))*2;metrics={height,icon:Math.min(height*.55,geometry.width*.16),title:geometry.width*.11,meta:geometry.width*.045,padding:height*.05,gap:geometry.width*.025};}
@@ -61,11 +61,17 @@
   if(weather){
    const low=geometry.ratio>=2.7||(metrics.height<=120&&geometry.width>=700);
    document.documentElement.dataset.weatherHeaderLayout=low?'low':'stacked';
-   metrics={...metrics,title:metrics.height*(low?.36:.30),meta:metrics.height*(low?.18:.14)};
+   if(mode!=='kiosk')metrics={...metrics,title:metrics.height*(low?.36:.30),meta:metrics.height*(low?.18:.14)};
   }
   const inset=weatherCompact?metrics.padding:(metrics.height-metrics.icon)/2;
   metrics={...metrics,gap:inset};
-  const html=document.documentElement;writeStyle(html,'--edu-header-inset',inset+'px');
+  const html=document.documentElement;
+  // Activate common output bindings before slower theme/integrity scripts finish.
+  if(html.dataset.kioskApp&&!/\/(?:config(?:\.html)?|editor\.html|ucet\.html)(?:\/|$)/.test(root.location.pathname)){
+   html.dataset.outputMode=mode;
+   html.classList.toggle('kiosk-output',mode==='kiosk');
+  }
+  writeStyle(html,'--edu-header-inset',inset+'px');
   for(const [name,value] of Object.entries(metrics))writeStyle(html,'--edu-header-'+name,value+'px');
   for(const [name,value] of Object.entries(api.text?.(geometry,mode)||{}))writeStyle(html,'--edu-text-'+name,value+'px');
   document.querySelectorAll('.edu-output-header').forEach(header=>{
