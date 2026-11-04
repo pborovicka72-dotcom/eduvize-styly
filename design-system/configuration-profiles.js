@@ -24,7 +24,7 @@
   let linkAuditScript;
   function mountLinkAudit(host){
     if(!linkAuditScript)linkAuditScript=(async()=>{
-      for(const file of ['link-contract.js','link-compatibility.js'])await new Promise((resolve,reject)=>{const script=document.createElement('script');script.src='https://pborovicka72-dotcom.github.io/eduvize-styly/design-system/'+file+'?v=20261103-link-contract-1';script.onload=resolve;script.onerror=reject;document.head.append(script);});
+      for(const file of ['link-contract.js','link-compatibility.js'])await new Promise((resolve,reject)=>{const script=document.createElement('script');script.src='https://pborovicka72-dotcom.github.io/eduvize-styly/design-system/'+file+'?v=20261104-shared-notice-1';script.onload=resolve;script.onerror=reject;document.head.append(script);});
     })();
     linkAuditScript.then(()=>root.EduvizeLinkCompatibility.mount(host)).catch(()=>{const note=document.createElement('p');note.textContent='Kontrola kompatibility odkazů se nepodařila načíst. Nastavení aplikace zůstává dostupné.';host.append(note);});
   }
