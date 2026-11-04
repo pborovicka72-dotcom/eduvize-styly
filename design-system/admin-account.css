@@ -54,3 +54,8 @@ body[data-confirmation-active="true"] main>:not(.edu-page-header):not(#license-c
 #license-confirm-button[hidden],#license-confirmation[hidden]{display:none!important}
 
 #license-confirmation .edu-admin__button{max-width:100%;white-space:normal;overflow-wrap:anywhere}
+
+/* Keep account action groups in the shared 20px flow, including wrapped rows. */
+.edu-account-panel .edu-admin__actions{gap:var(--edu-admin-related-gap,12px);margin-block-start:var(--edu-admin-flow-gap,20px)}
+.edu-account-panel #account-return,.edu-account-panel #account-link-microsoft{margin-block-start:var(--edu-admin-flow-gap,20px)}
+.edu-account-panel .edu-admin__button{box-sizing:border-box;max-width:100%;white-space:normal;text-align:center}
