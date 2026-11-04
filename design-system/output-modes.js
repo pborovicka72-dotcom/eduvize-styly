@@ -100,7 +100,7 @@
  const policy=kioskApp()||mode==='kiosk'?'interactive':interactionPicker?(interactionPicker.disabled?'interactive':interactionPicker.value):interaction(u);u.searchParams.set('interaction',policy);u.searchParams.set('paging',policy==='display'?'auto':'off');
  return root.EduvizeLinkContract.stamp(u);
  }
- function install(select){if(!select||select.dataset.eduOutputMode!==undefined)return;select.dataset.eduOutputMode='';if(!Array.from(select.options).some(o=>o.value==='kiosk'))select.add(new Option('Kiosek','kiosk'));const initial=initialMode();const option=Array.from(select.options).find(o=>o.value===initial||(initial==='nsp'&&/Newline Signage Pro/.test(o.text)));if(option&&select.value!==option.value){select.value=option.value;select.dispatchEvent(new Event('change',{bubbles:true}));}installInteraction(select);}
+ function install(select){if(!select||select.dataset.eduOutputMode!==undefined)return;select.dataset.eduOutputMode='';if(!Array.from(select.options).some(o=>o.value==='kiosk'))select.add(new Option('Kiosek','kiosk'));const explicit=['viewMode','output','layout','segment_style','segment_block','orientation','style','block'].some(key=>new URL(root.location.href).searchParams.has(key));const initial=select.id==='kiosk-output-type'&&!explicit?select.value:initialMode();const option=Array.from(select.options).find(o=>o.value===initial||(initial==='nsp'&&/Newline Signage Pro/.test(o.text)));if(option&&select.value!==option.value){select.value=option.value;select.dispatchEvent(new Event('change',{bubbles:true}));}installInteraction(select);}
  root.EduvizeOutputModes=Object.freeze({modes,mode,isKiosk,url,install,segmentKeys,defaultMode,initialMode,interaction,isInteractive,selection,setInteraction,kioskLayout,layoutSelection,setKioskLayout,autoplay,pager});
  if(isKiosk())document.documentElement.classList.add('kiosk-output');
  const policy=interaction();document.documentElement.dataset.eduInteraction=policy;
@@ -144,7 +144,7 @@
  if(root.EduvizeBroadcastLicense||!document.documentElement.dataset.kioskApp||/\/(?:config(?:\.html)?|editor\.html|admin)\/?$/.test(location.pathname))return;
  const html=document.documentElement,profile=new URL(location.href).searchParams.get('edu-profile')||'';
  const nativeInterval=root.setInterval.bind(root),nativeTimeout=root.setTimeout.bind(root);
- const pausedMedia=new Set();
+ const pausedMedia=new Set(),pausedFrames=new Map();
  let state='checking',screen,title,detail,checking=false,lease=0,expiry=null,wasSuspended=false;
  html.dataset.eduLicense=state;
  const css=document.createElement('style');css.textContent='html[data-edu-license]:not([data-edu-license="active"]) body>:not(#edu-license-screen),html[data-edu-license]:not([data-edu-license="active"]) body>:not(#edu-license-screen) *{visibility:hidden!important}#edu-license-screen{position:fixed!important;inset:0!important;z-index:2147483647!important;display:flex!important;box-sizing:border-box!important;align-items:center!important;justify-content:center!important;padding:clamp(20px,5vmin,100px)!important;background:var(--ev-bg,#eaf3f6)!important;color:var(--ev-text,#18394b)!important;text-align:center!important;font-family:Arial,sans-serif!important}#edu-license-screen[hidden]{display:none!important}#edu-license-screen>div{max-width:1000px}#edu-license-screen h1{margin:0 0 .6em!important;font-size:clamp(28px,5vmin,80px)!important;line-height:1.2!important}#edu-license-screen p{margin:0!important;font-size:clamp(18px,3vmin,44px)!important;line-height:1.5!important}';document.head.append(css);
@@ -159,8 +159,8 @@
   detail.textContent=state==='suspended'?'Škola nemá platnou licenci Eduvize.':state==='checking'?'':'Čekám na ověření licence školy.';
  }
  function hold(media){if(!media.paused)pausedMedia.add(media);media.pause();}
- function stopMedia(){if(state==='active')return;for(const media of document.querySelectorAll('video,audio'))hold(media);if(state!=='checking')for(const frame of document.querySelectorAll('iframe'))frame.remove();}
- function set(value){const old=state;state=value;html.dataset.eduLicense=value;panel();stopMedia();if(value==='suspended'||value==='unavailable')wasSuspended=true;if(value==='active'&&wasSuspended&&old!=='active')location.reload();else if(value==='active'){for(const media of pausedMedia)if(media.isConnected)media.play()?.catch(()=>{});pausedMedia.clear();}root.dispatchEvent(new CustomEvent('eduvize-broadcast-state',{detail:{state:value}}));}
+ function stopMedia(){if(state==='active')return;for(const media of document.querySelectorAll('video,audio'))hold(media);if(state!=='checking')for(const frame of document.querySelectorAll('iframe')){if(!pausedFrames.has(frame)){pausedFrames.set(frame,frame.getAttribute('src'));frame.src='about:blank';}}}
+ function set(value){const old=state;state=value;html.dataset.eduLicense=value;panel();stopMedia();if(value==='suspended'||value==='unavailable')wasSuspended=true;if(value==='active'){for(const [frame,src] of pausedFrames)if(frame.isConnected&&src)frame.src=src;pausedFrames.clear();for(const media of pausedMedia)if(media.isConnected)media.play()?.catch(()=>{});pausedMedia.clear();}root.dispatchEvent(new CustomEvent('eduvize-broadcast-state',{detail:{state:value}}));}
  async function check(){
   if(checking)return;checking=true;
   try{
@@ -181,5 +181,5 @@
  function start(){panel();new MutationObserver(()=>{if(state!=='active')stopMedia();}).observe(document.body,{childList:true,subtree:true});}
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});else start();
  check();nativeInterval(check,60000);nativeInterval(()=>{if(state==='active'&&performance.now()>=lease)set('unavailable');},1000);
- root.addEventListener('online',check);document.addEventListener('visibilitychange',()=>{if(!document.hidden)check();});
+ root.addEventListener('online',check);root.addEventListener('pageshow',()=>{if(state==='active'&&performance.now()>=lease)set('checking');check();});document.addEventListener('visibilitychange',()=>{if(!document.hidden)check();});
 })(window);
