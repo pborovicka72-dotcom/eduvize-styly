@@ -21,7 +21,7 @@ html[data-kiosk-app="news"][data-output-mode] #news .content{padding:var(--news-
 html[data-kiosk-app="news"][data-output-mode] #news .title{font-size:var(--news-card-title,28px)!important;line-height:1.22!important;font-weight:650;overflow-wrap:anywhere}
 html[data-kiosk-app="news"][data-output-mode] #news .summary{font-size:var(--news-card-body,22px)!important;line-height:1.45!important;overflow-wrap:anywhere}
 html[data-kiosk-app="news"][data-output-mode] #news :is(.date,.detail){font-size:var(--news-card-meta,16px)!important;line-height:1.3!important}
-html[data-kiosk-app="news"][data-output-mode] #news .media{flex:0 0 auto;width:100%;height:min(48cqh,66.6667cqw);min-width:0;min-height:0}
+html[data-kiosk-app="news"][data-output-mode] #news .media{flex:0 0 auto;width:100%;height:var(--news-card-media-height,200px);min-width:0;min-height:0}
 html[data-kiosk-app="news"][data-output-mode] #news .media.missing-photo{display:none!important}
 html[data-kiosk-app="news"][data-output-mode] #news .media img{object-fit:cover}
 html[data-kiosk-app="news"][data-output-mode] body.image-contain #news .media img{object-fit:contain}
@@ -70,7 +70,7 @@ html[data-kiosk-app="wisdom"][data-output-mode] .wisdom-heading{max-width:100%;o
 html[data-kiosk-app="wisdom"][data-output-mode] .wisdom-quotation{min-width:0}
 html[data-kiosk-app="wisdom"][data-output-mode] .quote{width:100%;max-width:100%;min-width:0;overflow-wrap:break-word}
 
-html[data-kiosk-app="news"][data-output-mode]:not(.web-output) #news .card{container-type:size}
+html[data-kiosk-app="news"][data-output-mode]:not(.web-output) #news .card{container-type:normal}
 
 
 /* Kiosk uses the same image-above-text cards and layout policy as signage. */
@@ -83,8 +83,10 @@ html[data-kiosk-app="news"][data-output-mode].kiosk-output #news :is(.title,.sum
 .news-page-controls .edu-pagination-status{font-size:clamp(14px,var(--edu-text-caption,18px),32px)}
 
 /* Choose image placement from the actual card geometry, shared by NSP and kiosk. */
-html[data-kiosk-app="news"][data-output-mode]:not(.web-output) #news .card.side-media{flex-direction:row!important}
-html[data-kiosk-app="news"][data-output-mode]:not(.web-output) #news .card.side-media .media{flex:0 0 32%;width:32%;height:max(0px,min(calc(100cqh - 2*var(--news-card-pad,20px)),40cqw));align-self:flex-start;min-height:0;margin:var(--news-card-pad,20px) 0 var(--news-card-pad,20px) var(--news-card-pad,20px);border-radius:var(--ev-control-radius,10px)}
+html[data-kiosk-app="news"][data-output-mode]:not(.web-output) #news .card.side-media{display:grid!important;grid-template-columns:minmax(0,32%) minmax(0,1fr)!important;grid-template-rows:minmax(0,1fr)!important;align-items:stretch;isolation:isolate;background:var(--ev-surface);border:1px solid var(--ev-border);overflow:hidden}
+html[data-kiosk-app="news"][data-output-mode]:not(.web-output) #news .card.side-media .media{flex:none;width:auto;height:var(--news-card-media-height,200px);max-height:calc(100% - 2*var(--news-card-pad,20px));align-self:start;min-height:0;margin:var(--news-card-pad,20px) 0 var(--news-card-pad,20px) var(--news-card-pad,20px);border-radius:var(--ev-control-radius,10px)}
+html[data-kiosk-app="news"][data-output-mode]:not(.web-output) #news .card.side-media .content{width:auto;height:100%;min-width:0;min-height:0;overflow:hidden;position:relative}
+html[data-kiosk-app="news"][data-output-mode] #news .card.side-media:not(.has-photo){grid-template-columns:minmax(0,1fr)!important}
 
 /* Wisdom feature card: shared by web, kiosk and every Newline segment.
    Header colors and geometry remain owned by the shared header/theme system. */
