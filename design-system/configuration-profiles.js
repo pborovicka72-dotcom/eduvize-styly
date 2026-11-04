@@ -96,7 +96,7 @@
     // Move existing controls so their original handlers and submit behavior survive.
     row.prepend(...[...(adapter.app==='school-identity'?[document.getElementById('school-edit')]:[]),save,local,copy,open].filter(Boolean));
     if(adapter.app==='styles'){const publish=document.getElementById('save');if(publish){publish.textContent='Použít změny ve sdíleném stylu';publish.title='Aktualizuje centrální styl Eduvize. Konfiguraci svého profilu uložíte tlačítkem Uložit na OneDrive.';}}
-    if(open)open.textContent='Otevřít výstup';
+    if(open){open.textContent='Otevřít výstup';open.dataset.eduOpenOutput='';window.EduvizeAdminNavigation?.normalize(open);}
     if(copy)copy.textContent='Kopírovat odkaz';
     const panel=make('div',null,'edu-profile-current');panel.dataset.eduProfilePanel=adapter.app;panel.id='edu-profile-save';
     const profileText=make('p','Profil není vybrán.','edu-profile-current__name'),status=make('p',null,'edu-profile-panel__status');status.setAttribute('role','status');status.setAttribute('aria-live','polite');
