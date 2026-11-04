@@ -89,7 +89,7 @@
     const nodes=group.querySelectorAll('.feels-like,.hero-meta');
     for(const node of nodes)node.style.fontSize=metrics.meta+'px';
     const current=header.querySelector('.weather-current'),temperature=header.querySelector('.temperature');
-    if(current&&temperature&&getComputedStyle(current).display!=='contents'){
+    if(current&&temperature&&getComputedStyle(current).display!=='contents'&&getComputedStyle(current).flexDirection!=='column'){
      const gap=parseFloat(getComputedStyle(current).gap)||0;
      const needed=Math.max(group.scrollWidth,...Array.from(nodes,node=>node.scrollWidth));
      const available=current.clientWidth-temperature.getBoundingClientRect().width-gap;

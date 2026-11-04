@@ -69,14 +69,17 @@ html[data-weather-portrait] .metric{display:flex;flex-direction:column;justify-c
 html[data-weather-portrait] .hour-cell{justify-content:center}
 
 /* Weather state is primary content: use the shared label role and its complete icon field. */
-html[data-kiosk-app="weather"][data-output-mode] .hero.edu-output-header .hero-details{font-size:max(var(--edu-header-meta),var(--edu-text-label));gap:.2em}
-html[data-kiosk-app="weather"][data-output-mode] .hero.edu-output-header :is(.feels-like,.hero-meta,.condition-label){font-size:max(var(--edu-header-meta),var(--edu-text-label))!important;line-height:1.2}
+html[data-kiosk-app="weather"][data-output-mode] .hero.edu-output-header{--weather-header-text:max(calc(var(--edu-header-meta)*1.5),var(--edu-text-label))}
+html[data-kiosk-app="weather"][data-output-mode] .hero.edu-output-header .hero-details{font-size:var(--weather-header-text);gap:.2em}
+html[data-kiosk-app="weather"][data-output-mode] .hero.edu-output-header :is(.feels-like,.hero-meta,.condition-label){font-size:var(--weather-header-text)!important;line-height:1.2}
 html[data-kiosk-app="weather"][data-output-mode] .hero.edu-output-header .hero-art.edu-header-art{width:var(--edu-header-icon)!important;height:100%!important;min-height:0;gap:.15em;justify-content:center}
-html[data-kiosk-app="weather"][data-output-mode] .hero.edu-output-header .hero-art.edu-header-art>svg{display:block;width:100%!important;height:auto!important;max-height:calc(100% - max(var(--edu-header-meta),var(--edu-text-label))*1.4)!important;min-height:0;flex:0 1 auto;aspect-ratio:1}
+html[data-kiosk-app="weather"][data-output-mode] .hero.edu-output-header .hero-art.edu-header-art>svg{display:block;width:100%!important;height:auto!important;max-height:calc(100% - var(--weather-header-text)*1.4)!important;min-height:0;flex:0 1 auto;aspect-ratio:1}
 html[data-kiosk-app="weather"][data-output-mode] .hero.edu-output-header .condition-label{flex:none;max-width:100%;overflow-wrap:normal}
 /* The weather glyph supplies the identity in a narrow column; keep room for actual readings. */
-html[data-kiosk-app="weather"][data-weather-portrait]:not([data-weather-header-only]) .hero.edu-output-header{grid-template-columns:minmax(0,1fr) auto!important}
+html[data-kiosk-app="weather"][data-weather-portrait]:not([data-weather-header-only]) .hero.edu-output-header{grid-template-columns:minmax(0,1fr) auto!important;--weather-header-text:max(calc(var(--edu-header-meta)*1.25),var(--edu-text-label))}
 html[data-kiosk-app="weather"][data-weather-portrait]:not([data-weather-header-only]) .hero>.edu-app-icon{display:none!important}
-html[data-weather-portrait]:not([data-weather-header-only]) .hero.edu-output-header .weather-current{grid-column:1}
+html[data-weather-portrait]:not([data-weather-header-only]) .hero.edu-output-header .weather-current{grid-column:1;flex-direction:column;align-items:flex-start;justify-content:center;gap:.15em}
 html[data-weather-portrait]:not([data-weather-header-only]) .hero.edu-output-header .hero-art{grid-column:2}
 html[data-kiosk-app="weather"][data-output-mode][data-weather-header-only] .hero.edu-output-header .hero-art.edu-header-art{width:100%!important;height:100%!important}
+
+html[data-weather-portrait]:not([data-weather-header-only]) .hero.edu-output-header .hero-meta{display:none}
