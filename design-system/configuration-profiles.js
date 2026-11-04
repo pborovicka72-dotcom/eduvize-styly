@@ -245,8 +245,8 @@
     if(!['weather','transport'].includes(adapter?.app)||document.getElementById('edu-school-suggestion'))return;
     const input=document.getElementById(adapter.app==='weather'?'address-search-input':'search');
     if(!input)return;
-    const panel=make('section',null,'edu-admin__card');panel.id='edu-school-suggestion';panel.hidden=true;
-    const info=make('p'),go=button('Vyhledat školu'),dismiss=button('Pokračovat s vlastním nastavením');panel.append(info,go,dismiss);
+    const panel=make('section',null,'edu-admin__card edu-admin__flow');panel.id='edu-school-suggestion';panel.hidden=true;
+    const info=make('p'),actions=make('div',null,'edu-admin__actions'),go=button('Vyhledat školu'),dismiss=button('Pokračovat s vlastním nastavením');actions.append(go,dismiss);panel.append(info,actions);
     input.closest('form').before(panel);let school=null,seq=0;
     function show(value){school=value&&typeof value==='object'&&typeof value.name==='string'&&value.name.trim()?value:null;panel.hidden=!school;if(school)info.textContent='Na kartě školy je uložena škola: '+school.name+([school.address,school.municipality].filter(Boolean).length?' · '+[school.address,school.municipality].filter(Boolean).join(', '):'')+'. Chcete ji vyhledat?';}
     go.onclick=()=>{if(!school)return;input.value=[school.name,school.municipality].filter(Boolean).join(' ');input.dispatchEvent(new Event('input',{bubbles:true}));if(adapter.app==='weather')document.getElementById('address-search-button')?.click();input.scrollIntoView({block:'center',behavior:'smooth'});input.focus();};
