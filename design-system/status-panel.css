@@ -13,3 +13,6 @@
 
 /* The brand artwork always sits on its white logo canvas. */
 html[data-kiosk-app="kiosk"] .edu-status-panel__brand{background:white}
+
+/* Paint the complete status strip in scaled Safari previews from the first frame. */
+.edu-status-panel{position:relative;isolation:isolate;transform:translateZ(0)}
