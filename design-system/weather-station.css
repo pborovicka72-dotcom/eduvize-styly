@@ -106,3 +106,6 @@ html.weather-station.kiosk-output .station-dashboard{overflow-y:auto;overflow-x:
 html.weather-station.kiosk-output .station-current{container-type:size}
 html.weather-station.kiosk-output .station-temperature{font-size:clamp(48px,min(18cqw,42cqh),360px)}
 html.weather-station.kiosk-output .station-dashboard[data-station-shape="portrait"] .station-temperature{font-size:clamp(48px,min(22cqw,42cqh),360px)}
+
+html.weather-station.kiosk-output .station-readings{gap:.2em}
+html.weather-station.kiosk-output .station-feels{line-height:1.15}
