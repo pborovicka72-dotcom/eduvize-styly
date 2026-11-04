@@ -47,7 +47,7 @@ html[data-kiosk-app="weather"][data-output-mode] #weather-pages .daily-hourly-gr
 
 /* Approved weather header: central identity and semantic sizes, independent cells. */
 html[data-kiosk-app="weather"] .hero.edu-output-header{display:flex!important;align-items:center!important;justify-content:space-between;min-width:0;overflow:hidden}
-html[data-kiosk-app="weather"] .hero.edu-output-header>.edu-app-icon{display:inline-grid!important;place-items:center!important;flex-shrink:0!important;align-self:center;background:var(--ev-secondary)!important;color:var(--ev-secondary-text)!important;border-radius:var(--ev-icon-radius,10px)!important}
+html[data-kiosk-app="weather"] .hero.edu-output-header>.edu-app-icon{display:inline-grid!important;place-items:center!important;flex-shrink:0!important;align-self:center;background:var(--ev-secondary)!important;color:var(--ev-secondary-text)!important;border-radius:calc(var(--edu-header-icon)*.04)!important}
 html[data-kiosk-app="weather"] .hero.edu-output-header>.edu-app-icon>svg{width:60%!important;height:60%!important;max-height:60%!important;display:block!important;transform:none!important}
 html[data-kiosk-app="weather"] .hero.edu-output-header .weather-current{display:flex!important;flex:1 1 0;min-width:0;flex-direction:column!important;align-items:flex-start!important;justify-content:center!important;gap:calc(var(--edu-header-height)*.035)!important}
 html[data-kiosk-app="weather"] .hero.edu-output-header .temperature{flex:none;max-width:100%;line-height:1.05!important}
