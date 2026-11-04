@@ -6,9 +6,9 @@ html.kiosk-output .edu-output-header .edu-header-meta{font-size:var(--edu-header
 html.kiosk-output :is(.edu-pagination-button,.edu-kiosk-pagination button,.edu-document-tool,.navigation button,.gallery-controls button){min-height:max(44px,calc(var(--edu-text-body,24px)*1.6))!important;font-size:var(--edu-text-caption,18px)!important}
 html.kiosk-output :is(.edu-pagination-status,.edu-kiosk-pagination>span){font-size:var(--edu-text-caption,18px)!important}
 
-html[data-kiosk-app="wisdom"].kiosk-output .edu-wisdom-output .content>.quote{font-size:clamp(44px,6vmin,144px)!important;max-width:24em;line-height:1.25!important}
-html[data-kiosk-app="wisdom"].kiosk-output .edu-wisdom-output .content>.quote[data-length="long"]{font-size:clamp(32px,4.5vmin,100px)!important}
-html[data-kiosk-app="wisdom"].kiosk-output .attribution .author{font-size:clamp(24px,2.8vmin,64px)!important}
+html[data-kiosk-app="wisdom"].kiosk-output .edu-wisdom-output .content>.quote{font-size:var(--edu-text-value)!important;max-width:24em;line-height:1.25!important}
+html[data-kiosk-app="wisdom"].kiosk-output .edu-wisdom-output .content>.quote[data-length="long"]{font-size:var(--edu-text-title)!important}
+html[data-kiosk-app="wisdom"].kiosk-output .attribution .author{font-size:var(--edu-text-body)!important}
 html[data-kiosk-app="wisdom"].kiosk-output .attribution :is(.work,.source-link){font-size:var(--edu-text-caption)!important}
 html[data-kiosk-app="wisdom"].kiosk-output .wisdom-quotation{padding:var(--edu-kiosk-space)!important;gap:var(--edu-kiosk-space)!important;justify-content:center;flex:0 1 auto!important;min-height: min(56vh,900px)!important;max-height:100%;overflow:hidden}
 html[data-kiosk-app="wisdom"].kiosk-output #display>.panel{gap:var(--edu-kiosk-space)!important}
@@ -18,14 +18,14 @@ html[data-kiosk-app="holidays"].kiosk-output body.ev-modern .upcoming-date{font-
 html[data-kiosk-app="holidays"].kiosk-output body.ev-modern .upcoming-event{font-size:var(--edu-text-label)!important}
 html[data-kiosk-app="holidays"].kiosk-output body.ev-modern .metric-value{font-size:var(--edu-text-value)!important}
 html[data-kiosk-app="holidays"].kiosk-output body.ev-modern :is(.metric-name,.metric-note){font-size:var(--edu-text-label)!important}
-html[data-kiosk-app="holidays"].kiosk-output body.ev-modern .upcoming-grid{flex:1 1 0!important;grid-auto-rows:minmax(0,1fr)!important;align-content:stretch}
+html[data-kiosk-app="holidays"].kiosk-output body.ev-modern .upcoming-grid{flex:0 1 auto!important;grid-auto-rows:1fr!important;align-content:start}
 html[data-kiosk-app="holidays"].kiosk-output body.ev-modern .upcoming-day{container-type:normal;gap:.4em;min-height:0;padding:var(--edu-kiosk-space)!important}
 html[data-kiosk-app="holidays"].kiosk-output body.ev-modern .calendar-metrics{flex:0 1 auto!important;max-height:none!important}
 html[data-kiosk-app="holidays"].kiosk-output body.ev-modern .calendar-card{padding:var(--edu-kiosk-space);min-height:0}
 html[data-kiosk-app="holidays"].kiosk-output body.calendar-reading #upcoming>.calendar-details{font-size:var(--edu-text-body)}
 html[data-kiosk-app="holidays"].kiosk-output body.calendar-reading #upcoming>.section-heading h2{font-size:var(--edu-text-title)!important}
-html[data-kiosk-app="holidays"].kiosk-output body.calendar-reading.ev-modern .shell>#upcoming{grid-template-rows:minmax(0,1.1fr) auto minmax(0,1fr)!important;align-content:stretch}
-html[data-kiosk-app="holidays"].kiosk-output body.calendar-reading.ev-modern .name-profile{height:100%!important;min-height:0;max-height:100%}
+html[data-kiosk-app="holidays"].kiosk-output body.calendar-reading.ev-modern .shell>#upcoming{grid-template-rows:auto auto auto!important;align-content:start}
+html[data-kiosk-app="holidays"].kiosk-output body.calendar-reading.ev-modern .name-profile{height:auto!important;min-height:0;max-height:none}
 html[data-kiosk-app="holidays"].kiosk-output body.calendar-reading .name-profile-text{flex:1 1 0!important}
 html[data-kiosk-app="holidays"].kiosk-output body.calendar-reading .name-profile-art svg{max-height:calc(var(--edu-text-body)*7)}
 
@@ -83,3 +83,9 @@ html[data-kiosk-app="holidays"].kiosk-output body.calendar-reading #upcoming.cal
 html[data-kiosk-app="holidays"].kiosk-output body.calendar-reading #upcoming .upcoming-name{font-size:var(--edu-text-title)!important}
 html[data-kiosk-app="holidays"].kiosk-output body.calendar-reading #upcoming .upcoming-date,
 html[data-kiosk-app="holidays"].kiosk-output body.calendar-reading #upcoming .upcoming-event{font-size:var(--edu-text-label)!important}
+
+/* Forecast and calendar cards keep a common natural reading height in kiosks. */
+html[data-kiosk-app="weather"].kiosk-output :is(.metrics,.hourly-grid,.daily-hourly-grid,.forecast-grid){grid-auto-rows:1fr;align-content:start}
+html[data-kiosk-app="holidays"].kiosk-output body.calendar-reading .name-profile-heading{font-size:var(--edu-text-title)!important}
+html[data-kiosk-app="holidays"].kiosk-output body.calendar-reading :is(.name-profile-text,.calendar-details){font-size:var(--edu-text-body)!important}
+html[data-kiosk-app="holidays"].kiosk-output body.calendar-reading .name-profile :is(.name-profile-source,.name-profile-count){font-size:var(--edu-text-caption)!important}
