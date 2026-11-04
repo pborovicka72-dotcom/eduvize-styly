@@ -134,3 +134,11 @@ html.weather-station:is(.nsp-output,.kiosk-output) body main.shell .station-dash
 /* Approved station weather glyph: twenty percent above the shared reading size. */
 html.weather-station:is(.nsp-output,.kiosk-output) .station-symbol{width:3.6em!important;height:3.6em!important;flex:0 0 3.6em!important;max-height:80%!important}
 html.weather-station:is(.nsp-output,.kiosk-output) .station-readings{align-items:flex-start;text-align:left}
+
+/* Portrait current conditions use their own panel area, shared by NSP and kiosk.
+   Container width/height caps also protect narrow columns and short previews. */
+html.weather-station:is(.nsp-output,.kiosk-output) .station-dashboard[data-station-shape="portrait"] .station-current{flex-direction:row;gap:4cqw}
+html.weather-station:is(.nsp-output,.kiosk-output) body main.shell .station-dashboard[data-station-shape="portrait"] .station-temperature{font-size:min(20cqw,42cqh)!important}
+html.weather-station:is(.nsp-output,.kiosk-output) .station-dashboard[data-station-shape="portrait"] .station-symbol{width:min(max(3.6em,17cqw),38cqh)!important;height:min(max(3.6em,17cqw),38cqh)!important;flex:0 0 min(max(3.6em,17cqw),38cqh)!important;max-height:100%!important}
+html.weather-station:is(.nsp-output,.kiosk-output) .station-dashboard[data-station-shape="portrait"] .station-feels{font-size:min(max(1.2em,4.4cqw),14cqh);white-space:nowrap}
+html.weather-station:is(.nsp-output,.kiosk-output) .station-dashboard[data-station-shape="portrait"] .station-condition{font-size:min(max(1em,3.4cqw),11cqh)}
