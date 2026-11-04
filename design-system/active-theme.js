@@ -23,6 +23,8 @@
  if(document.documentElement.dataset.eduTheme==='standard')return;
  const endpoint='https://eduvize-design-system-api.onrender.com/api/design-system/themes';
  const cacheKey='eduvize-active-theme-v1';
+ function themeProfile(){let selected='';try{selected=localStorage.getItem('eduvize-profile-selection-v1')||'';}catch{}const value=new URL(location.href).searchParams.get('edu-profile')||window.EduvizeAdminAuth?.status().profileId||selected;return /^[a-f0-9]{32}$/.test(value||'')?value:'';}
+ const scopedCache=profile=>cacheKey+(profile?':'+profile:'');
  const names={background:'--ev-bg',text:'--ev-text',surface:'--ev-surface',muted:'--ev-muted',primary:'--ev-primary',primaryText:'--ev-primary-text',secondary:'--ev-secondary',secondaryText:'--ev-secondary-text',accent:'--ev-accent',border:'--ev-border'};
  function apply(theme){
   if(!theme?.colors)return false;
@@ -38,20 +40,23 @@
   if(Number.isFinite(theme.cards?.radiusPx))root.setProperty('--edu-admin-card-radius',theme.cards.radiusPx+'px');
   document.documentElement.dataset.eduvizeTheme='active';return true;
  }
- try{const cached=JSON.parse(localStorage.getItem(cacheKey)||'null');if(cached)apply(cached)}catch(_){}
+ try{const cached=JSON.parse(localStorage.getItem(scopedCache(themeProfile()))||'null');if(cached)apply(cached)}catch(_){}
  async function refresh(){
   try{
-   const response=await fetch(endpoint,{cache:'no-store'});
+   const profile=themeProfile(),url=new URL(endpoint);if(profile)url.searchParams.set('profileId',profile);
+   const response=await fetch(url,{cache:'no-store'});
    if(!response.ok)throw Error('HTTP '+response.status);
    const themes=await response.json();
    if(!Array.isArray(themes))throw Error('Neplatné styly');
    const theme=(themes.find(x=>x.active)||themes.find(x=>x.id==='standard'))?.config;
-   if(!theme?.colors)return;
-   if(apply(theme)){try{localStorage.setItem(cacheKey,JSON.stringify(theme))}catch(_){}}
+   if(!theme?.colors||profile!==themeProfile())return;
+   if(apply(theme)){try{localStorage.setItem(scopedCache(profile),JSON.stringify(theme));localStorage.setItem(cacheKey,JSON.stringify(theme))}catch(_){}}
   }catch(error){console.warn('Eduvize: aktivní styl se nepodařilo načíst',error)}
   finally{document.documentElement.classList.remove('ev-theme-pending')}
  }
  refresh();
+ window.addEventListener('eduvize-admin-auth-change',refresh);
+ window.addEventListener('storage',event=>{if(event.key==='eduvize-profile-selection-v1')refresh();});
  document.addEventListener('visibilitychange',()=>{if(!document.hidden)refresh()});
  window.setInterval(()=>{if(!document.hidden)refresh()},60000);
 })();

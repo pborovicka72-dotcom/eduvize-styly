@@ -97,7 +97,8 @@
   await ready;const token=getToken(scope);if(!token)throw Error(need(scope));
   const u=new URL(value,location.href);
   const kioskOutput=scope==='configurations'&&u.origin==='https://eduvize-admin.onrender.com'&&u.pathname==='/api/account/kiosk-outputs'&&(options.method||'GET').toUpperCase()==='POST'&&!u.username&&!u.password;
-  const allowed=kioskOutput||(scope==='styles'?u.origin===CENTRAL&&u.pathname.startsWith('/api/design-system/'):u.origin===DOCS&&u.pathname.startsWith('/api/admin/'));
+  const profileTheme=scope==='configurations'&&u.origin===CENTRAL&&u.pathname==='/api/design-system/profile-theme'&&(options.method||'GET').toUpperCase()==='POST'&&!u.username&&!u.password;
+  const allowed=profileTheme||kioskOutput||(scope==='styles'?u.origin===CENTRAL&&u.pathname.startsWith('/api/design-system/'):u.origin===DOCS&&u.pathname.startsWith('/api/admin/'));
   if(!allowed)throw Error('Nepovolená adresa administračního požadavku.');
   const response=await sessionFetch(u.href,{...options,cache:'no-store',redirect:'error',headers:{...(options.headers||{}),Authorization:'Bearer '+token}});
   if(!response.ok){const data=await response.clone().json().catch(()=>({}));if(session?.token===token&&stored()?.token===token)failure(response.status,typeof data.detail==='string'?data.detail:'');}
