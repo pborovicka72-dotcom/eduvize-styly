@@ -34,3 +34,6 @@ html[data-output-mode] .edu-document-navigation-actions{display:flex;gap:12px;ju
 html[data-output-mode] .edu-document-navigation-actions[hidden]{display:none}
 html[data-output-mode] .edu-document-navigation #controls{grid-column:2;justify-content:center;padding:0}
 @media(max-width:900px){html[data-output-mode] .edu-document-navigation{grid-template-columns:1fr}html[data-output-mode] .edu-document-navigation #controls{grid-column:1;grid-row:1}html[data-output-mode] .edu-document-navigation-actions{grid-row:2}}
+
+/* Custom two-finger zoom, retaining one-finger scrolling. */
+.edu-document-fullscreen :is(.edu-document-canvas,.edu-media-viewport){touch-action:pan-x pan-y!important}
