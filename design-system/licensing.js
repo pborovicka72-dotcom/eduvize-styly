@@ -56,7 +56,15 @@
     button.hidden=true;$('license-confirm-continue').hidden=false;root.dispatchEvent(new Event('eduvize-school-account-change'));return;
    }
    if(result.registered){$('license-confirm-title').textContent='Registrace je dokončená';$('license-confirm-intro').textContent='Školní účet je vytvořený a licence aktivovaná. Nyní se můžete přihlásit.';button.hidden=true;$('license-confirm-continue').hidden=false;}
-   else{delete document.body.dataset.confirmationActive;$('license-confirmation').hidden=true;location.replace(auth.ACCOUNT+'#'+new URLSearchParams(result.microsoftTicket?{'edu-ms-ticket':result.microsoftTicket}:{'edu-email-ticket':result.emailTicket}));}
+   else{
+    const ticket=result.microsoftTicket||result.emailTicket;
+    if(typeof ticket!=='string'||!/^[A-Za-z0-9_-]{43}$/.test(ticket))throw Error('Přihlášení nevrátilo platné potvrzení. Vyžádejte si nový odkaz.');
+    // A fragment-only navigation does not rerun admin-auth initialization.
+    // Force a document navigation; the credential remains exclusively in the fragment.
+    const next=new URL(auth.ACCOUNT);next.searchParams.set('edu-login-return',crypto.randomUUID());
+    next.hash=new URLSearchParams(result.microsoftTicket?{'edu-ms-ticket':ticket}:{'edu-email-ticket':ticket}).toString();
+    location.replace(next.href);
+   }
   }catch(e){say('license-confirm-status',e.message);button.disabled=false;$('license-confirm-continue').hidden=false;}};
  }
  async function state(){
