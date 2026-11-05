@@ -3,6 +3,7 @@
  const auth=root.EduvizeAdminAuth,host=document.getElementById('edu-account-panel');if(!auth||!host)return;
  if(root.top!==root.self){const link=document.createElement('a');link.href=auth.ACCOUNT;link.target='_top';link.rel='noopener';link.textContent='Otevřít přihlášení';host.replaceChildren(link);return;}
  const $=id=>host.querySelector('#'+id),message=$('account-message');
+ const disconnect=document.createElement('button');disconnect.type='button';disconnect.className='edu-admin__button edu-admin__button--secondary';disconnect.textContent='Odpojit OneDrive';disconnect.hidden=true;$('account-check').after(disconnect);let cloudReady=false;
  let initializing=true,busy=false,driveConnected=false,signingOut=false,linkSchoolId='',microsoftLinked=null;
  const params=new URL(location.href).searchParams;
  let requested=params.get('returnTo'),manage=params.get('manage')==='1'||params.get('edu-link-pending')==='1'||new URLSearchParams(location.hash.slice(1)).has('edu-confirm');
@@ -29,6 +30,7 @@
   $('account-microsoft').textContent=driveConnected?'Obnovit připojení':'Připojit OneDrive';
   $('account-microsoft').classList.toggle('edu-admin__button--secondary',driveConnected);
   $('account-check').disabled=busy||!connected||!s.scopes.includes('documents');
+  disconnect.hidden=!connected||!driveConnected||!cloudReady;disconnect.disabled=busy||!connected;
   $('account-return').hidden=!requested||!connected;
   $('account-return').disabled=busy||!connected;
  }
@@ -51,6 +53,8 @@
  $('account-microsoft-login').onclick=()=>work('Otevírám přihlášení Microsoft…',()=>auth.loginMicrosoft($('account-remember').checked));
  if($('account-link-microsoft'))$('account-link-microsoft').onclick=()=>work('Otevírám propojení Microsoft…',()=>auth.loginMicrosoft($('account-remember').checked));
  $('account-logout').onclick=()=>{signingOut=true;status();work('Odhlašuji…',async()=>{try{await auth.logout();}finally{signingOut=false;driveConnected=false;$('account-onedrive').textContent='Ověřuji připojení…';status();}say('Odhlášení proběhlo úspěšně.');});};
+ disconnect.onclick=()=>work('Odpojuji OneDrive pro import…',async()=>{const response=await auth.fetch(auth.DOCS+'/api/admin/microsoft',{method:'DELETE'},'documents');const data=await response.json();if(!response.ok)throw Error(data.detail||'Odpojení se nepodařilo.');driveConnected=false;$('account-onedrive').textContent='OneDrive není připojený. Dokumenty a nastavení používají cloud Eduvize.';say('OneDrive je odpojený. Přihlášení do Eduvize zůstává platné.');status();});
+ root.addEventListener('eduvize-cloud-migrated',()=>{cloudReady=true;status();});
  $('account-check').onclick=()=>work('Ověřuji OneDrive…',async()=>{say(await connection()?'Připojení bylo ověřeno.':'Připojení nyní nelze ověřit. Zkuste to znovu.');});
  $('account-microsoft').onclick=()=>work('Otevírám připojení OneDrive…',async()=>{const r=await auth.fetch(auth.DOCS+'/api/admin/microsoft/start',{method:'POST'},'documents'),data=await r.json();if(!r.ok)throw Error(data.detail||'Připojení nelze otevřít.');const u=new URL(data.url);if(u.origin!==auth.DOCS||u.pathname!=='/auth/microsoft/storage/start')throw Error('Neplatná adresa připojení OneDrive.');location.assign(u.href);});
  $('account-return').onclick=()=>work('Otevírám administraci…',returnToApp);
