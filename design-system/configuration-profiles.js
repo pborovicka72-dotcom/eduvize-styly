@@ -253,15 +253,15 @@
     try{return await schoolConfigurationPromise;}finally{schoolConfigurationPromise=null;}
   }
   async function manager(host){
-    if(!host||host.dataset.mounted)return;host.dataset.mounted='1';
-    host.replaceChildren(make('h2','Profily školy'));host.hidden=false;
+    if(!host||host.dataset.mounted)return;host.dataset.mounted='1';host.hidden=true;host.classList.add('edu-admin__flow');
+    host.replaceChildren(make('h2','Profily školy'));
     const intro=make('p','Každá budova nebo pracoviště může mít vlastní nastavení aplikací, barvy a odkazy. Dokumenty a fotografie sdílí celá škola.','edu-admin__hint');host.append(intro);
     const ui=controls(host),row=make('div',null,'edu-admin__actions'),name=make('input');name.type='text';name.maxLength=80;name.placeholder='Např. ZŠ – hlavní budova';name.setAttribute('aria-label','Název nového profilu');
     const copyLabel=make('label','Zkopírovat nastavení vybraného profilu'),copy=make('input');copy.type='checkbox';copy.checked=true;copyLabel.prepend(copy);
     const create=button('Vytvořit profil',false),rename=button('Přejmenovat profil'),history=button('Historie a obnova');row.append(create,rename,history);host.append(name,copyLabel,row);
     const versions=make('div');host.append(versions);
     let items=[];
-    async function refresh(){try{await root.EduvizeAdminAuth?.ready;const result=await request('',{fresh:true});items=result.items;options(ui.select,items,root.EduvizeAdminAuth.status().profileId);ui.status.textContent=items.length+' profilů školy';}catch(e){ui.status.textContent=e.message;}}
+    async function refresh(){try{await root.EduvizeAdminAuth?.ready;host.hidden=!root.EduvizeAdminAuth?.status().connected;if(host.hidden)return;const result=await request('',{fresh:true});items=result.items;options(ui.select,items,root.EduvizeAdminAuth.status().profileId);ui.status.textContent=items.length+' '+(items.length===1?'profil školy':items.length<5?'profily školy':'profilů školy');}catch(e){ui.status.textContent=e.message;}}
     async function act(fn){for(const c of [create,rename,history,ui.select,ui.reload])c.disabled=true;try{await fn();}catch(e){ui.status.textContent=e.message;}finally{for(const c of [create,rename,history,ui.select,ui.reload])c.disabled=false;}}
     ui.reload.onclick=refresh;
     ui.select.onchange=()=>act(async()=>{if(!ui.select.value)return;if(root.EduvizeProfileBeforeSwitch&&!await root.EduvizeProfileBeforeSwitch()){ui.select.value=root.EduvizeAdminAuth.status().profileId;return;}await root.EduvizeAdminAuth.selectProfile(ui.select.value);select(ui.select.value);ui.status.textContent='Aktivní profil: '+items.find(p=>p.id===ui.select.value)?.name;root.dispatchEvent(new Event('eduvize-profile-selected'));});

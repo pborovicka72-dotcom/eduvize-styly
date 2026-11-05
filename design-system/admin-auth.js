@@ -146,7 +146,7 @@
  const ready=initialize();
  root.EduvizeAdminAuth=Object.freeze({ready,refresh,ensureConnection,operatorProfile,getToken,fetch:authorizedFetch,login,loginMicrosoft,logout,handoff,selectProfile,loginUrl,need,failure,status:()=>({connected:!!getToken(),profileId:validated?session?.profileId||'':'',schoolId:validated?session?.schoolId||'':'',scopes:validated?[...session.scopes]:[],expiresAt:session?.expiresAt||0,message}),CENTRAL,DOCS,HUB,ACCOUNT});
  const navigation=document.createElement('script');navigation.src='https://pborovicka72-dotcom.github.io/eduvize-styly/design-system/admin-navigation.js?v=20261104-output-tabs-1';navigation.dataset.eduAdminNavigation='';document.head.append(navigation);
- const cloudModule=document.createElement('script');cloudModule.src='https://pborovicka72-dotcom.github.io/eduvize-styly/design-system/cloud-storage.js?v=20261105-cloud-1';document.head.append(cloudModule);
+ const cloudModule=document.createElement('script');cloudModule.src='https://pborovicka72-dotcom.github.io/eduvize-styly/design-system/cloud-storage.js?v=20261105-cloud-2';document.head.append(cloudModule);
  const linkLibrary=document.createElement('script');linkLibrary.src='https://pborovicka72-dotcom.github.io/eduvize-styly/design-system/generated-links.js?v=20261104-school-views-1';document.head.append(linkLibrary);
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',renderBanner,{once:true});else renderBanner();
  root.addEventListener('storage',e=>{if(e.key===KEY){refresh();}});
