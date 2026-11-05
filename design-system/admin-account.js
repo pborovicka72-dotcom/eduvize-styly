@@ -17,7 +17,7 @@
   $('account-loading').hidden=!initializing;
   $('account-login-view').hidden=initializing||connected;
   $('account-connected-view').hidden=!connected;
-  document.querySelectorAll('[data-account-private]').forEach(node=>{node.hidden=!connected||node.id==='configurations'||(node.hasAttribute('data-account-school')&&!s.schoolId)||(node.hasAttribute('data-account-operator')&&(!!s.schoolId||!s.scopes.includes('styles')));});
+  document.querySelectorAll('[data-account-private]').forEach(node=>{node.hidden=!connected||(node.hasAttribute('data-account-school')&&!s.schoolId)||(node.hasAttribute('data-account-operator')&&(!!s.schoolId||!s.scopes.includes('styles')));});
   $('account-connected-title').textContent=s.schoolId?'Účet a úložiště školy':'Účet správce Eduvize';
   $('account-session').textContent=connected?(s.schoolId?'Přihlášeno do správy školy.':'Přihlášeno jako správce služby.') : '';
   $('account-microsoft-login').disabled=busy||initializing;
@@ -45,7 +45,7 @@
   }catch(e){if(auth.getToken('documents')===token){driveConnected=false;$('account-onedrive').textContent=e.message;status();}return false;}
  }
  async function work(text,fn){if(busy)return;busy=true;say(text);status();try{await fn();}catch(e){say(e.message);}finally{busy=false;status();}}
- function needsDrive(){try{const u=new URL(requested);return u.searchParams.get('edu-require-drive')==='1'||u.searchParams.has('edu-profile')||u.origin===auth.DOCS||/\/eduvize-(?:kiosek|dokumenty)\/config.html$/.test(u.pathname);}catch{return true;}}
+ function needsDrive(){try{return new URL(requested).searchParams.get('edu-require-drive')==='1';}catch{return false;}}
  async function returnToApp(){if(!auth.status().connected)throw Error('Nejprve se přihlaste do Eduvize.');const url=await auth.handoff(requested);try{sessionStorage.removeItem('eduvize-account-return');}catch{}location.replace(url);}
  $('account-form').onsubmit=e=>{e.preventDefault();work('Ověřuji přihlášení…',async()=>{const key=$('account-key').value.trim();if(!key)throw Error('Vyplňte klíč správce služby.');await auth.login(key,key,$('account-remember').checked);$('account-key').value='';say('');await connection();if(requested&&(!needsDrive()||driveConnected))await returnToApp();});};
  $('account-microsoft-login').onclick=()=>work('Otevírám přihlášení Microsoft…',()=>auth.loginMicrosoft($('account-remember').checked));
@@ -58,5 +58,5 @@
  root.addEventListener('eduvize-admin-auth-change',()=>{status();if(!initializing&&!auth.status().connected){driveConnected=false;say(auth.status().message||'');}});
  root.addEventListener('eduvize-admin-request-progress',event=>{const d=event.detail;if(!d||!Number.isInteger(d.requestId))return;if(d.finished)pendingProgress.delete(d.requestId);else if(d.text)pendingProgress.set(d.requestId,d.text);showMessage();});
  status();
- auth.ready.then(async()=>{initializing=false;status();if(!auth.status().connected){say(auth.status().message||'');return;}await connection();if(auth.status().connected)say('');if(requested&&!manage&&auth.status().connected&&(!needsDrive()||driveConnected)){try{await returnToApp();}catch(e){say(e.message);}}}).catch(e=>{initializing=false;status();say(e.message);});
+ auth.ready.then(async()=>{initializing=false;status();if(!auth.status().connected){say(auth.status().message||'');return;}if(requested&&!manage&&!needsDrive()){try{await returnToApp();}catch(e){say(e.message);}return;}await connection();if(auth.status().connected)say('');if(requested&&!manage&&auth.status().connected&&(!needsDrive()||driveConnected)){try{await returnToApp();}catch(e){say(e.message);}}}).catch(e=>{initializing=false;status();say(e.message);});
 })(window);

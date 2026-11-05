@@ -73,6 +73,7 @@
  }
  refresh();
  window.addEventListener('eduvize-admin-auth-change',refresh);
+ window.addEventListener('eduvize-profile-selected',refresh);
  window.addEventListener('storage',event=>{if(event.key==='eduvize-profile-selection-v1')refresh();});
  document.addEventListener('visibilitychange',()=>{if(!document.hidden)refresh()});
  window.setInterval(()=>{if(!document.hidden)refresh()},60000);
@@ -84,9 +85,9 @@
  function start(){
   if(!document.querySelector('.edu-admin-page')||(!window.EduvizeProfileAdapter&&!document.getElementById('configurations')))return;
   if(document.querySelector('script[data-edu-profiles],script[src*="configuration-profiles.js"]'))return;
-  const css=document.createElement('link');css.rel='stylesheet';css.href=new URL('configuration-profiles.css?v=20261104-design-audit-1',base);document.head.append(css);
-  const load=()=>{const script=document.createElement('script');script.src=new URL('configuration-profiles.js?v=20261104-design-audit-1',base);script.dataset.eduProfiles='';document.head.append(script);};
-  if(window.EduvizeAdminAuth)load();else{const auth=document.createElement('script');auth.src=new URL('admin-auth.js?v=20261104-design-audit-1',base);auth.onload=load;document.head.append(auth);}
+  const css=document.createElement('link');css.rel='stylesheet';css.href=new URL('configuration-profiles.css?v=20261105-cloud-1',base);document.head.append(css);
+  const load=()=>{const script=document.createElement('script');script.src=new URL('configuration-profiles.js?v=20261105-cloud-1',base);script.dataset.eduProfiles='';document.head.append(script);};
+  if(window.EduvizeAdminAuth)load();else{const auth=document.createElement('script');auth.src=new URL('admin-auth.js?v=20261105-cloud-1',base);auth.onload=load;document.head.append(auth);}
  }
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});else start();
  window.addEventListener('eduvize-profile-adapter-ready',start);
