@@ -270,6 +270,13 @@
     history.onclick=()=>act(async()=>{if(!ui.select.value)throw Error('Vyberte profil.');const id=ui.select.value,result=await request('/'+id+'/history');versions.replaceChildren();for(const entry of result.items){const restore=button('Obnovit verzi '+entry.revision+' · '+entry.updatedAt);restore.onclick=()=>act(async()=>{if(!confirm('Obnovit uloženou verzi profilu? Současná verze zůstane v historii.'))return;const current=await request('/'+id,{fresh:true});await request('/'+id+'/restore',{method:'POST',body:JSON.stringify({revision:entry.revision,expectedRevision:current.revision})});versions.replaceChildren();await refresh();});versions.append(restore);}if(!result.items.length)versions.textContent='Historie je zatím prázdná.';});
     watchAuth(refresh);await refresh();
   }
+  async function picker(host){
+    if(!host||host.dataset.mounted)return;host.dataset.mounted='1';host.hidden=true;
+    const ui=controls(host);ui.reload.textContent='Správa profilů';ui.reload.onclick=()=>location.assign(manageUrl(selection()));
+    async function refresh(){try{await root.EduvizeAdminAuth?.ready;host.hidden=!root.EduvizeAdminAuth?.status().connected;if(host.hidden)return;const result=await request('');options(ui.select,result.items,root.EduvizeAdminAuth.status().profileId);ui.status.textContent='Nastavení zobrazení platí pro vybraný profil. Knihovna souborů je společná celé škole.';}catch(e){ui.status.textContent=e.message;}}
+    ui.select.onchange=async()=>{const id=ui.select.value;if(!id)return;ui.select.disabled=true;try{if(root.EduvizeProfileBeforeSwitch&&!await root.EduvizeProfileBeforeSwitch()){ui.select.value=root.EduvizeAdminAuth.status().profileId;return;}await root.EduvizeAdminAuth.selectProfile(id);select(id);}catch(e){ui.status.textContent=e.message;}finally{ui.select.disabled=false;}};
+    watchAuth(refresh);await refresh();
+  }
   function schoolSuggestion(adapter){
     if(!['weather','transport'].includes(adapter?.app)||document.getElementById('edu-school-suggestion'))return;
     const input=document.getElementById(adapter.app==='weather'?'address-search-input':'search');
@@ -283,7 +290,7 @@
     async function refresh(){const current=++seq;panel.hidden=true;try{await root.EduvizeAdminAuth?.ready;const id=root.EduvizeAdminAuth?.status().profileId||selection();if(id){const profile=await request('/'+id);if(current!==seq)return;show(profile.apps?.['school-identity']?.config?.data);return;}let local;try{local=JSON.parse(localStorage.getItem('eduvize-school-card-preview-v1')||'null');}catch{}if(current===seq)show(local);}catch{panel.hidden=true;}}
     watchAuth(refresh);refresh();
   }
-  root.EduvizeProfiles=Object.freeze({mount,manager,fields,segment,applySegment,apps,request,fingerprint});
+  root.EduvizeProfiles=Object.freeze({mount,manager,picker,fields,segment,applySegment,apps,request,fingerprint});
   function start(){manager(document.getElementById('configurations'));if(root.EduvizeProfileAdapter){mount(root.EduvizeProfileAdapter);schoolSuggestion(root.EduvizeProfileAdapter);}}
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});else start();
   root.addEventListener('eduvize-profile-adapter-ready',()=>{mount(root.EduvizeProfileAdapter);schoolSuggestion(root.EduvizeProfileAdapter);});
