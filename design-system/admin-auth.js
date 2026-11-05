@@ -1,5 +1,9 @@
 /* Shared short-lived administration session. Never stores Microsoft/admin keys. */
 (function(root){
+ if(location.protocol==='https:'&&location.hostname==='pborovicka72-dotcom.github.io'){
+  location.replace('https://skola.eduvize.cz'+location.pathname+location.search+location.hash);
+  return;
+ }
  if(root.EduvizeAdminAuth)return;
  const CENTRAL='https://eduvize-design-system-api.onrender.com',DOCS='https://eduvize-dokumenty-api.onrender.com';
  const HUB='https://pborovicka72-dotcom.github.io/eduvize-styly/aplikace.html',KEY='eduvize-admin-session-v1';
