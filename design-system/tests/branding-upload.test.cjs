@@ -2,7 +2,7 @@ const fs=require('node:fs'),vm=require('node:vm'),assert=require('node:assert/st
 const script=fs.readFileSync(require('node:path').join(__dirname,'../branding-admin.js'),'utf8');
 function setup(){
  const handlers={},requests=[],applied=[];let markup='',src='';
- const field=()=>({value:'',files:[],style:{},disabled:false,validationMessage:'',setCustomValidity(v){this.validationMessage=v;},addEventListener(n,f){this[n]=f;}});
+ const field=()=>({value:'',files:[],style:{},disabled:false,validationMessage:'',setCustomValidity(v){this.validationMessage=v;},reportValidity(){return !this.validationMessage;},addEventListener(n,f){this[n]=f;}});
  const file=field(),input=field(),save=field(),reset=field(),status=field(),details=field();
  const preview={complete:true,naturalWidth:100,get src(){return src},set src(v){src=v},removeAttribute(){src=''}};
  const form={style:{},elements:{logoFile:file,logoUrl:input},reportValidity(){return !file.validationMessage&&!input.validationMessage;},querySelector(v){return v==='[type=submit]'?save:reset}};
@@ -15,7 +15,7 @@ function setup(){
  return {file,input,form,preview,reset,status,requests,applied,auth,markup,submit:()=>form.onsubmit({preventDefault(){}})};
 }
 async function ready(){await new Promise(resolve=>setImmediate(resolve))}
-test('file upload is primary and URL mode is collapsed',()=>{const e=setup();assert.ok(e.markup.indexOf('type="file"')<e.markup.indexOf('<details>'));assert.ok(!e.markup.includes('<details open'));});
+test('existing URL stays visible before additive recommended upload and unchanged actions',()=>{const e=setup();assert.ok(e.markup.indexOf('type="url"')<e.markup.indexOf('type="file"'));assert.ok(e.markup.includes('Adresa nového loga (HTTPS)'));assert.ok(e.markup.includes('Nahrát logo Eduvize · doporučeno'));assert.ok(!e.markup.includes('<details'));assert.ok(e.markup.indexOf('type="file"')<e.markup.indexOf('data-edu-brand-preview'));assert.ok(e.markup.indexOf('Použít logo ve všech aplikacích')<e.markup.indexOf('Výchozí animované logo'));});
 test('selected file wins and is sent as binary to same-origin endpoint',async()=>{const e=setup();await ready();const f={size:32,type:'image/png'};e.file.files=[f];e.input.value='https://example.com/secondary.png';e.file.change();assert.equal(e.preview.src,'blob:test');await e.submit();assert.equal(e.requests[0].url,'https://test.skola.eduvize.cz/api/design-system/branding/logo');assert.equal(e.requests[0].options.body,f);assert.equal(e.applied.length,1);});
 test('URL remains available as secondary mode',async()=>{const e=setup();await ready();e.input.value='https://example.com/new.png';e.input.input();await e.submit();assert.equal(e.requests[0].options.method,'PUT');assert.equal(JSON.parse(e.requests[0].options.body).logoUrl,e.input.value||'https://example.com/new.png');});
 test('reset is explicit and sends empty logo URL',async()=>{const e=setup();await ready();e.reset.onclick();await e.submit();assert.equal(JSON.parse(e.requests[0].options.body).logoUrl,'');});
@@ -24,3 +24,5 @@ test('failed upload leaves active branding unchanged',async()=>{const e=setup();
 test('school without styles scope cannot use the form',async()=>{const e=setup();e.auth.getToken=()=>false;await ready();assert.equal(e.file.disabled,true);assert.equal(e.input.disabled,true);});
 
 test("opposite environment is rejected before preview loads it",async()=>{const e=setup();await ready();e.input.value="https://skola.eduvize.cz/logo.png";e.input.input();await e.submit();assert.equal(e.preview.src,"");assert.equal(e.requests.length,0);});
+
+test("selected file takes priority over an invalid unused URL",async()=>{const e=setup();await ready();e.input.value="not a URL";e.input.input();const f={size:32,type:"image/png"};e.file.files=[f];e.file.change();e.form.reportValidity=()=>false;await e.submit();assert.equal(e.requests[0].options.body,f);});

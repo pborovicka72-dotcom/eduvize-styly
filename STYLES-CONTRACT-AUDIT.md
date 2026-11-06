@@ -12,6 +12,10 @@ Aktivní větve `feat/styles-logo-upload` nyní používají čisté kopie `/pri
 - Lokálně prošlo 279 backendových testů (1 existující skip), JS branding testy a společné output/client/link testy. Osm prohlížečových kontrol nad kompilovaným releasem ověřilo skutečný auth, upload, náhradu standardního loga, zachování školního loga, chybový soubor, URL variantu, reset, anonymní cold-cache a mobilní rozměry. Aplikační požadavky mimo vlastní origin i odchozí serverová spojení mimo loopback byly blokované, bez pokusů. Pomocné dokumentové API není součástí lokální fixture a je evidováno odděleně; nejde o kompletní provozní akceptaci všech služeb.
 - Během akceptačního okna Fotogalerie neprovádět main merge ani test deploy. Po CI předat obě PR hlavnímu vláknu; produkce zůstává zakázaná. Vlastní testovací server, PostgreSQL, obnova a celá síťová matice se ověří až ve společném releasu.
 
+### Dodatečné layout review
+
+Na základě globálního pokynu uživatele zůstává dosavadní URL pole první a stále viditelné, se stejným labelem. Upload je přidaný aditivně pod ním jako doporučený způsob. Původní akce, jejich popisky, pořadí a společný náhled se zachovávají. Výběr souboru má při uložení přednost i před neplatným nepoužitým URL. Tuto dynamickou strukturu pokrývá skutečný browser test, nikoli jen porovnání editor HTML.
+
 ## Původní audit
 
 Stav k 6. 11. 2026. Audit místních zdrojů, nikoli potvrzení živého provozu nebo nezávislosti sestaveného vydání. Nic nebylo nasazeno. Řídí se společným `EDUVIZE-OUTPUT-CONTRACT.md` ve složce Eduvize Aplikace.
@@ -41,7 +45,7 @@ Stav k 6. 11. 2026. Audit místních zdrojů, nikoli potvrzení živého provozu
 
 ## Připravená změna loga (lokálně, nenasazeno)
 
-1. První volba je výběr souboru s náhledem; odkaz zůstává pod rozbalovacím „Použít odkaz na logo“. Vybraný soubor má přednost. Výběr souboru nic nepublikuje.
+1. Doporučená volba je výběr souboru s náhledem; dosavadní URL pole zůstává na původním místě a stále viditelné. Vybraný soubor má přednost. Výběr souboru nic nepublikuje.
 2. Potvrzení odešle binární soubor přes `POST /api/design-system/branding/logo`. Backend nejprve ověří operátorské oprávnění, velikost a podporovaný typ. Školní účet globální logo měnit nesmí.
 3. PNG/GIF/WebP a statické SVG, limit 2 MB. Animace lze nahrát jako GIF/WebP; SVG upload odmítá aktivní prvky, skripty, externí zdroje a animace. Rozměry PNG/GIF jsou omezené. Nejde o plný raster dekodér; skutečné vykreslení a poškozené soubory ověřit také v prohlížeči.
 4. Nová aditivní tabulka `eduvize_brand_assets_v1` obsahuje hash, MIME a bytes. V téže DB transakci se přepne globální `logoUrl`. Selhání zachová předchozí logo. Historické soubory se automaticky nemažou.
