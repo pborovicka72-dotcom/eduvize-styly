@@ -34,7 +34,7 @@
 })();
 /* Shared Eduvize active theme loader. No local theme definitions. */
 (function(){ // The theme editor keeps the default shell; selections affect its preview only.
- if(document.documentElement.dataset.eduTheme==='standard')return;
+ if(new URLSearchParams(location.search).has('edu-output')||document.documentElement.dataset.eduTheme==='standard')return;
  const endpoint='https://eduvize-design-system-api.onrender.com/api/design-system/themes';
  const cacheKey='eduvize-active-theme-v1';
  function themeProfile(){let selected='';try{selected=localStorage.getItem('eduvize-profile-selection-v1')||'';}catch{}const value=new URL(location.href).searchParams.get('edu-profile')||window.EduvizeAdminAuth?.status().profileId||selected;return /^[a-f0-9]{32}$/.test(value||'')?value:'';}

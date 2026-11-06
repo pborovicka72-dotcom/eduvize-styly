@@ -1,5 +1,6 @@
 /* Link schema is independent of application releases and cache-busting v. */
 (function(root){
+ if(new URLSearchParams(root.location.search).has('edu-output'))return; // v1 publication owns context and lifecycle.
  'use strict';
  const version=1;
  const apps={weather:'pocasi',transport:'jizdni-rady',news:'aktuality',menu:'jidelnicek',documents:'dokumenty',kiosk:'kiosek',wisdom:'moudrost-dne',holidays:'svatky','school-systems':'skolni-systemy','day-progress':'prubeh-dne',gallery:'styly/fotogalerie','school-calendar':'styly/experimental/school-calendar'};
@@ -44,6 +45,7 @@
 
 /* One contract for application output links. Kiosk uses the actual iframe viewport. */
 (function(root){
+ if(new URLSearchParams(root.location.search).has('edu-output'))return; // v1 publication owns context and lifecycle.
  'use strict';
  const modes=Object.freeze([{id:'web',label:'Běžná stránka'},{id:'nsp',label:'Newline Signage Pro'},{id:'kiosk',label:'Kiosek'}]);
  const defaultMode='nsp';
@@ -122,6 +124,7 @@
 
 /* Only slow periodic callbacks are configurable; clocks and page rotation keep their cadence. */
 (function(root){
+ if(new URLSearchParams(root.location.search).has('edu-output'))return; // v1 publication owns context and lifecycle.
  if(root.EduvizeRefreshClock)return;
  const start=root.setInterval.bind(root),stop=root.clearInterval.bind(root),timers=new Map();
  let seconds=null,lastTriggered=null;
@@ -145,6 +148,7 @@
 
 /* Every output checks its school entitlement independently of the notice job. */
 (function(root){
+ if(new URLSearchParams(root.location.search).has('edu-output'))return; // v1 publication owns context and lifecycle.
  'use strict';
  if(root.EduvizeBroadcastLicense||!document.documentElement.dataset.kioskApp||/\/(?:config(?:\.html)?|editor\.html|admin)\/?$/.test(location.pathname))return;
  const html=document.documentElement,profile=new URL(location.href).searchParams.get('edu-profile')||'';
