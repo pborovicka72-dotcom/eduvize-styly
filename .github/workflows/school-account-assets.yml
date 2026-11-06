@@ -1,0 +1,44 @@
+name: School account and static assets
+on:
+  pull_request:
+    paths:
+      - 'experimental/**'
+      - 'ucet.html'
+      - '.github/workflows/school-account-assets.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'experimental/**'
+      - 'ucet.html'
+      - '.github/workflows/school-account-assets.yml'
+permissions:
+  contents: read
+jobs:
+  school-account:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node experimental/school-calendar/test_school_card.mjs
+      - run: node experimental/school-calendar/test_search_interaction.mjs
+      - name: Verify the supported static account package
+        shell: python
+        run: |
+          from pathlib import Path
+          import shutil
+          import tempfile
+
+          with tempfile.TemporaryDirectory() as directory:
+              target = Path(directory)
+              for name in ('index.html', 'aplikace.html', 'ucet.html', 'licence.html', 'editor.html'):
+                  shutil.copyfile(name, target / name)
+              for name in ('design-system', 'experimental', 'fotogalerie'):
+                  shutil.copytree(name, target / name)
+              for name in ('ucet.html', 'experimental/school-calendar/school-card.js',
+                           'experimental/school-calendar/school-card.css',
+                           'experimental/school-calendar/schools.json.gz'):
+                  assert (target / name).is_file(), name
