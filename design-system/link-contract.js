@@ -1,5 +1,6 @@
 /* Link schema is independent of application releases and cache-busting v. */
 (function(root){
+ if(new URLSearchParams(root.location.search).has('edu-output'))return; // v1 publication owns context and lifecycle.
  'use strict';
  const version=1;
  const apps={weather:'pocasi',transport:'jizdni-rady',news:'aktuality',menu:'jidelnicek',documents:'dokumenty',kiosk:'kiosek',wisdom:'moudrost-dne',holidays:'svatky','school-systems':'skolni-systemy','day-progress':'prubeh-dne',gallery:'styly/fotogalerie','school-calendar':'skolni-kalendar'};
