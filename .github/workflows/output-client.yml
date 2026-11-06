@@ -14,3 +14,6 @@ jobs:
       - run: node design-system/tests/output-runtime-recovery.test.cjs
       - run: node tests/link-contract.test.cjs
       - run: node design-system/tests/broadcast-license.test.cjs
+
+      - name: Global brand upload controls and logo replacement
+        run: node --test design-system/tests/branding-upload.test.cjs design-system/tests/branding-runtime.test.cjs
