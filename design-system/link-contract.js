@@ -8,6 +8,7 @@
   if(u.username||u.password)return null;
   for(const [app,slug] of Object.entries(apps)){
    const hosts=['eduvize-'+slug+'.onrender.com'];if(app==='weather')hosts.push('eduvize-weather.onrender.com');if(app==='documents')hosts.push('eduvize-dokumenty-api.onrender.com');
+   if(['skola.eduvize.cz','test.skola.eduvize.cz'].includes(u.hostname)&&(u.pathname.startsWith('/'+slug+'/')||u.pathname.startsWith('/eduvize-'+slug+'/')))return app;
    if(hosts.includes(u.hostname))return app;
    if(u.hostname==='pborovicka72-dotcom.github.io'&&u.pathname.startsWith('/eduvize-'+slug+'/'))return app;
   }
@@ -16,8 +17,9 @@
  function inspect(value,{layouts}={}){
   let u;try{u=new URL(value);}catch{return {status:'unknown',app:null,issues:['Neplatná úplná adresa.']};}
   const app=identify(u),issues=[];if(!app)return {status:'unknown',app:null,issues:['Adresa nepatří mezi podporované adresy aplikací Eduvize.']};
-  if(!/\/(?:index\.html|signage\.html|display)?$/.test(u.pathname))return {status:'unknown',app,issues:['Tato cesta není evidována jako výstup aplikace.']};
+  if(!(app==='menu'&&/\/output\.html$/.test(u.pathname))&&!/\/(?:index\.html|signage\.html|display)?$/.test(u.pathname))return {status:'unknown',app,issues:['Tato cesta není evidována jako výstup aplikace.']};
   const p=u.searchParams,raw=p.get('edu-link'),legacy=raw===null;
+  if(app==='menu'&&/\/output\.html$/.test(u.pathname)&&!(/^[a-f0-9]{32}$/.test(p.get('edu-menu')||'')))issues.push('Chybí identifikátor publikovaného jídelníčku.');
   if(!legacy&&(!/^\d+$/.test(raw)||Number(raw)!==version))issues.push('Formát odkazu tato verze kontroly nezná. Odkaz neměňte automaticky; ověřte jej v aktuální administraci.');
   for(const key of ['edu-link','viewMode','output','layout','segment_orientation','segment_style','segment_block','orientation','style','block','interaction','kiosk_layout'])if(p.getAll(key).length>1)issues.push('Parametr '+key+' je uveden vícekrát.');
   const selected=p.get('viewMode'),output=p.get('output'),layout=p.get('layout');

@@ -31,3 +31,11 @@ for(const [query,mode,interaction] of [['','web','interactive'],['viewMode=web-a
  assert.equal(context.window.EduvizeOutputModes.interaction(api.stamp(old)),interaction,query);
 }
 console.log('Link contract OK: 10 application addresses, '+segments+' NSP segments, legacy/future/invalid URLs, parameter preservation and generation.');
+
+for(const origin of ['https://skola.eduvize.cz','https://test.skola.eduvize.cz']){
+ const stable=origin+'/jidelnicek/output.html?edu-menu='+'a'.repeat(32)+'&edu-link=1';
+ assert.equal(api.inspect(stable).status,'current');
+ assert.equal(api.inspect(origin+'/jidelnicek/index.html?days=1&custom=a&custom=b').status,'legacy');
+ const stamped=context.window.EduvizeOutputModes.url(origin+'/jidelnicek/index.html?custom=a&custom=b','web');
+ assert.deepEqual(stamped.searchParams.getAll('custom'),['a','b']);
+}
