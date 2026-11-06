@@ -10,11 +10,12 @@
    const rect=root.EduvizeNSPLayouts?.layouts[g.orientation]?.[g.layoutId]?.[g.segmentId-1];
    if(!rect)throw Error('Unknown segment');[width,height]=rect;
   }else if(p.mode==='kiosk'){
-   if(g?.registryId!=='kiosk-viewport'||g.registryVersion!==1||!(g.width>=240&&g.height>=240))throw Error('Invalid viewport');
+   if(g?.registryId!=='kiosk-viewport'||g.registryVersion!==1||!(g.width>=240&&g.height>=240)||!['menu','tiles'].includes(p.kioskLayout))throw Error('Invalid viewport');
    width=g.width;height=g.height;
   }else if(g!==null)throw Error('Invalid web geometry');
   if(!profile)throw Error('Load shared segment-profile.js before published runtime');
   const geometry=profile.resolve(width,height),metrics=Object.freeze({geometry,header:profile.header(geometry,p.mode),text:profile.text(geometry,p.mode)});
+  if(p.mode==='kiosk')root.document.documentElement.dataset.kioskHeader=p.kioskLayout==='menu'?'light':'dark';
   root.document.documentElement.dataset.outputMode=p.mode;
   root.document.documentElement.dataset.outputInteraction=p.interaction;
   root.EduvizePublishedOutput=Object.freeze({id:snapshot.id,presentation:p,metrics});
