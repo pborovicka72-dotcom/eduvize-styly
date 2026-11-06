@@ -2,12 +2,12 @@
 (function(root){
  'use strict';
  const version=1;
- const apps={weather:'pocasi',transport:'jizdni-rady',news:'aktuality',menu:'jidelnicek',documents:'dokumenty',kiosk:'kiosek',wisdom:'moudrost-dne',holidays:'svatky','school-systems':'skolni-systemy','day-progress':'prubeh-dne',gallery:'styly/fotogalerie','school-calendar':'styly/experimental/school-calendar'};
+ const apps={weather:'pocasi',transport:'jizdni-rady',news:'aktuality',menu:'jidelnicek',documents:'dokumenty',kiosk:'kiosek',wisdom:'moudrost-dne',holidays:'svatky','school-systems':'skolni-systemy','day-progress':'prubeh-dne',gallery:'styly/fotogalerie','school-calendar':'skolni-kalendar'};
  function identify(u){
   if(u.protocol!=='https:'&&u.protocol!=='http:')return null;
   if(u.username||u.password)return null;
   if(['skola.eduvize.cz','test.skola.eduvize.cz'].includes(u.hostname)&&u.protocol==='https:'&&!u.port){
-   const routes={'/pocasi':'weather','/aktuality':'news','/jidelnicek':'menu','/skolni-systemy':'school-systems','/prubeh-dne':'day-progress','/display':'documents','/eduvize-dokumenty':'documents','/eduvize-kiosek':'kiosk','/eduvize-jizdni-rady':'transport','/eduvize-moudrost-dne':'wisdom','/eduvize-svatky':'holidays','/eduvize-styly/fotogalerie':'gallery','/eduvize-styly/experimental/school-calendar':'school-calendar'};
+   const routes={'/pocasi':'weather','/aktuality':'news','/jidelnicek':'menu','/skolni-systemy':'school-systems','/prubeh-dne':'day-progress','/display':'documents','/eduvize-dokumenty':'documents','/eduvize-kiosek':'kiosk','/eduvize-jizdni-rady':'transport','/eduvize-moudrost-dne':'wisdom','/eduvize-svatky':'holidays','/eduvize-styly/fotogalerie':'gallery','/eduvize-skolni-kalendar':'school-calendar'};
    for(const [path,app] of Object.entries(routes))if(u.pathname===path||u.pathname.startsWith(path+'/'))return app;
   }
   for(const [app,slug] of Object.entries(apps)){

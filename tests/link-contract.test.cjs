@@ -32,14 +32,14 @@ for(const [query,mode,interaction] of [['','web','interactive'],['viewMode=web-a
 }
 console.log('Link contract OK: 10 application addresses, '+segments+' NSP segments, legacy/future/invalid URLs, parameter preservation and generation.');
 
-const hosted={'/pocasi/display':'weather','/aktuality/':'news','/jidelnicek/index.html':'menu','/skolni-systemy/index.html':'school-systems','/prubeh-dne/index.html':'day-progress','/display':'documents','/eduvize-dokumenty/index.html':'documents','/eduvize-kiosek/index.html':'kiosk','/eduvize-jizdni-rady/index.html':'transport','/eduvize-moudrost-dne/index.html':'wisdom','/eduvize-svatky/index.html':'holidays','/eduvize-styly/fotogalerie/index.html':'gallery','/eduvize-styly/experimental/school-calendar/':'school-calendar'};
+const hosted={'/pocasi/display':'weather','/aktuality/':'news','/jidelnicek/index.html':'menu','/skolni-systemy/index.html':'school-systems','/prubeh-dne/index.html':'day-progress','/display':'documents','/eduvize-dokumenty/index.html':'documents','/eduvize-kiosek/index.html':'kiosk','/eduvize-jizdni-rady/index.html':'transport','/eduvize-moudrost-dne/index.html':'wisdom','/eduvize-svatky/index.html':'holidays','/eduvize-styly/fotogalerie/index.html':'gallery','/eduvize-skolni-kalendar/':'school-calendar'};
 context.window.EduvizeAdminAuth={status:()=>({profileId:'a'.repeat(32)})};
 for(const host of ['skola.eduvize.cz','test.skola.eduvize.cz'])for(const [path,app] of Object.entries(hosted)){
  const value='https://'+host+path+'?future=one&future=two#part';
  assert.equal(api.identify(new URL(value)),app);
  const generated=context.window.EduvizeOutputModes.url(value,'web');
  assert.equal(generated.pathname,path);assert.equal(generated.searchParams.get('edu-profile'),'a'.repeat(32));
- assert.deepEqual(generated.searchParams.getAll('future'),['one','two']);assert.equal(generated.hash,'#part');
+ assert.equal(generated.searchParams.getAll('future').join(','),'one,two');assert.equal(generated.hash,'#part');
  assert.equal(generated.searchParams.get('edu-link'),'1');
 }
 for(const value of ['https://skola.eduvize.cz.evil.test/pocasi/display','https://skola.eduvize.cz:444/pocasi/display','https://skola.eduvize.cz/pocasix/display']){
