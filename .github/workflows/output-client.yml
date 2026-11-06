@@ -12,6 +12,7 @@ jobs:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
       - run: node design-system/tests/output-api-client.test.cjs
       - run: node design-system/tests/output-runtime-recovery.test.cjs
+      - run: node --test design-system/tests/output-items-client.test.cjs
       - run: node tests/link-contract.test.cjs
       - run: node design-system/tests/broadcast-license.test.cjs
 
