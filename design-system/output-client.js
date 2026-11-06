@@ -10,8 +10,13 @@
    const headers={Accept:'application/json'};
    if(privateRequest){const auth=await options.getAuthorization?.();if(!auth||!auth.startsWith('Bearer '))throw new OutputError(401,'UNAUTHORIZED','Přihlaste se ke škole.');headers.Authorization=auth;}
    if(body!==undefined){if(!key||!/^[a-f0-9-]{32,36}$/i.test(key))throw new TypeError('Persist an operation key before mutation');headers['Content-Type']='application/json';headers['Idempotency-Key']=key;}
-   const response=await fetcher(origin+path,{method,headers,body:body===undefined?undefined:JSON.stringify(body),credentials:'omit',cache:'no-store',redirect:'error',signal:options.signal});
-   const value=await response.json();
+   const abort=new AbortController(),parentAbort=()=>abort.abort();
+   if(options.signal?.aborted)abort.abort();else options.signal?.addEventListener('abort',parentAbort,{once:true});
+   const timer=root.setTimeout(()=>abort.abort(),12000);
+   let response,value;
+   try{response=await fetcher(origin+path,{method,headers,body:body===undefined?undefined:JSON.stringify(body),credentials:'omit',cache:'no-store',redirect:'error',signal:abort.signal});value=await response.json();}
+   finally{root.clearTimeout(timer);options.signal?.removeEventListener('abort',parentAbort);}
+
    if(!response.ok)throw new OutputError(response.status,value.error?.code||'HTTP_ERROR',value.error?.message||'Požadavek se nezdařil.',value.error?.requestId);
    if(value.url){const u=new URL(value.url);if(u.origin!==origin||!/^\/o\/[a-f0-9]{32}$/.test(u.pathname)||u.search||u.hash)throw new OutputError(502,'INVALID_RESPONSE','Server vrátil neplatný odkaz.');}
    return value;
@@ -27,6 +32,7 @@
    publishOutput:(outputId,body,key)=>request('/api/v1/outputs/'+checkId(outputId)+'/publish','POST',body,key),
    revokeOutput:(outputId,body,key)=>request('/api/v1/outputs/'+checkId(outputId)+'/revoke','POST',body,key),
    getOutputLink:outputId=>request('/api/v1/outputs/'+checkId(outputId)+'/link'),
+   getPublicTheme:outputId=>request('/api/public/v1/outputs/'+checkId(outputId)+'/theme','GET',undefined,undefined,false),
    getPublicData:outputId=>request('/api/public/v1/outputs/'+checkId(outputId)+'/data','GET',undefined,undefined,false),
    getPublicOutput:outputId=>request('/api/public/v1/outputs/'+checkId(outputId),'GET',undefined,undefined,false)
   });

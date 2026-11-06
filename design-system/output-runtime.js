@@ -29,7 +29,8 @@
   const origin=root.location.origin;
   if(!['https://test.skola.eduvize.cz','https://skola.eduvize.cz'].includes(origin))throw new TypeError('Eduvize origin required');
   const controller=new AbortController(),client=root.EduvizeOutputClient.create({origin,signal:controller.signal});
-  let stopped=false,running=false,revision=null,lastSuccess=Date.now();
+  let stopped=false,running=false,revision=null,lastSuccess=Date.now(),renderAbort=null;
+  async function bounded(callback){let timer;try{return await Promise.race([Promise.resolve().then(callback),new Promise((_,reject)=>{timer=root.setTimeout(()=>reject(Error("Renderer deadline exceeded")),10000);})]);}finally{root.clearTimeout(timer);}}
   async function refresh(){
    if(stopped||running)return;running=true;
    try{
@@ -37,24 +38,22 @@
     if(snapshot.id!==outputId||snapshot.schemaVersion!==1||!Number.isInteger(snapshot.publishedRevision)||snapshot.appId!==options.appId)throw Error('Unexpected publication');
     const expected='/api/public/v1/outputs/'+outputId+'/theme';
     if(snapshot.theme?.mode!=='profile-active'||snapshot.theme.url!==expected||snapshot.theme.refreshSeconds!==60)throw Error('Invalid theme descriptor');
-    const response=await root.fetch(expected,{cache:'no-store',credentials:'omit',redirect:'error',signal:controller.signal});
-    if(!response.ok)throw Error('Theme unavailable');
-    const theme=await response.json();
+    const theme=await client.getPublicTheme(outputId);
     for(const key of Object.keys(roles))if(!/^#[a-f0-9]{6}$/i.test(theme.colors?.[key]||''))throw Error('Invalid theme');
     if(stopped)return;
     for(const [key,variable] of Object.entries(roles))root.document.documentElement.style.setProperty(variable,theme.colors[key]);
     for(const [group,key,variable,max] of [['controls','heightPx','--ev-control-height',80],['controls','radiusPx','--ev-control-radius',80],['cards','radiusPx','--ev-card-radius',80],['icons','radiusPx','--ev-icon-radius',24]]){const value=theme[group]?.[key];if(Number.isInteger(value)&&value>=0&&value<=max)root.document.documentElement.style.setProperty(variable,value+'px');}
-    if(revision!==snapshot.publishedRevision){const metrics=presentation(snapshot);await options.onPresentation?.(snapshot.presentation,metrics);await options.render(snapshot,metrics);revision=snapshot.publishedRevision;}
+    if(revision!==snapshot.publishedRevision){renderAbort?.abort();renderAbort=new AbortController();const metrics=presentation(snapshot);await bounded(()=>options.onPresentation?.(snapshot.presentation,metrics));await bounded(()=>options.render(snapshot,metrics,{signal:renderAbort.signal}));revision=snapshot.publishedRevision;}
     lastSuccess=Date.now();options.onReady?.(snapshot);
    }catch(error){
     if(stopped)return;
-    if(error.status===404||error.status===410){options.clear(error);stop();}
-    else {if(Date.now()-lastSuccess>300000){options.clear(error);revision=null;}options.onError?.(error);}
+    if(error.status===404||error.status===410||error.status===403){renderAbort?.abort();options.clear(error);stop();}
+    else {renderAbort?.abort();if(Date.now()-lastSuccess>300000){options.clear(error);revision=null;}options.onError?.(error);}
    }finally{running=false;}
   }
   const visibility=()=>{if(!root.document.hidden)refresh();};
   const timer=root.setInterval(()=>{if(!root.document.hidden)refresh();},60000);
-  function stop(){if(stopped)return;stopped=true;root.clearInterval(timer);root.document.removeEventListener('visibilitychange',visibility);controller.abort();}
+  function stop(){if(stopped)return;stopped=true;root.clearInterval(timer);root.document.removeEventListener('visibilitychange',visibility);controller.abort();renderAbort?.abort();}
   root.document.addEventListener('visibilitychange',visibility);refresh();
   return Object.freeze({refresh,stop,outputId});
  }
