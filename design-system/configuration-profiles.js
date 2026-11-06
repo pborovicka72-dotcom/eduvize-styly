@@ -6,7 +6,7 @@
   const DOCS='https://eduvize-dokumenty-api.onrender.com';
   const API=DOCS+'/api/admin/configuration-profiles',SELECTION='eduvize-profile-selection-v1';
   const apps=Object.freeze([
-    {id:'school-calendar',name:'Školní kalendář',url:'https://pborovicka72-dotcom.github.io/eduvize-styly/experimental/school-calendar/config.html'},
+    {id:'school-calendar',name:'Školní kalendář',url:'https://skola.eduvize.cz/eduvize-skolni-kalendar/config.html'},
     {id:'school-identity',name:'Karta školy',url:ACCOUNT+'#school-card'},
     {id:'kiosk',name:'Kiosek',url:'https://pborovicka72-dotcom.github.io/eduvize-kiosek/config.html'},
     {id:'documents',name:'Dokumenty',url:DOCS+'/config'},
