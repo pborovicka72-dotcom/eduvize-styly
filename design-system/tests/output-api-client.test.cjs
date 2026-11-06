@@ -1,6 +1,6 @@
 const assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm');
 const origin='https://test.skola.eduvize.cz',id='a'.repeat(32),calls=[];
-const ctx={location:{origin,href:origin+'/?edu-output='+id},crypto:{randomUUID:()=> 'b'.repeat(32)},URL,URLSearchParams,AbortController,Date,console};
+const ctx={location:{origin,href:origin+'/?edu-output='+id},crypto:{randomUUID:()=> 'b'.repeat(32)},URL,URLSearchParams,AbortController,Date,console,setTimeout,clearTimeout};
 ctx.fetch=async(url,options)=>{calls.push({url,options});return {ok:true,json:async()=>({id,url:origin+'/o/'+id,publishedRevision:1})};};
 vm.createContext(ctx);vm.runInContext(fs.readFileSync('design-system/output-client.js','utf8'),ctx);
 (async()=>{
@@ -28,5 +28,12 @@ vm.createContext(ctx);vm.runInContext(fs.readFileSync('design-system/output-clie
  const runtime=ctx.EduvizeOutputRuntime.start({appId:'news',render:()=>rendered++,clear:()=>cleared++});
  await new Promise(r=>setImmediate(r));assert.equal(rendered,1);timer();await new Promise(r=>setImmediate(r));assert.equal(rendered,1);
  revoked=true;await runtime.refresh();assert.equal(cleared,1);runtime.stop();
+ // A hanging application renderer must not prevent a subsequent revoke poll.
+ revoked=false;let deadline=0;ctx.setTimeout=(f,delay)=>delay===10000?(queueMicrotask(f),1):setTimeout(f,delay);ctx.clearTimeout=clearTimeout;
+ const hanging=ctx.EduvizeOutputRuntime.start({appId:'news',render:()=>new Promise(()=>{}),clear:()=>cleared++,onError:()=>deadline++});
+ await new Promise(r=>setImmediate(r));assert.equal(deadline,1);revoked=true;await hanging.refresh();assert.equal(cleared,2);hanging.stop();
+ ctx.setTimeout=(f)=>{queueMicrotask(f);return 1};ctx.clearTimeout=()=>{};
+ const timeoutClient=ctx.EduvizeOutputClient.create({fetch:(_url,{signal})=>new Promise((_,reject)=>signal.addEventListener('abort',()=>reject(Error('Timeout')),{once:true}))});
+ await assert.rejects(()=>timeoutClient.getPublicOutput(id),/Timeout/);
  console.log('Output client/runtime: copy/open read-only, retry keys, auth isolation, invalid origin, errors, polling/revoke passed');
 })().catch(e=>{console.error(e);process.exitCode=1});
