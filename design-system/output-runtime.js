@@ -49,7 +49,9 @@
    }catch(error){
     if(stopped)return;
     if(error.status===404||error.status===410||error.status===403){renderAbort?.abort();options.clear(error);stop();}
-    else {renderAbort?.abort();if(Date.now()-lastSuccess>300000){options.clear(error);revision=null;}options.onError?.(error);}
+    // Aborting invalidates this render generation even when publication did not change.
+    // Recover with a fresh signal/render after the next successful verification.
+    else {renderAbort?.abort();revision=null;if(Date.now()-lastSuccess>300000){options.clear(error);}options.onError?.(error);}
    }finally{running=false;}
   }
   const visibility=()=>{if(!root.document.hidden)refresh();};
