@@ -1,5 +1,5 @@
 {
-  "id": "link-contract-2026-11-03",
-  "publishedAt": "2026-11-03",
-  "message": "Nově zavádíme označení formátu nových odkazů a kontrolu jejich společných parametrů. Kvůli této změně není potřeba již používané odkazy nahrazovat. Verze aplikace a formát odkazu jsou dvě různé věci. Před změnou používaného odkazu uchovejte jeho původní podobu a porovnejte nový výstup v náhledu."
+  "id": "security-kiosk-links-2026-11-06",
+  "publishedAt": "2026-11-06",
+  "message": "Připravuje se bezpečnostní aktualizace výstupních odkazů Kiosku. Po její aktivaci se veřejný výstup načte pouze ze schváleného serverového snímku s kiosk_id a platným edu-profile téže školy. Staré odkazy s configz, config nebo #config a odkazy kiosk_id bez profilu bude nutné převést; samy již obsah pro veřejnou obrazovku neurčí. Původní odkazy, uložené profily a zálohy zachovejte. Po přihlášení načtěte původní nastavení z profilu nebo zálohy, zkontrolujte náhled a znovu zkopírujte výstupní odkaz. Máte-li pouze starý odkaz na serverový snímek, může jej obnovit pouze přihlášená škola, která snímek vlastní; ověřený převod zajistí správce. Nic se automaticky nepřepisuje ani nemaže. Oznámení patří do administrace, ne na veřejné školní obrazovky."
 }
