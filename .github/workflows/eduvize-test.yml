@@ -19,7 +19,9 @@ jobs:
         with:
           persist-credentials: false
       - name: Hosted links, school profiles and historical URL compatibility
-        run: node tests/link-contract.test.cjs
+        run: |
+          node tests/link-contract.test.cjs
+          node design-system/tests/broadcast-license.test.cjs
       - name: Package tracked source without private credentials
         run: git archive --format=tar.gz HEAD -o "$RUNNER_TEMP/source.tar.gz"
       - name: Authenticate using short-lived GitHub identity and deploy test

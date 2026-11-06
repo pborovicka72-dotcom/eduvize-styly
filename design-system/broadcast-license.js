@@ -2,7 +2,8 @@
 (function(root){
  'use strict';
  if(root.EduvizeBroadcastLicense||!document.documentElement.dataset.kioskApp||/\/(?:config(?:\.html)?|editor\.html|admin)\/?$/.test(location.pathname))return;
- const html=document.documentElement,profile=new URL(location.href).searchParams.get('edu-profile')||'';
+ const html=document.documentElement,query=new URL(location.href).searchParams,profile=query.get('edu-profile')||'',appId=html.dataset.kioskApp;
+ const licenseQuery=new URLSearchParams({appId});if(profile)licenseQuery.set('profile',profile);if(['school-systems','day-progress'].includes(appId)&&query.get('provider'))licenseQuery.set('provider',query.get('provider'));
  const nativeInterval=root.setInterval.bind(root),nativeTimeout=root.setTimeout.bind(root);
  const pausedMedia=new Set();
  let state='checking',screen,title,detail,checking=false,lease=0,expiry=null,wasSuspended=false;
@@ -16,7 +17,7 @@
   screen.style.setProperty('display',quiet?'none':'flex','important');
   screen.style.setProperty('visibility','visible','important');
   title.textContent=state==='suspended'?'Vysílání pozastaveno':state==='checking'?'':'Vysílání dočasně nedostupné';
-  detail.textContent=state==='suspended'?'Škola nemá platnou licenci Eduvize.':state==='checking'?'':'Čekám na ověření licence školy.';
+  detail.textContent=state==='suspended'?'Aplikace nebo její zdroj nejsou součástí platné licence školy.':state==='checking'?'':'Čekám na ověření licence školy.';
  }
  function hold(media){if(!media.paused)pausedMedia.add(media);media.pause();}
  function stopMedia(){if(state==='active')return;for(const media of document.querySelectorAll('video,audio'))hold(media);if(state!=='checking')for(const frame of document.querySelectorAll('iframe'))frame.remove();}
@@ -24,7 +25,7 @@
  async function check(){
   if(checking)return;checking=true;
   try{
-   const response=await fetch('https://eduvize-admin.onrender.com/api/public/broadcast-status'+(profile?'?profile='+encodeURIComponent(profile):''),{cache:'no-store',redirect:'error',signal:AbortSignal.timeout(25000)});
+   const response=await fetch(location.origin+'/api/public/broadcast-status?'+licenseQuery,{cache:'no-store',redirect:'error',signal:AbortSignal.timeout(25000)});
    if(!response.ok)throw Error('License unavailable');const data=await response.json();
    if(typeof data.active!=='boolean'||!Number.isFinite(data.serverTime)||(data.expiresAt!==null&&!Number.isFinite(data.expiresAt)))throw Error('Invalid license');
    if(expiry)clearTimeout(expiry);
