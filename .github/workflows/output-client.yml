@@ -1,0 +1,14 @@
+name: Shared output client v1
+on:
+  pull_request:
+  push:
+    branches: [feat/shared-output-client-v1]
+permissions:
+  contents: read
+jobs:
+  client:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - run: node design-system/tests/output-api-client.test.cjs
+      - run: node tests/link-contract.test.cjs

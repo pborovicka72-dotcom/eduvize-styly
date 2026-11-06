@@ -1,5 +1,6 @@
 /* One segment viewport for every app. No template dimensions are duplicated here. */
 (function(root){
+ if(new URLSearchParams(root.location.search).has('edu-output'))return; // v1 publication owns context and lifecycle.
  'use strict';
  const p=new URLSearchParams(location.search);
  if(root.EduvizeOutputModes.mode()!=='nsp'||p.get('ev_inner')==='1')return;

@@ -1,5 +1,6 @@
 /* One physical header and text scale for equal viewport dimensions. */
 (function(root){
+ if(new URLSearchParams(root.location.search).has('edu-output'))return; // v1 publication owns context and lifecycle.
  let parentHeight=null,queued=false,lastParentLayout='';const headerStates=new WeakMap();
  function writeStyle(node,name,value,priority=''){
   value=String(value);if(node.style.getPropertyValue(name)!==value||node.style.getPropertyPriority(name)!==priority)node.style.setProperty(name,value,priority);
