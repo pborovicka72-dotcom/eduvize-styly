@@ -1,0 +1,47 @@
+name: Eduvize – schválené ostré vydání
+on:
+  workflow_dispatch:
+    inputs:
+      release:
+        description: Identifikátor vydání ověřeného na test.skola.eduvize.cz (20 znaků)
+        required: true
+        type: string
+      approval:
+        description: Napište SCHVALUJI NASAZENI
+        required: true
+        type: string
+permissions:
+  contents: read
+  id-token: write
+concurrency:
+  group: eduvize-production
+  cancel-in-progress: false
+jobs:
+  publish:
+    if: github.actor == 'pborovicka72-dotcom' && github.ref == 'refs/heads/main' && inputs.approval == 'SCHVALUJI NASAZENI'
+    environment:
+      name: production
+      url: https://skola.eduvize.cz
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - name: Publish exactly the tested image digests after approval
+        shell: python
+        env:
+          EDUVIZE_RELEASE: ${{ inputs.release }}
+        run: |
+          import json, os, time, urllib.request
+          base='https://test.skola.eduvize.cz/_deploy'
+          request=urllib.request.Request(os.environ['ACTIONS_ID_TOKEN_REQUEST_URL']+'&audience='+base,headers={'Authorization':'Bearer '+os.environ['ACTIONS_ID_TOKEN_REQUEST_TOKEN']})
+          with urllib.request.urlopen(request,timeout=30) as r:token=json.load(r)['value']
+          payload=json.dumps({'release':os.environ['EDUVIZE_RELEASE']}).encode()
+          request=urllib.request.Request(base+'/promote',data=payload,method='POST',headers={'Authorization':'Bearer '+token,'Content-Type':'application/octet-stream'})
+          with urllib.request.urlopen(request,timeout=90) as r:job=json.load(r)['job']
+          for attempt in range(130):
+              with urllib.request.urlopen(base+'/status/'+job,timeout=30) as r:result=json.load(r)
+              if result['status']=='failed':raise SystemExit(result['error'])
+              if result['status'] in ('passed','published'):
+                  with open(os.environ['GITHUB_STEP_SUMMARY'],'a') as f:f.write('## Eduvize\n\nVydání: `'+result['release']+'`\n\nStav: '+result['status']+'\n\n[Otevřít prostředí]('+result['url']+')\n')
+                  print('Release:',result['release'],'Status:',result['status']);break
+              time.sleep(20)
+          else:raise SystemExit('Deployment timed out; inspect VPS journal before trying again.')
