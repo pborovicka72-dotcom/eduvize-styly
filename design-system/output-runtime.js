@@ -48,7 +48,7 @@
     lastSuccess=Date.now();options.onReady?.(snapshot);
    }catch(error){
     if(stopped)return;
-    if(error.status===404||error.status===410||error.status===403){renderAbort?.abort();options.clear(error);stop();}
+    if(error.status===401||error.status===404||error.status===410||error.status===403){stop();options.clear(error);}
     // Aborting invalidates this render generation even when publication did not change.
     // Recover with a fresh signal/render after the next successful verification.
     else {renderAbort?.abort();revision=null;if(Date.now()-lastSuccess>300000){options.clear(error);}options.onError?.(error);}
