@@ -30,7 +30,7 @@ async function run(source=fs.readFileSync('design-system/output-runtime.js','utf
  }
  const aged=await setup();aged.advance(300001);aged.fail('theme');await aged.runtime.refresh();assert.equal(aged.clears.length,1);
  aged.recover();await aged.runtime.refresh();assert.equal(aged.signals.length,2);aged.runtime.stop();
- for(const status of [403,404,410]){
+ for(const status of [401,403,404,410]){
   const s=await setup();s.fail('snapshot',Object.assign(Error('Denied'),{status}));await s.runtime.refresh();
   assert.equal(s.clears.length,1);assert.ok(s.signals[0].aborted);assert.equal(s.intervals.size,0);
   s.recover();await s.runtime.refresh();assert.equal(s.signals.length,1,'terminal denial must not revive playback');

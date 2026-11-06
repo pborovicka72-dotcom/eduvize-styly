@@ -3,11 +3,11 @@ const {Blob}=require('node:buffer');
 const id='a'.repeat(32),key='b'.repeat(32),origin='https://test.skola.eduvize.cz';
 function setup(fetch){const timers=new Map();let next=0;const env={location:{origin},URL,URLSearchParams,AbortController,setTimeout:(fn,ms)=>{timers.set(++next,{fn,ms});return next;},clearTimeout:id=>timers.delete(id),fetch};vm.createContext(env);vm.runInContext(fs.readFileSync('design-system/output-client.js','utf8'),env);return {create:env.EduvizeOutputClient.create,timers};}
 function image(){return {ok:true,status:200,headers:{get:name=>name.toLowerCase()==='content-type'?'image/png':null},blob:async()=>new Blob(['bitmap'],{type:'image/png'})};}
-test('shared item methods construct only scoped anonymous no-store endpoints',async()=>{
+test('shared item methods construct only scoped same-origin no-store endpoints',async()=>{
  const calls=[];const s=setup(async(url,options)=>{calls.push({url,options});return url.endsWith('/image')?image():{ok:true,json:async()=>({key,title:'Text',paragraphs:[]})};});const client=s.create();
  assert.equal((await client.getPublicItem(id,key)).key,key);assert.equal((await client.getPublicItemImage(id,key)).type,'image/png');assert.equal(s.timers.size,0);
  assert.deepEqual(calls.map(x=>x.url),[origin+'/api/public/v1/outputs/'+id+'/items/'+key,origin+'/api/public/v1/outputs/'+id+'/items/'+key+'/image']);
- for(const {options} of calls){assert.equal(options.credentials,'omit');assert.equal(options.redirect,'error');assert.equal(options.cache,'no-store');assert.ok(!options.headers.Authorization);}
+ for(const {options} of calls){assert.equal(options.credentials,'same-origin');assert.equal(options.redirect,'error');assert.equal(options.cache,'no-store');assert.ok(!options.headers.Authorization);}
  assert.throws(()=>client.getPublicItem(id,'https://foreign.example'));
 });
 test('item-level and parent cancellation abort network and discard late responses',async()=>{
