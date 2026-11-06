@@ -34,3 +34,6 @@ V této přípravě všech 39 kopií zůstává zachováno. Odstranit je lze tep
 instalaci trusted assembleru, úspěšném integračním běhu s přesnými kandidátními
 SHA a ověření nového testovacího vydání. Postup a návrat popisuje
 `eduvize-admin/deployment/STATIC-PUBLICATION.md`.
+
+Ověření zahrnuje nově sloučené branding změny styles#8/admin#11; při každém
+dalším posunu vlastníků je nutné aktualizovat piny a znovu sestavit kandidáta.
