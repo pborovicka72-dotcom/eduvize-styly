@@ -18,3 +18,15 @@ jobs:
 
       - name: Global brand upload controls and logo replacement
         run: node --test design-system/tests/branding-upload.test.cjs design-system/tests/branding-runtime.test.cjs
+
+      - name: Stable section paging and real-browser card measurement
+        run: node design-system/tests/section-pager-stability.test.mjs
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install isolated browser test dependencies
+        run: |
+          python -m pip install 'playwright>=1.50,<2'
+          python -m playwright install --with-deps chromium
+      - name: NSP 6/4 resize history and paging regression
+        run: python design-system/tests/section-pager-browser.py
