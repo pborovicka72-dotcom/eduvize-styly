@@ -30,3 +30,6 @@ jobs:
           python -m playwright install --with-deps chromium
       - name: NSP 6/4 resize history and paging regression
         run: python design-system/tests/section-pager-browser.py
+
+      - name: News portrait media placement
+        run: node tests/news-media-orientation.test.mjs
