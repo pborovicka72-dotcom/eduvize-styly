@@ -37,3 +37,5 @@ SHA a ověření nového testovacího vydání. Postup a návrat popisuje
 
 Ověření zahrnuje nově sloučené branding změny styles#8/admin#11; při každém
 dalším posunu vlastníků je nutné aktualizovat piny a znovu sestavit kandidáta.
+
+Aktualizace 7. 11. 2026 zachovává autorizovaná same-origin čtení a terminální zastavení runtime z main 53327f2. Kanonická integrace zahrnuje také output-gated-auth a output-items-client; autorizační CI z main zůstává beze změny.
