@@ -150,14 +150,18 @@
       // Keep the draft until the restored state has been applied successfully.
       sessionStorage.removeItem(draftKey);url.searchParams.delete('edu-resume-save');url.searchParams.delete('edu-require-drive');history.replaceState(null,'',url.href);return true;
     }
-    async function readProfile(apply=false){
-      const p=await request('/'+profileId,{fresh:manualLoad}),entry=p.apps[adapter.app],incoming=entry?.revision||0;profileTitle=p.name;
-      const preserveEditing=apply&&!manualLoad&&adapter.app==='school-identity'&&adapter.isEditing?.();
+    async function readProfile(apply=false,{fresh=false,replace=false}={}){
+      const beforeRestore=replace&&apply?fingerprint(adapter.read()):'';
+      const p=await request('/'+profileId,{fresh:manualLoad||fresh}),entry=p.apps[adapter.app],incoming=entry?.revision||0;profileTitle=p.name;
+      // An explicit history restore replaces the confirmed draft, but not edits
+      // made while its fresh read was in flight.
+      const preserveEditing=apply&&(replace?fingerprint(adapter.read())!==beforeRestore:!manualLoad&&adapter.app==='school-identity'&&adapter.isEditing?.());
       if(!apply&&tracked===profileId){if(incoming!==revision){needsReload=true;say('Na Eduvize je novější nastavení. Před uložením je načtěte.','error');return;}say(dirty()?'Změny nejsou uložené do Eduvize.':loaded?'Uloženo do Eduvize.':'Dosud neuloženo do Eduvize.',dirty()?'dirty':'saved');return;}
       if(entry&&!entry.config.empty&&apply&&!preserveEditing){const before=structuredClone(adapter.read());try{await adapter.apply(structuredClone(entry.config));}catch(error){try{await adapter.apply(before);}catch{}throw error;}if(manualLoad){backup=before;undo.hidden=false;}}
       if(!entry&&apply&&!preserveEditing&&adapter.app==='school-identity')await adapter.apply({schemaVersion:1,data:{}});
       if(apply&&!preserveEditing){userChanged=false;resetEditState();}
       revision=incoming;tracked=profileId;needsReload=false;loaded=!!entry&&!entry.config.empty;baseline=fingerprint(preserveEditing?(loaded?entry.config:{schemaVersion:1,data:{}}):(apply||!loaded?adapter.read():entry.config));
+      if(replace&&preserveEditing){needsReload=true;say('Verze byla obnovena v Eduvizi. Před načtením zkontrolujte nově rozepsané změny.','dirty');return;}
       say(loaded?(apply&&!preserveEditing?(adapter.loadedMessage||'Nastavení načteno z Eduvize.'):dirty()?'Změny nejsou uložené do Eduvize.':'Uloženo do Eduvize.'):'Dosud neuloženo do Eduvize.',dirty()?'dirty':'saved');
     }
     async function list(initial=false){
@@ -215,6 +219,13 @@
     const header=main.querySelector('.edu-page-header');if(header)header.after(picker);else main.prepend(picker);
     profilePicker=controls(picker);profilePicker.reload.textContent='Správa profilů';profilePicker.reload.onclick=()=>{location.assign(manageUrl(profileId));};
     async function refreshPicker(){try{await auth()?.ready;if(!canSave()){picker.hidden=true;return;}const result=await request('');options(profilePicker.select,result.items,profileId||auth().status().profileId);picker.hidden=false;}catch{picker.hidden=true;}}
+    root.addEventListener('eduvize-profile-updated',event=>{
+      if(!ready||!initialized)return;
+      work('Načítám změnu profilu…',async()=>{
+        if(event.detail?.id===profileId)await readProfile(!!event.detail.restore,{fresh:true,replace:!!event.detail.restore});
+        await refreshPicker();
+      });
+    });
     root.EduvizeProfileBeforeSwitch=async()=>{
       if(!dirty())return true;
       if(confirm('Před přepnutím profilu uložit rozpracované změny do Eduvize?')){await save.onclick();return !dirty()&&!errorText;}
@@ -266,8 +277,8 @@
     ui.reload.onclick=refresh;
     ui.select.onchange=()=>act(async()=>{if(!ui.select.value)return;if(root.EduvizeProfileBeforeSwitch&&!await root.EduvizeProfileBeforeSwitch()){ui.select.value=root.EduvizeAdminAuth.status().profileId;return;}await root.EduvizeAdminAuth.selectProfile(ui.select.value);select(ui.select.value);ui.status.textContent='Aktivní profil: '+items.find(p=>p.id===ui.select.value)?.name;root.dispatchEvent(new Event('eduvize-profile-selected'));});
     create.onclick=()=>act(async()=>{const title=name.value.trim();if(!title)throw Error('Vyplňte název profilu.');if(root.EduvizeProfileBeforeSwitch&&!await root.EduvizeProfileBeforeSwitch())return;const result=await request('',{method:'POST',body:JSON.stringify({name:title,...(copy.checked&&ui.select.value?{copyFrom:ui.select.value}:{})})});name.value='';await root.EduvizeAdminAuth.selectProfile(result.id);select(result.id);await refresh();});
-    rename.onclick=()=>act(async()=>{const selected=items.find(p=>p.id===ui.select.value);if(!selected)throw Error('Vyberte profil.');const title=prompt('Nový název profilu',selected.name);if(title===null)return;await request('/'+selected.id,{method:'PATCH',body:JSON.stringify({name:title,expectedRevision:selected.revision})});await refresh();});
-    history.onclick=()=>act(async()=>{if(!ui.select.value)throw Error('Vyberte profil.');const id=ui.select.value,result=await request('/'+id+'/history');versions.replaceChildren();for(const entry of result.items){const restore=button('Obnovit verzi '+entry.revision+' · '+entry.updatedAt);restore.onclick=()=>act(async()=>{if(!confirm('Obnovit uloženou verzi profilu? Současná verze zůstane v historii.'))return;const current=await request('/'+id,{fresh:true});await request('/'+id+'/restore',{method:'POST',body:JSON.stringify({revision:entry.revision,expectedRevision:current.revision})});versions.replaceChildren();await refresh();});versions.append(restore);}if(!result.items.length)versions.textContent='Historie je zatím prázdná.';});
+    rename.onclick=()=>act(async()=>{const selected=items.find(p=>p.id===ui.select.value);if(!selected)throw Error('Vyberte profil.');const title=prompt('Nový název profilu',selected.name);if(title===null)return;await request('/'+selected.id,{method:'PATCH',body:JSON.stringify({name:title,expectedRevision:selected.revision})});await refresh();root.dispatchEvent(new CustomEvent('eduvize-profile-updated',{detail:{id:selected.id}}));});
+    history.onclick=()=>act(async()=>{if(!ui.select.value)throw Error('Vyberte profil.');const id=ui.select.value,result=await request('/'+id+'/history');versions.replaceChildren();for(const entry of result.items){const restore=button('Obnovit verzi '+entry.revision+' · '+entry.updatedAt);restore.onclick=()=>act(async()=>{if(!confirm('Obnovit uloženou verzi profilu? Současná verze zůstane v historii.'))return;if(root.EduvizeProfileBeforeSwitch&&!await root.EduvizeProfileBeforeSwitch())return;const current=await request('/'+id,{fresh:true});await request('/'+id+'/restore',{method:'POST',body:JSON.stringify({revision:entry.revision,expectedRevision:current.revision})});versions.replaceChildren();await refresh();root.dispatchEvent(new CustomEvent('eduvize-profile-updated',{detail:{id,restore:true}}));});versions.append(restore);}if(!result.items.length)versions.textContent='Historie je zatím prázdná.';});
     watchAuth(refresh);await refresh();
   }
   async function picker(host){
