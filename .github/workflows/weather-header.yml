@@ -1,0 +1,15 @@
+name: Shared weather header regression
+on:
+  pull_request:
+    paths:
+      - 'design-system/output-header.js'
+      - 'design-system/tests/header-stability.test.mjs'
+      - '.github/workflows/weather-header.yml'
+permissions:
+  contents: read
+jobs:
+  header:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - run: node design-system/tests/header-stability.test.mjs
