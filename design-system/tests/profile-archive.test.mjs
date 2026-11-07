@@ -85,4 +85,8 @@ for(const check of [
   const f=fixture({archiveUnavailable:true});await f.start();
   assert.equal(f.find('Archivovat profil').disabled,true);assert.equal(f.find('Obnovit profil').disabled,true);assert.match(f.status(),/není dostupná/);
 }
+{
+  const f=fixture({check:{complete:false,blockers:[{kind:'legacy-config',label:'Nastavení aplikace weather může být používáno starším odkazem.',count:1}]}});await f.start();f.choose(targetId);await f.find('Archivovat profil').onclick();
+  assert.match(f.status(),/není úplná/);assert.match(f.status(),/weather/);assert.equal(f.confirmations.length,0);
+}
 console.log('Archive UI preserves selection and action order; checks, cancellation, races and recovery pass.');

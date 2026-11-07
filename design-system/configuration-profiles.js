@@ -296,10 +296,10 @@
     async function archiveAct(fn){if(archiveBusy||managerBusy)return;archiveBusy=true;archiveButtons();for(const c of [create,rename,history,ui.select,ui.reload])c.disabled=true;try{await fn();}catch(e){archiveStatus.textContent=e.message;}finally{archiveBusy=false;for(const c of [create,rename,history,ui.select,ui.reload])c.disabled=false;archiveButtons();}}
     async function archiveCheck(id){
       const result=await request('/'+id+'/archive-check',{fresh:true});
-      if(result.profileId!==id||!Number.isInteger(result.revision)||result.revision<1||result.complete!==true||!Array.isArray(result.blockers)||!Array.isArray(result.outputs))throw Error('Kontrola vazeb není úplná. Profil nelze archivovat.');
+      if(result.profileId!==id||!Number.isInteger(result.revision)||result.revision<1||typeof result.complete!=='boolean'||!Array.isArray(result.blockers)||!Array.isArray(result.outputs))throw Error('Kontrola vazeb není úplná. Profil nelze archivovat.');
       const labels=[...result.blockers,...result.outputs].map(item=>typeof item.label==='string'?item.label:'Neupřesněná vazba');
-      const allowed=result.canArchive===true&&labels.length===0;
-      archiveStatus.textContent=allowed?'Kontrola dokončena. Profil nemá vazby bránící archivaci.':'Profil nelze archivovat. '+(labels.join('; ')||'Server archivaci nepovolil.');
+      const allowed=result.complete===true&&result.canArchive===true&&labels.length===0;
+      archiveStatus.textContent=allowed?'Kontrola dokončena. Profil nemá vazby bránící archivaci.':(result.complete?'Profil nelze archivovat. ':'Kontrola vazeb není úplná. Profil nelze archivovat. ')+(labels.join('; ')||'Server archivaci nepovolil.');
       return {...result,allowed};
     }
     archiveSelect.onchange=()=>{archiveStatus.textContent='';archiveButtons();};
