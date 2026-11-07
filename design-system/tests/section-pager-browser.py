@@ -30,35 +30,39 @@ def run():
                 else:external.append(request.request.url);request.abort()
             context.route('**/*',route)
             cases=[]
-            for seed in (600,1200):
-                for order in ('pagerFirst','equalFirst'):
-                    page=context.new_page();errors=[];page.on('pageerror',lambda error:errors.append(str(error)))
-                    page.goto(f'http://127.0.0.1:{server.server_port}/design-system/tests/section-pager-natural-height.html?seed={seed}')
-                    page.locator('#seed').click();page.locator('#'+order).click()
-                    before=json.loads(page.locator('#trace').inner_text().strip().splitlines()[-1])
-                    original_text=page.locator('.weather-page').first.text_content()
-                    assert before['host']==[2968,250],before
-                    assert before['role']=='48px',before
-                    assert len(before['columns'].split())==3,before
-                    assert before['transformedHeight']<=251,before
-                    assert max(c['h'] for c in before['cards'])-min(c['h'] for c in before['cards'])<=1,before
-                    # Exercise real manual paging away/back and unchanged refresh events.
-                    page.get_by_role('button',name='Další →',exact=True).click()
-                    page.get_by_role('button',name='← Předchozí',exact=True).click()
-                    for _ in range(3):page.locator('#snapshot').click()
-                    after=json.loads(page.locator('#trace').inner_text().strip().splitlines()[-1])
-                    assert after['scale']==before['scale'],(before,after)
-                    assert page.locator('.weather-page').first.text_content()==original_text
-                    assert after['textLength']==before['textLength'],(before,after)
-                    assert after['role']==before['role'],(before,after)
-                    assert abs(after['transformedHeight']-before['transformedHeight'])<=1,(before,after)
-                    assert not after['queued'],after
-                    assert not errors,errors
-                    cases.append({'seed':seed,'order':order,'scale':float(after['scale']),'height':after['transformedHeight'],'role':after['role']})
-                    page.close()
+            for kind,count in [('forecast-grid',3),('hourly-grid',3),('daily-hourly-grid',3),('metrics',3),('forecast-grid',0),('forecast-grid',1)]:
+                for seed in (600,1200):
+                    for order in ('pagerFirst','equalFirst'):
+                        page=context.new_page();errors=[];page.on('pageerror',lambda error:errors.append(str(error)))
+                        page.goto(f'http://127.0.0.1:{server.server_port}/design-system/tests/section-pager-natural-height.html?seed={seed}&kind={kind}&count={count}')
+                        page.locator('#seed').click();page.locator('#'+order).click()
+                        before=json.loads(page.locator('#trace').inner_text().strip().splitlines()[-1])
+                        original_text=page.locator('.weather-page').first.text_content()
+                        assert before['host']==[2968,250],before
+                        assert before['role']=='48px',before
+                        assert len(before['columns'].split())==max(count,1),before
+                        assert before['transformedHeight']<=251,before
+                        assert all(c['authoredMin']=='23px' for c in before['cards']),before
+                        if before['cards']:assert max(c['h'] for c in before['cards'])-min(c['h'] for c in before['cards'])<=1,before
+                        # Exercise real manual paging away/back and unchanged refresh events.
+                        page.get_by_role('button',name='Další →',exact=True).click()
+                        page.get_by_role('button',name='← Předchozí',exact=True).click()
+                        for _ in range(3):page.locator('#snapshot').click()
+                        after=json.loads(page.locator('#trace').inner_text().strip().splitlines()[-1])
+                        assert after['scale']==before['scale'],(before,after)
+                        assert page.locator('.weather-page').first.text_content()==original_text
+                        assert after['textLength']==before['textLength'],(before,after)
+                        assert after['role']==before['role'],(before,after)
+                        assert abs(after['transformedHeight']-before['transformedHeight'])<=1,(before,after)
+                        assert not after['queued'],after
+                        assert not errors,errors
+                        cases.append({'kind':kind,'count':count,'seed':seed,'order':order,'scale':float(after['scale']),'height':after['transformedHeight'],'role':after['role']})
+                        page.close()
             # Same content + final geometry must not depend on previous widths or callback order.
-            assert max(c['scale'] for c in cases)-min(c['scale'] for c in cases)<=.001,cases
-            assert max(c['height'] for c in cases)-min(c['height'] for c in cases)<=1,cases
+            for kind,count in {(c['kind'],c['count']) for c in cases}:
+                group=[c for c in cases if c['kind']==kind and c['count']==count]
+                assert max(c['scale'] for c in group)-min(c['scale'] for c in group)<=.001,group
+                assert max(c['height'] for c in group)-min(c['height'] for c in group)<=1,group
             assert not external,external
             print(json.dumps({'result':'PASS','cases':cases,'externalRequests':len(external)},indent=2))
             browser.close()
