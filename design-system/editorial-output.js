@@ -12,8 +12,8 @@
   const available=content.clientHeight-(parseFloat(cs.paddingTop)||0)-(parseFloat(cs.paddingBottom)||0)-other-(parseFloat(cs.rowGap)||0)*Math.max(0,visible.length-1);
   const base=parseFloat(getComputedStyle(quote).fontSize);if(available<=0)return;
   function fits(size){quote.style.setProperty('font-size',size+'px','important');return quote.scrollHeight<=available+1&&quote.scrollWidth<=quote.clientWidth+1;}
-  const length=quote.textContent.trim().length;
-  const target=root.EduvizeOutputModes?.mode?.()==='kiosk'?base:length<=180?Math.max(base,Math.min(220,content.clientWidth/9,available*.38)):base;
+  // Empty space is intentional. Fitting may shrink text, never enlarge its role.
+  const target=base;
   if(fits(target))return;
   let low=Math.min(12,base),high=target;
   for(let step=0;step<12;step++){const mid=(low+high)/2;if(fits(mid))low=mid;else high=mid;}
