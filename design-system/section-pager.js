@@ -14,7 +14,12 @@
    if(fitted.get(section)===key)return;
    const grid=section.querySelector('.metrics,.hourly-grid,.daily-hourly-grid,.forecast-grid');
    section.style.width=width+'px';section.style.minHeight='0';
-   if(grid)grid.style.minHeight='0';
+   if(grid){
+    grid.style.minHeight='0';
+    // Equal heights are derived from the previous grid width. Measure natural cards
+    // before searching new widths; otherwise resize/paging history becomes a font scale.
+    for(const card of grid.children)card.style.removeProperty('--edu-card-equal-height');
+   }
    const count=grid?.children.length||1,fixed=Number(section.dataset.sectionColumns);const candidates=grid?(Number.isInteger(fixed)&&fixed>0?[Math.min(fixed,count)]:[...new Set([1,2,3,6].filter(n=>n<=count))]):[1];
    let best={scale:0,columns:1};
    section.style.setProperty('display','block','important');section.style.transform='none';
