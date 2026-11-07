@@ -41,7 +41,8 @@ def run():
                         assert before['host']==[2968,250],before
                         assert before['role']=='48px',before
                         assert len(before['columns'].split())==max(count,1),before
-                        assert before['transformedHeight']<=251,before
+                        # The fitter allows one layout pixel; fractional rects may add half a pixel.
+                        assert before['transformedHeight']<=251.5,before
                         assert all(c['authoredMin']=='23px' for c in before['cards']),before
                         if before['cards']:assert max(c['h'] for c in before['cards'])-min(c['h'] for c in before['cards'])<=1,before
                         # Exercise real manual paging away/back and unchanged refresh events.
