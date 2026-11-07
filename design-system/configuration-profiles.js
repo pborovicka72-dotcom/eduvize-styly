@@ -270,10 +270,59 @@
     const ui=controls(host),row=make('div',null,'edu-admin__actions'),name=make('input');name.type='text';name.maxLength=80;name.placeholder='Např. ZŠ – hlavní budova';name.setAttribute('aria-label','Název nového profilu');
     const copyLabel=make('label','Zkopírovat nastavení vybraného profilu'),copy=make('input');copy.type='checkbox';copy.checked=true;copyLabel.prepend(copy);
     const create=button('Vytvořit profil',false),rename=button('Přejmenovat profil'),history=button('Historie a obnova');row.append(create,rename,history);host.append(name,copyLabel,row);
-    const versions=make('div');host.append(versions);
+    const versions=make('div',null,'edu-profile-versions');host.append(versions);
+    // Separate target: inspecting or restoring an archive never switches the
+    // profile used by the open administration or its unsaved configuration.
+    const archivePanel=make('details',null,'edu-profile-archive'),archiveBody=make('div',null,'edu-admin__flow');
+    archivePanel.append(make('summary','Archivace a obnova profilů'),archiveBody);host.append(archivePanel);
+    const archiveHelp=make('p','Archivace zachová nastavení i historii. Používaný profil a profil s navázanými výstupy nelze archivovat. Obnovení profil znovu zpřístupní, ale nepřepne právě otevřené nastavení.','edu-admin__hint');
+    const archiveLabel=make('label','Profil k archivaci nebo obnově','edu-admin__field'),archiveSelect=make('select');archiveSelect.setAttribute('aria-label','Profil k archivaci nebo obnově');archiveLabel.append(archiveSelect);
+    const archiveActions=make('div',null,'edu-admin__actions'),checkArchive=button('Zkontrolovat vazby'),archiveProfile=button('Archivovat profil'),unarchiveProfile=button('Obnovit profil');archiveActions.append(checkArchive,archiveProfile,unarchiveProfile);
+    const archiveStatus=make('p',null,'edu-admin__hint');archiveStatus.setAttribute('role','status');archiveStatus.setAttribute('aria-live','polite');archiveBody.append(archiveHelp,archiveLabel,archiveActions,archiveStatus);
+    let archiveItems=[],archiveBusy=false,managerBusy=false;
+    const archiveTarget=()=>archiveItems.find(p=>p.id===archiveSelect.value);
+    function archiveButtons(){const p=archiveTarget(),busy=archiveBusy||managerBusy;archiveSelect.disabled=busy;checkArchive.disabled=busy||!p||p.archived===true;archiveProfile.disabled=busy||!p||p.archived===true;unarchiveProfile.disabled=busy||!p||p.archived!==true;}
+    async function refreshArchive(selected=archiveSelect.value){
+      archiveItems=[];archiveSelect.replaceChildren();archiveButtons();
+      const [active,archived]=await Promise.all([request('',{fresh:true}),request('?archived=1',{fresh:true})]);
+      if(!Array.isArray(active.items)||!Array.isArray(archived.items))throw Error('Seznam archivovaných profilů se nepodařilo ověřit.');
+      const combined=[...active.items.map(p=>({...p,archived:false})),...archived.items.map(p=>({...p,archived:true}))];
+      if(combined.some(p=>!/^[a-f0-9]{32}$/.test(p.id)||typeof p.name!=='string'||!Number.isInteger(p.revision)||p.revision<1)||new Set(combined.map(p=>p.id)).size!==combined.length)throw Error('Stav archivace profilů se nepodařilo ověřit.');
+      archiveItems=combined;
+      archiveSelect.replaceChildren(new Option('Vyberte profil…',''));
+      for(const p of archiveItems)archiveSelect.add(new Option(p.name+(p.archived?' · archivovaný':''),p.id));
+      archiveSelect.value=archiveItems.some(p=>p.id===selected)?selected:'';archiveButtons();
+    }
+    async function archiveAct(fn){if(archiveBusy||managerBusy)return;archiveBusy=true;archiveButtons();for(const c of [create,rename,history,ui.select,ui.reload])c.disabled=true;try{await fn();}catch(e){archiveStatus.textContent=e.message;}finally{archiveBusy=false;for(const c of [create,rename,history,ui.select,ui.reload])c.disabled=false;archiveButtons();}}
+    async function archiveCheck(id){
+      const result=await request('/'+id+'/archive-check',{fresh:true});
+      if(result.profileId!==id||!Number.isInteger(result.revision)||result.revision<1||typeof result.complete!=='boolean'||!Array.isArray(result.blockers)||!Array.isArray(result.outputs))throw Error('Kontrola vazeb není úplná. Profil nelze archivovat.');
+      const labels=[...result.blockers,...result.outputs].map(item=>typeof item.label==='string'?item.label:'Neupřesněná vazba');
+      const allowed=result.complete===true&&result.canArchive===true&&labels.length===0;
+      archiveStatus.textContent=allowed?'Kontrola dokončena. Profil nemá vazby bránící archivaci.':(result.complete?'Profil nelze archivovat. ':'Kontrola vazeb není úplná. Profil nelze archivovat. ')+(labels.join('; ')||'Server archivaci nepovolil.');
+      return {...result,allowed};
+    }
+    archiveSelect.onchange=()=>{archiveStatus.textContent='';archiveButtons();};
+    archivePanel.ontoggle=()=>{if(archivePanel.open)return archiveAct(refreshArchive);};
+    checkArchive.onclick=()=>archiveAct(async()=>{const p=archiveTarget();if(p&&!p.archived)await archiveCheck(p.id);});
+    archiveProfile.onclick=()=>archiveAct(async()=>{
+      const p=archiveTarget();if(!p||p.archived)return;
+      const check=await archiveCheck(p.id);if(!check.allowed)return;
+      if(!confirm('Archivovat profil „'+p.name+'“? Nastavení a historie zůstanou zachované a profil bude možné obnovit.'))return;
+      await request('/'+p.id+'/archive',{method:'POST',body:JSON.stringify({expectedRevision:check.revision})});
+      await refresh();await refreshArchive();archiveStatus.textContent='Profil byl archivován. Nastavení a historie zůstaly zachované.';
+      root.dispatchEvent(new CustomEvent('eduvize-profile-updated',{detail:{id:p.id,archived:true}}));
+    });
+    unarchiveProfile.onclick=()=>archiveAct(async()=>{
+      const p=archiveTarget();if(!p?.archived)return;
+      await request('/'+p.id+'/unarchive',{method:'POST',body:JSON.stringify({expectedRevision:p.revision})});
+      await refresh();await refreshArchive();archiveStatus.textContent='Profil byl obnoven. Aktivní profil se nezměnil.';
+      root.dispatchEvent(new CustomEvent('eduvize-profile-updated',{detail:{id:p.id,archived:false}}));
+    });
+    archiveButtons();
     let items=[];
-    async function refresh(){try{await root.EduvizeAdminAuth?.ready;host.hidden=!root.EduvizeAdminAuth?.status().connected;if(host.hidden)return;const result=await request('',{fresh:true});items=result.items;options(ui.select,items,root.EduvizeAdminAuth.status().profileId);ui.status.textContent=items.length+' '+(items.length===1?'profil školy':items.length<5?'profily školy':'profilů školy');}catch(e){ui.status.textContent=e.message;}}
-    async function act(fn){for(const c of [create,rename,history,ui.select,ui.reload])c.disabled=true;try{await fn();}catch(e){ui.status.textContent=e.message;}finally{for(const c of [create,rename,history,ui.select,ui.reload])c.disabled=false;}}
+    async function refresh(){try{await root.EduvizeAdminAuth?.ready;host.hidden=!root.EduvizeAdminAuth?.status().connected;const archiveSelected=archiveSelect.value;archiveItems=[];archiveSelect.replaceChildren();archiveButtons();if(host.hidden)return;const result=await request('',{fresh:true});items=result.items;options(ui.select,items,root.EduvizeAdminAuth.status().profileId);ui.status.textContent=items.length+' '+(items.length===1?'profil školy':items.length<5?'profily školy':'profilů školy');if(archivePanel.open)await refreshArchive(archiveSelected);}catch(e){ui.status.textContent=e.message;}}
+    async function act(fn){if(managerBusy||archiveBusy)return;managerBusy=true;archiveButtons();for(const c of [create,rename,history,ui.select,ui.reload])c.disabled=true;try{await fn();}catch(e){ui.status.textContent=e.message;}finally{managerBusy=false;for(const c of [create,rename,history,ui.select,ui.reload])c.disabled=false;archiveButtons();}}
     ui.reload.onclick=refresh;
     ui.select.onchange=()=>act(async()=>{if(!ui.select.value)return;if(root.EduvizeProfileBeforeSwitch&&!await root.EduvizeProfileBeforeSwitch()){ui.select.value=root.EduvizeAdminAuth.status().profileId;return;}await root.EduvizeAdminAuth.selectProfile(ui.select.value);select(ui.select.value);ui.status.textContent='Aktivní profil: '+items.find(p=>p.id===ui.select.value)?.name;root.dispatchEvent(new Event('eduvize-profile-selected'));});
     create.onclick=()=>act(async()=>{const title=name.value.trim();if(!title)throw Error('Vyplňte název profilu.');if(root.EduvizeProfileBeforeSwitch&&!await root.EduvizeProfileBeforeSwitch())return;const result=await request('',{method:'POST',body:JSON.stringify({name:title,...(copy.checked&&ui.select.value?{copyFrom:ui.select.value}:{})})});name.value='';await root.EduvizeAdminAuth.selectProfile(result.id);select(result.id);await refresh();});

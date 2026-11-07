@@ -35,4 +35,6 @@
 #configurations>input{max-width:520px;width:100%;box-sizing:border-box}
 #configurations>label{display:flex;align-items:center;gap:12px}
 #configurations>div:last-child{display:flex;flex-wrap:wrap;gap:12px}
+#configurations>.edu-profile-versions{display:flex;flex-wrap:wrap;gap:12px}
+.edu-profile-archive>.edu-admin__flow{margin-block-start:20px}
 .edu-upload-results{display:grid;gap:12px;margin-block:12px 0;padding-inline-start:24px}

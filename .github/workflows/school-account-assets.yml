@@ -5,7 +5,10 @@ on:
       - 'experimental/**'
       - 'ucet.html'
       - 'design-system/configuration-profiles.js'
+      - 'design-system/configuration-profiles.css'
       - 'design-system/tests/account-profile-restore.test.mjs'
+      - 'design-system/tests/profile-archive.test.mjs'
+      - 'design-system/active-theme.js'
       - '.github/workflows/school-account-assets.yml'
   push:
     branches: [main]
@@ -13,7 +16,10 @@ on:
       - 'experimental/**'
       - 'ucet.html'
       - 'design-system/configuration-profiles.js'
+      - 'design-system/configuration-profiles.css'
       - 'design-system/tests/account-profile-restore.test.mjs'
+      - 'design-system/tests/profile-archive.test.mjs'
+      - 'design-system/active-theme.js'
       - '.github/workflows/school-account-assets.yml'
 permissions:
   contents: read
@@ -30,6 +36,7 @@ jobs:
       - run: node experimental/school-calendar/test_school_card.mjs
       - run: node experimental/school-calendar/test_search_interaction.mjs
       - run: node design-system/tests/account-profile-restore.test.mjs
+      - run: node design-system/tests/profile-archive.test.mjs
       - name: Verify the supported static account package
         shell: python
         run: |
