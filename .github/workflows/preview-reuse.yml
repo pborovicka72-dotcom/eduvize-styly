@@ -1,0 +1,18 @@
+name: Preview document visibility
+on:
+  pull_request:
+  push:
+    branches: [fix/preview-reuse-visibility]
+permissions:
+  contents: read
+jobs:
+  preview:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node design-system/tests/preview-reuse-visibility.test.mjs
+      - run: node design-system/tests/preview-viewport.test.mjs
+      - run: node design-system/tests/weather-preview-integration.test.mjs
