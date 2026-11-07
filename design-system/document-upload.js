@@ -9,6 +9,17 @@
   const results=document.createElement('ul');results.className='edu-upload-results';results.setAttribute('aria-live','polite');progress.after(results);
   let busy=false;
   file.addEventListener('change',()=>{if(busy)return;file.setCustomValidity('');results.replaceChildren();message.textContent=file.files.length?file.files.length+' vybraných souborů':'';progress.hidden=!file.files.length;bar.value=0;});
+  const dropZone=file.closest('label')||file;
+  file.title='Vyberte soubory nebo je přetáhněte sem.';
+  function isFileDrag(event){return Array.from(event.dataTransfer?.types||[]).includes('Files');}
+  dropZone.addEventListener('dragover',event=>{if(!isFileDrag(event))return;event.preventDefault();event.dataTransfer.dropEffect=busy?'none':'copy';if(!busy)dropZone.classList.add('edu-upload-dragover');});
+  dropZone.addEventListener('dragleave',event=>{if(!dropZone.contains(event.relatedTarget))dropZone.classList.remove('edu-upload-dragover');});
+  dropZone.addEventListener('drop',event=>{
+   if(!isFileDrag(event))return;event.preventDefault();dropZone.classList.remove('edu-upload-dragover');
+   if(busy||!event.dataTransfer.files.length)return;
+   try{file.files=event.dataTransfer.files;file.dispatchEvent(new Event('change',{bubbles:true}));}
+   catch{onError?.('Soubory se nepodařilo převzít. Použijte tlačítko pro výběr souborů.');}
+  });
   function send(selected,token,endpoint,index,total,selectedCategory){return new Promise((resolve,reject)=>{
    const data=new FormData();data.append('file',selected);data.append('category',selectedCategory);data.append('scope',options.scope||'documents');
    const xhr=new XMLHttpRequest();xhr.open('POST',endpoint.href);xhr.setRequestHeader('Authorization','Bearer '+token);xhr.timeout=180000;
