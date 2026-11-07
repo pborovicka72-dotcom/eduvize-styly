@@ -2,36 +2,37 @@
 (function(root){
   'use strict';
   if(root.EduvizeProfiles)return;
-  const ACCOUNT='https://pborovicka72-dotcom.github.io/eduvize-styly/ucet.html';
-  const DOCS='https://eduvize-dokumenty-api.onrender.com';
+  const ORIGIN=location.origin;
+  const ACCOUNT=ORIGIN+'/eduvize-styly/ucet.html';
+  const DOCS=ORIGIN;
   const API=DOCS+'/api/admin/configuration-profiles',SELECTION='eduvize-profile-selection-v1';
   const apps=Object.freeze([
-    {id:'school-calendar',name:'Školní kalendář',url:'https://skola.eduvize.cz/eduvize-skolni-kalendar/config.html'},
+    {id:'school-calendar',name:'Školní kalendář',url:ORIGIN+'/eduvize-skolni-kalendar/config.html'},
     {id:'school-identity',name:'Karta školy',url:ACCOUNT+'#school-card'},
-    {id:'kiosk',name:'Kiosek',url:'https://pborovicka72-dotcom.github.io/eduvize-kiosek/config.html'},
+    {id:'kiosk',name:'Kiosek',url:ORIGIN+'/eduvize-kiosek/config.html'},
     {id:'documents',name:'Dokumenty',url:DOCS+'/config'},
-    {id:'weather',name:'Počasí',url:'https://eduvize-weather.onrender.com/config'},
-    {id:'holidays',name:'Svátky',url:'https://pborovicka72-dotcom.github.io/eduvize-svatky/config.html'},
-    {id:'menu',name:'Jídelníček',url:'https://eduvize-jidelnicek.onrender.com/config.html'},
-    {id:'transport',name:'Jízdní řády',url:'https://pborovicka72-dotcom.github.io/eduvize-jizdni-rady/config.html'},
-    {id:'wisdom',name:'Moudrost dne',url:'https://pborovicka72-dotcom.github.io/eduvize-moudrost-dne/config.html'},
-    {id:'news',name:'Aktuality',url:'https://eduvize-aktuality.onrender.com/config'},
-    {id:'styles',name:'Styly',url:'https://eduvize-design-system-api.onrender.com/'},
-    {id:'day-progress',name:'Průběh dne',url:'https://eduvize-prubeh-dne.onrender.com/config.html'},
-    {id:'school-systems',name:'Školní informační systémy',url:'https://eduvize-skolni-systemy.onrender.com/config.html'}
+    {id:'weather',name:'Počasí',url:ORIGIN+'/pocasi/config'},
+    {id:'holidays',name:'Svátky',url:ORIGIN+'/eduvize-svatky/config.html'},
+    {id:'menu',name:'Jídelníček',url:ORIGIN+'/jidelnicek/config.html'},
+    {id:'transport',name:'Jízdní řády',url:ORIGIN+'/eduvize-jizdni-rady/config.html'},
+    {id:'wisdom',name:'Moudrost dne',url:ORIGIN+'/eduvize-moudrost-dne/config.html'},
+    {id:'news',name:'Aktuality',url:ORIGIN+'/aktuality/config'},
+    {id:'styles',name:'Styly',url:ORIGIN+'/'},
+    {id:'day-progress',name:'Průběh dne',url:ORIGIN+'/prubeh-dne/config.html'},
+    {id:'school-systems',name:'Školní informační systémy',url:ORIGIN+'/skolni-systemy/config.html'}
   ]);
   let updatesScript;
   let linkAuditScript;
   function mountLinkAudit(host){
     if(!linkAuditScript)linkAuditScript=(async()=>{
-      for(const file of ['link-contract.js','link-compatibility.js'])await new Promise((resolve,reject)=>{const script=document.createElement('script');script.src='https://pborovicka72-dotcom.github.io/eduvize-styly/design-system/'+file+'?v=20261104-shared-notice-1';script.onload=resolve;script.onerror=reject;document.head.append(script);});
+      for(const file of ['link-contract.js','link-compatibility.js'])await new Promise((resolve,reject)=>{const script=document.createElement('script');script.src=ORIGIN+'/eduvize-styly/design-system/'+file+'?v=20261104-shared-notice-1';script.onload=resolve;script.onerror=reject;document.head.append(script);});
     })();
     linkAuditScript.then(()=>root.EduvizeLinkCompatibility.mount(host)).catch(()=>{const note=document.createElement('p');note.textContent='Kontrola kompatibility odkazů se nepodařila načíst. Nastavení aplikace zůstává dostupné.';host.append(note);});
   }
   function mountUpdates(app,host){
     if(!updatesScript)updatesScript=new Promise((resolve,reject)=>{
       const script=document.createElement('script');
-      script.src='https://pborovicka72-dotcom.github.io/eduvize-styly/design-system/update-settings.js?v=20261103-1';
+      script.src=ORIGIN+'/eduvize-styly/design-system/update-settings.js?v=20261103-1';
       script.onload=resolve;script.onerror=reject;document.head.append(script);
     });
     updatesScript.then(()=>root.EduvizeUpdateSettings.mount(app,host)).catch(()=>{const message=document.createElement('p');message.className='edu-admin__hint';message.textContent='Modul aktualizací se nepodařilo načíst.';host.append(message);});
