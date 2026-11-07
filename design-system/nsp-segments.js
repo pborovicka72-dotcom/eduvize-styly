@@ -54,7 +54,9 @@ if(cell&&options.previewUrl){
   reused=persistentPreview.key===identity.href;persistentPreview.key=identity.href;
  }else frame=document.createElement('iframe');
  frame.allowFullscreen=true;frame.allow='fullscreen';frame.title='Náhled vybraného segmentu';frame.classList.add('ev-interactive-preview');
- if(!frame.classList.contains('edu-preview-frame'))frame.style.cssText='border:0;display:block;width:'+width+'px;height:'+height+'px;visibility:hidden';else if(!reused)frame.style.visibility='hidden';
+ // Geometry-only reuse must preserve visibility even before the async viewport helper mounts.
+ if(!frame.classList.contains('edu-preview-frame'))Object.assign(frame.style,{border:'0',display:'block',width:width+'px',height:height+'px'});
+ if(!reused)frame.style.visibility='hidden';
  frame.onload=()=>{options.onPreviewLoad?.(frame);requestAnimationFrame(()=>{frame.style.visibility='visible'})};
  if(options.preservePreview!==true)cell.append(frame);
  const mountPreview=api=>{if(frame.isConnected)api.mount(frame,{host:viewport,width,height,aspect:false})};
