@@ -270,10 +270,10 @@
     const ui=controls(host),row=make('div',null,'edu-admin__actions'),name=make('input');name.type='text';name.maxLength=80;name.placeholder='Např. ZŠ – hlavní budova';name.setAttribute('aria-label','Název nového profilu');
     const copyLabel=make('label','Zkopírovat nastavení vybraného profilu'),copy=make('input');copy.type='checkbox';copy.checked=true;copyLabel.prepend(copy);
     const create=button('Vytvořit profil',false),rename=button('Přejmenovat profil'),history=button('Historie a obnova');row.append(create,rename,history);host.append(name,copyLabel,row);
-    const versions=make('div');host.append(versions);
+    const versions=make('div',null,'edu-profile-versions');host.append(versions);
     // Separate target: inspecting or restoring an archive never switches the
     // profile used by the open administration or its unsaved configuration.
-    const archivePanel=make('details'),archiveBody=make('div',null,'edu-admin__flow');
+    const archivePanel=make('details',null,'edu-profile-archive'),archiveBody=make('div',null,'edu-admin__flow');
     archivePanel.append(make('summary','Archivace a obnova profilů'),archiveBody);host.append(archivePanel);
     const archiveHelp=make('p','Archivace zachová nastavení i historii. Používaný profil a profil s navázanými výstupy nelze archivovat. Obnovení profil znovu zpřístupní, ale nepřepne právě otevřené nastavení.','edu-admin__hint');
     const archiveLabel=make('label','Profil k archivaci nebo obnově','edu-admin__field'),archiveSelect=make('select');archiveSelect.setAttribute('aria-label','Profil k archivaci nebo obnově');archiveLabel.append(archiveSelect);
