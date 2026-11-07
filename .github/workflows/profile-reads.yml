@@ -1,0 +1,19 @@
+name: Profile read performance
+on:
+  pull_request:
+  push:
+    branches: [perf/profile-read-singleflight]
+permissions:
+  contents: read
+jobs:
+  profile-reads:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node design-system/tests/profile-read-cache.test.mjs
+      - run: node design-system/tests/profile-warm-ui.test.mjs
+      - run: node design-system/tests/admin-change-status.test.mjs
+      - run: node design-system/tests/output-profile-controls.test.mjs
