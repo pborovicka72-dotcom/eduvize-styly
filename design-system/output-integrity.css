@@ -174,7 +174,7 @@ html[data-kiosk-app="transport"][data-output-mode="kiosk"] .table-header{
  padding-left:calc(var(--transport-gap,12px) + 1px);
 }
 
-html[data-kiosk-app][data-output-mode="kiosk"] :is(.empty,.error){
+html[data-kiosk-app][data-output-mode="kiosk"] :is(.empty,.error:not(.dot)){
  text-align:left;padding-inline:var(--edu-kiosk-text-inset,var(--edu-header-inset));
 }
 
