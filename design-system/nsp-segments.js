@@ -10,7 +10,7 @@ let state={...window.EduvizeNSPPicker.defaultSelection},outputMode='nsp',persist
 for(const field of ['orientation','style','block']){const value=initialParams.get('segment_'+field)||initialParams.get(field);if(value!==null)state[field]=field==='orientation'?value:Number(value);}
 
 function allowed(w,h,o,st,b){return !options.allowed||options.allowed(w,h,o,st,b)}
-function setKioskGeometry(next){const {width,height,orientation}=next||{};if(!Number.isSafeInteger(width)||!Number.isSafeInteger(height)||width<=0||height<=0||orientation!==(width>=height?'landscape':'portrait'))return false;kioskViewport={width,height,orientation};if(outputMode==='kiosk')draw();return true;}
+function setKioskGeometry(next){const {width,height,orientation}=next||{};if(!Number.isSafeInteger(width)||!Number.isSafeInteger(height)||width<=0||height<=0||orientation!==(width>=height?'landscape':'portrait'))return false;kioskViewport={width,height,orientation};if(outputMode==='kiosk'){const preview=q('#ev-preview'),frame=preview.querySelector('iframe');if(frame){preview.style.setProperty('width',width<height?'31.640625%':'100%');preview.style.marginInline='auto';host.querySelectorAll('.edu-web-preview-controls button').forEach((button,index)=>button.setAttribute('aria-pressed',String(index===(orientation==='landscape'?0:1))));const mount=api=>{if(frame.isConnected)api.mount(frame,{host:preview,width,height})};if(window.EduvizePreviewViewport)mount(window.EduvizePreviewViewport);else previewReady.then(mount);}}return true;}
 function choose(next){
  const x=window.scrollX,y=window.scrollY,wrap=q('#ev-preview-wrap'),height=wrap.getBoundingClientRect().height;
  wrap.style.minHeight=height+'px';state={...state,...next};draw();options.onChange?.({...state});
