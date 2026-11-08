@@ -12,11 +12,19 @@
   const entries=[['Aplikace',apps],['Účet',account+'#account'],['Karta školy',account+'#school-card'],['Profily a konfigurace',account+'#configurations'],['Licence školy',account+'#account-license']];
   for(const [label,href] of entries){
    const link=document.createElement('a');link.textContent=label;link.href=href;link.target='_self';
-   const target=new URL(href,root.location.origin),currentHash=root.location.hash||'#account';
-   if(target.pathname===root.location.pathname&&(!target.hash||target.hash===currentHash))link.setAttribute('aria-current','page');
-   link.addEventListener('click',()=>toggle(false));nav.append(link);
+   const target=new URL(href,root.location.origin);
+   link.addEventListener('click',()=>{markCurrent(target);toggle(false);});nav.append(link);
   }
   const service=document.createElement('a');service.href='/eduvize-styly/licence.html';service.target='_self';service.textContent='Správa služby';service.hidden=true;nav.append(service);
+  function markCurrent(url=new URL(root.location.pathname+root.location.hash,root.location.origin)){
+   const currentHash=url.hash||'#account';
+   for(const link of nav.querySelectorAll('a')){
+    const target=new URL(link.href,root.location.origin);
+    if(!link.hidden&&target.pathname===url.pathname&&(!target.hash||target.hash===currentHash))link.setAttribute('aria-current','page');
+    else link.removeAttribute('aria-current');
+   }
+  }
+  root.addEventListener('hashchange',()=>markCurrent());
   const menu=document.createElement('button');menu.type='button';menu.className='edu-workspace-menu';menu.textContent='Menu';menu.setAttribute('aria-controls',aside.id);menu.setAttribute('aria-expanded','false');
   function toggle(open){document.body.classList.toggle('edu-workspace-open',open);menu.setAttribute('aria-expanded',String(open));}
   menu.addEventListener('click',()=>toggle(menu.getAttribute('aria-expanded')!=='true'));
@@ -29,6 +37,7 @@
    aside.hidden=!connected;menu.hidden=!connected;
    service.hidden=!(connected&&!state.schoolId&&Array.isArray(state.scopes)&&state.scopes.includes('styles'));
    for(const link of nav.querySelectorAll('a'))if(link!==service&&link.getAttribute('href')!==apps&&link.getAttribute('href')!==account+'#account')link.hidden=!(connected&&state.schoolId);
+   markCurrent();
    if(!connected)toggle(false);
   }
   aside.append(brand,nav);document.body.prepend(aside,menu);
