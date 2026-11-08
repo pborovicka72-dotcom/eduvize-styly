@@ -1,0 +1,20 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import vm from 'node:vm';
+const source=fs.readFileSync(new URL('../nsp-segments.js',import.meta.url),'utf8');
+const match=source.match(/kioskGeometry:(\(\)=>\{.*?\}),params:/);
+assert.ok(match,'public kioskGeometry API must exist');
+let mode={value:'kiosk'},frame={isConnected:true,getAttribute:key=>attrs[key]},attrs={'data-preview-width':'3840','data-preview-height':'2160'};
+const root={querySelector:selector=>{assert.equal(selector,'#ev-preview.kiosk-preview iframe');return frame;}};
+const geometry=vm.runInNewContext('('+match[1]+')',{mode,root});
+const read=()=>JSON.parse(JSON.stringify(geometry()));
+assert.deepEqual(read(),{width:3840,height:2160,orientation:'landscape'});
+attrs={'data-preview-width':'2160','data-preview-height':'3840'};
+assert.deepEqual(read(),{width:2160,height:3840,orientation:'portrait'});
+attrs={'data-preview-width':'1280','data-preview-height':'720'};
+assert.equal(read().width,1280,'read actual selection, never assume 1920');
+for(const bad of [null,'','0','-1','NaN','Infinity']){attrs['data-preview-width']=bad;assert.equal(read(),null);}
+attrs={'data-preview-width':'3840','data-preview-height':'2160'};
+mode.value='web';assert.equal(read(),null);mode.value='nsp';assert.equal(read(),null);mode.value='kiosk';
+frame.isConnected=false;assert.equal(read(),null);frame=null;assert.equal(read(),null);
+console.log('Selected kiosk geometry: landscape, portrait, non-default, unavailable and non-kiosk PASS');
