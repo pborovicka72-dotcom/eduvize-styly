@@ -98,7 +98,7 @@
   async function profileReadiness(){
     const auth=root.EduvizeAdminAuth;if(!auth)return null;await auth.ready;
     const scope=auth.getToken('configurations')?'configurations':'documents';
-    if(!auth.getToken(scope)){const state=auth.status(),signature=authSignature(state);return {id:state.profileId||'',title:'',settingsWarm:false,valid:()=>!auth.getToken('configurations')&&!auth.getToken('documents')&&authSignature(auth.status())===signature};}
+    if(!auth.getToken(scope)){const state=auth.status(),signature=authSignature(state);if(!state.connected&&state.expiresAt)return null;return {id:state.profileId||'',title:'',settingsWarm:false,valid:()=>!auth.getToken('configurations')&&!auth.getToken('documents')&&authSignature(auth.status())===signature};}
     const epoch=readEpoch,context=await readContext(auth,scope);
     const valid=()=>context.valid()&&epoch===readEpoch;
     if(!valid())return null;
@@ -154,7 +154,7 @@
     function showEditState(){if(!editBaseline)return;changeStatus.hidden=false;const changed=fingerprint(adapter.read())!==editBaseline;changeStatus.textContent=userChanged&&changed?'Neuložené změny.':'Bez neuložených změn.';changeStatus.dataset.state=userChanged&&changed?'dirty':'saved';}
     const ui={status};
     const draftKey='eduvize-profile-save-draft-v1:'+adapter.app+':'+location.pathname;
-    let identityVerified=false,visualBusy=false,busy=false,profileId='',profileTitle='',revision=0,baseline='',backup=null,errorText='',loaded=false,ready=false,initialized=false,tracked='',needsLogin=false,restored=false,needsReload=false,manualLoad=false,timer,kioskEdited=false,browserBaseline='';
+    let verifiedIdentity=null,identityVerified=false,visualBusy=false,busy=false,profileId='',profileTitle='',revision=0,baseline='',backup=null,errorText='',loaded=false,ready=false,initialized=false,tracked='',needsLogin=false,restored=false,needsReload=false,manualLoad=false,timer,kioskEdited=false,browserBaseline='';
     const auth=()=>root.EduvizeAdminAuth;
     const canSave=()=>!!(auth()?.getToken('configurations')||auth()?.getToken('documents'));
     const activeId=()=>auth()?.status().profileId||'';
@@ -197,7 +197,7 @@
     }
     async function readProfile(apply=false,{fresh=false,replace=false}={}){
       const beforeRestore=replace&&apply?fingerprint(adapter.read()):'';
-      const p=await request('/'+profileId,{fresh:manualLoad||fresh}),entry=p.apps[adapter.app],incoming=entry?.revision||0;profileTitle=p.name;
+      const p=await request('/'+profileId,{fresh:manualLoad||fresh}),entry=p.apps[adapter.app],incoming=entry?.revision||0;identityVerified=true;profileTitle=p.name;
       // An explicit history restore replaces the confirmed draft, but not edits
       // made while its fresh read was in flight.
       const preserveEditing=apply&&(replace?fingerprint(adapter.read())!==beforeRestore:!manualLoad&&(userChanged||dirty()||adapter.app==='school-identity'&&adapter.isEditing?.()));
@@ -211,7 +211,7 @@
     }
     async function list(initial=false){
       if(adapter.app==='school-identity'&&!auth()?.status().schoolId){profileId='';return;}
-      if(!canSave()){say('Pro uložení do Eduvize se přihlaste. Rozpracované změny zůstanou zachované.');return;}
+      if(!canSave()){const state=auth()?.status();say(!state?.connected&&state?.expiresAt?(state.message||'Ověřuji přihlášení…'):'Pro uložení do Eduvize se přihlaste. Rozpracované změny zůstanou zachované.');return;}
       const active=await schoolConfiguration();
       if(!active){profileId='';profileTitle='';say('Přihlaste se k účtu školy.');return;}
       if(tracked&&active!==profileId&&!restored){if(dirty()){needsReload=true;say('Změnil se vybraný profil. Uložte rozpracované změny před načtením jiného profilu.','error');return;}profileId=active;revision=0;tracked='';select(profileId);manualLoad=true;try{await readProfile(true);}finally{manualLoad=false;}backup=null;undo.hidden=true;return;}
@@ -258,6 +258,7 @@
       if(adapter.app==='kiosk'&&copy)copy.addEventListener('click',()=>queueMicrotask(()=>{browserBaseline=departureFingerprint(adapter.read());kioskEdited=false;}));
     }
     root.addEventListener('beforeunload',event=>{if(!profileId||!baseline||(['kiosk','transport'].includes(adapter.app)&&!kioskEdited))return;const current=departureFingerprint(adapter.read()),saved=departureFingerprint(JSON.parse(baseline));if(current!==saved&&current!==browserBaseline){event.preventDefault();event.returnValue='';}});
+    root.addEventListener('eduvize-admin-auth-change',()=>{if(verifiedIdentity?.valid())return;identityVerified=false;profileTitle='';state();if(ready&&initialized&&!busy)work('Ověřuji aktivní profil…',()=>list(false));});
     watchAuth(()=>{state();if(ready&&initialized&&!busy)work('Ověřuji aktivní profil…',()=>list(false));});
     document.addEventListener('visibilitychange',()=>{if(!document.hidden&&ready&&!busy)auth()?.refresh();});
     const picker=make('section',null,'edu-profile-panel edu-admin__card');picker.setAttribute('aria-label','Aktivní profil školy');
@@ -282,7 +283,7 @@
       if(!await root.EduvizeProfileBeforeSwitch()){profilePicker.select.value=profileId;return;}
       await work('Přepínám profil…',async()=>{await auth().selectProfile(next);select(next);profileId=next;revision=0;tracked='';baseline='';userChanged=false;manualLoad=true;try{await readProfile(true);}finally{manualLoad=false;}backup=null;undo.hidden=true;if(!loaded)say('Tento profil zatím nemá nastavení této aplikace. Upravte výchozí hodnoty a uložte je.');});
     };
-    state();refreshPicker();try{const initialIdentity=await profileReadiness();if(initialIdentity?.valid()){identityVerified=true;profileId=initialIdentity.id;profileTitle=initialIdentity.title;state();}await waitAdapter(adapter);if(adapter.app==='styles'){try{const saved=JSON.parse(localStorage.getItem(localKey)||'null');if(saved)await adapter.apply(saved);}catch{}}ready=true;resetEditState();baseline=fingerprint(adapter.read());const resume=await restoreDraft();await auth()?.ready;const currentIdentity=await profileReadiness();if(currentIdentity?.valid()){identityVerified=true;profileId=currentIdentity.id;profileTitle=currentIdentity.title;state();}await work('Načítám nastavení profilu…',()=>list(!resume),{warm:!!currentIdentity?.valid()&&currentIdentity.settingsWarm});initialized=true;await refreshPicker();}catch(e){say(e.message,'error');state();}
+    state();refreshPicker();try{const initialIdentity=await profileReadiness();if(initialIdentity?.valid()){verifiedIdentity=initialIdentity;identityVerified=true;profileId=initialIdentity.id;profileTitle=initialIdentity.title;state();}await waitAdapter(adapter);if(adapter.app==='styles'){try{const saved=JSON.parse(localStorage.getItem(localKey)||'null');if(saved)await adapter.apply(saved);}catch{}}ready=true;resetEditState();baseline=fingerprint(adapter.read());const resume=await restoreDraft();await auth()?.ready;const currentIdentity=await profileReadiness();if(currentIdentity?.valid()){verifiedIdentity=currentIdentity;identityVerified=true;profileId=currentIdentity.id;profileTitle=currentIdentity.title;state();}await work('Načítám nastavení profilu…',()=>list(!resume),{warm:!!currentIdentity?.valid()&&currentIdentity.settingsWarm});initialized=true;await refreshPicker();}catch(e){say(e.message,'error');state();}
     return {refresh:()=>work('Ověřuji aktivní profil…',()=>list(false))};
   }
   function fields(ids){
