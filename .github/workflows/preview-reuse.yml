@@ -16,3 +16,4 @@ jobs:
       - run: node design-system/tests/preview-reuse-visibility.test.mjs
       - run: node design-system/tests/preview-viewport.test.mjs
       - run: node design-system/tests/weather-preview-integration.test.mjs
+      - run: node design-system/tests/kiosk-selection-geometry.test.mjs
