@@ -15,5 +15,6 @@ jobs:
           node-version: '22'
       - run: node design-system/tests/profile-read-cache.test.mjs
       - run: node design-system/tests/profile-warm-ui.test.mjs
+      - run: node design-system/tests/profile-mount-lifecycle.test.mjs
       - run: node design-system/tests/admin-change-status.test.mjs
       - run: node design-system/tests/output-profile-controls.test.mjs
