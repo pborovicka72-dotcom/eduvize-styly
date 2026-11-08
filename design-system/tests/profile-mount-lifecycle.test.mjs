@@ -16,7 +16,7 @@ function harness({crypto=webcrypto}={}){
  const nodes=[],main=new Node(),header=new Node(),row=new Node(),local=new Node('button'),copy=new Node('button'),open=new Node('button');main.append(header,row);row.append(local,copy,open);
  const all=()=>{const a=[];function visit(n){a.push(n);n.children.forEach(visit);}visit(main);return a;};
  const document={readyState:'loading',hidden:false,head:new Node(),createElement:tag=>{const n=new Node(tag);nodes.push(n);return n;},getElementById:key=>key==='weather-save-settings'?local:key==='location-settings-cancel'?copy:all().find(n=>n.id===key)||null,querySelector:s=>s.startsWith('main.edu-admin-page')?main:s==='button[form="location-settings"][type="submit"]'?open:s==='[data-edu-profile-panel]'?all().find(n=>n.dataset.eduProfilePanel)||null:null,addEventListener:(n,f)=>(docListeners[n]??=[]).push(f)};main.querySelector=s=>s==='.edu-page-header'?header:null;
- const auth={ready:Promise.resolve(),getToken:s=>validated&&s==='configurations'?token:'',status:()=>({connected:validated,schoolId:school,profileId:profile,scopes:['configurations'],expiresAt:3600}),fetch:async url=>{fetchCalls++;return {ok:true,status:200,json:async()=>url.endsWith('/'+profile)?{id:profile,name:token==='synthetic-principal'?'Verified TEST':'Other principal',apps:{weather:{revision:3,config:{schemaVersion:1,data:{value:'server'}}}}}:{items:profile?[{id:profile,name:token==='synthetic-principal'?'Verified TEST':'Other principal'}]:[]}};}};
+ const auth={ready:Promise.resolve(),getToken:s=>validated&&s==='configurations'?token:'',status:()=>({connected:validated,schoolId:school,profileId:profile,scopes:['configurations'],expiresAt:token?3600:0}),fetch:async url=>{fetchCalls++;return {ok:true,status:200,json:async()=>url.endsWith('/'+profile)?{id:profile,name:token==='synthetic-principal'?'Verified TEST':'Other principal',apps:{weather:{revision:3,config:{schemaVersion:1,data:{value:'server'}}}}}:{items:profile?[{id:profile,name:token==='synthetic-principal'?'Verified TEST':'Other principal'}]:[]}};}};
  const root={crypto,EduvizeAdminAuth:auth,addEventListener:(n,f)=>(listeners[n]??=[]).push(f),dispatchEvent:e=>{for(const f of listeners[e.type]||[])f(e);}};
  const store={getItem:k=>storage.get(k)||null,setItem:(k,v)=>storage.set(k,v),removeItem:k=>storage.delete(k)};
  const location={origin:'https://test.skola.eduvize.cz',href:'https://test.skola.eduvize.cz/pocasi/config',pathname:'/pocasi/config'};
@@ -54,5 +54,17 @@ function harness({crypto=webcrypto}={}){
 // Empty selection is asserted only after authentication has actually settled.
 {
  const h=harness(),ready=defer();h.auth.ready=ready.promise;h.setValidated(false);h.setIdentity('','');const pending=h.mount();await tick();assert.ok(h.labels.every(s=>!s.includes('není vybrán')));ready.resolve();await tick();assert.equal(h.labels.at(-1),'Profil: není vybrán');h.adapterReady.resolve();await pending;
+}
+// A stored but unvalidated session is pending, not evidence of an empty/disconnected identity.
+{
+ const h=harness();h.setValidated(false);const pending=h.mount();await tick();assert.ok(h.labels.at(-1).includes('ověřuji výběr'));h.adapterReady.resolve();await pending;assert.ok(h.labels.every(s=>!s.includes('není vybrán')));assert.ok(h.statuses.every(s=>!s.includes('se přihlaste')));assert.ok(h.statuses.includes('Ověřuji přihlášení…'));
+}
+// Same-page principal changes synchronously clear the old label, then only validated new data may name it.
+{
+ const h=harness();await h.api.request();await h.api.request('/'+id);const pending=h.mount();h.adapterReady.resolve();await pending;assert.equal(h.labels.at(-1),'Profil: Verified TEST');const index=h.labels.length;h.setIdentity('same-page-new-principal');h.root.dispatchEvent({type:'eduvize-admin-auth-change'});assert.equal(h.labels.at(-1),'Profil: ověřuji výběr…');await tick();assert.ok(h.labels.slice(index).every(s=>s!=='Profil: Verified TEST'));assert.equal(h.labels.at(-1),'Profil: Other principal');
+}
+// Same-page change to an unvalidated stored session must stay neutral and preserve a dirty form.
+{
+ const h=harness();await h.api.request();await h.api.request('/'+id);const pending=h.mount();h.adapterReady.resolve();await pending;h.edit();h.setValidated(false);h.root.dispatchEvent({type:'eduvize-admin-auth-change'});await tick();assert.equal(h.labels.at(-1),'Profil: ověřuji výběr…');assert.equal(h.current.data.value,'dirty');assert.ok(!h.statuses.at(-1).includes('se přihlaste'));
 }
 console.log('PASS: full mount first paint, list-only/cold detail, fully warm data, auth/digest isolation and dirty form lifecycle.');
