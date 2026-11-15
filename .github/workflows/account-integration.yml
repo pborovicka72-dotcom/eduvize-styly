@@ -1,0 +1,17 @@
+name: Integrated same-origin account frontend
+on:
+  pull_request:
+    paths: ['ucet.html', 'design-system/**', 'experimental/school-calendar/**', 'tests/account-origin.test.cjs', '.github/workflows/account-integration.yml']
+  push:
+    branches: [integration/account-android-test-20261107]
+permissions:
+  contents: read
+jobs:
+  frontend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node --test design-system/tests/account-profile-restore.test.mjs design-system/tests/profile-archive.test.mjs experimental/school-calendar/test_search_interaction.mjs tests/account-origin.test.cjs

@@ -160,3 +160,16 @@ html[data-kiosk-app="news"][data-output-mode] .edu-news-output .header.edu-outpu
 }
 html[data-kiosk-app="news"][data-output-mode] .edu-news-output .header.edu-output-header>.status:empty{display:none!important}
 html[data-kiosk-app="news"].edu-menu-app-header .edu-news-output .header.edu-output-header>.brand{grid-template-columns:minmax(0,1fr)}
+
+/* Large wisdom segments: a readable, centred text block rather than a poster.
+   Small segments, shared headers and ordinary web keep their existing geometry. */
+@media (min-width:1201px) and (min-height:721px){
+ html[data-kiosk-app="wisdom"].nsp-output .edu-wisdom-output #display .content>.quote,
+ html[data-kiosk-app="wisdom"].nsp-output .edu-wisdom-output #display .content>.quote[data-length="long"]{
+  font-size:clamp(32px,calc(var(--edu-text-body,40px)*1.15),112px)!important;
+  line-height:1.3!important;
+ }
+ html[data-kiosk-app="wisdom"].nsp-output .edu-wisdom-output #display .content>:is(.wisdom-category,.quote,.attribution){
+  width:100%;max-width:1440px;align-self:center;
+ }
+}

@@ -1,0 +1,29 @@
+/* Shared administration status contract. Opt-in class only; never styles output pages. */
+:root{
+ --edu-admin-status-font-family:var(--edu-admin-font,system-ui,-apple-system,"Segoe UI",Arial,sans-serif);
+ --edu-admin-status-font-size:14px;
+ --edu-admin-status-font-weight:400;
+ --edu-admin-status-line-height:1.5;
+ --edu-admin-status-related-gap:12px;
+ --edu-admin-status-block-gap:20px;
+}
+body.ev-admin.edu-admin-status-context{font-family:var(--edu-admin-status-font-family)}
+body.ev-admin.edu-admin-status-context .edu-admin__status[role="status"]{
+ font-family:var(--edu-admin-status-font-family)!important;
+ font-size:var(--edu-admin-status-font-size)!important;
+ font-weight:var(--edu-admin-status-font-weight)!important;
+ line-height:var(--edu-admin-status-line-height)!important;
+ font-style:normal;
+ letter-spacing:normal;
+ margin-block:var(--edu-admin-status-related-gap) 0;
+}
+body.ev-admin.edu-admin-status-context .edu-profile-current>.edu-admin__status{margin:0}
+body.ev-admin.edu-admin-status-context .edu-profile-current__name{
+ font-family:var(--edu-admin-status-font-family);
+ font-size:var(--edu-admin-status-font-size);
+ font-weight:600;
+ line-height:var(--edu-admin-status-line-height);
+ margin:0;
+}
+body.ev-admin.edu-admin-status-context .edu-output-actions:has(>.edu-admin__status){row-gap:var(--edu-admin-status-related-gap)}
+body.ev-admin.edu-admin-status-context .edu-output-actions>.edu-admin__status{margin:0}

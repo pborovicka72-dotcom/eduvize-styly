@@ -38,3 +38,7 @@
 #configurations>.edu-profile-versions{display:flex;flex-wrap:wrap;gap:12px}
 .edu-profile-archive>.edu-admin__flow{margin-block-start:20px}
 .edu-upload-results{display:grid;gap:12px;margin-block:12px 0;padding-inline-start:24px}
+
+/* Keep the school profile selector and reload action separated, including wrapping. */
+#configurations .edu-profile-panel__row{column-gap:20px;row-gap:12px}
+#configurations .edu-profile-panel__row>label{display:flex;flex-direction:column;gap:8px}
