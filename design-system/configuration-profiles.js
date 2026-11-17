@@ -124,6 +124,7 @@
     function say(text,state=''){status.textContent=text;status.dataset.state=state;status.hidden=state==='saved'&&/^Uloženo do Eduvize/.test(text);changeStatus.hidden=state==='saved'&&/^Uloženo do Eduvize/.test(text);}
     let segmentEdited=false,profilePicker=null;
     function dirty(){
+      if(adapter.app==='styles'&&typeof adapter.hasUnsavedChanges==='function')return adapter.hasUnsavedChanges();
       if(!baseline||!userChanged)return false;
       const current=adapter.read(),saved=JSON.parse(baseline);
       if(adapter.app==='documents'&&!segmentEdited){
@@ -159,9 +160,10 @@
     }
     async function readProfile(apply=false){
       const p=await request('/'+profileId,{fresh:true}),entry=p.apps[adapter.app],incoming=entry?.revision||0;profileTitle=p.name;
+      if(apply&&adapter.app==='styles')await adapter.loadProfile?.(profileId);
       const preserveEditing=apply&&!manualLoad&&adapter.app==='school-identity'&&adapter.isEditing?.();
       if(!apply&&tracked===profileId){if(incoming!==revision){needsReload=true;say('Na Eduvize je novější nastavení. Před uložením je načtěte.','error');return;}say(dirty()?'Změny nejsou uložené do Eduvize.':loaded?'Uloženo do Eduvize.':'Dosud neuloženo do Eduvize.',dirty()?'dirty':'saved');return;}
-      if(entry&&!entry.config.empty&&apply&&!preserveEditing&&(adapter.app!=='styles'||manualLoad)){const before=structuredClone(adapter.read());try{await adapter.apply(structuredClone(entry.config));}catch(error){try{await adapter.apply(before);}catch{}throw error;}if(manualLoad){backup=before;undo.hidden=false;}}
+      if(entry&&!entry.config.empty&&apply&&!preserveEditing&&adapter.app!=='styles'){const before=structuredClone(adapter.read());try{await adapter.apply(structuredClone(entry.config));}catch(error){try{await adapter.apply(before);}catch{}throw error;}if(manualLoad){backup=before;undo.hidden=false;}}
       if(!entry&&apply&&!preserveEditing&&adapter.app==='school-identity')await adapter.apply({schemaVersion:1,data:{}});
       if(apply&&!preserveEditing){userChanged=false;resetEditState();}
       revision=incoming;tracked=profileId;needsReload=false;loaded=!!entry&&!entry.config.empty;baseline=fingerprint(preserveEditing?(loaded?entry.config:{schemaVersion:1,data:{}}):(apply||!loaded?adapter.read():entry.config));
@@ -216,6 +218,7 @@
       if(adapter.app==='kiosk'&&copy)copy.addEventListener('click',()=>queueMicrotask(()=>{browserBaseline=departureFingerprint(adapter.read());kioskEdited=false;}));
     }
     function hasUnsavedDeparture(){
+      if(adapter.app==='styles'&&typeof adapter.hasUnsavedChanges==='function')return adapter.hasUnsavedChanges();
       if(!profileId||!baseline||(['kiosk','transport'].includes(adapter.app)&&!kioskEdited))return false;
       const current=departureFingerprint(adapter.read()),saved=departureFingerprint(JSON.parse(baseline));
       return current!==saved&&current!==browserBaseline;
@@ -241,7 +244,7 @@
       if(!await root.EduvizeProfileBeforeSwitch()){profilePicker.select.value=profileId;return;}
       await work('Přepínám profil…',async()=>{await auth().selectProfile(next);select(next);profileId=next;revision=0;tracked='';baseline='';userChanged=false;manualLoad=true;try{await readProfile(true);}finally{manualLoad=false;}backup=null;undo.hidden=true;if(!loaded)say('Tento profil zatím nemá nastavení této aplikace. Upravte výchozí hodnoty a uložte je.');});
     };
-    state();refreshPicker();try{await waitAdapter(adapter);if(adapter.app==='styles'){try{const saved=JSON.parse(localStorage.getItem(localKey)||'null');if(saved)await adapter.apply(saved);}catch{}}ready=true;resetEditState();baseline=fingerprint(adapter.read());const resume=await restoreDraft();await auth()?.ready;await work('Načítám nastavení profilu…',()=>list(!resume));initialized=true;await refreshPicker();}catch(e){say(e.message,'error');state();}
+    state();refreshPicker();try{await waitAdapter(adapter);ready=true;resetEditState();baseline=fingerprint(adapter.read());const resume=await restoreDraft();await auth()?.ready;await work('Načítám nastavení profilu…',()=>list(!resume));initialized=true;await refreshPicker();}catch(e){say(e.message,'error');state();}
     return {refresh:()=>work('Ověřuji aktivní profil…',()=>list(false))};
   }
   function fields(ids){
@@ -311,4 +314,5 @@
   root.addEventListener('eduvize-profile-adapter-ready',()=>{mount(root.EduvizeProfileAdapter);schoolSuggestion(root.EduvizeProfileAdapter);});
   root.addEventListener('eduvize-admin-auth-change',()=>{if(root.EduvizeProfileAdapter?.app==='school-identity'&&root.EduvizeAdminAuth?.status().schoolId)mount(root.EduvizeProfileAdapter);});
 })(window);
+
 

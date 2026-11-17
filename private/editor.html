@@ -71,16 +71,34 @@ function swatchGradient(colors){return 'linear-gradient(90deg,'+colors.primary+'
 function updateThemeSwatches(){for(const button of document.querySelectorAll('#theme-list-items button[data-theme-id]')){const t=themes.find(item=>item.id===button.dataset.themeId);if(t){const swatch=button.querySelector('.theme-swatch');if(swatch){swatch.style.background=swatchGradient(t.config.colors);swatch.style.color=t.config.colors.text;swatch.textContent='T'}}}}
 function renderPalettes(){const grid=document.getElementById('palette-grid');grid.replaceChildren();for(const p of palettePresets){const button=document.createElement('button');button.type='button';button.className='palette-choice';const swatch=document.createElement('span');swatch.className='palette-swatch';swatch.style.background=swatchGradient(p);const label=document.createElement('span');label.textContent=p.name;button.append(swatch,label);button.onclick=()=>{for(const [key,value] of Object.entries(p))if(key!=='name')theme.colors[key]=value;fields();msg('Paleta „'+p.name+'“ byla použita v náhledu. Pro trvalé uložení použijte Uložit jako nový styl nebo Použít změny ve sdíleném stylu.')};grid.append(button)}}
 let standardUnlocked=false;let original,theme;const deep=o=>JSON.parse(JSON.stringify(o));const get=(o,path)=>path.split('.').reduce((v,k)=>v?.[k],o)??(path==='icons.radiusPx'?10:undefined);const set=(o,path,val)=>{const p=path.split('.');o[p[0]]??={};o[p[0]][p[1]]=val};
-function editable(){return canPublishStyle()&&(selected!=='standard'||standardUnlocked)}
-function canPublishStyle(){const state=window.EduvizeAdminAuth?.status();return state?.connected===true&&!state.schoolId&&state.scopes?.includes('styles')===true;}
-function updateEditLock(){const locked=!editable();for(const el of document.querySelectorAll('#fields input,#palette-grid button,#theme-name'))el.disabled=locked;for(const id of ['save','create','reset'])document.getElementById(id).disabled=locked;const unlock=document.getElementById('unlock');unlock.style.display=canPublishStyle()&&selected==='standard'?'inline-block':'none';for(const id of ['save','create','remove'])document.getElementById(id).hidden=!canPublishStyle();const activate=document.getElementById('activate');activate.textContent=window.EduvizeAdminAuth?.status().schoolId?'Použít styl pro školu':'Nastavit jako aktivní';activate.disabled=!window.EduvizeAdminAuth?.status().connected;unlock.textContent=standardUnlocked?'Zamknout úpravy výchozího stylu':'Odemknout úpravy výchozího stylu'}
+let themeContext='';
+function styleContext(){const s=window.EduvizeAdminAuth?.status();return JSON.stringify([s?.connected,s?.schoolId||'',s?.profileId||''])}
+function styleScope(){return window.EduvizeAdminAuth?.status().schoolId?'configurations':'styles'}
+function canPublishStyle(){const state=window.EduvizeAdminAuth?.status();return themeContext===styleContext()&&state?.connected===true&&state.scopes?.includes(styleScope())===true;}
+function editable(){return canPublishStyle()&&(window.EduvizeAdminAuth.status().schoolId?themes.find(t=>t.id===selected)?.editable===true:selected!=='standard'||standardUnlocked)}
+let styleBaseline='';
+function styleFingerprint(){return theme?JSON.stringify({theme,name:document.getElementById('theme-name').value}):''}
+function hasUnsavedStyleChanges(){return themeContext===styleContext()&&!!styleBaseline&&styleFingerprint()!==styleBaseline}
+function updateEditLock(){
+ const school=!!window.EduvizeAdminAuth?.status().schoolId,allowed=canPublishStyle();
+ const draftAllowed=allowed&&(school||selected!=='standard'||standardUnlocked);
+ for(const el of document.querySelectorAll('#fields input,#palette-grid button,#theme-name'))el.disabled=!draftAllowed;
+ document.getElementById('save').disabled=!editable();
+ for(const id of ['create','reset'])document.getElementById(id).disabled=!draftAllowed;
+ const unlock=document.getElementById('unlock');unlock.style.display=allowed&&!school&&selected==='standard'?'inline-block':'none';
+ for(const id of ['save','create','remove'])document.getElementById(id).hidden=!allowed;
+ document.getElementById('remove').disabled=!editable()||selected==='standard';
+ const activate=document.getElementById('activate');activate.textContent=school?'Použít styl pro vybraný profil':'Nastavit jako aktivní';
+ activate.disabled=!allowed||(school&&!window.EduvizeAdminAuth.status().profileId);
+ unlock.textContent=standardUnlocked?'Zamknout úpravy výchozího stylu':'Odemknout úpravy výchozího stylu';
+}
 function render(){const p=document.getElementById('preview');const canonical={'colors.background':'--ev-bg','colors.text':'--ev-text','colors.muted':'--ev-muted','colors.surface':'--ev-surface','colors.primary':'--ev-primary','colors.primaryText':'--ev-primary-text','colors.secondary':'--ev-secondary','colors.secondaryText':'--ev-secondary-text','colors.accent':'--ev-accent','colors.border':'--ev-border','controls.heightPx':'--ev-control-height','controls.radiusPx':'--ev-control-radius','cards.radiusPx':'--ev-card-radius','icons.radiusPx':'--ev-icon-radius'};for(const [k,v] of Object.entries(canonical))p.style.setProperty(v,get(theme,k)+(k.endsWith('Px')?'px':''));updateCatalogFrame()}
 function updateCatalogFrame(){const f=document.getElementById('catalog-frame');if(!f||!theme)return;const c=theme.colors;f.srcdoc='<html lang="cs"><meta name="viewport" content="width=device-width"><style>*{box-sizing:border-box}body{margin:0;padding:5vmin;font:clamp(18px,3vmin,40px) system-ui;background:'+c.background+';color:'+c.text+'}h1{font-size:1.3em}section{padding:5vmin;border:2px solid '+c.border+';border-radius:'+theme.cards.radiusPx+'px;background:'+c.surface+'}strong{color:'+c.primary+'}</style><section><h1>Ukázka aplikace</h1><p><strong>Aktivní náhled stylu</strong></p><p>Stejný obsah na výšku i na šířku.</p></section></html>'}
 function fields(){const root=document.getElementById('fields');root.replaceChildren();for(const [key,label,type] of defs){const wrap=document.createElement('label');wrap.className='field';wrap.textContent=label;const input=document.createElement('input');input.type=type;input.value=get(theme,key);if(type==='number'){input.min='0';input.max=key==='icons.radiusPx'?'24':'80';input.step='1'}input.oninput=()=>{const v=type==='number'?Math.max(0,Math.min(key==='icons.radiusPx'?24:80,Number(input.value)||0)):input.value;set(theme,key,v);render();updateThemeSwatches()};wrap.append(input);root.append(wrap)}render();updateThemeSwatches();updateEditLock()}
 async function init(){try{const r=await fetch('https://pborovicka72-dotcom.github.io/eduvize-styly/design-system/admin-theme.json',{cache:'no-store'});if(!r.ok)throw Error('HTTP '+r.status);original=await r.json();theme=deep(original);fields()}catch(e){document.getElementById('state').textContent='Nepodařilo se načíst základní konfiguraci: '+e.message}}let themes=[],selected='standard';
 
 const msg=t=>document.getElementById('state').textContent=t;
-async function api(path,method='GET',body){let r;try{const options={method,headers:body?{'Content-Type':'application/json'}:{},...(body?{body:JSON.stringify(body)}:{})};const url=new URL('https://eduvize-design-system-api.onrender.com/api/design-system/'+path);if(path==='themes'){await window.EduvizeAdminAuth.ready;const state=window.EduvizeAdminAuth.status();if(state.schoolId&&state.profileId)url.searchParams.set('profileId',state.profileId);}r=method==='GET'?await fetch(url,{...options,cache:'no-store'}):await window.EduvizeAdminAuth.fetch(url,options,'styles')}catch(e){throw Error(e.message||'Server není dostupný.')}const d=await r.json().catch(()=>({}));if(!r.ok)throw Error(typeof d.detail==='string'?d.detail:'Chyba serveru '+r.status);return d}
+async function api(path,method='GET',body){let r;try{const options={method,headers:body?{'Content-Type':'application/json'}:{},...(body?{body:JSON.stringify(body)}:{})};const url=new URL('https://eduvize-design-system-api.onrender.com/api/design-system/'+path);if(path==='themes'){await window.EduvizeAdminAuth.ready;const state=window.EduvizeAdminAuth.status();if(state.schoolId&&state.profileId)url.searchParams.set('profileId',state.profileId);}r=await window.EduvizeAdminAuth.fetch(url,{...options,cache:'no-store'},styleScope())}catch(e){throw Error(e.message||'Server není dostupný.')}const d=await r.json().catch(()=>({}));if(!r.ok)throw Error(typeof d.detail==='string'?d.detail:'Chyba serveru '+r.status);return d}
 
 function selectTheme(id){
  const t=themes.find(x=>x.id===id);
@@ -89,9 +107,10 @@ function selectTheme(id){
  theme=deep(t.config);
  document.getElementById('theme-name').value=t.name;
  fields();
- document.getElementById('preview-selection').textContent='Právě zobrazen: '+t.name+(t.active?' · aktivní':'')+(t.locked?' · výchozí (nelze přepsat ani smazat)':'');
+ document.getElementById('preview-selection').textContent='Právě zobrazen: '+t.name+(t.active?' · aktivní':'')+(t.locked?' · výchozí; vlastní variantu uložte jako nový styl':'');
  document.getElementById('save').disabled=!editable();
- document.getElementById('remove').disabled=!!t.locked;
+ document.getElementById('remove').disabled=!editable()||selected==='standard';
+ styleBaseline=styleFingerprint();
  for(const button of document.querySelectorAll('#theme-list-items button[data-theme-id]')){
   const active=button.dataset.themeId===id;
   button.setAttribute('aria-pressed',String(active));
@@ -102,10 +121,13 @@ function selectTheme(id){
 let themeListRequest=0;
 async function loadThemes(pick,created){
  const request=++themeListRequest;
+ await window.EduvizeAdminAuth.ready;
+ const context=styleContext();
  try{
   const fresh=await api('themes');
-  if(request!==themeListRequest)return;
+  if(request!==themeListRequest||context!==styleContext())return;
   if(!Array.isArray(fresh))throw Error('Server nevrátil seznam stylů.');
+  themeContext=context;
   themes=fresh;
   if(created&&!themes.some(t=>t.id===created.id))themes.push(created);
   const sel=document.getElementById('theme-select'),list=document.getElementById('theme-list-items');
@@ -120,8 +142,8 @@ async function loadThemes(pick,created){
   // The editor shell stays standard; the initial preview follows the active theme.
   const requested=pick||themes.find(t=>t.active)?.id||'standard';
   selectTheme(themes.some(t=>t.id===requested)?requested:'standard');
- }catch(e){document.getElementById('theme-list-items').textContent='Styly se nepodařilo načíst: '+e.message;msg('Nelze načíst uložené styly: '+e.message);console.error('Eduvize theme loading failed',e);throw e}
- finally{document.getElementById('preview').setAttribute('aria-busy','false')}
+ }catch(e){if(request!==themeListRequest||context!==styleContext())return;document.getElementById('theme-list-items').textContent='Styly se nepodařilo načíst: '+e.message;msg('Nelze načíst uložené styly: '+e.message);console.error('Eduvize theme loading failed',e);throw e}
+ finally{if(request===themeListRequest&&context===styleContext())document.getElementById('preview').setAttribute('aria-busy','false')}
 }
 document.getElementById('theme-select').addEventListener('change',e=>selectTheme(e.target.value));
 function feedback(message,state=''){const el=document.getElementById('save-feedback');el.className='save-feedback'+(state?' '+state:'');el.textContent=message}
@@ -136,19 +158,44 @@ const newStyleName=newStyleDialog.querySelector('input'),newStyleError=newStyleD
 function showNewStyleError(message){newStyleError.textContent=message;newStyleName.setAttribute('aria-invalid','true');newStyleName.focus();}
 newStyleName.oninput=()=>{newStyleError.textContent='';newStyleName.removeAttribute('aria-invalid');};
 newStyleDialog.querySelector('[data-cancel]').onclick=()=>newStyleDialog.close();
-document.getElementById('create').onclick=()=>{newStyleName.value=document.getElementById('theme-name').value;newStyleError.textContent='';newStyleName.removeAttribute('aria-invalid');newStyleDialog.showModal();newStyleName.focus();newStyleName.select();};
+document.getElementById('create').onclick=()=>{newStyleName.value=document.getElementById('theme-name').value+' – kopie';newStyleError.textContent='';newStyleName.removeAttribute('aria-invalid');newStyleDialog.showModal();newStyleName.focus();newStyleName.select();};
 newStyleDialog.querySelector('form').onsubmit=async event=>{
  event.preventDefault();const name=newStyleName.value.replace(/\s+/gu,' ').trim();
  if(!name||name.length>80){showNewStyleError('Název musí mít 1–80 znaků.');return;}
  if(themes.some(item=>themeNameKey(item.name)===themeNameKey(name))||themeNameKey(name)===themeNameKey('EDUVIZE Standard')){showNewStyleError('Styl s tímto názvem již existuje. Zadejte jiný název.');return;}
+ const config=deep(theme),context=styleContext();
  newStyleSubmit.disabled=true;newStyleError.textContent='Ukládám nový styl…';
- try{await window.EduvizeAdminAuth.ready;if(!window.EduvizeAdminAuth.getToken('styles'))throw Error(window.EduvizeAdminAuth.need('styles'));const config=deep(theme);const t=await api('themes','POST',{name,config});await loadThemes(t.id,{...t,config,active:false,locked:false});newStyleDialog.close();feedback('✓ Styl „'+name+'“ byl uložen.');msg('Styl „'+name+'“ byl uložen do databáze a zobrazen v seznamu výše.');}
+ try{await window.EduvizeAdminAuth.ready;if(!window.EduvizeAdminAuth.getToken(styleScope()))throw Error(window.EduvizeAdminAuth.need(styleScope()));const t=await api('themes','POST',{name,config});if(context!==styleContext()){newStyleDialog.close();return;}await loadThemes(t.id,{...t,config,active:false,locked:false,editable:true});newStyleDialog.close();feedback('✓ Styl „'+name+'“ byl uložen.');msg('Styl „'+name+'“ byl uložen do databáze a zobrazen v seznamu výše.');}
  catch(error){showNewStyleError(error.message);}
  finally{newStyleSubmit.disabled=false;}
 };
-document.getElementById('save').onclick=()=>run(async()=>{if(!editable())throw Error('Nejprve odemkněte úpravy výchozího stylu');await window.EduvizeAdminAuth.ready;if(!window.EduvizeAdminAuth.getToken('styles')){feedback(window.EduvizeAdminAuth.need('styles'),'error');return}const name=document.getElementById('theme-name').value.trim();const button=document.getElementById('save');button.disabled=true;feedback('Ukládám změny…','pending');try{await api('themes/'+selected,'PUT',{name,config:theme});await loadThemes(selected);feedback('✓ Změny stylu „'+name+'“ byly uloženy.');msg('Styl aktualizován.')}finally{button.disabled=!editable()}});
-document.getElementById('activate').onclick=()=>run(async()=>{const auth=window.EduvizeAdminAuth;await auth.ready;const state=auth.status(),button=document.getElementById('activate');button.disabled=true;try{if(state.schoolId){const response=await auth.fetch('https://eduvize-design-system-api.onrender.com/api/design-system/profile-theme',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({themeId:selected})},'configurations');const data=await response.json();if(!response.ok)throw Error(data.detail||'Styl školy se nepodařilo aktivovat.');await loadThemes(selected);feedback('Styl byl nastaven pro vaši školu.');msg('Aktivní styl školy nastaven. Výstupy převezmou změnu nejpozději do jedné minuty.');}else{await api('themes/'+selected+'/activate','POST');await loadThemes(selected);msg('Globální aktivní styl nastaven.');}}finally{updateEditLock();}});
-window.addEventListener('eduvize-admin-auth-change',()=>{if(theme)updateEditLock();});window.EduvizeAdminAuth.ready.then(()=>{if(theme)updateEditLock();});
+document.getElementById('save').onclick=()=>run(async()=>{
+ if(!editable())throw Error('Tento styl nelze přepsat. Uložte vlastní variantu jako nový styl.');
+ const id=selected,name=document.getElementById('theme-name').value.trim(),config=deep(theme),context=styleContext();
+ const button=document.getElementById('save');button.disabled=true;feedback('Ukládám změny…','pending');
+ try{await api('themes/'+id,'PUT',{name,config});if(context!==styleContext())return;await loadThemes(id);feedback('✓ Změny stylu „'+name+'“ byly uloženy.');msg('Styl aktualizován.');}
+ finally{updateEditLock();}
+});
+document.getElementById('activate').onclick=()=>run(async()=>{
+ const auth=window.EduvizeAdminAuth,state=auth.status(),id=selected,context=styleContext(),profileId=state.profileId;
+ if(themeContext!==context)throw Error('Počkejte na načtení stylů vybraného profilu.');
+ const button=document.getElementById('activate');button.disabled=true;
+ try{
+  if(state.schoolId){
+   const response=await auth.fetch('/api/design-system/profile-theme',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({themeId:id,profileId})},'configurations');
+   const data=await response.json();if(!response.ok)throw Error(data.detail||'Styl profilu se nepodařilo aktivovat.');
+  }else{await api('themes/'+id+'/activate','POST');}
+  if(context!==styleContext())return;
+  await loadThemes(id);feedback('Styl byl nastaven pro vybraný profil.');msg('Styl byl nastaven.');
+ }finally{updateEditLock();}
+});
+let displayedProfileId='';
+function syncStyleProfile(){
+ const next=styleContext();if(next===displayedProfileId)return;
+ displayedProfileId=next;themeContext='';++themeListRequest;
+ if(theme){updateEditLock();document.getElementById('preview').setAttribute('aria-busy','true');msg('Načítám styly vybraného profilu…');void loadThemes().catch(()=>{});}
+}
+window.addEventListener('eduvize-admin-auth-change',syncStyleProfile);window.addEventListener('eduvize-profile-selected',syncStyleProfile);window.EduvizeAdminAuth.ready.then(syncStyleProfile);
 document.getElementById('remove').onclick=()=>run(async()=>{if(selected==='standard')throw Error('Výchozí styl nelze smazat');if(!confirm('Opravdu smazat vybraný styl?'))return;await api('themes/'+selected,'DELETE');await loadThemes('standard');msg('Styl smazán.')});
 document.getElementById('reset').onclick=()=>{if(!original)return;theme=deep(original);fields();msg('Náhled obnoven na výchozí hodnoty; uložené styly beze změny.')};
 document.getElementById('unlock').onclick=()=>{standardUnlocked=!standardUnlocked;updateEditLock();msg(standardUnlocked?'Výchozí styl je odemčený pro úpravy.':'Výchozí styl je zamčený.')};renderPalettes();init().then(()=>loadThemes()).catch(()=>{});
@@ -161,6 +208,8 @@ for(const [id,page] of [['catalog-prev',1],['catalog-next',2]])document.getEleme
 </script>
 <script id="eduvize-profile-adapter">
 window.EduvizeProfileAdapter={app:"styles",
+hasUnsavedChanges:hasUnsavedStyleChanges,
+loadProfile:()=>loadThemes(),
 ready:new Promise((resolve,reject)=>{let n=0;const wait=()=>{if(theme&&themes.length)resolve();else if(n++>300)reject(Error('Nepodařilo se načíst styly.'));else setTimeout(wait,100);};wait();}),
 loadedMessage:'Styl načten do náhledu. Uložení nebo aktivaci globálního stylu provedete tlačítky ve správě stylů.',
 read:()=>theme?{schemaVersion:1,data:{theme:deep(theme),selected,name:document.getElementById('theme-name').value}}:null,
@@ -168,3 +217,4 @@ apply:async config=>{if(!config.data?.theme?.colors||!config.data.theme.controls
 window.dispatchEvent(new Event("eduvize-profile-adapter-ready"));
 </script>
 <script src="https://pborovicka72-dotcom.github.io/eduvize-styly/design-system/branding-admin.js?v=20261106-logo-upload-1"></script></body></html>
+
