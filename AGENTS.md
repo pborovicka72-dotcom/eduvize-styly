@@ -34,3 +34,5 @@
 - Nasazujte stejné obrazy a statické soubory ověřené na testu; při publikaci nic znovu nesestavujte. Databázové změny musí být zpětně kompatibilní; destruktivní migrace vyžadují samostatný schválený plán.
 - Provozní postup vlastní `eduvize-admin/deployment/README.md`. Staré GitHub Pages a Render jsou pouze kompatibilní cesty; nepublikujte přes ně nové funkce mimo schvalovaný proces.
 
+
+- Informační stav profilu patří nad hlavní tlačítka výstupu. Potvrzení úspěšného uložení se po dokončení skryje; aktualizace a kontrolu odkazů zobrazujte ve sbalených podrobnostech společné komponenty ve všech aplikacích.
