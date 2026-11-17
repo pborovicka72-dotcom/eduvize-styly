@@ -158,7 +158,7 @@
       sessionStorage.removeItem(draftKey);url.searchParams.delete('edu-resume-save');url.searchParams.delete('edu-require-drive');history.replaceState(null,'',url.href);return true;
     }
     async function readProfile(apply=false){
-      const p=await request('/'+profileId,{fresh:manualLoad}),entry=p.apps[adapter.app],incoming=entry?.revision||0;profileTitle=p.name;
+      const p=await request('/'+profileId,{fresh:true}),entry=p.apps[adapter.app],incoming=entry?.revision||0;profileTitle=p.name;
       const preserveEditing=apply&&!manualLoad&&adapter.app==='school-identity'&&adapter.isEditing?.();
       if(!apply&&tracked===profileId){if(incoming!==revision){needsReload=true;say('Na Eduvize je novější nastavení. Před uložením je načtěte.','error');return;}say(dirty()?'Změny nejsou uložené do Eduvize.':loaded?'Uloženo do Eduvize.':'Dosud neuloženo do Eduvize.',dirty()?'dirty':'saved');return;}
       if(entry&&!entry.config.empty&&apply&&!preserveEditing&&(adapter.app!=='styles'||manualLoad)){const before=structuredClone(adapter.read());try{await adapter.apply(structuredClone(entry.config));}catch(error){try{await adapter.apply(before);}catch{}throw error;}if(manualLoad){backup=before;undo.hidden=false;}}
@@ -188,7 +188,7 @@
       await auth().refresh();if(!canSave()){login();return;}
       if(!activeId())await schoolConfiguration();
       if(activeId()!==profileId){needsReload=true;throw Error('Nastavení školy se změnilo. Před uložením je načtěte.');}
-      const snapshot=structuredClone(adapter.read());say('Ukládám do Eduvize…');const result=await request('/'+profileId+'/apps/'+adapter.app,{method:'PUT',body:JSON.stringify({expectedRevision:revision,config:snapshot})});revision=result.revision;baseline=fingerprint(snapshot);loaded=true;say(dirty()?'Během ukládání vznikly další neuložené změny.':'Uloženo do Eduvize i v prohlížeči.',dirty()?'dirty':'saved');
+      const snapshot=structuredClone(adapter.read());say('Ukládám do Eduvize…');const latest=await request('/'+profileId,{fresh:true}),remote=latest.apps?.[adapter.app],remoteRevision=remote?.revision||0,remoteFingerprint=remote?.config&&!remote.config.empty?fingerprint(remote.config):'';if(remoteRevision!==revision){if(remoteFingerprint&&remoteFingerprint!==baseline&&remoteFingerprint!==fingerprint(snapshot)){needsReload=true;throw Error('Nastavení tohoto modulu změnil jiný správce. Načtěte aktuální verzi před uložením.');}revision=remoteRevision;}if(remoteFingerprint===fingerprint(snapshot)){baseline=remoteFingerprint;loaded=true;say('Uloženo do Eduvize.','saved');return;}const result=await request('/'+profileId+'/apps/'+adapter.app,{method:'PUT',body:JSON.stringify({expectedRevision:revision,config:snapshot})});revision=result.revision;baseline=fingerprint(snapshot);loaded=true;say(dirty()?'Během ukládání vznikly další neuložené změny.':'Uloženo do Eduvize i v prohlížeči.',dirty()?'dirty':'saved');
     });
     manage.onclick=event=>{event.preventDefault();work('Otevírám výběr profilu…',async()=>login());};
     undo.onclick=()=>work('Vracím místní nastavení…',async()=>{if(!backup)return;const previous=backup;backup=structuredClone(adapter.read());await adapter.apply(previous);userChanged=true;showEditState();say('Místní nastavení obnoveno.','dirty');});
