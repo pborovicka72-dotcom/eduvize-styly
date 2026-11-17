@@ -1,0 +1,16 @@
+name: Wisdom and News editorial regression
+on:
+  push:
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  editorial:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node tests/wisdom-large-segments.test.mjs
+      - run: node tests/news-media-orientation.test.mjs

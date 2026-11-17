@@ -30,8 +30,9 @@
   kiosk:['#schoolContent .school-card h3','#pageContent .page-section h2','#pageContent .page-section p']
  };
  function contentInset(header,app,fallback){
+  // Weather pages have different centered/scaled card anchors; keep their common header fixed.
   // News photos can sit beside the copy; the identity stays at the shared left inset.
-  if(app==='news'||app==='holidays'&&document.body.classList.contains('calendar-reading'))return fallback;
+  if(app==='weather'||app==='news'||app==='holidays'&&document.body.classList.contains('calendar-reading'))return fallback;
   if(app==='kiosk'){
    const card=document.querySelector('#schoolContent .school-card-about'),copy=card?.querySelector('.school-about-copy');
    if(card&&copy&&card.getBoundingClientRect().width)return Math.max(0,card.getBoundingClientRect().left-header.getBoundingClientRect().left+(parseFloat(getComputedStyle(copy).paddingLeft)||fallback));

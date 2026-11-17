@@ -53,11 +53,11 @@
   const cardWidth=(width-gap*(columns-1))/columns;
   const cardHeight=(height-gap*(rows-1))/rows;
   const font=root.EduvizeOutputModes?.mode?.()==='kiosk'?root.EduvizeSegmentProfile.text(root.EduvizeSegmentProfile.resolve(width,height),'kiosk').body:signage?clamp(Math.min(cardWidth/24,cardHeight/15),20,58):(root.EduvizeOutputModes?.mode?.()==='kiosk'?clamp(width/100,20,32):16);
-  return {columns,rows,capacity,side:images,font,pad:clamp(font*.65,14,32),gap,cardHeight,cardWidth};
+  return {columns,rows,capacity,side:images&&!portrait,font,pad:clamp(font*.65,14,32),gap,cardHeight,cardWidth};
  }
  function apply(body,grid,options){
   const policy=resolve(grid.clientWidth,grid.clientHeight||root.innerHeight*.78,{portrait:root.innerHeight>root.innerWidth,...options});
-  for(const [key,value] of Object.entries({body:policy.font,title:policy.font*1.25,meta:Math.max(14,policy.font*.68),pad:policy.pad,gap:policy.gap,'media-height':Math.max(40,Math.min(policy.cardHeight-policy.pad*2,policy.cardWidth*.4))}))body.style.setProperty('--news-card-'+key,value+'px');
+  for(const [key,value] of Object.entries({body:policy.font,title:policy.font*1.25,meta:Math.max(14,policy.font*.68),pad:policy.pad,gap:policy.gap,'media-height':Math.max(40,Math.min(policy.side?policy.cardHeight-policy.pad*2:policy.cardHeight*.4,policy.cardWidth*.4))}))body.style.setProperty('--news-card-'+key,value+'px');
   return policy;
  }
  root.EduvizeNewsLayout=Object.freeze({resolve,apply});
