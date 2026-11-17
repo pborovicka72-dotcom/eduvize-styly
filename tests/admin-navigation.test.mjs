@@ -8,7 +8,7 @@ const form={target:'settings',matches:s=>s.includes('form'),hasAttribute:()=>fal
 const doc={documentElement:{},readyState:'complete',querySelectorAll:()=>[link,form],addEventListener:(name,fn)=>events[name]=fn};
 let observer;
 const root={location:{href:'https://eduvize-weather.onrender.com/config',origin:'https://eduvize-weather.onrender.com',assign:u=>assigned.push(u)},open:(...args)=>{opened.push(args);return 'provider-popup';}};
-vm.runInNewContext(source,{window:root,document:doc,URL,MutationObserver:class{constructor(fn){observer=fn;}observe(){}}});
+vm.runInNewContext(source,{window:root,document:doc,URL,setTimeout,MutationObserver:class{constructor(fn){observer=fn;}observe(){}}});
 assert.equal(link.target,'_self');assert.equal(form.target,'_self');
 for(const u of ['https://pborovicka72-dotcom.github.io/eduvize-styly/aplikace.html','https://eduvize-prubeh-dne.onrender.com/config.html','/display?viewMode=kiosk'])assert.equal(root.open(u,'_blank'),null);
 assert.equal(assigned.length,3);assert.equal(opened.length,0);
