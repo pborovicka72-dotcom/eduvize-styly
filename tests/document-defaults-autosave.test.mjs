@@ -1,0 +1,26 @@
+import fs from 'node:fs';
+import vm from 'node:vm';
+import assert from 'node:assert/strict';
+const source=fs.readFileSync(new URL('../design-system/admin-autosave.js',import.meta.url),'utf8');
+function setup(draft,save){const storage=new Map(draft?[['draft',JSON.stringify(draft)]]:[]),timers=new Map();let id=0;const window={};vm.runInNewContext(source,{window,localStorage:{getItem:k=>storage.get(k),setItem:(k,v)=>storage.set(k,v),removeItem:k=>storage.delete(k)},setTimeout:fn=>{timers.set(++id,fn);return id;},clearTimeout:id=>timers.delete(id)});return {editor:window.EduvizeAutoSave.create({key:'draft',initial:{title:'Saved'},save}),storage,timers};}
+let calls=0;
+let s=setup({title:'Saved'},async()=>calls++);
+assert.equal(s.editor.dirty(),false,'Draft identical to server must not block leaving');
+assert.equal(s.storage.size,0);
+s.editor.update({title:'Saved'});assert.equal(s.editor.dirty(),false);
+s=setup({title:'Recovered'},async()=>calls++);
+assert.equal(s.editor.dirty(),true);assert.equal(s.timers.size,1,'Recovered draft must schedule saving');
+await s.editor.flush();assert.equal(s.editor.dirty(),false);assert.equal(calls,1);assert.equal(s.storage.size,0);
+s=setup(null,async()=>{throw Error('offline');});s.editor.update({title:'Unsaved'});
+await assert.rejects(s.editor.flush(),/offline/);assert.equal(s.editor.dirty(),true);assert.equal(s.storage.size,1,'Failed save retains recoverable draft and leave protection');
+const modes=fs.readFileSync(new URL('../design-system/output-modes.js',import.meta.url),'utf8');
+const functions=modes.slice(modes.indexOf(' function defaultInteraction('),modes.indexOf(' function isInteractive('));
+const document={documentElement:{dataset:{eduDefaultInteraction:'interactive'}}};
+const ctx={document,root:{location:{href:'https://test.skola.eduvize.cz/display?layout=signage'}},URL,mode:u=>u.searchParams.get('layout')==='signage'?'nsp':'web',kioskApp:()=>false};
+vm.runInNewContext(functions,ctx);
+assert.equal(ctx.interaction(),'interactive');
+assert.equal(ctx.interaction('https://test.skola.eduvize.cz/display?layout=signage&interaction=display'),'display','Explicit display choice must win');
+delete document.documentElement.dataset.eduDefaultInteraction;
+assert.equal(ctx.interaction(),'display','Other NSP apps retain default');
+assert.equal(ctx.defaultInteraction(true),'interactive');
+console.log('Document interaction defaults and recoverable autosave state pass.');
