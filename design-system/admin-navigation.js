@@ -34,7 +34,7 @@
  function depart(action){approvedDeparture=true;try{action();}finally{setTimeout(()=>{approvedDeparture=false;},1000);}}
  function navigate(value){
   const go=()=>depart(()=>root.location.assign(new URL(String(value),root.location.href).href));
-  if(!needsConfirmation()){go();return Promise.resolve(true);}
+  if(sameDocument(value)||!needsConfirmation()){go();return Promise.resolve(true);}
   return confirmDeparture().then(allowed=>{if(allowed)go();return allowed;});
  }
  function internal(value){
@@ -44,6 +44,10 @@
   if(u.hostname==='pborovicka72-dotcom.github.io'&&u.pathname.startsWith('/eduvize-'))return true;
   if(/^eduvize-[a-z0-9-]+\.onrender\.com$/.test(u.hostname))return true;
   return ['localhost','127.0.0.1'].includes(u.hostname)&&['8765','8789','8790'].includes(u.port);
+ }
+ function sameDocument(value){
+  const destination=new URL(String(value),root.location.href),current=new URL(root.location.href);
+  return destination.origin===current.origin&&destination.pathname===current.pathname&&destination.search===current.search;
  }
  function openOutput(value){
   const url=new URL(String(value),root.location.href);
@@ -73,7 +77,7 @@
   const link=event.target.closest?.('a[href]:not([download])');
   if(!link)return;
   normalizeElement(link);
-  if(event.defaultPrevented||event.button!==0||event.ctrlKey||event.metaKey||event.shiftKey||event.altKey||link.hasAttribute('data-edu-open-output')||link.target==='_blank'||!internal(link.href)||!needsConfirmation())return;
+  if(event.defaultPrevented||event.button!==0||event.ctrlKey||event.metaKey||event.shiftKey||event.altKey||link.hasAttribute('data-edu-open-output')||link.target==='_blank'||!internal(link.href)||sameDocument(link.href)||!needsConfirmation())return;
   event.preventDefault();event.stopImmediatePropagation();void navigate(link.href);
  },true);
  document.addEventListener('submit',event=>normalizeElement(event.target),true);
