@@ -3,7 +3,7 @@ import vm from 'node:vm';
 import fs from 'node:fs';
 const source=fs.readFileSync(new URL('../design-system/admin-navigation.js',import.meta.url),'utf8');
 const assigned=[],opened=[],events={},changed=[];
-const link={target:'_blank',matches:s=>s.includes('a[href]'),hasAttribute:()=>false};
+const link={target:'_blank',matches:s=>s==='a[href]:not([download]),form',hasAttribute:()=>false};
 const form={target:'settings',matches:s=>s.includes('form'),hasAttribute:()=>false};
 const doc={documentElement:{},readyState:'complete',querySelectorAll:()=>[link,form],addEventListener:(name,fn)=>events[name]=fn};
 let observer;
