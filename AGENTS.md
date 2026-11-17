@@ -21,6 +21,10 @@
 
 - Ordinary navigation between Eduvize apps, administration pages and output pages must use the current tab. Use links with target=_self or location.assign; never pre-open an about:blank tab for asynchronous output preparation. Keep downloads and provider authentication flows functional. Verify both anchors and scripted navigation without increasing browser tab count.
 
+- All Eduvize administration apps use the shared `design-system/admin-navigation.js` exit dialog when a user follows an in-app link or scripted app navigation with unsaved work. Register each app's unsaved-work predicate with `EduvizeAdminNavigation.registerExitGuard`; do not use `window.confirm` for leaving an app. After the user approves the shared dialog, suppress that app's `beforeunload` warning for the same navigation so two prompts never appear. Keep the browser-native `beforeunload` safeguard for browser close and reload, where browsers do not permit a custom page dialog. Verify both Stay and Leave, clean navigation, and document/profile edits in every administration app.
+
+- Creating a school profile must not select or activate it. Keep both the account manager and the page-level profile picker synchronized immediately after creation, rename or explicit selection. Refresh options without replacing unchanged controls or scrolling the page while the user edits the profile form. The style editor must read and activate the theme for the explicitly selected profile; a profile change must refresh its theme list and preview without a page reload.
+
 ## Testovací a ostré nasazení
 
 - Nové funkce připravujte ve větvi a přes pull request. Změny v `main` se automaticky nasazují pouze na `https://test.skola.eduvize.cz`.
@@ -29,3 +33,4 @@
 - Nikdy nekopírujte produkční data, Microsoft/OneDrive tokeny, SMTP/CRM údaje ani produkční klíče do testu. Test používá samostatné přístupy.
 - Nasazujte stejné obrazy a statické soubory ověřené na testu; při publikaci nic znovu nesestavujte. Databázové změny musí být zpětně kompatibilní; destruktivní migrace vyžadují samostatný schválený plán.
 - Provozní postup vlastní `eduvize-admin/deployment/README.md`. Staré GitHub Pages a Render jsou pouze kompatibilní cesty; nepublikujte přes ně nové funkce mimo schvalovaný proces.
+
