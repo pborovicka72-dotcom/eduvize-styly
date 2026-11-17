@@ -108,13 +108,12 @@
     if(copy)copy.textContent='Kopírovat odkaz';
     const panel=make('div',null,'edu-profile-current');panel.dataset.eduProfilePanel=adapter.app;panel.id='edu-profile-save';
     const profileText=make('p','Profil není vybrán.','edu-profile-current__name'),status=make('p',null,'edu-profile-panel__status');status.setAttribute('role','status');status.setAttribute('aria-live','polite');
-    const manage=make('a','Účet a připojení','edu-admin__button edu-admin__button--secondary');manage.href=manageUrl('');const actions=make('div',null,'edu-admin__actions'),load=button('Načíst uložené nastavení'),undo=button('Vrátit před načtením');undo.hidden=true;load.hidden=true;actions.append(load,undo);panel.append(profileText,status,manage,actions);if(row)row.after(panel);else save.after(panel);
-    if(adapter.app!=='school-identity')mountUpdates(adapter.app,panel);
-    if(adapter.app!=='school-identity')mountLinkAudit(panel);
+    const manage=make('a','Účet a připojení','edu-admin__button edu-admin__button--secondary');manage.href=manageUrl('');const actions=make('div',null,'edu-admin__actions'),load=button('Načíst uložené nastavení'),undo=button('Vrátit před načtením');undo.hidden=true;load.hidden=true;actions.append(load,undo);panel.append(profileText,status,manage,actions);if(row)row.before(panel);else save.before(panel);
+    if(adapter.app!=='school-identity'){const details=make('details',null,'edu-profile-details'),summary=make('summary','Informace o aktualizacích a odkazech');details.append(summary);panel.append(details);mountUpdates(adapter.app,details);mountLinkAudit(details);}
     const changeStatus=make('p','Bez neuložených změn.','edu-profile-change-status');changeStatus.dataset.eduChangeStatus='';changeStatus.setAttribute('role','status');changeStatus.setAttribute('aria-live','polite');panel.prepend(changeStatus);
     let editBaseline='',userChanged=false;
-    function resetEditState(message='Bez neuložených změn.'){changeStatus.hidden=false;userChanged=false;editBaseline=fingerprint(adapter.read());changeStatus.textContent=message;changeStatus.dataset.state='saved';}
-    function showEditState(){if(!editBaseline)return;changeStatus.hidden=false;const changed=fingerprint(adapter.read())!==editBaseline;changeStatus.textContent=userChanged&&changed?'Neuložené změny.':'Bez neuložených změn.';changeStatus.dataset.state=userChanged&&changed?'dirty':'saved';}
+    function resetEditState(message='Bez neuložených změn.'){changeStatus.hidden=true;userChanged=false;editBaseline=fingerprint(adapter.read());changeStatus.textContent=message;changeStatus.dataset.state='saved';}
+    function showEditState(){if(!editBaseline)return;changeStatus.hidden=false;const changed=fingerprint(adapter.read())!==editBaseline;changeStatus.textContent=userChanged&&changed?'Neuložené změny.':'Bez neuložených změn.';changeStatus.hidden=!(userChanged&&changed);changeStatus.dataset.state=userChanged&&changed?'dirty':'saved';}
     const ui={status};
     const draftKey='eduvize-profile-save-draft-v1:'+adapter.app+':'+location.pathname;
     let busy=false,profileId='',profileTitle='',revision=0,baseline='',backup=null,errorText='',loaded=false,ready=false,initialized=false,tracked='',needsLogin=false,restored=false,needsReload=false,manualLoad=false,timer,kioskEdited=false,browserBaseline='';
@@ -122,7 +121,7 @@
     const canSave=()=>!!(auth()?.getToken('configurations')||auth()?.getToken('documents'));
     const activeId=()=>auth()?.status().profileId||'';
     function profileName(){return profileTitle||'vybraný profil';}
-    function say(text,state=''){status.textContent=text;status.dataset.state=state;changeStatus.hidden=state==='saved'&&/^Uloženo do Eduvize/.test(text);}
+    function say(text,state=''){status.textContent=text;status.dataset.state=state;status.hidden=state==='saved'&&/^Uloženo do Eduvize/.test(text);changeStatus.hidden=state==='saved'&&/^Uloženo do Eduvize/.test(text);}
     let segmentEdited=false,profilePicker=null;
     function dirty(){
       if(!baseline||!userChanged)return false;
