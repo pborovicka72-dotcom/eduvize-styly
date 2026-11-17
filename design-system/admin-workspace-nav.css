@@ -1,0 +1,19 @@
+/* Opt-in on the two approved workspace pages; signed-out login keeps its layout. */
+.edu-workspace-nav[hidden],.edu-workspace-menu[hidden]{display:none!important}
+.edu-workspace-nav{display:none}
+.edu-workspace-menu{display:none}
+body.edu-workspace-enabled .edu-workspace-nav{display:block;position:fixed;inset:0 auto 0 0;width:224px;padding:24px 16px;background:var(--edu-admin-surface,var(--ev-surface,#fff));border-right:1px solid var(--edu-admin-border,var(--ev-border,#ccd7dd));overflow:auto;z-index:30}
+.edu-workspace-brand{display:block;padding:12px;font-size:24px;font-weight:750;text-decoration:none;color:var(--edu-admin-ink,var(--ev-text,#183640))}
+.edu-workspace-nav nav{display:grid;gap:8px;margin-top:20px}
+.edu-workspace-nav nav a{display:flex;align-items:center;min-height:44px;padding:10px 12px;border-radius:10px;color:var(--edu-admin-ink,var(--ev-text,#183640));text-decoration:none;font-weight:600}
+.edu-workspace-nav nav a[hidden]{display:none}
+.edu-workspace-nav nav a:is(:hover,[aria-current=page]){background:var(--edu-admin-primary-soft,#e3eef2)}
+.edu-workspace-nav a:focus-visible,.edu-workspace-menu:focus-visible{outline:3px solid var(--edu-admin-primary,#176a7c);outline-offset:3px}
+body.edu-workspace-enabled main.edu-admin-page{margin-left:244px;max-width:1280px;padding:24px}
+body.edu-workspace-enabled main.edu-admin-page>.edu-admin__card{margin-bottom:20px}
+@media(max-width:900px){
+ body.edu-workspace-enabled main.edu-admin-page{margin-left:auto;padding:72px 16px 24px}
+ body.edu-workspace-enabled .edu-workspace-nav{display:none;top:60px;width:min(280px,calc(100vw - 32px));box-shadow:8px 8px 24px #1233}
+ body.edu-workspace-enabled.edu-workspace-open .edu-workspace-nav{display:block}
+ body.edu-workspace-enabled .edu-workspace-menu{display:block;position:fixed;top:12px;left:16px;z-index:40;min-height:44px;padding:10px 16px;border:1px solid var(--edu-admin-border,#ccd7dd);border-radius:10px;background:var(--edu-admin-surface,#fff);color:var(--edu-admin-ink,#183640);font:inherit;font-weight:650}
+}
