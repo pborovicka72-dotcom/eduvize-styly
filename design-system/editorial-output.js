@@ -55,7 +55,7 @@
   const cardWidth=(width-gap*(columns-1))/columns;
   const cardHeight=(height-gap*(rows-1))/rows;
   const font=outputMode==='kiosk'?root.EduvizeSegmentProfile.text(root.EduvizeSegmentProfile.resolve(width,height),'kiosk').body:signage?clamp(Math.min(cardWidth/24,cardHeight/15),20,58):(outputMode==='kiosk'?clamp(width/100,20,32):16);
-  return {columns,rows,capacity,side:images&&(signage||!portrait),font,pad:clamp(font*.65,14,32),gap,cardHeight,cardWidth};
+  return {columns,rows,capacity,side:images&&!portrait,font,pad:clamp(font*.65,14,32),gap,cardHeight,cardWidth};
  }
  function apply(body,grid,options){
   const policy=resolve(grid.clientWidth,grid.clientHeight||root.innerHeight*.78,{portrait:root.innerHeight>root.innerWidth,...options});
