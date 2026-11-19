@@ -42,8 +42,11 @@
 
 .edu-build-marker,.edu-kiosk-style-version{display:none!important}
 
-/* Loading covers follow the active profile theme, including while output data is pending. */
-:where(html[data-edu-profile-hydration]::after,
+/* Admin profile hydration keeps its selected theme. */
+html[data-edu-profile-hydration]::after{background-color:var(--ev-bg,var(--edu-admin-bg))!important;color:var(--ev-text,var(--edu-admin-ink))!important}
+
+/* Public loading covers use a neutral surface instead of a full profile-colored screen. */
+:where(
   html[data-news-pending],html[data-news-pending] body,#news-loading,
   #menu-public-status,html[data-transport-ready="false"] body,
   #transport-loading,html[data-kiosk-app="transport"] #loading,
@@ -51,14 +54,14 @@
   html[data-sis-output-pending] body,html[data-sis-output-pending] body::before,
   html[data-news-preview] #preview-status,
   body > #publication-status,body > #status){
-  background-color:var(--ev-bg,var(--edu-admin-bg))!important;
-  color:var(--ev-text,var(--edu-admin-ink))!important;
+  background-color:var(--edu-admin-surface,#fff)!important;
+  color:var(--edu-admin-ink,#142c46)!important;
 }
 
-/* A public output keeps its profile colors while its data is loading. */
+/* Keep status text readable while the public output is loading. */
 :where(body > #publication-status:not([hidden]),body > #status:not([hidden])){
  position:fixed;inset:0;z-index:10;display:grid;place-items:center;
  box-sizing:border-box;margin:0;padding:24px;text-align:center;
  font:600 clamp(18px,2vw,28px) var(--edu-admin-font,system-ui,sans-serif);
- background:var(--ev-bg,var(--edu-admin-bg));color:var(--ev-text,var(--edu-admin-ink));
+ background:var(--edu-admin-surface,#fff);color:var(--edu-admin-ink,#142c46);
 }
