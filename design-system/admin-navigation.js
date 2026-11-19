@@ -13,13 +13,11 @@
  function openOutput(value){
   const url=new URL(String(value),root.location.href);
   if(!['http:','https:'].includes(url.protocol))throw new Error('Neplatný odkaz na výstup.');
-  return nativeOpen(url.href,'_blank','noopener,noreferrer');
+  root.location.assign(url.href);return null;
  }
  function normalizeElement(element){
   if(element.matches('a[href]:not([download])[data-edu-open-output]')){
-   if(element.target!=='_blank')element.target='_blank';
-   if(!element.relList.contains('noopener'))element.relList.add('noopener');
-   if(!element.relList.contains('noreferrer'))element.relList.add('noreferrer');
+   if(element.target!=='_self')element.target='_self';
    return;
   }
   if(element.matches('a[href]:not([download]),form')&&element.target&&element.target!=='_self')element.target='_self';
