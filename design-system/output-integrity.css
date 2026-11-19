@@ -1,6 +1,6 @@
-@import url('./segment-display.css?v=20261103-viewport-1');
-@import url('https://pborovicka72-dotcom.github.io/eduvize-styly/design-system/card-layout.css?v=1');
-@import url('./web-brand.css?v=20261031-integrity-1');
+@import url('./segment-display.css?v=71d22a46bba8006dd932');
+@import url('/eduvize-styly/design-system/card-layout.css?v=71d22a46bba8006dd932');
+@import url('./web-brand.css?v=71d22a46bba8006dd932');
 /* Shared roles, applied after app components: identical viewport = identical typography. */
 html[data-kiosk-app][data-output-mode]{font-family:var(--edu-admin-font,system-ui);font-size:var(--edu-text-body,18px);color:var(--ev-text);background:var(--ev-bg)}
 html[data-kiosk-app][data-output-mode] body{font-family:inherit;color:var(--ev-text);background:var(--ev-bg)}
@@ -174,7 +174,7 @@ html[data-kiosk-app="transport"][data-output-mode="kiosk"] .table-header{
  padding-left:calc(var(--transport-gap,12px) + 1px);
 }
 
-html[data-kiosk-app][data-output-mode="kiosk"] :is(.empty,.error){
+html[data-kiosk-app][data-output-mode="kiosk"] :is(.empty,.error:not(.dot)){
  text-align:left;padding-inline:var(--edu-kiosk-text-inset,var(--edu-header-inset));
 }
 

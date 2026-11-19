@@ -18,5 +18,5 @@
  root.clearInterval=function(handle){const t=timers.get(handle);if(t){if(t.actual)stop(t.actual);timers.delete(handle);emit();}else stop(handle);};
  function configure(value){if(value!==null&&(!Number.isInteger(value)||![0,30,60,120,300,600,900,1800,3600].includes(value)))throw Error('Neplatný interval');if(value===seconds)return;seconds=value;for(const t of timers.values())arm(t);emit();}
  root.EduvizeRefreshClock=Object.freeze({configure,status,nativeInterval:start});
- const script=document.createElement('script');script.src='https://pborovicka72-dotcom.github.io/eduvize-styly/design-system/update-runtime.js?v=20261103-1';script.async=true;document.head.append(script);
+ const script=document.createElement('script');script.src=(location.origin+"/eduvize-styly/design-system/update-runtime.js?v=71d22a46bba8006dd932");script.async=true;document.head.append(script);
 })(window);

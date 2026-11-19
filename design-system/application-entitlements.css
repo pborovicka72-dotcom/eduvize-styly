@@ -1,0 +1,20 @@
+.edu-license-line{display:flex;align-items:center;justify-content:flex-end;flex-wrap:wrap;gap:8px}
+.edu-license-line[hidden]{display:none!important}
+.edu-license-trigger{position:relative;display:inline-flex}
+.edu-license-chip{display:inline-flex;align-items:center;gap:6px;min-height:30px;padding:4px 11px;border:1px solid var(--ev-border,#e8cbd7);border-radius:999px;background:var(--ev-surface,#fff);color:var(--ev-text,#4b2d3d);font:inherit;font-size:.84em;font-weight:650;line-height:1.2;white-space:nowrap;cursor:pointer}
+.edu-license-chip:hover,.edu-license-chip:focus-visible{border-color:var(--ev-primary,#8d3e5f)}
+.edu-license-chip__check{color:var(--ev-primary,#8d3e5f);font-weight:750}
+.edu-license-chip__info{color:var(--ev-muted,#705260);font-size:.95em}
+.edu-license-chip--denied{color:var(--ev-muted,#705260)}
+.edu-license-popover{position:absolute;z-index:50;top:calc(100% + 8px);right:0;width:max-content;max-width:min(270px,calc(100vw - 40px));padding:12px 14px;border:1px solid var(--ev-border,#e8cbd7);border-radius:12px;background:var(--ev-surface,#fff);color:var(--ev-text,#4b2d3d);box-shadow:0 12px 28px #36202e26;font-size:.88em;line-height:1.45;white-space:normal}
+.edu-license-popover[hidden]{display:none!important}
+.edu-license-popover strong{display:block;margin-bottom:3px}
+.edu-license-trigger.is-open{z-index:50}
+article.card.edu-license-menu-open{position:relative;z-index:30}
+.ev-admin article.card{position:relative}
+article.card .edu-license-line{position:absolute;top:18px;right:18px;width:auto;max-width:calc(100% - 92px);margin:0;padding:0;border:0}
+article.card .edu-license-line button.edu-license-chip{min-height:30px;padding:4px 11px;border:1px solid var(--ev-border,#e8cbd7);border-radius:999px;background:var(--ev-surface,#fff)!important;color:var(--ev-text,#4b2d3d);box-shadow:none;font:inherit;font-size:.84em;font-weight:650;line-height:1.2}
+.ev-admin section.app-grid[aria-label="Školní aplikace"]{grid-template-columns:repeat(2,minmax(0,1fr))}
+.ev-admin section.app-grid[aria-label="Školní aplikace"]>article.card{--edu-card-equal-height:0px!important}
+@media(max-width:800px){.ev-admin section.app-grid[aria-label="Školní aplikace"]{grid-template-columns:minmax(0,1fr)}}
+@media(max-width:700px){article.card .edu-license-line{top:12px;right:12px;max-width:calc(100% - 84px);gap:4px}.edu-license-chip{min-height:40px}.edu-license-popover{max-width:min(270px,calc(100vw - 32px))}}

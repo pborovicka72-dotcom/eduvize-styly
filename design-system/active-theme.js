@@ -19,12 +19,12 @@
   if(script){node.src=url.href;node.async=false;}else{node.rel='stylesheet';node.href=url.href;}
   document.head.append(node);
  }
- asset('card-layout.css?v=20261104-design-audit-1');
- asset('card-layout.js?v=20261104-design-audit-1',true);
- asset('typography.css?v=20261104-design-audit-1');
- asset('typography.js?v=20261104-design-audit-1',true);
- asset('fit-panel.js?v=20261104-design-audit-1',true);
- function forms(){if(!document.querySelector('.ev-admin,.edu-admin-page,.edu-admin,input,textarea,select'))return;asset('form-fields.css?v=20261104-design-audit-1');asset('form-fields.js?v=20261104-design-audit-1',true);return true;}
+ asset('card-layout.css?v=92ec10e6057ac4c39eba');
+ asset('card-layout.js?v=92ec10e6057ac4c39eba',true);
+ asset('typography.css?v=92ec10e6057ac4c39eba');
+ asset('typography.js?v=92ec10e6057ac4c39eba',true);
+ asset('fit-panel.js?v=92ec10e6057ac4c39eba',true);
+ function forms(){if(!document.querySelector('.ev-admin,.edu-admin-page,.edu-admin,input,textarea,select'))return;asset('form-fields.css?v=92ec10e6057ac4c39eba');asset('form-fields.js?v=92ec10e6057ac4c39eba',true);return true;}
  function start(){
   if(forms())return;
   const observer=new MutationObserver(records=>{if(records.some(record=>[...record.addedNodes].some(node=>node.nodeType===1&&(node.matches('input,textarea,select,form')||node.querySelector('input,textarea,select'))))&&forms())observer.disconnect();});
@@ -35,7 +35,7 @@
 /* Shared Eduvize active theme loader. No local theme definitions. */
 (function(){ // The theme editor keeps the default shell; selections affect its preview only.
  if(new URLSearchParams(location.search).has('edu-output')||document.documentElement.dataset.eduTheme==='standard')return;
- const endpoint='https://eduvize-design-system-api.onrender.com/api/design-system/themes';
+ const endpoint=location.origin+'/api/design-system/themes';
  const cacheKey='eduvize-active-theme-v1';
  function themeProfile(){let selected='';try{selected=localStorage.getItem('eduvize-profile-selection-v1')||'';}catch{}const value=new URL(location.href).searchParams.get('edu-profile')||window.EduvizeAdminAuth?.status().profileId||selected;return /^[a-f0-9]{32}$/.test(value||'')?value:'';}
  const scopedCache=profile=>cacheKey+':'+(profile||'global');
@@ -71,6 +71,7 @@
   finally{document.documentElement.classList.remove('ev-theme-pending')}
   })();inFlight.set(profile,operation);try{return await operation;}finally{inFlight.delete(profile);}
  }
+ window.EduvizeActiveTheme=Object.freeze({refresh});
  refresh();
  window.addEventListener('eduvize-admin-auth-change',refresh);
  window.addEventListener('eduvize-profile-selected',refresh);
@@ -85,9 +86,9 @@
  function start(){
   if(!document.querySelector('.edu-admin-page')||(!window.EduvizeProfileAdapter&&!document.getElementById('configurations')))return;
   if(document.querySelector('script[data-edu-profiles],script[src*="configuration-profiles.js"]'))return;
-  const css=document.createElement('link');css.rel='stylesheet';css.href=new URL('configuration-profiles.css?v=20261105-cloud-3',base);document.head.append(css);
-  const load=()=>{const script=document.createElement('script');script.src=new URL('configuration-profiles.js?v=20261105-cloud-3',base);script.dataset.eduProfiles='';document.head.append(script);};
-  if(window.EduvizeAdminAuth)load();else{const auth=document.createElement('script');auth.src=new URL('admin-auth.js?v=20261105-cloud-3',base);auth.onload=load;document.head.append(auth);}
+  const css=document.createElement('link');css.rel='stylesheet';css.href=new URL('configuration-profiles.css?v=92ec10e6057ac4c39eba',base);document.head.append(css);
+  const load=()=>{const script=document.createElement('script');script.src=new URL('configuration-profiles.js?v=20261119-global-departure-dialog-r2',base);script.dataset.eduProfiles='';document.head.append(script);};
+  if(window.EduvizeAdminAuth)load();else{const auth=document.createElement('script');auth.src=new URL('admin-auth.js?v=92ec10e6057ac4c39eba',base);auth.onload=load;document.head.append(auth);}
  }
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});else start();
  window.addEventListener('eduvize-profile-adapter-ready',start);
@@ -108,6 +109,6 @@
 })();
 
 /* Load centrally managed vector branding in every shared-style consumer. */
-(function(){if(window.EduvizeBranding||document.querySelector('script[data-edu-branding]'))return;const script=document.createElement('script');script.src='https://pborovicka72-dotcom.github.io/eduvize-styly/design-system/branding.js?v=20261104-vector-1';script.dataset.eduBranding='';document.head.append(script);})();
+(function(){if(window.EduvizeBranding||document.querySelector('script[data-edu-branding]'))return;const script=document.createElement('script');script.src=location.origin+'/eduvize-styly/design-system/branding.js?v=92ec10e6057ac4c39eba';script.dataset.eduBranding='';document.head.append(script);})();
 
 })();

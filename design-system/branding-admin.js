@@ -3,9 +3,9 @@
  const api=new URL('/api/design-system/branding',location.origin).href;
  const fallback=new URL('assets/eduvize-logo-compact-animated.svg',document.currentScript.src).href;
  const main=document.querySelector('main.edu-admin-page');if(!main)return;
- const host=document.createElement('section');host.className='edu-admin__card';host.id='edu-branding-settings';
+ const host=document.createElement('section');host.className='edu-admin__card edu-admin__flow';host.id='edu-branding-settings';
  host.innerHTML=`<h2>Logo Eduvize</h2><p class="edu-admin__hint">Společné logo ve všech aplikacích a kioscích. Změna platí nezávisle na barevném stylu. Vlastní logo školy zůstává zachované.</p>
- <form class="edu-branding-form" novalidate><label class="edu-admin__field">Adresa nového loga (HTTPS)<input type="url" name="logoUrl" placeholder="Prázdné = výchozí animované logo Eduvize" aria-describedby="edu-branding-hint"></label>
+ <form class="edu-branding-form edu-admin__flow" novalidate><label class="edu-admin__field">Adresa nového loga (HTTPS)<input type="url" name="logoUrl" placeholder="Prázdné = výchozí animované logo Eduvize" aria-describedby="edu-branding-hint"></label>
  <p class="edu-admin__hint" id="edu-branding-hint">Odkaz na veřejně dostupný obrázek je druhotná možnost. Vybraný soubor má přednost.</p>
  <div style="display:grid;gap:12px"><label class="edu-admin__field">Nahrát logo Eduvize · doporučeno<input type="file" name="logoFile" accept="image/png,image/gif,image/webp,image/svg+xml" aria-describedby="edu-branding-upload-hint"></label>
  <p class="edu-admin__hint" id="edu-branding-upload-hint" style="margin:0">PNG, GIF, WebP nebo statické SVG, nejvýše 2 MB. Pro animované logo použijte GIF nebo WebP. Soubor se uloží do Eduvize po potvrzení.</p></div>

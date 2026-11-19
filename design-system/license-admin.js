@@ -46,7 +46,7 @@
     assignment.append(title,hint,label,verify,accountInfo,assignHost);body.append(assignment);
     const button=text('button','Vystavit náhradní kód');button.type='button';button.className='edu-admin__button edu-admin__button--secondary';button.onclick=async()=>{button.disabled=true;try{const token=auth.getToken('styles'),result=await request('/api/operator/licenses/'+item.id+'/code',{method:'POST'},'operator');if(operator()&&token===auth.getToken('styles')){showCode(result);say('license-issue-status','Náhradní kód je připravený. Původní kód a rozpracované aktivace přestaly platit.');}}catch(e){feedback.textContent=e.message;}finally{button.disabled=false;}};body.append(button);
    }
-   body.append(feedback);host.append(card);
+   root.EduvizeEntitlementAdmin?.bind(body,item);body.append(feedback);host.append(card);
   }
   say('license-list-status','Načtené licence: '+data.items.length+'.');
  }

@@ -13,7 +13,7 @@
  // The segment owns its layout dependency; apps need only include this script.
  const stylesheet=document.createElement('link');
  stylesheet.rel='stylesheet';
- stylesheet.href=new URL('segment-display.css?v=20261103-viewport-1',document.currentScript.src).href;
+ stylesheet.href=new URL('segment-display.css?v=71d22a46bba8006dd932',document.currentScript.src).href;
  stylesheet.addEventListener('load',mount,{once:true});
  document.head.append(stylesheet);
  function mount(){

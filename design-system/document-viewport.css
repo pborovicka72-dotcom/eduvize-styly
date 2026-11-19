@@ -1,4 +1,4 @@
-@import url("navigation.css?v=1");
+@import url("navigation.css?v=71d22a46bba8006dd932");
 .edu-document-tools{display:flex;flex:none;flex-wrap:wrap;align-items:center;justify-content:center;gap:7px;padding:6px;background:var(--ev-surface,#fff);color:var(--ev-text,#153a53)}
 .edu-document-tools[hidden],.edu-document-tool[hidden]{display:none}
 

@@ -15,5 +15,6 @@
   title.textContent=html.dataset.eduOutputTitle||({menu:'Jídelníček',weather:'Počasí ČHMÚ',transport:'Jízdní řády',documents:'Dokumenty školy',news:'Aktuality školy',wisdom:'Moudrost dne',holidays:'Svátky a jmeniny'})[app]||'';header.append(title);
  }
  root.EduvizeBrand=Object.freeze({mount,source});
- if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',mount,{once:true});else mount();
+ function autoMount(){if(document.documentElement.dataset.kioskApp==='menu'&&document.documentElement.dataset.menuPublished==='true')return;mount();}
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',autoMount,{once:true});else autoMount();
 })(window);

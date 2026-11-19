@@ -15,15 +15,13 @@
 
 - Keep school application cards in application management sorted by their visible Czech names using Czech alphabetical order (locale cs). Insert every new application at its alphabetical position. Keep central management (styles and kiosk) separate from school applications.
 
-- Treat published output URLs as a stable public API. Preserve historical routes, aliases, omitted-parameter defaults and unknown content parameters. Read LINK_COMPATIBILITY.md before changing URL parsing, generation or configuration schemas. Version application releases independently of the link schema; do not force schools to replace links for routine updates. Add legacy URL regression cases and a precise administration notice before any incompatible change. Never show migration notices on public output screens or automatically rewrite school links.
+- Follow the coordinated EDUVIZE-OUTPUT-CONTRACT.md (user decision 2026-11-06). Historical development aliases need not be preserved; the first stable shared contract establishes permanent output addresses. Keep school data, materials, configurations and licences. Use the shared generator, registry and resolver, never an app-specific alternative. Public context comes from the published server record, not an administrator session or localStorage. Never publish unsaved edits or create duplicate outputs on retry; follow the current saved-output workflow. These are requirements, not a claim that migration is complete.
+- Production and test must work independently of Render, including cold startup with empty caches. Do not add active onrender fallbacks or proxy-only migration. Removing old services requires coordinated validation and backups; no deployment or deletion is authorized by these instructions.
+- Local draft persistence and automatic recovery are superseded by the no-local-draft decision of 2026-11-09. Preserve dirty-state warnings, navigation protection and explicit confirmed cloud Save. Remove only precisely owned obsolete draft keys, never authentication, profiles, cloud settings or library data. Historical workflow text must not reactivate drafts.
 
 - Always preserve vertical spacing between explanatory text, forms, fields, action rows and status/help text. Use the shared administration flow (20px between blocks, 12px for related hints); never let zero-margin hints touch the next form or the preceding button. Keep spacing inside compact list rows separate from form spacing and verify both desktop and mobile layouts.
 
 - Ordinary navigation between Eduvize apps, administration pages and output pages must use the current tab. Use links with target=_self or location.assign; never pre-open an about:blank tab for asynchronous output preparation. Keep downloads and provider authentication flows functional. Verify both anchors and scripted navigation without increasing browser tab count.
-
-- All Eduvize administration apps use the shared `design-system/admin-navigation.js` exit dialog when a user follows an in-app link or scripted app navigation with unsaved work. Register each app's unsaved-work predicate with `EduvizeAdminNavigation.registerExitGuard`; do not use `window.confirm` for leaving an app. After the user approves the shared dialog, suppress that app's `beforeunload` warning for the same navigation so two prompts never appear. Keep the browser-native `beforeunload` safeguard for browser close and reload, where browsers do not permit a custom page dialog. Verify both Stay and Leave, clean navigation, and document/profile edits in every administration app.
-
-- Creating a school profile must not select or activate it. Keep both the account manager and the page-level profile picker synchronized immediately after creation, rename or explicit selection. Refresh options without replacing unchanged controls or scrolling the page while the user edits the profile form. The style editor must read and activate the theme for the explicitly selected profile; a profile change must refresh its theme list and preview without a page reload.
 
 ## Testovací a ostré nasazení
 
@@ -33,6 +31,3 @@
 - Nikdy nekopírujte produkční data, Microsoft/OneDrive tokeny, SMTP/CRM údaje ani produkční klíče do testu. Test používá samostatné přístupy.
 - Nasazujte stejné obrazy a statické soubory ověřené na testu; při publikaci nic znovu nesestavujte. Databázové změny musí být zpětně kompatibilní; destruktivní migrace vyžadují samostatný schválený plán.
 - Provozní postup vlastní `eduvize-admin/deployment/README.md`. Staré GitHub Pages a Render jsou pouze kompatibilní cesty; nepublikujte přes ně nové funkce mimo schvalovaný proces.
-
-
-- Informační stav profilu patří nad hlavní tlačítka výstupu. Potvrzení úspěšného uložení se po dokončení skryje; aktualizace a kontrolu odkazů zobrazujte ve sbalených podrobnostech společné komponenty ve všech aplikacích.

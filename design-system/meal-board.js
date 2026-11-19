@@ -4,7 +4,8 @@
  const clamp=(n,a,b)=>Math.max(a,Math.min(b,n));
  function profile(width,height,mode='nsp'){
   const short=Math.min(width,height),web=mode==='web';
-  return {body:mode==='kiosk'?root.EduvizeSegmentProfile.text(root.EduvizeSegmentProfile.resolve(width,height),mode).body:web?22:width/height>=2.7?clamp(short*.065,26,56):width/height<.8?clamp(short*.052,36,88):clamp(short*.024,20,60),gap:web?22:clamp(short*.018,10,40),
+  const pairedTall=mode==='nsp'&&height>=1600&&height<=1800&&width>=800&&width<=3200;
+  return {body:mode==='kiosk'?root.EduvizeSegmentProfile.text(root.EduvizeSegmentProfile.resolve(width,height),mode).body:web?22:width/height>=2.7?clamp(short*.065,26,56):width/height<.8?clamp(short*.052,36,88):clamp(short*.024,20,60),gap:web?22:clamp((pairedTall?height:short)*.018,10,40),
    first:web?(width>=1050?2:1):(width>=1500&&height>=850?2:1),
    later:web?(width>=1500?3:width>=1050?2:1):(width>=2400&&height>=1100?3:width>=1500&&height>=850?2:1),
    horizontal:!web&&(width/height>=2.7||height<=720&&width>=700)};
