@@ -15,7 +15,9 @@
  }
  function header(geometry,mode='nsp'){
   if(mode==='kiosk'){const {height}=kiosk(geometry);return Object.freeze({height,icon:height*.6,title:height*.34,meta:height*.18,padding:height*.1,gap:height*.15});}
-  const height=mode==='web'?96:geometry.short<=720?192:geometry.short<=1200?288:Math.round(geometry.short*.22/32)*32;
+  // Tall NSP panels in the same row use their shared physical height for the header.
+  const pairedTall=mode==='nsp'&&geometry.height>=1600&&geometry.height<=1800&&geometry.width>=800&&geometry.width<=3200;
+  const height=mode==='web'?96:pairedTall?Math.round(geometry.height*.2/16)*16:geometry.short<=720?192:geometry.short<=1200?288:Math.round(geometry.short*.22/32)*32;
   return Object.freeze({height,icon:height*.64,title:height*.36,meta:height*.18,padding:height*.05,gap:height*.08});
  }
  function text(geometry,mode='nsp'){
