@@ -17,6 +17,8 @@ const bytes=new TextEncoder().encode(JSON.stringify({date:'2026-09-30',fields,it
 const docEvents={},root={EduvizeAdminAuth:{ready:Promise.resolve(),status:()=>({schoolId:'own'})},dispatchEvent(){}};
 const scope={window:root,document:{currentScript:{src:'https://example.test/school-card.js'},getElementById:get,createElement:element,addEventListener:(type,fn)=>{docEvents[type]=fn;},dispatchEvent(){}},URL,Intl,TextDecoder,TextEncoder,CustomEvent:class{constructor(type){this.type=type;}},fetch:async()=>({ok:true,arrayBuffer:async()=>bytes.buffer}),localStorage:{getItem:()=>JSON.stringify(original),setItem(){}},setTimeout:fn=>{const id=++nextTimer;timers.set(id,fn);return id;},clearTimeout:id=>timers.delete(id)};
 vm.runInNewContext(source,scope);await Promise.resolve();
+root.EduvizeProfileAdapter.apply({schemaVersion:1,data:original});
+assert.equal(get('name').value,original.name,'Cloud profile populates the school card before editing');
 assert.equal(root.EduvizeProfileAdapter.loadedMessage,'Karta školy načtena z Eduvize.','School profiles use Eduvize storage even without a connected OneDrive');
 get('school-edit').onclick();get('school-change').onclick();
 assert.equal(get('school-query').value,'');assert.equal(get('school-lookup').hidden,false);
@@ -37,7 +39,10 @@ const profiles=fs.readFileSync(new URL('../../design-system/configuration-profil
 const start=profiles.indexOf('    async function readProfile('),end=profiles.indexOf('    async function list(',start);
 let resolveRead,editing=false,applied=0;
 const saved={schemaVersion:1,data:{name:'Uložená škola'}},draft={schemaVersion:1,data:{name:'Nově vybraná škola'}};
-const ctx={profileId:'a'.repeat(32),manualLoad:false,tracked:'',adapter:{app:'school-identity',isEditing:()=>editing,read:()=>draft,apply:async()=>{applied++;}},request:()=>new Promise(resolve=>{resolveRead=resolve;}),fingerprint:JSON.stringify,structuredClone,userChanged:true,resetEditState(){throw Error('Must not reset an active edit');},say(){},dirty:()=>true};
+const profileId='a'.repeat(32),profileAuth={getToken:()=> 'fixture-token',status:()=>({schoolId:'school',profileId})};
+const ctx={profileId,manualLoad:false,tracked:'',profileApplyFailed:false,outputReadGeneration:0,outputReadPending:false,outputApplyTail:Promise.resolve(),
+ auth:()=>profileAuth,authSignature:JSON.stringify,activeId:()=>profileId,statusMessages:{loaded:'Načteno',dirty:'Změněno',saved:()=> 'Uloženo'},
+ adapter:{app:'school-identity',isEditing:()=>editing,read:()=>draft,apply:async()=>{applied++;}},request:()=>new Promise(resolve=>{resolveRead=resolve;}),fingerprint:JSON.stringify,structuredClone,userChanged:true,resetEditState(){throw Error('Must not reset an active edit');},say(){},dirty:()=>true};
 vm.runInNewContext(profiles.slice(start,end)+';this.readProfile=readProfile;',ctx);
 const pending=ctx.readProfile(true);editing=true;
 resolveRead({name:'Profil školy',apps:{'school-identity':{revision:7,config:saved}}});await pending;

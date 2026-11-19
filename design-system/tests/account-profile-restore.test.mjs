@@ -17,13 +17,16 @@ function harness(){
   const controls={select:node(),reload:node(),status:node()};
   const context={
     profileId:id,profileTitle:profile.name,revision:3,tracked:id,loaded:true,manualLoad:false,ready:true,initialized:true,
-    baseline:JSON.stringify(current),userChanged:false,needsReload:false,
+    baseline:JSON.stringify(current),userChanged:false,needsReload:false,profileApplyFailed:false,
+    outputReadGeneration:0,outputReadPending:false,outputApplyTail:Promise.resolve(),
     adapter:{app:'school-identity',isEditing:()=>true,read:()=>current,apply:async value=>{current=structuredClone(value);applied.push(current);}},
-    root:{EduvizeAdminAuth:{ready:Promise.resolve(),status:()=>({connected:true,profileId:id})},
+    root:{EduvizeAdminAuth:{ready:Promise.resolve(),getToken:()=> 'fixture-token',status:()=>({connected:true,schoolId:'school',profileId:id})},
       addEventListener:(type,fn)=>{listeners[type]=fn;},dispatchEvent:event=>listeners[event.type]?.(event)},
     make:(_tag,text)=>node(text),button:text=>{const value=node(text);buttons.push(value);return value;},
     controls:()=>controls,options:(select,_items,selected)=>{select.value=selected;},watchAuth(){},
     prompt:()=> 'TEST přejmenovaný profil',confirm:()=>true,CustomEvent:class{constructor(type,options){this.type=type;this.detail=options.detail;}},
+    auth:()=>context.root.EduvizeAdminAuth,authSignature:JSON.stringify,activeId:()=>id,
+    statusMessages:{loaded:'Nastavení načteno z Eduvize.',dirty:'Máte neuložené změny.',saved:()=> 'Uloženo do Eduvize.'},
     fingerprint:JSON.stringify,structuredClone,resetEditState(){},say(text){context.message=text;},dirty:()=>JSON.stringify(current)!==context.baseline,
     refreshPicker:async()=>{context.pickerRefreshes=(context.pickerRefreshes||0)+1;},
     work:(_text,fn)=>{const pending=fn();inflight.push(pending);return pending;},

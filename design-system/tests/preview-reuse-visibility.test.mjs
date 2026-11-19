@@ -8,7 +8,7 @@ assert.ok(start>0&&end>start);
 const prepare=source.slice(start,end);
 function fixture(){
  const classes=new Set(),raf=[],style={visibility:'',setProperty(name,value){this[name]=value;},set cssText(value){this.visibility=value.match(/visibility:([^;]+)/)?.[1]||'';}};
- const frame={style,classList:{contains:name=>classes.has(name),add:name=>classes.add(name)},setAttribute(){},addEventListener(){}},context={frame,width:872,height:1672,reused:false,options:{},requestAnimationFrame:fn=>raf.push(fn)};
+ const frame={style,isConnected:true,classList:{contains:name=>classes.has(name),add:name=>classes.add(name)},setAttribute(){},addEventListener(){}},context={frame,width:872,height:1672,reused:false,options:{},requestAnimationFrame:fn=>raf.push(fn)};
  const draw=reused=>{context.reused=reused;vm.runInNewContext(prepare,context);};
  const load=()=>{frame.onload();while(raf.length)raf.shift()();};
  return {frame,context,draw,load,mount(){
