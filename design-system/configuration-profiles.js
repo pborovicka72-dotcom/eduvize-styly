@@ -104,7 +104,7 @@
   root.addEventListener('eduvize-admin-auth-change',checkReadIdentity);
   root.addEventListener('eduvize-profile-selected',checkReadIdentity);
   root.addEventListener('eduvize-profile-updated',forgetReads);
-  function watchAuth(callback){const signature=()=>authSignature(root.EduvizeAdminAuth?.status());let previous=signature();root.addEventListener('eduvize-admin-auth-change',()=>{const next=signature();if(next===previous)return;previous=next;callback();});}
+  function watchAuth(callback){const signature=()=>{const auth=root.EduvizeAdminAuth;return JSON.stringify([authSignature(auth?.status()),auth?.getToken?.('configurations')||auth?.getToken?.('documents')||'']);};let previous=signature();root.addEventListener('eduvize-admin-auth-change',()=>{const next=signature();if(next===previous)return;previous=next;callback();});}
   const requestAcknowledgementObservers=new WeakMap(),requestOperationGuards=new WeakMap();
   function freezeAcknowledgedSnapshot(value){if(value&&typeof value==='object'){for(const child of Object.values(value))freezeAcknowledgedSnapshot(child);Object.freeze(value);}return value;}
   function guardedRequestOptions(fetchOptions,headers,guard){
@@ -603,7 +603,7 @@
       if(!recoveryEnabled&&adapter.app==='kiosk'&&copy)copy.addEventListener('click',()=>queueMicrotask(()=>{browserBaseline=departureFingerprint(adapter.read());kioskEdited=false;}));
     }
     root.addEventListener('beforeunload',event=>{if(adapter.app==='school-identity'&&cardDeparture)return;if(recoveryEnabled&&consumeRecoveryApproval(event,'shared'))return;if(legacyIncompleteCommit()){event.preventDefault();event.returnValue='';return;}if(!profileId||!baseline||(['kiosk','transport'].includes(adapter.app)&&!kioskEdited))return;const current=departureFingerprint(adapter.read()),saved=departureFingerprint(JSON.parse(baseline));if(current!==saved&&current!==browserBaseline){event.preventDefault();event.returnValue='';}});
-    root.addEventListener('eduvize-admin-auth-change',()=>{if(verifiedIdentity?.valid()||verifiedIdentity?.sameIdentity?.())return;identityVerified=false;profileTitle='';state();if(ready&&initialized&&!busy)work('Ověřuji aktivní profil…',()=>list(false));});
+    root.addEventListener('eduvize-admin-auth-change',()=>{if(verifiedIdentity?.valid())return;identityVerified=false;profileTitle='';state();if(ready&&initialized&&!busy)work('Ověřuji aktivní profil…',()=>list(false));});
     watchAuth(()=>{state();if(ready&&initialized&&!busy)work('Ověřuji aktivní profil…',()=>list(false));});
     document.addEventListener('visibilitychange',()=>{if(!document.hidden&&ready&&!busy)auth()?.refresh();});
     const picker=make('section',null,'edu-profile-panel edu-admin__card');picker.setAttribute('aria-label','Aktivní profil školy');
