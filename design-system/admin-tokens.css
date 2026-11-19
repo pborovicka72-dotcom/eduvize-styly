@@ -41,3 +41,15 @@
 [hidden]:not([hidden="until-found"]){display:none!important}
 
 .edu-build-marker,.edu-kiosk-style-version{display:none!important}
+
+/* Loading covers follow the active profile theme, including while output data is pending. */
+:where(html[data-edu-profile-hydration]::after,
+  html[data-news-pending],html[data-news-pending] body,#news-loading,
+  #menu-public-status,html[data-transport-ready="false"] body,
+  #transport-loading,html[data-kiosk-app="transport"] #loading,
+  body.gallery-public-pending.gallery-display,#gallery-public-loading,
+  html[data-sis-output-pending] body,html[data-sis-output-pending] body::before,
+  html[data-news-preview] #preview-status){
+  background-color:var(--ev-bg,var(--edu-admin-bg))!important;
+  color:var(--ev-text,var(--edu-admin-ink))!important;
+}

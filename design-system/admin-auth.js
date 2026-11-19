@@ -12,7 +12,7 @@
   if(!profilePaths.has(location.pathname.replace(/\.html$/,''))||root.EduvizeProfileHydration)return;
   const html=document.documentElement;
   const style=document.createElement('style');
-  style.textContent='html[data-edu-profile-hydration]::after{content:"Načítám nastavení profilu…";position:fixed;inset:0;z-index:2147483647;display:grid;place-items:center;background:#faf4f7;color:#49303b;font:600 clamp(18px,2vw,28px) system-ui,sans-serif;text-align:center;padding:24px}html[data-edu-profile-hydration="error"]::after{content:"Nastavení profilu se nepodařilo načíst. Obnovte stránku."}';
+  style.textContent='html[data-edu-profile-hydration]::after{content:"Načítám nastavení profilu…";position:fixed;inset:0;z-index:2147483647;display:grid;place-items:center;background:var(--ev-bg,var(--edu-admin-bg,#eaf2f8));color:var(--ev-text,var(--edu-admin-ink,#142c46));font:600 clamp(18px,2vw,28px) system-ui,sans-serif;text-align:center;padding:24px}html[data-edu-profile-hydration="error"]::after{content:"Nastavení profilu se nepodařilo načíst. Obnovte stránku."}';
   document.head.append(style);
   let timer;
   function begin(){html.dataset.eduProfileHydration='loading';clearTimeout(timer);timer=setTimeout(()=>finish(Error('Načtení profilu trvá neobvykle dlouho. Obnovte stránku.')),180000);}
