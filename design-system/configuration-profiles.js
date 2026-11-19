@@ -180,6 +180,14 @@
     copied:'Odkaz na veřejný výstup zkopírován.',
     preview:'Náhled rozpracovaného nastavení otevřen v nové záložce.'
   });
+  function publicationFailureMessage(error){
+    const cause=error?.cause?.code==='OUTPUT_UPDATE_FAILED'?error.cause.cause:error?.cause;
+    const temporary=[408,425,429,500,502,503,504].includes(Number(cause?.status))||cause?.code==='REQUEST_ABORTED'||cause?.name==='AbortError'||cause?.name==='TypeError';
+    const detail=temporary?'Spojení se serverem selhalo i při opakování. Zkuste uložení znovu.':
+      typeof cause?.code==='string'&&typeof cause?.message==='string'?cause.message.replace(/\s+/g,' ').slice(0,180):
+      'Zkuste uložení znovu; nastavení zůstalo uložené.';
+    return 'Nastavení bylo uloženo do Eduvize. Veřejný výstup se nepodařilo aktualizovat. '+detail;
+  }
   function contextualStatus(text){
     if(text==='Uloženo do Eduvize.')return statusMessages.saved();
     if(text==='Nastavení načteno z Eduvize.')return statusMessages.loaded;
@@ -469,7 +477,7 @@
         try{const published=await outputActions.withSavedCommit(commit);if(requiredOutput){if(published?.settingsSaved!==true||typeof published.outputUpdated!=='boolean')throw partialError(Error('Uložení nastavení a výstupu nebylo potvrzené.'));if(acknowledged)acknowledged=freezeAcknowledgedSnapshot({...acknowledged,outputUpdated:published.outputUpdated});checkOperation();}}
         catch(error){
           if(requiredOutput&&acknowledged)rememberLegacyIncompleteCommit(acknowledged);
-          if(error?.code==='OUTPUT_UPDATE_FAILED'&&error.settingsSaved===true)throw Object.assign(Error('Nastavení bylo uloženo do Eduvize. Aktualizace veřejného výstupu se nezdařila; výstup nemusí odpovídat uloženému nastavení.'),{code:error.code,settingsSaved:true,committed:acknowledged?structuredClone(acknowledged):error.savedCommit||null,outputUpdated:acknowledged?.outputUpdated??null,cause:error});
+          if(error?.code==='OUTPUT_UPDATE_FAILED'&&error.settingsSaved===true)throw Object.assign(Error(publicationFailureMessage(error)),{code:error.code,settingsSaved:true,committed:acknowledged?structuredClone(acknowledged):error.savedCommit||null,outputUpdated:acknowledged?.outputUpdated??null,cause:error});
           if(requiredOutput&&acknowledged)throw partialError(error);throw error;
         }
       }else await commit();
@@ -509,7 +517,7 @@
       if(outputActions?.workflow==='saved-copy-preview'&&typeof outputActions.withSavedCommit==='function'){
         try{const published=await outputActions.withSavedCommit(commit);if(lastProfileCommit&&published?.settingsSaved===true&&typeof published.outputUpdated==='boolean'){lastProfileCommit=Object.freeze({...lastProfileCommit,publicationConfirmed:true,outputUpdated:published.outputUpdated});}}
         catch(error){
-          if(error?.code==='OUTPUT_UPDATE_FAILED'&&error.settingsSaved===true)throw Error('Nastavení bylo uloženo do Eduvize. Aktualizace veřejného výstupu se nezdařila; výstup nemusí odpovídat uloženému nastavení.');
+          if(error?.code==='OUTPUT_UPDATE_FAILED'&&error.settingsSaved===true)throw Error(publicationFailureMessage(error));
           throw error;
         }
       }else await commit();

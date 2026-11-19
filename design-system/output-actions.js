@@ -17,6 +17,9 @@
  }
 
  function fail(code,message){const e=new Error(message);e.code=code;throw e;}
+ function transientPublicationError(error){
+  return [408,425,429,500,502,503,504].includes(Number(error?.status))||error?.code==='REQUEST_ABORTED'||error?.name==='AbortError';
+ }
  function interactionOf(p){
   if(!['display','interactive'].includes(p?.interaction))fail('INVALID_INTERACTION','Vyberte dotykovou nebo nedotykovou verzi výstupu.');
   return p.interaction;
@@ -269,11 +272,21 @@
      if(savedCommit.profileId!==c.profileId||savedCommit.appId!==c.appId||!Number.isSafeInteger(savedCommit.revision)||savedCommit.revision<0||!savedCommit.config)fail('INVALID_SAVED_COMMIT','Nelze ověřit uložené nastavení.');
      const confirmedDraft=await call(c,()=>options.draft({savedCommit}));
      if(!variantMatches(c,confirmedDraft))fail('INVALID_SAVED_COMMIT','Potvrzené uložení neodpovídá vybrané variantě a formátu výstupu.');
-     const existing=await resolve(c);
-     if(!existing)return {settingsSaved:true,outputUpdated:false,savedCommit};
-     if(existing.state==='revoked')fail('OUTPUT_REVOKED','Tento odkaz byl odvolán. Ověřte používaný výstup.');
-     const output=await publishSaved(c,savedCommit);
-     return {settingsSaved:true,outputUpdated:true,savedCommit,output};
+     // The settings PUT is acknowledged once. A transient output API failure may
+     // be resumed with its durable idempotency journal, without saving settings again.
+     for(let attempt=0;attempt<3;attempt++){
+      try{
+       current(c);
+       const existing=await resolve(c);
+       if(!existing)return {settingsSaved:true,outputUpdated:false,savedCommit};
+       if(existing.state==='revoked')fail('OUTPUT_REVOKED','Tento odkaz byl odvolán. Ověřte používaný výstup.');
+       const output=await publishSaved(c,savedCommit);
+       return {settingsSaved:true,outputUpdated:true,savedCommit,output};
+      }catch(error){
+       if(attempt===2||!transientPublicationError(error))throw error;
+       await new Promise(resolve=>root.setTimeout(resolve,attempt===0?400:1200));
+      }
+     }
     }catch(cause){throw Object.assign(new Error('Nastavení bylo uloženo, aktualizace výstupu se nezdařila.'),{code:'OUTPUT_UPDATE_FAILED',settingsSaved:true,savedCommit,cause});}
    });
   }
