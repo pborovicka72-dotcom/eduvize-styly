@@ -1,5 +1,7 @@
 (async()=>{
  const G=EduvizeGallery,L=EduvizeGalleryLayout,p=new URLSearchParams(location.search),$=id=>document.getElementById(id);if((window.EduvizeOutputModes?.mode?.()||p.get('viewMode'))==='nsp'&&p.has('segment_style')&&p.get('ev_inner')!=='1')return;
+ let smallSegment=p.get('segment_orientation')==='landscape'&&p.get('segment_style')==='6'&&p.get('segment_block')==='3'&&p.get('ev_inner')==='1';
+ function usePresentation(value){if(value)smallSegment=value.mode==='nsp'&&value.geometry?.orientation==='landscape'&&Number(value.geometry.layoutId)===6&&Number(value.geometry.segmentId)===3;}
  let album=null,items=[],pages=[],page=0,paused=false,elapsed=0,last=performance.now(),minSeconds=8,generation=0,activeVideos=[],soundGranted=false,music=null,fadeFrame=0,loading=false,currentFrame=null,previewContent='',musicGeneration=0;
  const publicOutput=p.has('edu-output');const prefetched=new Map();const publicReady=()=>{if(!publicOutput)return;document.body.classList.remove('gallery-public-pending');const indicator=$('gallery-public-loading');if(indicator)indicator.hidden=true;};
  const message=t=>{$('message')?.remove();const e=document.createElement('p');e.id='message';e.className='gallery-message';e.textContent=t;$('stage').append(e);};
@@ -11,7 +13,7 @@
  function audioVolume(){if(!music||!album)return;const current=music,s=config(),duck=s.videoSound&&activeVideos.some(v=>!v.ended&&!v.paused&&!v.muted);const target=(paused?0:(Number(s.volume)||0)/100)*(duck?.08:1);cancelAnimationFrame(fadeFrame);const start=current.volume,t0=performance.now();const step=()=>{if(music!==current||!album)return;const f=Math.min(1,(performance.now()-t0)/500);current.volume=start+(target-start)*f;if(f<1)fadeFrame=requestAnimationFrame(step);};step();}
  function soundButton(){if(!album)return;let button=document.querySelector('.gallery-sound');const s=config(),wanted=s.music||s.videoSound;if(!wanted||soundGranted){button?.remove();return;}if(!button){button=document.createElement('button');button.className='gallery-sound';button.textContent='Zapnout zvuk';button.onclick=()=>{if(!album)return;soundGranted=true;for(const v of activeVideos){v.muted=!config().videoSound;playVideo(v);}playMusic();button.remove();audioVolume();};$('stage').append(button);}}
  async function setupMusic(){stopMusic();const ticket=musicGeneration,sourceAlbum=album,s=config(),item=sourceAlbum.items.find(i=>i.id===s.music&&i.mime.startsWith('audio/'));if(!item)return;try{const url=await G.mediaUrl(sourceAlbum,item);if(ticket!==musicGeneration||album!==sourceAlbum)return;music=new Audio(url);music.hidden=true;music.className='gallery-music';music.loop=true;music.volume=0;$('stage').append(music);playMusic();}catch{if(ticket!==musicGeneration||album!==sourceAlbum)return;soundGranted=false;}audioVolume();}
- function prepare(){const s=config();items=album.items.filter(i=>!i.mime.startsWith('audio/')&&(s.videos||!i.mime.startsWith('video/'))&&(s.whole||s.selection.includes(i.id)));items.sort((a,b)=>s.sort==='name'?a.name.localeCompare(b.name,'cs'):(a.date||'').localeCompare(b.date||''));const n=s.style==='single'?1:s.count;pages=[];for(let i=0;i<items.length;i+=n)pages.push(items.slice(i,i+n));page=Math.min(page,Math.max(0,pages.length-1));$('title').textContent=String(s.displayName||'').trim()||album.name;$('title').title=album.name;$('heading').hidden=!s.header;}
+ function prepare(){const s=config();items=album.items.filter(i=>!i.mime.startsWith('audio/')&&(s.videos||!i.mime.startsWith('video/'))&&(s.whole||s.selection.includes(i.id)));items.sort((a,b)=>s.sort==='name'?a.name.localeCompare(b.name,'cs'):(a.date||'').localeCompare(b.date||''));const n=s.style==='single'||smallSegment?1:s.count;pages=[];for(let i=0;i<items.length;i+=n)pages.push(items.slice(i,i+n));page=Math.min(page,Math.max(0,pages.length-1));$('title').textContent=String(s.displayName||'').trim()||album.name;$('title').title=album.name;$('heading').hidden=!s.header;}
  function updateControls(){$('pause').textContent=paused?'▶':'Ⅱ';$('pause').setAttribute('aria-label',paused?'Pokračovat v přehrávání':'Pozastavit přehrávání');$('page-info').textContent=pages.length?(page+1)+' / '+pages.length+(p.get('local')==='1'?' · místní album':''):'';}
  function clearPrefetched(){for(const {image} of prefetched.values())image.removeAttribute('src');prefetched.clear();}
  function prefetchFollowing(){if(!publicOutput||pages.length<2)return;for(const item of pages[(page+1)%pages.length]){if(!item.mime.startsWith('image/')||!item.src)continue;const image=new Image();image.decoding='async';prefetched.set(item.id,{image});image.src=item.src;image.decode().catch(()=>{if(prefetched.get(item.id)?.image===image)prefetched.delete(item.id);});}}
@@ -33,7 +35,7 @@
   EduvizeOutputRuntime.start({appId:'gallery',outputId:p.get('edu-output'),
    async render(snapshot){
     const next=EduvizeGalleryPublishedView.album(snapshot);
-    generation++;loading=false;clearPrefetched();album=next;prepare();EduvizeGalleryPublishedView.apply(snapshot.presentation);await setupMusic();await show();
+    generation++;loading=false;clearPrefetched();usePresentation(snapshot.presentation);album=next;prepare();EduvizeGalleryPublishedView.apply(snapshot.presentation);await setupMusic();await show();
    },
    clear(){generation++;loading=false;clearPrefetched();stopMusic();for(const video of activeVideos)stopMedia(video);activeVideos=[];album=null;currentFrame=null;pages=[];$('stage').replaceChildren();$('heading').hidden=true;$('page-info').textContent='';message('Tento výstup nyní není dostupný.');publicReady();},
    onError(){if(!album){const indicator=$('gallery-public-loading');if(indicator)indicator.textContent='Publikovanou galerii se nepodařilo načíst. Obnovte stránku.';}}
@@ -41,7 +43,7 @@
   return;
  }
  async function receiveDraft(next,presentation){
-  album=next;prepare();if(presentation&&window.EduvizeGalleryPublishedView)window.EduvizeGalleryPublishedView.apply(presentation);await setupMusic();if(loading){generation++;loading=false;}await show();
+  usePresentation(presentation);album=next;prepare();if(presentation&&window.EduvizeGalleryPublishedView)window.EduvizeGalleryPublishedView.apply(presentation);await setupMusic();if(loading){generation++;loading=false;}await show();
  }
  if(p.get('preview')==='1'&&p.has('draft-preview')){
   message('Připravuji náhled…');window.EduvizeGalleryDraftPreview.receive(p.get('draft-preview'),receiveDraft,message);return;

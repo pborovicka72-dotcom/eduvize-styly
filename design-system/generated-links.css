@@ -91,3 +91,19 @@ body>.edu-link-feedback[hidden]{display:none!important}
 .edu-link-more .edu-admin__button{width:100%;min-height:40px;justify-content:flex-start;text-align:left;padding:10px 12px}
 @media(max-width:1200px){.edu-link-card__top{grid-template-columns:96px minmax(0,1fr)}.edu-link-quick{grid-column:2;justify-content:flex-start;flex-wrap:wrap}}
 @media(max-width:700px){.edu-link-card__top{grid-template-columns:64px minmax(0,1fr)}.edu-link-quick{grid-column:1/-1}.edu-link-more-anchor>.edu-admin__button{min-height:44px}}
+
+/* The interaction mark belongs to the existing output preview. */
+.edu-link-preview{position:relative;grid-column:1;width:96px;min-height:56px;display:grid;align-items:center;justify-items:start}
+.edu-link-preview .edu-link-segment{max-width:100%}
+.edu-link-preview .edu-link-interaction{position:absolute;right:-5px;bottom:-5px;display:grid;place-items:center;width:26px;height:26px;box-sizing:border-box;margin:0;padding:3px;border:2px solid var(--ev-surface,#fff);border-radius:50%;background:var(--ev-primary,#132c50);color:var(--ev-primary-text,#fff);box-shadow:0 1px 4px #0003}
+.edu-link-preview .edu-link-interaction[data-interaction=display]{background:var(--ev-muted,#536781);color:#fff}
+.edu-link-preview .edu-link-interaction svg{width:17px;height:17px}
+.edu-link-preview .edu-link-interaction span{display:none}
+@media(max-width:700px){.edu-link-preview{width:64px;min-height:44px}.edu-link-preview .edu-link-interaction{right:-4px;bottom:-4px;width:24px;height:24px}}
+
+/* Fixed-size outputs show their screen orientation beside the interaction mark. */
+.edu-link-preview[data-orientation=portrait]{width:56px;justify-items:center}
+.edu-link-kiosk[data-orientation=portrait] .edu-link-kiosk__screen{width:36px;height:50px}
+.edu-link-preview .edu-link-orientation{position:absolute;right:-5px;top:-5px;display:grid;place-items:center;width:26px;height:26px;box-sizing:border-box;border:2px solid var(--ev-surface,#fff);border-radius:50%;background:var(--ev-secondary,#f8d344);color:var(--ev-text,#132c50);box-shadow:0 1px 4px #0003}
+.edu-link-preview .edu-link-orientation svg{width:17px;height:17px}
+@media(max-width:700px){.edu-link-preview[data-orientation=portrait]{width:50px}.edu-link-preview .edu-link-orientation{right:-4px;top:-4px;width:24px;height:24px}.edu-link-preview .edu-link-orientation svg{width:16px;height:16px}.edu-link-kiosk[data-orientation=portrait] .edu-link-kiosk__screen{width:30px;height:40px}}

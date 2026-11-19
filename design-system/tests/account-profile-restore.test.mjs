@@ -17,11 +17,9 @@ function harness(){
   const controls={select:node(),reload:node(),status:node()};
   const context={
     profileId:id,profileTitle:profile.name,revision:3,tracked:id,loaded:true,manualLoad:false,ready:true,initialized:true,
-    profileApplyFailed:false,outputReadGeneration:0,outputReadPending:false,outputApplyTail:Promise.resolve(),authObservation:0,
-    auth:()=>context.root.EduvizeAdminAuth,authSignature:JSON.stringify,activeId:()=>id,statusMessages:{dirty:'Rozpracováno',saved:()=> 'Uloženo'},undo:{hidden:true},
     baseline:JSON.stringify(current),userChanged:false,needsReload:false,
     adapter:{app:'school-identity',isEditing:()=>true,read:()=>current,apply:async value=>{current=structuredClone(value);applied.push(current);}},
-    root:{EduvizeAdminAuth:{ready:Promise.resolve(),getToken:()=> 'Bearer test',status:()=>({connected:true,schoolId:'own',profileId:id})},
+    root:{EduvizeAdminAuth:{ready:Promise.resolve(),status:()=>({connected:true,profileId:id})},
       addEventListener:(type,fn)=>{listeners[type]=fn;},dispatchEvent:event=>listeners[event.type]?.(event)},
     make:(_tag,text)=>node(text),button:text=>{const value=node(text);buttons.push(value);return value;},
     controls:()=>controls,options:(select,_items,selected)=>{select.value=selected;},watchAuth(){},

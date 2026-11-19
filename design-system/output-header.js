@@ -52,6 +52,11 @@
   queued=false;if(document.documentElement.classList.contains('weather-station'))return;const api=root.EduvizeSegmentProfile;if(!api||root.innerWidth<1||root.innerHeight<1)return;
   const wisdomPhysical=publishedWisdom?root.EduvizeWisdomPublishedHeaderMetrics:null,geometry=wisdomPhysical?api.resolve(wisdomPhysical.width,wisdomPhysical.height):api.resolve(root.innerWidth,root.innerHeight),verifiedMode=publishedWisdom&&document.documentElement.dataset.outputMode,mode=['web','nsp','kiosk'].includes(verifiedMode)?verifiedMode:root.EduvizeOutputModes?.mode?.()||(root.EduvizeOutputModes?.isKiosk?.()?'kiosk':'nsp');
   let metrics=wisdomPhysical?.header||api.header(geometry,mode);
+  // The two tall columns in the four-block NSP layout share one physical header height.
+  if(document.documentElement.dataset.kioskApp==='menu'&&mode==='nsp'&&geometry.height>=1600&&geometry.height<=1800&&geometry.width>=800&&geometry.width<=3200){
+   const height=Math.round(geometry.height*.2/16)*16;
+   metrics={height,icon:height*.64,title:height*.36,meta:height*.18,padding:height*.05,gap:height*.08};
+  }
   if(mode==='nsp'&&document.documentElement.dataset.eduHeaderDensity==='compact'){
    const height=Math.max(80,Math.min(200,geometry.short*.12));
    metrics={height,icon:height*.64,title:height*.34,meta:height*.18,padding:height*.08,gap:height*.1};

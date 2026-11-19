@@ -17,6 +17,16 @@
  }
 
  function fail(code,message){const e=new Error(message);e.code=code;throw e;}
+ function interactionOf(p){
+  if(!['display','interactive'].includes(p?.interaction))fail('INVALID_INTERACTION','Vyberte dotykovou nebo nedotykovou verzi výstupu.');
+  return p.interaction;
+ }
+ function variantMatches(c,draft){
+  return canonicalSlot(draft?.presentation)===c.slotId&&interactionOf(draft.presentation)===c.interaction&&
+   (c.appId!=='gallery'||!c.sourceId||draft?.payload?.albumId===c.sourceId)&&
+   (c.appId!=='weather'||draft?.payload?.weatherStyle===c.sourceId)&&
+   (c.appId!=='school-systems'||draft?.payload?.provider+':'+(draft?.payload?.target==='teacher'?'teacher_':'')+draft?.payload?.view===c.sourceId);
+ }
  function canonicalSlot(p){
   if(!p||!['web','nsp','kiosk'].includes(p.mode))fail('INVALID_GEOMETRY','Vyberte platný režim výstupu.');
   const g=p.geometry;
@@ -62,16 +72,16 @@
   function context(){
    const c=clone(options.context());
    if(typeof c.schoolId!=='string'||!c.schoolId||c.schoolId.length>128||!ID.test(c.profileId)||!/^[a-z][a-z0-9-]{0,47}$/.test(c.appId))fail('CONTEXT_REQUIRED','Nejprve vyberte uložený školní profil a výstup.');
-   const value={schoolId:c.schoolId,profileId:c.profileId,appId:c.appId,slotId:canonicalSlot(c.presentation)};
+   const value={schoolId:c.schoolId,profileId:c.profileId,appId:c.appId,slotId:canonicalSlot(c.presentation),interaction:interactionOf(c.presentation)};
    if(Object.prototype.hasOwnProperty.call(c,'sourceId')){
-    if(!(c.appId==='news'&&typeof c.sourceId==='string'&&/^[A-Za-z0-9_-]{1,80}$/.test(c.sourceId)||c.appId==='gallery'&&typeof c.sourceId==='string'&&ID.test(c.sourceId)||c.appId==='school-systems'&&typeof c.sourceId==='string'&&/^(?:teacher_)?(?:timetable|permanent)$|^(?:overview|changes|staffchanges|guards|events|notices)$/.test(c.sourceId)))fail('INVALID_SOURCE','Vyberte platný zdroj nebo školní přehled.');
+    if(!(c.appId==='news'&&typeof c.sourceId==='string'&&/^[A-Za-z0-9_-]{1,80}$/.test(c.sourceId)||c.appId==='gallery'&&typeof c.sourceId==='string'&&ID.test(c.sourceId)||c.appId==='weather'&&['standard','station'].includes(c.sourceId)||c.appId==='school-systems'&&/^(?:bakalari|edupage|edookit|skolaonline):(?:teacher_)?(?:timetable|permanent|changes|staffchanges|guards|events|notices|overview|substitution_overview)$/.test(c.sourceId)))fail('INVALID_SOURCE','Vyberte platnou variantu výstupu.');
     value.sourceId=c.sourceId;
    }
    if(c.appId!=='gallery'){if(root.EduvizeProfiles?.outputContextVersion!=='profile-applied-v1'||typeof root.EduvizeProfiles.assertOutputContext!=='function')fail('OUTPUT_PROFILE_NOT_APPLIED','Ověření načteného profilu se ještě nepřipravilo. Obnovte stránku.');root.EduvizeProfiles.assertOutputContext(value);}
    principalGuards.set(value,capturePrincipal(value));return value;
   }
   const scope=c=>'edu-output-action-v2:'+encodeURIComponent(JSON.stringify(c));
-  const requestGuards=new WeakMap(),principalGuards=new WeakMap(),legacyGalleryBindings=new WeakMap();
+  const requestGuards=new WeakMap(),principalGuards=new WeakMap(),legacyBindings=new WeakMap();
   function current(c){const live=requestGuards.get(c)||c,principal=principalGuards.get(live);if(!principal?.valid()||JSON.stringify(context())!==JSON.stringify(live))fail('CONTEXT_CHANGED','Přihlášení, školní profil nebo výstup se změnily. Zkuste akci znovu.');}
   function read(key){const raw=storage.getItem(key);if(!raw)return {version:1};let value;try{value=JSON.parse(raw);}catch{fail('INVALID_JOURNAL','Nelze bezpečně obnovit rozpracovanou změnu odkazu.');}if(value.version!==1)fail('INVALID_JOURNAL','Nelze bezpečně obnovit rozpracovanou změnu odkazu.');return value;}
   function write(key,state){storage.setItem(key,JSON.stringify(state));}
@@ -85,38 +95,37 @@
    return value;
   }
   async function stableKey(c,action){
-   c=legacyGalleryBindings.get(c)||c;
+   c=legacyBindings.get(c)||c;
    const parts=['edu-output-slot-v2',origin,c.schoolId,c.profileId,c.appId,c.slotId,action];
-   if(Object.prototype.hasOwnProperty.call(c,'sourceId'))parts.push(c.appId==='gallery'?'gallery-album-v1':c.appId==='school-systems'?'sis-view-v1':'news-source-v1',c.sourceId);
+   if(Object.prototype.hasOwnProperty.call(c,'interaction'))parts.push('output-interaction-v1',c.interaction);
+   if(Object.prototype.hasOwnProperty.call(c,'sourceId'))parts.push(c.appId==='gallery'?'gallery-album-v1':c.appId==='weather'?'weather-style-v1':c.appId==='school-systems'?'sis-view-v1':'news-source-v1',c.sourceId);
    const bytes=new root.TextEncoder().encode(JSON.stringify(parts));
    const digest=await root.crypto.subtle.digest('SHA-256',bytes);
    return Array.from(new Uint8Array(digest)).map(n=>n.toString(16).padStart(2,'0')).join('').slice(0,32);
   }
   async function lookup(c){
-   legacyGalleryBindings.delete(c);
+   legacyBindings.delete(c);
    const assemblyKey=await stableKey(c,'assembly');
    let value=await call(c,()=>client.lookupOutputSlot({appId:c.appId,profileId:c.profileId,assemblyKey}));
-   if(c.appId==='gallery'&&c.sourceId&&value?.assemblyId===null&&value?.output===null&&(value.generation===undefined||value.generation===0)){
-    const legacy={...c};delete legacy.sourceId;
-    const legacyKey=await stableKey(legacy,'assembly');
-    const candidate=await call(c,()=>client.lookupOutputSlot({appId:c.appId,profileId:c.profileId,assemblyKey:legacyKey}));
-    if(candidate?.output){
+   if(value?.assemblyId===null&&value?.output===null&&(value.generation===undefined||value.generation===0)){
+    const legacy={...c};delete legacy.interaction;
+    if(c.appId==='weather'||c.appId==='school-systems')delete legacy.sourceId;
+    const candidates=[legacy];
+    if(c.appId==='gallery'&&c.sourceId){const oldest={...legacy};delete oldest.sourceId;candidates.push(oldest);}
+    for(const prior of candidates){
+     const legacyKey=await stableKey(prior,'assembly');
+     const candidate=await call(c,()=>client.lookupOutputSlot({appId:c.appId,profileId:c.profileId,assemblyKey:legacyKey}));
+     if(!candidate||!(candidate.assemblyId===null||ID.test(candidate.assemblyId))||!(candidate.output===null||candidate.output&&ID.test(candidate.output.id))||!Number.isSafeInteger(candidate.generation??0)||(candidate.generation??0)<0)fail('INVALID_RECORD','Server vrátil neplatné původní přiřazení výstupu.');
+     if(!candidate.output)continue;
      const old=record(candidate.output,c);
-     if(old.assemblyId!==candidate.assemblyId)fail('BINDING_CHANGED','Přiřazení alba k výstupu není platné.');
-     if(old.state==='revoked')fail('OUTPUT_REVOKED','Původní odkaz alba byl odvolán. Ověřte používaný výstup.');
-     if(old.state!=='published')fail('GALLERY_BINDING_UNCONFIRMED','Původní odkaz alba není potvrzený. Nelze jej bezpečně převzít.');
+     if(old.assemblyId!==candidate.assemblyId)fail('BINDING_CHANGED','Původní přiřazení výstupu není platné.');
+     if(old.state!=='published')continue;
      const authenticated=record(await call(c,()=>client.getOutput(old.id)),c);
      const published=await call(c,()=>client.getPublicOutput(old.id));
      const same=['id','profileId','appId','assemblyId','revision','state','publishedRevision'].every(k=>authenticated[k]===old[k]);
-     const album=authenticated.draft?.payload?.albumId,publicAlbum=published?.payload?.albumId;
-     if(!same||published?.schemaVersion!==1||published.id!==old.id||published.appId!=='gallery'||published.publishedRevision!==old.publishedRevision||!ID.test(album||'')||!ID.test(publicAlbum||'')||album!==publicAlbum||canonicalSlot(authenticated.draft?.presentation)!==c.slotId||canonicalSlot(published.presentation)!==c.slotId)fail('GALLERY_BINDING_UNCONFIRMED','Původní odkaz alba se změnil nebo jeho přiřazení není jednoznačné.');
-     if(album===c.sourceId){legacyGalleryBindings.set(c,legacy);value=candidate;}
-     // A confirmed foreign album remains untouched. Only explicit first Copy may create this album's qualified slot.
-    }else{
-     const legacyGeneration=candidate?.generation===undefined?0:candidate.generation;
-     if(!candidate||!(candidate.assemblyId===null||ID.test(candidate.assemblyId))||candidate.output!==null||!Number.isSafeInteger(legacyGeneration)||legacyGeneration<0)fail('INVALID_RECORD','Server vrátil neplatné původní přiřazení alba.');
-     // An empty/tombstoned legacy assembly has no live output/URL to adopt. Leave it and its generation untouched.
-     // Save remains settings-only; explicit first Copy uses the album-qualified slot.
+     if(!same||published?.schemaVersion!==1||published.id!==old.id||published.appId!==c.appId||published.publishedRevision!==old.publishedRevision)fail('BINDING_UNCONFIRMED','Původní výstup se změnil. Obnovte stránku a zkuste akci znovu.');
+     if(!variantMatches(c,authenticated.draft)||!variantMatches(c,published))continue;
+     legacyBindings.set(c,prior);value=candidate;break;
     }
    }
    if(!value||!(value.assemblyId===null||ID.test(value.assemblyId))||!(value.output===null||value.output&&ID.test(value.output.id)))fail('INVALID_RECORD','Server vrátil neplatné přiřazení výstupu.');
@@ -131,8 +140,7 @@
   async function generate({draft}){return serialized(c=>generateHeld(c,draft));}
   async function generateHeld(c,draft){
    const key=scope(c),requested=clone(draft);
-   if(c.appId==='gallery'&&c.sourceId){if(requested?.payload?.albumId!==c.sourceId)fail('INVALID_SOURCE','Uložené album neodpovídá vybranému odkazu.');await lookup(c);}
-   if(canonicalSlot(requested.presentation)!==c.slotId)fail('CONTEXT_CHANGED','Režim nebo geometrie výstupu se změnily. Zkuste akci znovu.');
+   if(!variantMatches(c,requested))fail('CONTEXT_CHANGED','Uložený formát nebo varianta výstupu se změnily. Uložte nastavení a zkuste akci znovu.');
     try{
     current(c);const state=read(key);let flow=state.pending;
     if(!flow){
@@ -145,7 +153,7 @@
     if(flow.generation!==undefined&&(!Number.isSafeInteger(flow.generation)||flow.generation<0))fail('INVALID_JOURNAL','Neplatná generace rozpracované operace.');
     if(flow.assemblyKey!==await stableKey(c,'assembly')||flow.outputKey!==await stableKey(c,flow.generation?'output:'+flow.generation:'output'))fail('INVALID_JOURNAL','Nelze bezpečně obnovit rozpracovanou změnu odkazu.');
     if((await lookup(c)).generation!==(flow.generation??0))fail('OUTPUT_DELETED','Původní výstup byl odstraněn. Obnovte stránku a znovu použijte Kopírovat odkaz.');
-    if(canonicalSlot(flow.draft?.presentation)!==c.slotId)fail('INVALID_JOURNAL','Geometrie rozpracované změny neodpovídá výstupu.');
+    if(!variantMatches(c,flow.draft))fail('INVALID_JOURNAL','Varianta rozpracované změny neodpovídá výstupu.');
     async function verifyBinding(){
      const value=record(await call(c,()=>client.getOutput(flow.outputId)),c);
      if(!ID.test(flow.assemblyId)||value.assemblyId!==flow.assemblyId)fail('BINDING_CHANGED','Přiřazení výstupu se změnilo. Nejdříve ověřte výstup.');
@@ -240,7 +248,7 @@
    return lock(scope(c),async()=>{
     current(c);
     const draft=await call(c,()=>options.draft({savedCommit:null,purpose:'copy'}));
-    if(canonicalSlot(draft?.presentation)!==c.slotId)fail('CONTEXT_CHANGED','Uložený formát výstupu se změnil. Zkuste kopírování znovu.');
+    if(!variantMatches(c,draft))fail('CONTEXT_CHANGED','Uložený formát nebo varianta výstupu se změnily. Uložte nastavení a zkuste kopírování znovu.');
     const existing=await resolve(c);
     if(existing?.state==='revoked')fail('OUTPUT_REVOKED','Tento odkaz byl odvolán. Ověřte používaný výstup.');
     if(existing?.state==='published')return linkHeld(c);
@@ -259,7 +267,8 @@
      savedCommit=clone(confirmed);
      current(c);
      if(savedCommit.profileId!==c.profileId||savedCommit.appId!==c.appId||!Number.isSafeInteger(savedCommit.revision)||savedCommit.revision<0||!savedCommit.config)fail('INVALID_SAVED_COMMIT','Nelze ověřit uložené nastavení.');
-     if(c.appId==='gallery'&&c.sourceId){const confirmedDraft=await call(c,()=>options.draft({savedCommit}));if(confirmedDraft?.payload?.albumId!==c.sourceId||canonicalSlot(confirmedDraft.presentation)!==c.slotId)fail('INVALID_SAVED_COMMIT','Potvrzené uložení neodpovídá vybranému albu a formátu.');}
+     const confirmedDraft=await call(c,()=>options.draft({savedCommit}));
+     if(!variantMatches(c,confirmedDraft))fail('INVALID_SAVED_COMMIT','Potvrzené uložení neodpovídá vybrané variantě a formátu výstupu.');
      const existing=await resolve(c);
      if(!existing)return {settingsSaved:true,outputUpdated:false,savedCommit};
      if(existing.state==='revoked')fail('OUTPUT_REVOKED','Tento odkaz byl odvolán. Ověřte používaný výstup.');
@@ -446,5 +455,5 @@
   openButton.addEventListener('click',()=>run(async(report,active)=>{await actions.previewDraft();active();report(root.EduvizeProfiles?.statusMessages?.preview||'Náhled rozpracovaného nastavení otevřen v nové záložce.');}));
   return Object.freeze({...actions,withSavedCommit:saveFn=>{invalidate();return actions.withSavedCommit(saveFn);},contextChanged:()=>{invalidate();const target=sink();if(target)target.beginAction();else result('','');},refresh:async()=>actions.state()});
  }
- root.EduvizeOutputActions=Object.freeze({create,mount,canonicalSlot,schemaVersion:2,sourceDiscriminator:'news-source-v1',gallerySourceDiscriminator:'gallery-album-v1',schoolSystemsViewDiscriminator:'sis-view-v1',galleryPreviewHost:'gallery-protected-physical-v1',weatherPreviewHost:'weather-protected-physical-v1',transportPreviewHost:'transport-protected-physical-v1',wisdomPreviewHost:'wisdom-protected-physical-v1',previewPresentation:'physical-viewport-v1',formContext:'profile-applied-v1',menuPreviewHost:'menu-native-physical-v1',newsPreviewHost:'news-protected-physical-v1',documentsPreviewHost:'documents-protected-physical-v1'});
+ root.EduvizeOutputActions=Object.freeze({create,mount,canonicalSlot,schemaVersion:2,sourceDiscriminator:'news-source-v1',gallerySourceDiscriminator:'gallery-album-v1',galleryPreviewHost:'gallery-protected-physical-v1',weatherPreviewHost:'weather-protected-physical-v1',transportPreviewHost:'transport-protected-physical-v1',wisdomPreviewHost:'wisdom-protected-physical-v1',previewPresentation:'physical-viewport-v1',formContext:'profile-applied-v1',menuPreviewHost:'menu-native-physical-v1',newsPreviewHost:'news-protected-physical-v1',documentsPreviewHost:'documents-protected-physical-v1'});
 })(typeof window==='undefined'?globalThis:window);
