@@ -38,7 +38,9 @@ const profiles=fs.readFileSync(new URL('../../design-system/configuration-profil
 const start=profiles.indexOf('    async function readProfile('),end=profiles.indexOf('    async function list(',start);
 let resolveRead,editing=false,applied=0;
 const saved={schemaVersion:1,data:{name:'Uložená škola'}},draft={schemaVersion:1,data:{name:'Nově vybraná škola'}};
-const ctx={profileId:'a'.repeat(32),manualLoad:false,tracked:'',adapter:{app:'school-identity',isEditing:()=>editing,read:()=>draft,apply:async()=>{applied++;}},request:()=>new Promise(resolve=>{resolveRead=resolve;}),fingerprint:JSON.stringify,structuredClone,userChanged:true,resetEditState(){throw Error('Must not reset an active edit');},say(){},dirty:()=>true};
+const ctx={profileId:'a'.repeat(32),manualLoad:false,tracked:'',profileApplyFailed:false,outputReadGeneration:0,outputReadPending:false,outputApplyTail:Promise.resolve(),authObservation:0,
+ auth:()=>ctx.operator,operator:{getToken:()=> 'Bearer test',status:()=>({schoolId:'own',profileId:ctx.profileId})},authSignature:JSON.stringify,activeId:()=>ctx.profileId,
+ adapter:{app:'school-identity',isEditing:()=>editing,read:()=>draft,apply:async()=>{applied++;}},request:()=>new Promise(resolve=>{resolveRead=resolve;}),fingerprint:JSON.stringify,structuredClone,userChanged:true,resetEditState(){throw Error('Must not reset an active edit');},say(){},dirty:()=>true,statusMessages:{dirty:'Rozpracováno',saved:()=> 'Uloženo'}};
 vm.runInNewContext(profiles.slice(start,end)+';this.readProfile=readProfile;',ctx);
 const pending=ctx.readProfile(true);editing=true;
 resolveRead({name:'Profil školy',apps:{'school-identity':{revision:7,config:saved}}});await pending;

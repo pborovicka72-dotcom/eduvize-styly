@@ -3,7 +3,7 @@ import vm from 'node:vm';
 import assert from 'node:assert/strict';
 const source=fs.readFileSync(new URL('../configuration-profiles.js',import.meta.url),'utf8');
 const work=source.slice(source.indexOf('    function state(){'),source.indexOf('    function login(){'));
-const setup=`let identityVerified=true,visualBusy=false,busy=false,ready=true,needsReload=false,needsLogin=false,errorText='',timer,profileTitle='Test škola',profileId='selected';
+const setup=`let identityVerified=true,visualBusy=false,busy=false,ready=true,needsReload=false,needsLogin=false,documentsNativeReady=true,errorText='',timer,profileTitle='Test škola',profileId='selected';
 const save={},load={},undo={hidden:true},actions={},manage={},profileText={},profilePicker={select:{}},messages=[];
 const canSave=()=>true,say=(text,state)=>messages.push({text,state});
 ${work}
