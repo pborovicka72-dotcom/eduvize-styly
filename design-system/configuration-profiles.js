@@ -149,7 +149,7 @@
     if(adapter.app!=='school-identity')mountUpdates(adapter.app,panel);
     if(adapter.app!=='school-identity')mountLinkAudit(panel);
     const changeStatus=make('p','Bez neuložených změn.','edu-profile-change-status');changeStatus.dataset.eduChangeStatus='';changeStatus.setAttribute('role','status');changeStatus.setAttribute('aria-live','polite');panel.prepend(changeStatus);
-    let editBaseline='',userChanged=false;
+    let editBaseline='',userChanged=false,departureDiscarded=false;
     function resetEditState(message='Bez neuložených změn.'){changeStatus.hidden=false;userChanged=false;editBaseline=fingerprint(adapter.read());changeStatus.textContent=message;changeStatus.dataset.state='saved';}
     function showEditState(){if(!editBaseline)return;changeStatus.hidden=false;const changed=fingerprint(adapter.read())!==editBaseline;changeStatus.textContent=userChanged&&changed?'Neuložené změny.':'Bez neuložených změn.';changeStatus.dataset.state=userChanged&&changed?'dirty':'saved';}
     const ui={status};
@@ -235,6 +235,7 @@
     manage.onclick=event=>{event.preventDefault();work('Otevírám výběr profilu…',async()=>login());};
     undo.onclick=()=>work('Vracím místní nastavení…',async()=>{if(!backup)return;const previous=backup;backup=structuredClone(adapter.read());await adapter.apply(previous);userChanged=true;showEditState();say('Místní nastavení obnoveno.','dirty');});
     function changed(event){
+      if(event.isTrusted&&['input','change'].includes(event.type)&&!event.target.closest('dialog'))departureDiscarded=false;
       if(!panel.contains(event.target)&&event.target!==save&&event.target!==local){
         const field=['input','change'].includes(event.type)&&event.target.matches?.('input,select,textarea,[contenteditable]')&&!event.target.readOnly&&!event.target.disabled;
         const action=event.type==='click'&&event.target.closest?.('button')&&!event.target.closest('.edu-output-actions,.toolbar,.theme-action-buttons,.sis-admin-actions,.day-actions');
@@ -257,7 +258,7 @@
       // The kiosk's share handler saves the native local configuration before copying.
       if(adapter.app==='kiosk'&&copy)copy.addEventListener('click',()=>queueMicrotask(()=>{browserBaseline=departureFingerprint(adapter.read());kioskEdited=false;}));
     }
-    root.addEventListener('beforeunload',event=>{if(!profileId||!baseline||(['kiosk','transport'].includes(adapter.app)&&!kioskEdited))return;const current=departureFingerprint(adapter.read()),saved=departureFingerprint(JSON.parse(baseline));if(current!==saved&&current!==browserBaseline){event.preventDefault();event.returnValue='';}});
+    root.addEventListener('beforeunload',event=>{if(departureDiscarded||!profileId||!baseline||(['kiosk','transport'].includes(adapter.app)&&!kioskEdited))return;const current=departureFingerprint(adapter.read()),saved=departureFingerprint(JSON.parse(baseline));if(current!==saved&&current!==browserBaseline){event.preventDefault();event.returnValue='';}});
     root.addEventListener('eduvize-admin-auth-change',()=>{if(verifiedIdentity?.valid())return;identityVerified=false;profileTitle='';state();if(ready&&initialized&&!busy)work('Ověřuji aktivní profil…',()=>list(false));});
     watchAuth(()=>{state();if(ready&&initialized&&!busy)work('Ověřuji aktivní profil…',()=>list(false));});
     document.addEventListener('visibilitychange',()=>{if(!document.hidden&&ready&&!busy)auth()?.refresh();});
@@ -274,9 +275,10 @@
     });
     root.EduvizeProfileBeforeSwitch=async()=>{
       if(!dirty())return true;
-      if(confirm('Před přepnutím profilu uložit rozpracované změny do Eduvize?')){await save.onclick();return !dirty()&&!errorText;}
-      if(!confirm('Přepnout profil a zahodit rozpracované změny?'))return false;
-      userChanged=false;return true;
+      const choice=await root.EduvizeAdminNavigation?.departureChoice?.();
+      if(choice==='save'){await save.onclick();return !dirty()&&!errorText;}
+      if(choice!=='discard')return false;
+      departureDiscarded=true;userChanged=false;return true;
     };
     profilePicker.select.onchange=async()=>{
       const next=profilePicker.select.value;if(!next||next===profileId)return;
