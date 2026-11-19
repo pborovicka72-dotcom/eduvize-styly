@@ -77,15 +77,17 @@
   const authSignature=s=>JSON.stringify([s?.connected,s?.schoolId||'',s?.profileId||'',s?.scopes||[]]);
   async function readContext(auth,scope){
     const token=auth.getToken(scope),state=auth.status(),signature=authSignature(state);
-    const valid=()=>!!token&&auth.getToken(scope)===token&&authSignature(auth.status())===signature;
+    const sameIdentity=()=>!!auth.getToken(scope)&&authSignature(auth.status())===signature;
+    const valid=()=>sameIdentity()&&auth.getToken(scope)===token;
+    const changed=()=>{const error=Error('Přihlášení nebo vybraný profil se během načítání změnil.');if(sameIdentity()){error.code='PROFILE_READ_SUPERSEDED';error.retrySafe=sameIdentity;}return error;};
     if(!valid())throw Error('Přihlaste se na stránce Účet a konfigurace pro přístup k nastavení školy do Eduvize.');
     // The digest partitions cached reads; it never grants permission.
     if(!root.crypto?.subtle||typeof TextEncoder==='undefined')return {identity:'',cacheable:false,valid};
     const origin=location.origin;let bytes;
-    try{bytes=await root.crypto.subtle.digest('SHA-256',new TextEncoder().encode('eduvize-profile-reads-v2\0'+origin+'\0'+token));}catch{if(!valid())throw Error('Přihlášení nebo vybraný profil se během načítání změnil.');return {identity:'',cacheable:false,valid};}
-    if(!valid())throw Error('Přihlášení nebo vybraný profil se během načítání změnil.');
+    try{bytes=await root.crypto.subtle.digest('SHA-256',new TextEncoder().encode('eduvize-profile-reads-v2\0'+origin+'\0'+token));}catch{if(!valid())throw changed();return {identity:'',cacheable:false,valid,sameIdentity};}
+    if(!valid())throw changed();
     const principal=Array.from(new Uint8Array(bytes),v=>v.toString(16).padStart(2,'0')).join('');
-    return {identity:JSON.stringify([origin,state.schoolId||'',state.profileId||'',scope,[...(state.scopes||[])].sort(),principal]),cacheable:true,valid};
+    return {identity:JSON.stringify([origin,state.schoolId||'',state.profileId||'',scope,[...(state.scopes||[])].sort(),principal]),cacheable:true,valid,sameIdentity};
   }
   const readPrincipal=()=>{const auth=root.EduvizeAdminAuth,state=auth?.status?.();return JSON.stringify([auth?.getToken?.()||'',authSignature(state)]);};
   let observedReadPrincipal=readPrincipal();
@@ -126,7 +128,7 @@
     const context=await readContext(auth,scope),cacheable=context.cacheable&&method==='GET'&&(path===''||/^\/[a-f0-9]{32}$/.test(path));
     if(method!=='GET')forgetReads();
     const epoch=readEpoch,key=context.identity+'\0'+path;
-    const readChanged=()=>{const error=Error('Přihlášení, profil nebo uložené nastavení se během načítání změnilo. Načtěte je znovu.');if(context.valid()&&method==='GET'){error.code='PROFILE_READ_SUPERSEDED';error.retrySafe=context.valid;}return error;};
+    const readChanged=()=>{const error=Error('Přihlášení, profil nebo uložené nastavení se během načítání změnilo. Načtěte je znovu.');if(context.sameIdentity()&&method==='GET'){error.code='PROFILE_READ_SUPERSEDED';error.retrySafe=context.sameIdentity;}return error;};
     const finalRead=value=>{if(!context.valid()||method==='GET'&&epoch!==readEpoch)throw readChanged();return structuredClone(value);};
     if(cacheable&&!fresh){const value=readCache(context.identity,path);if(value!==undefined)return finalRead(value);}
     if(cacheable&&pendingReads.has(key))return finalRead(await pendingReads.get(key));
@@ -152,7 +154,7 @@
     if(!valid())return null;
     const id=auth.status().profileId||'',list=context.cacheable?readCache(context.identity,''):null;
     const item=list?.items?.find(p=>p.id===id),profile=context.cacheable&&id?readCache(context.identity,'/'+id):null;
-    return {id,title:item?.name||'',settingsWarm:!!item&&profile?.id===id,valid};
+    return {id,title:item?.name||'',settingsWarm:!!item&&profile?.id===id,valid,sameIdentity:context.sameIdentity};
   }
   function controls(host){
     const row=make('div',null,'edu-profile-panel__row'),label=make('label','Profil školy / obrazovky'),select=make('select');select.setAttribute('aria-label','Profil školy nebo obrazovky');label.append(select);
@@ -389,8 +391,8 @@
     }
     async function readProfile(apply=false,{fresh=false,replace=false}={}){
       if(profileApplyFailed&&(!manualLoad||!apply))throw Object.assign(Error('Načtení nastavení selhalo. Použijte Načíst uložené nastavení nebo obnovte stránku.'),{code:'PROFILE_APPLY_FAILED'});
-      const outputTicket=++outputReadGeneration,outputAuth=auth(),outputTarget=profileId,outputScope=outputAuth?.getToken('configurations')?'configurations':'documents',outputToken=outputAuth?.getToken(outputScope),outputSchool=String(outputAuth?.status().schoolId||''),outputSignature=authSignature(outputAuth?.status()),outputEpoch=authObservation;
-      const outputCurrent=()=>outputTicket===outputReadGeneration&&auth()===outputAuth&&!!outputToken&&outputAuth.getToken(outputScope)===outputToken&&authSignature(outputAuth.status())===outputSignature&&authObservation===outputEpoch&&profileId===outputTarget&&activeId()===outputTarget;
+      const outputTicket=++outputReadGeneration,outputAuth=auth(),outputTarget=profileId,outputScope=outputAuth?.getToken('configurations')?'configurations':'documents',outputSchool=String(outputAuth?.status().schoolId||''),outputSignature=authSignature(outputAuth?.status());
+      const outputCurrent=()=>outputTicket===outputReadGeneration&&auth()===outputAuth&&!!outputAuth.getToken(outputScope)&&authSignature(outputAuth.status())===outputSignature&&profileId===outputTarget&&activeId()===outputTarget;
       const checkOutputLoad=()=>{if(!outputCurrent())throw Object.assign(Error('Profil se během načítání změnil. Načtěte aktuálně vybraný profil.'),{code:'OUTPUT_PROFILE_NOT_APPLIED'});};
       const applyOutputConfig=config=>{
         const execute=async()=>{checkOutputLoad();const before=structuredClone(adapter.read());try{await adapter.apply(config);checkOutputLoad();return before;}catch(error){if(!outputCurrent())throw error;profileApplyFailed=true;needsReload=true;identityVerified=false;if(adapter.app==='transport'&&error?.code==='PROFILE_APPLY_SUPERSEDED')throw error;try{checkOutputLoad();await adapter.apply(before);checkOutputLoad();}catch{}throw Object.assign(Error('Nastavení se nepodařilo načíst. Použijte Načíst uložené nastavení. '+(error?.message||'')),{code:'PROFILE_APPLY_FAILED',cause:error});}};
@@ -601,7 +603,7 @@
       if(!recoveryEnabled&&adapter.app==='kiosk'&&copy)copy.addEventListener('click',()=>queueMicrotask(()=>{browserBaseline=departureFingerprint(adapter.read());kioskEdited=false;}));
     }
     root.addEventListener('beforeunload',event=>{if(adapter.app==='school-identity'&&cardDeparture)return;if(recoveryEnabled&&consumeRecoveryApproval(event,'shared'))return;if(legacyIncompleteCommit()){event.preventDefault();event.returnValue='';return;}if(!profileId||!baseline||(['kiosk','transport'].includes(adapter.app)&&!kioskEdited))return;const current=departureFingerprint(adapter.read()),saved=departureFingerprint(JSON.parse(baseline));if(current!==saved&&current!==browserBaseline){event.preventDefault();event.returnValue='';}});
-    root.addEventListener('eduvize-admin-auth-change',()=>{if(verifiedIdentity?.valid())return;identityVerified=false;profileTitle='';state();if(ready&&initialized&&!busy)work('Ověřuji aktivní profil…',()=>list(false));});
+    root.addEventListener('eduvize-admin-auth-change',()=>{if(verifiedIdentity?.valid()||verifiedIdentity?.sameIdentity?.())return;identityVerified=false;profileTitle='';state();if(ready&&initialized&&!busy)work('Ověřuji aktivní profil…',()=>list(false));});
     watchAuth(()=>{state();if(ready&&initialized&&!busy)work('Ověřuji aktivní profil…',()=>list(false));});
     document.addEventListener('visibilitychange',()=>{if(!document.hidden&&ready&&!busy)auth()?.refresh();});
     const picker=make('section',null,'edu-profile-panel edu-admin__card');picker.setAttribute('aria-label','Aktivní profil školy');
