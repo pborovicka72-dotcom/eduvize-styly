@@ -49,7 +49,16 @@
   #transport-loading,html[data-kiosk-app="transport"] #loading,
   body.gallery-public-pending.gallery-display,#gallery-public-loading,
   html[data-sis-output-pending] body,html[data-sis-output-pending] body::before,
-  html[data-news-preview] #preview-status){
+  html[data-news-preview] #preview-status,
+  body > #publication-status,body > #status){
   background-color:var(--ev-bg,var(--edu-admin-bg))!important;
   color:var(--ev-text,var(--edu-admin-ink))!important;
+}
+
+/* A public output keeps its profile colors while its data is loading. */
+:where(body > #publication-status:not([hidden]),body > #status:not([hidden])){
+ position:fixed;inset:0;z-index:10;display:grid;place-items:center;
+ box-sizing:border-box;margin:0;padding:24px;text-align:center;
+ font:600 clamp(18px,2vw,28px) var(--edu-admin-font,system-ui,sans-serif);
+ background:var(--ev-bg,var(--edu-admin-bg));color:var(--ev-text,var(--edu-admin-ink));
 }

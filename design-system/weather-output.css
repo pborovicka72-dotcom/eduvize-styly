@@ -60,3 +60,37 @@ html[data-kiosk-app="weather"] .hero.edu-output-header .condition-label{flex:non
 html[data-kiosk-app="weather"][data-weather-header-layout="low"] .hero.edu-output-header .weather-current{flex-direction:row!important;align-items:center!important;justify-content:flex-start!important;gap:var(--edu-header-gap)!important}
 /* The kiosk menu already displays the application identity. */
 html[data-kiosk-app="weather"].edu-menu-app-header .hero.edu-output-header>.edu-app-icon{display:none!important}
+
+/* A compact NSP weather segment is a single readable summary card. */
+html[data-kiosk-app="weather"][data-output-mode="nsp"][data-weather-header-only] .hero.edu-output-header{
+ display:grid!important;grid-template-columns:minmax(0,1fr) 180px;grid-template-rows:minmax(0,1fr) 74px;
+ align-items:center!important;justify-content:stretch!important;
+}
+html[data-kiosk-app="weather"][data-output-mode="nsp"][data-weather-header-only] .hero.edu-output-header>.edu-app-icon{display:none!important}
+html[data-kiosk-app="weather"][data-output-mode="nsp"][data-weather-header-only] .hero.edu-output-header .weather-current{display:contents!important}
+html[data-kiosk-app="weather"][data-output-mode="nsp"][data-weather-header-only] .hero.edu-output-header .temperature{
+ grid-column:1;grid-row:1;align-self:center;justify-self:start;min-width:0;
+}
+html[data-kiosk-app="weather"][data-output-mode="nsp"][data-weather-header-only] .hero.edu-output-header .hero-art.edu-header-art{
+ grid-column:2;grid-row:1;align-self:center;justify-self:center;display:flex!important;
+ width:180px!important;height:auto!important;max-height:100%!important;flex:none!important;padding:0!important;gap:6px!important;
+}
+html[data-kiosk-app="weather"][data-output-mode="nsp"][data-weather-header-only] .hero.edu-output-header .hero-art.edu-header-art>svg{
+ width:118px!important;height:118px!important;max-width:100%!important;max-height:none!important;flex:none!important;
+}
+html[data-kiosk-app="weather"][data-output-mode="nsp"][data-weather-header-only] .hero.edu-output-header .condition-label{
+ font-size:36px!important;line-height:1.1!important;max-height:2.2em;overflow:hidden;text-align:center!important;
+}
+html[data-kiosk-app="weather"][data-output-mode="nsp"][data-weather-header-only] .hero.edu-output-header .condition-label.is-unknown{
+ font-size:24px!important;max-height:3.3em;
+}
+html[data-kiosk-app="weather"][data-output-mode="nsp"][data-weather-header-only] .hero.edu-output-header .hero-details{
+ grid-column:1/-1;grid-row:2;display:flex!important;flex-direction:row!important;align-items:center!important;
+ justify-content:space-between!important;width:100%;height:100%;min-width:0;border-top:2px solid color-mix(in srgb,var(--ev-primary-text) 35%,transparent);
+}
+html[data-kiosk-app="weather"][data-output-mode="nsp"][data-weather-header-only] .hero.edu-output-header .hero-details .feels-like{
+ font-size:32px!important;line-height:1.15!important;white-space:nowrap!important;gap:8px!important;flex-wrap:nowrap!important;
+}
+html[data-kiosk-app="weather"][data-output-mode="nsp"][data-weather-header-only] .hero.edu-output-header .hero-details .hero-meta{
+ font-size:27px!important;line-height:1.15!important;white-space:nowrap!important;margin-left:auto!important;
+}
