@@ -18,6 +18,7 @@ const docEvents={},root={EduvizeAdminAuth:{ready:Promise.resolve(),status:()=>({
 const scope={window:root,document:{currentScript:{src:'https://example.test/school-card.js'},getElementById:get,createElement:element,addEventListener:(type,fn)=>{docEvents[type]=fn;},dispatchEvent(){}},URL,Intl,TextDecoder,TextEncoder,CustomEvent:class{constructor(type){this.type=type;}},fetch:async()=>({ok:true,arrayBuffer:async()=>bytes.buffer}),localStorage:{getItem:()=>JSON.stringify(original),setItem(){}},setTimeout:fn=>{const id=++nextTimer;timers.set(id,fn);return id;},clearTimeout:id=>timers.delete(id)};
 vm.runInNewContext(source,scope);await Promise.resolve();
 assert.equal(root.EduvizeProfileAdapter.loadedMessage,'Karta školy načtena z Eduvize.','School profiles use Eduvize storage even without a connected OneDrive');
+root.EduvizeProfileAdapter.apply({schemaVersion:1,data:original});
 get('school-edit').onclick();get('school-change').onclick();
 assert.equal(get('school-query').value,'');assert.equal(get('school-lookup').hidden,false);
 get('school-query').value='ZŠ Praha';get('school-query').events.input();
