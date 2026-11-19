@@ -156,7 +156,7 @@
  const html=document.documentElement,profile=new URL(location.href).searchParams.get('edu-profile')||'';
  const nativeInterval=root.setInterval.bind(root),nativeTimeout=root.setTimeout.bind(root);
  const pausedMedia=new Set(),pausedFrames=new Map();
- let state='checking',screen,title,detail,checking=false,lease=0,expiry=null,wasSuspended=false;
+ let state='checking',screen,title,detail,checking=false,lease=0,expiry=null,wasSuspended=false,retryTimer=null,failures=0;
  html.dataset.eduLicense=state;
  const css=document.createElement('style');css.textContent='html[data-edu-license]:not([data-edu-license="active"]) body>:not(#edu-license-screen),html[data-edu-license]:not([data-edu-license="active"]) body>:not(#edu-license-screen) *{visibility:hidden!important}#edu-license-screen{position:fixed!important;inset:0!important;z-index:2147483647!important;display:flex!important;box-sizing:border-box!important;align-items:center!important;justify-content:center!important;padding:clamp(20px,5vmin,100px)!important;background:var(--ev-bg,#eaf3f6)!important;color:var(--ev-text,#18394b)!important;text-align:center!important;font-family:Arial,sans-serif!important}#edu-license-screen[hidden]{display:none!important}#edu-license-screen>div{max-width:1000px}#edu-license-screen h1{margin:0 0 .6em!important;font-size:clamp(28px,5vmin,80px)!important;line-height:1.2!important}#edu-license-screen p{margin:0!important;font-size:clamp(18px,3vmin,44px)!important;line-height:1.5!important}';document.head.append(css);
  function panel(){
@@ -174,6 +174,7 @@
  function set(value){const old=state;state=value;html.dataset.eduLicense=value;panel();stopMedia();if(value==='suspended'||value==='unavailable')wasSuspended=true;if(value==='active'){for(const [frame,src] of pausedFrames)if(frame.isConnected&&src)frame.src=src;pausedFrames.clear();for(const media of pausedMedia)if(media.isConnected)media.play()?.catch(()=>{});pausedMedia.clear();}root.dispatchEvent(new CustomEvent('eduvize-broadcast-state',{detail:{state:value}}));}
  async function check(){
   if(checking)return;checking=true;
+  if(retryTimer){clearTimeout(retryTimer);retryTimer=null;}
   try{
    const response=await fetch((location.origin+"/api/public/broadcast-status")+(profile?'?profile='+encodeURIComponent(profile):''),{cache:'no-store',redirect:'error',signal:AbortSignal.timeout(25000)});
    if(!response.ok)throw Error('License unavailable');const data=await response.json();
@@ -182,9 +183,13 @@
    if(!data.active){lease=0;set('suspended');return;}
    const remaining=data.expiresAt===null?Infinity:(data.expiresAt-data.serverTime)*1000;
    if(remaining<=0){lease=0;set('suspended');return;}
-   lease=performance.now()+Math.min(90000,remaining);set('active');
+   failures=0;lease=performance.now()+Math.min(90000,remaining);set('active');
    if(Number.isFinite(remaining))expiry=nativeTimeout(()=>{lease=0;set('suspended');check();},Math.min(remaining,2147483647));
-  }catch{if(performance.now()>=lease)set('unavailable');}
+  }catch{
+   if(performance.now()>=lease)set('unavailable');
+   const delay=[3000,8000,20000,60000][Math.min(failures++,3)];
+   retryTimer=nativeTimeout(()=>{retryTimer=null;check();},delay);
+  }
   finally{checking=false;}
  }
  root.EduvizeBroadcastLicense=Object.freeze({check,status:()=>state});
