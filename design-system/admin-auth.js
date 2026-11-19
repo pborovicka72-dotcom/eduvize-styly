@@ -178,7 +178,7 @@
  if(!outputAuthOnly){
  const navigation=document.createElement('script');navigation.src=(location.origin+"/eduvize-styly/design-system/admin-navigation.js?v=92ec10e6057ac4c39eba");navigation.dataset.eduAdminNavigation='';document.head.append(navigation);
  const cloudModule=document.createElement('script');cloudModule.src=(location.origin+"/eduvize-styly/design-system/cloud-storage.js?v=92ec10e6057ac4c39eba");document.head.append(cloudModule);
- const linkLibrary=document.createElement('script');linkLibrary.src=(location.origin+"/eduvize-styly/design-system/generated-links.js?v=92ec10e6057ac4c39eba");document.head.append(linkLibrary);
+ const linkLibrary=document.createElement('script');linkLibrary.src=(location.origin+"/eduvize-styly/design-system/generated-links.js?v=20261119-sis-view-variants-r1");document.head.append(linkLibrary);
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',renderBanner,{once:true});else renderBanner();
  }
  root.addEventListener('storage',e=>{if(e.key===KEY){refresh();}});

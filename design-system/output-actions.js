@@ -64,7 +64,7 @@
    if(typeof c.schoolId!=='string'||!c.schoolId||c.schoolId.length>128||!ID.test(c.profileId)||!/^[a-z][a-z0-9-]{0,47}$/.test(c.appId))fail('CONTEXT_REQUIRED','Nejprve vyberte uložený školní profil a výstup.');
    const value={schoolId:c.schoolId,profileId:c.profileId,appId:c.appId,slotId:canonicalSlot(c.presentation)};
    if(Object.prototype.hasOwnProperty.call(c,'sourceId')){
-    if(!(c.appId==='news'&&typeof c.sourceId==='string'&&/^[A-Za-z0-9_-]{1,80}$/.test(c.sourceId)||c.appId==='gallery'&&typeof c.sourceId==='string'&&ID.test(c.sourceId)))fail('INVALID_SOURCE','Vyberte platný uložený zdroj Aktualit.');
+    if(!(c.appId==='news'&&typeof c.sourceId==='string'&&/^[A-Za-z0-9_-]{1,80}$/.test(c.sourceId)||c.appId==='gallery'&&typeof c.sourceId==='string'&&ID.test(c.sourceId)||c.appId==='school-systems'&&typeof c.sourceId==='string'&&/^(?:teacher_)?(?:timetable|permanent)$|^(?:overview|changes|staffchanges|guards|events|notices)$/.test(c.sourceId)))fail('INVALID_SOURCE','Vyberte platný zdroj nebo školní přehled.');
     value.sourceId=c.sourceId;
    }
    if(c.appId!=='gallery'){if(root.EduvizeProfiles?.outputContextVersion!=='profile-applied-v1'||typeof root.EduvizeProfiles.assertOutputContext!=='function')fail('OUTPUT_PROFILE_NOT_APPLIED','Ověření načteného profilu se ještě nepřipravilo. Obnovte stránku.');root.EduvizeProfiles.assertOutputContext(value);}
@@ -87,7 +87,7 @@
   async function stableKey(c,action){
    c=legacyGalleryBindings.get(c)||c;
    const parts=['edu-output-slot-v2',origin,c.schoolId,c.profileId,c.appId,c.slotId,action];
-   if(Object.prototype.hasOwnProperty.call(c,'sourceId'))parts.push(c.appId==='gallery'?'gallery-album-v1':'news-source-v1',c.sourceId);
+   if(Object.prototype.hasOwnProperty.call(c,'sourceId'))parts.push(c.appId==='gallery'?'gallery-album-v1':c.appId==='school-systems'?'sis-view-v1':'news-source-v1',c.sourceId);
    const bytes=new root.TextEncoder().encode(JSON.stringify(parts));
    const digest=await root.crypto.subtle.digest('SHA-256',bytes);
    return Array.from(new Uint8Array(digest)).map(n=>n.toString(16).padStart(2,'0')).join('').slice(0,32);
@@ -446,5 +446,5 @@
   openButton.addEventListener('click',()=>run(async(report,active)=>{await actions.previewDraft();active();report(root.EduvizeProfiles?.statusMessages?.preview||'Náhled rozpracovaného nastavení otevřen v nové záložce.');}));
   return Object.freeze({...actions,withSavedCommit:saveFn=>{invalidate();return actions.withSavedCommit(saveFn);},contextChanged:()=>{invalidate();const target=sink();if(target)target.beginAction();else result('','');},refresh:async()=>actions.state()});
  }
- root.EduvizeOutputActions=Object.freeze({create,mount,canonicalSlot,schemaVersion:2,sourceDiscriminator:'news-source-v1',gallerySourceDiscriminator:'gallery-album-v1',galleryPreviewHost:'gallery-protected-physical-v1',weatherPreviewHost:'weather-protected-physical-v1',transportPreviewHost:'transport-protected-physical-v1',wisdomPreviewHost:'wisdom-protected-physical-v1',previewPresentation:'physical-viewport-v1',formContext:'profile-applied-v1',menuPreviewHost:'menu-native-physical-v1',newsPreviewHost:'news-protected-physical-v1',documentsPreviewHost:'documents-protected-physical-v1'});
+ root.EduvizeOutputActions=Object.freeze({create,mount,canonicalSlot,schemaVersion:2,sourceDiscriminator:'news-source-v1',gallerySourceDiscriminator:'gallery-album-v1',schoolSystemsViewDiscriminator:'sis-view-v1',galleryPreviewHost:'gallery-protected-physical-v1',weatherPreviewHost:'weather-protected-physical-v1',transportPreviewHost:'transport-protected-physical-v1',wisdomPreviewHost:'wisdom-protected-physical-v1',previewPresentation:'physical-viewport-v1',formContext:'profile-applied-v1',menuPreviewHost:'menu-native-physical-v1',newsPreviewHost:'news-protected-physical-v1',documentsPreviewHost:'documents-protected-physical-v1'});
 })(typeof window==='undefined'?globalThis:window);
