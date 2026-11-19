@@ -1,6 +1,6 @@
 (function(root){
  if(root.EduvizeUpdateSettings)return;
- const API='https://eduvize-dokumenty-api.onrender.com',mounted=new Set();
+ const API=(location.origin+""),mounted=new Set();
  const titles={weather:'Počasí',transport:'Jízdní řády',news:'Aktuality',menu:'Jídelníček',documents:'Dokumenty',kiosk:'Kiosek',wisdom:'Moudrost dne',holidays:'Svátky',styles:'Správa stylů','school-systems':'Školní systémy','day-progress':'Průběh dne'};
  const frequency={off:'Není plánována',weekly:'Každý týden',monthly:'Každý měsíc',quarterly:'Každé čtvrtletí',yearly:'Jednou ročně'};
  const date=value=>value?new Intl.DateTimeFormat('cs-CZ',{dateStyle:'medium',timeStyle:'short',timeZone:'Europe/Prague'}).format(new Date(value)):'—';
@@ -52,6 +52,6 @@
   });
   state();load();
  }
- const link=document.createElement('link');link.rel='stylesheet';link.href='https://pborovicka72-dotcom.github.io/eduvize-styly/design-system/update-settings.css?v=20261103-1';document.head.append(link);
+ const link=document.createElement('link');link.rel='stylesheet';link.href=(location.origin+"/eduvize-styly/design-system/update-settings.css?v=71d22a46bba8006dd932");document.head.append(link);
  root.EduvizeUpdateSettings=Object.freeze({mount});
 })(window);

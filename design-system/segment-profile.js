@@ -39,8 +39,9 @@
  function documentCatalog(width,height,{heading=64,count=1,folder=true}={}){
   const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
   const touch=root.EduvizeOutputModes?.mode?.()==='kiosk';
-  const body=touch?kiosk(resolve(root.innerWidth,root.innerHeight)).body:0;
-  const title=touch?body:clamp(heading*.48,22,68),label=touch?Math.max(14,body*.7):clamp(title*.55,16,38);
+  // Full-viewport Documents tiles share the NSP style1 scale in both orientations.
+  const referenceHeading=touch?header(resolve(root.innerWidth,root.innerHeight),'nsp').title:heading;
+  const title=clamp(referenceHeading*.48,22,68),label=clamp(title*.55,16,38);
   const gap=clamp(title*.4,12,28),maxWidth=clamp(title*12,300,720);
   let columns=Math.max(1,Math.ceil((width+gap)/(maxWidth+gap))||1);
   const cardWidth=(width-gap*(columns-1))/columns;

@@ -7,11 +7,11 @@
  const allowed=()=>{if(name==='styles')return true;const state=auth?.status();return state?.connected===true&&!state.schoolId&&state.scopes?.includes('styles')===true;};
  async function open(){
   if(loading||opened)return;
-  login.href=auth?.loginUrl(location.href)||'https://pborovicka72-dotcom.github.io/eduvize-styly/ucet.html#account';
+  login.href=auth?.loginUrl(location.href)||(location.origin+"/eduvize-styly/ucet.html#account");
   if(!allowed()){message.textContent='Přístup je povolen pouze administrátorovi Eduvize.';login.hidden=false;return;}
   loading=true;login.hidden=true;message.textContent='Ověřuji přístup správce…';
   try{
-   const endpoint='https://eduvize-design-system-api.onrender.com/api/design-system/operator-pages/'+name;
+   const endpoint=(location.origin+"/api/design-system/operator-pages/")+name;
    const response=name==='styles'?await fetch(endpoint,{cache:'no-store'}):await auth.fetch(endpoint,{method:'GET'},'styles');
    if(!response.ok)throw Error('Přístup ke správě je zamítnut.');
    const html=await response.text();if(!allowed())throw Error('Přihlášení správce již není platné.');

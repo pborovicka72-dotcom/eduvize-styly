@@ -1,5 +1,5 @@
 (function(root){
- const API='https://eduvize-dokumenty-api.onrender.com/api/update-plans/',clock=root.EduvizeRefreshClock;
+ const API=(location.origin+"/api/update-plans/"),clock=root.EduvizeRefreshClock;
  if(!clock)return;
  const applications=['weather','transport','news','menu','documents','kiosk','wisdom','holidays','styles','school-systems','day-progress'];
  function appId(){const id=document.documentElement.dataset.kioskApp;if(applications.includes(id))return id;

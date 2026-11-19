@@ -23,3 +23,16 @@
 #documents-list-heading:focus{outline:none}
 
 #items-status{margin-bottom:16px}
+.edu-document-usage{min-width:0;overflow-wrap:anywhere}
+.edu-document-usage__places{padding-left:22px;margin:8px 0 12px}
+.edu-document-usage details>summary{cursor:pointer;font-weight:600}
+.edu-document-usage__details{max-height:18rem;overflow:auto;overscroll-behavior:contain;padding:0 8px 0 22px;margin:10px 0;font-size:13px;line-height:1.4}
+.edu-document-usage__details>li+li{margin-top:8px}
+
+/* Documents uses the same shared profile/settings/action rows as News. */
+.edu-output-section #document-output-status:empty{display:none}
+.edu-output-section .edu-profile-current{margin-top:12px}
+
+.edu-document-delete-dialog{width:min(640px,calc(100vw - 32px));max-height:85dvh;overflow:auto}
+.edu-document-delete-dialog h2{margin-top:0}
+.edu-document-delete-dialog .edu-admin__actions{justify-content:flex-end;margin-top:20px}

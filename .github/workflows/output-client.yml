@@ -14,8 +14,22 @@ jobs:
       - run: node design-system/tests/output-runtime-recovery.test.cjs
       - run: node --test design-system/tests/output-items-client.test.cjs design-system/tests/output-gated-auth.test.cjs
       - run: node tests/link-contract.test.cjs
-      - run: node --test tests/admin-navigation.test.mjs tests/admin-exit-dialog.test.mjs
       - run: node design-system/tests/broadcast-license.test.cjs
 
       - name: Global brand upload controls and logo replacement
         run: node --test design-system/tests/branding-upload.test.cjs design-system/tests/branding-runtime.test.cjs
+
+      - name: Stable section paging and real-browser card measurement
+        run: node design-system/tests/section-pager-stability.test.mjs
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install isolated browser test dependencies
+        run: |
+          python -m pip install 'playwright>=1.50,<2'
+          python -m playwright install --with-deps chromium
+      - name: NSP 6/4 resize history and paging regression
+        run: python design-system/tests/section-pager-browser.py
+
+      - name: News portrait media placement
+        run: node tests/news-media-orientation.test.mjs

@@ -1,12 +1,13 @@
 /* One physical header and text scale for equal viewport dimensions. */
 (function(root){
- if(new URLSearchParams(root.location.search).has('edu-output'))return; // v1 publication owns context and lifecycle.
+ const published=new URLSearchParams(root.location.search).has('edu-output'),publishedMenu=published&&document.documentElement.dataset.menuPublished==='true',publishedWeather=published&&document.documentElement.dataset.kioskApp==='weather',publishedWisdom=published&&document.documentElement.dataset.kioskApp==='wisdom';
+ if(published&&!publishedMenu&&!publishedWeather&&!publishedWisdom)return; // Other publications retain their existing lifecycle boundary.
  let parentHeight=null,queued=false,lastParentLayout='';const headerStates=new WeakMap();
  function writeStyle(node,name,value,priority=''){
   value=String(value);if(node.style.getPropertyValue(name)!==value||node.style.getPropertyPriority(name)!==priority)node.style.setProperty(name,value,priority);
  }
  function headerStyle(value){const next=value==='light'?'light':'dark';if(document.documentElement.dataset.kioskHeader!==next)document.documentElement.dataset.kioskHeader=next;}
- headerStyle(new URLSearchParams(root.location.search).get('kiosk_header'));
+ if(!publishedMenu)headerStyle(new URLSearchParams(root.location.search).get('kiosk_header'));
  function fitTitles(header){
   for(const node of header.querySelectorAll('.edu-header-title,.edu-header-meta')){
    let available=node.clientWidth;
@@ -30,8 +31,9 @@
   kiosk:['#schoolContent .school-card h3','#pageContent .page-section h2','#pageContent .page-section p']
  };
  function contentInset(header,app,fallback){
+  // Weather pages have different centered/scaled card anchors; keep their common header fixed.
   // News photos can sit beside the copy; the identity stays at the shared left inset.
-  if(app==='news'||app==='holidays'&&document.body.classList.contains('calendar-reading'))return fallback;
+  if(app==='weather'||app==='news'||app==='holidays'&&document.body.classList.contains('calendar-reading'))return fallback;
   if(app==='kiosk'){
    const card=document.querySelector('#schoolContent .school-card-about'),copy=card?.querySelector('.school-about-copy');
    if(card&&copy&&card.getBoundingClientRect().width)return Math.max(0,card.getBoundingClientRect().left-header.getBoundingClientRect().left+(parseFloat(getComputedStyle(copy).paddingLeft)||fallback));
@@ -48,8 +50,8 @@
  function htmlWeather(){return document.documentElement.dataset.kioskApp==='weather';}
  function update(){
   queued=false;if(document.documentElement.classList.contains('weather-station'))return;const api=root.EduvizeSegmentProfile;if(!api||root.innerWidth<1||root.innerHeight<1)return;
-  const geometry=api.resolve(root.innerWidth,root.innerHeight),mode=root.EduvizeOutputModes?.mode?.()||(root.EduvizeOutputModes?.isKiosk?.()?'kiosk':'nsp');
-  let metrics=api.header(geometry,mode);
+  const wisdomPhysical=publishedWisdom?root.EduvizeWisdomPublishedHeaderMetrics:null,geometry=wisdomPhysical?api.resolve(wisdomPhysical.width,wisdomPhysical.height):api.resolve(root.innerWidth,root.innerHeight),verifiedMode=publishedWisdom&&document.documentElement.dataset.outputMode,mode=['web','nsp','kiosk'].includes(verifiedMode)?verifiedMode:root.EduvizeOutputModes?.mode?.()||(root.EduvizeOutputModes?.isKiosk?.()?'kiosk':'nsp');
+  let metrics=wisdomPhysical?.header||api.header(geometry,mode);
   if(mode==='nsp'&&document.documentElement.dataset.eduHeaderDensity==='compact'){
    const height=Math.max(80,Math.min(200,geometry.short*.12));
    metrics={height,icon:height*.64,title:height*.34,meta:height*.18,padding:height*.08,gap:height*.1};
@@ -108,7 +110,7 @@
    header.dataset.eduHeader='shared';headerStates.set(header,state);
   });
  }
- function schedule(){if(queued)return;queued=true;requestAnimationFrame(update);}
+ function schedule(){if(publishedMenu&&!root.EduvizePublishedOutput)return;if(queued)return;queued=true;requestAnimationFrame(update);}
  root.addEventListener('resize',schedule);
  root.addEventListener('message',event=>{if(event.source!==root.parent||root.parent===root||!root.EduvizeOutputModes?.isKiosk?.())return;if(event.data?.type==='eduvize-kiosk-layout'){const state=JSON.stringify([event.data.headerStyle,event.data.menuLayout,event.data.parentMode,event.data.headerHeight,event.data.headerInset]);if(state===lastParentLayout)return;lastParentLayout=state;headerStyle(event.data.headerStyle||(event.data.menuLayout?'light':'dark'));if(event.data.parentMode)document.documentElement.classList.toggle('edu-kiosk-header-legacy',event.data.parentMode!=='kiosk');document.documentElement.classList.toggle('edu-menu-app-header',event.data.menuLayout===true);schedule();}const h=Number(event.data?.headerHeight);if(event.data?.type==='eduvize-kiosk-layout'&&Number.isFinite(h)&&h>=44&&h<=root.innerHeight*.4){parentHeight=h;schedule();}});
  function start(){
@@ -124,8 +126,8 @@
   }
   update();new MutationObserver(schedule).observe(document.body,{subtree:true,childList:true,characterData:true});
   root.addEventListener('load',schedule);document.fonts?.ready.then(schedule);}
- if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});else start();
- update();root.EduvizeOutputHeader=Object.freeze({update:schedule,setStyle:headerStyle});
+ if(!publishedMenu){if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});else start();update();}
+ root.EduvizeOutputHeader=Object.freeze({update:schedule,setStyle:headerStyle});
 })(window);
 
 

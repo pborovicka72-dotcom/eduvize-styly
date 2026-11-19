@@ -8,7 +8,7 @@
   const heading=el('summary','Aktualizace a kompatibilita odkazů');panel.append(heading);
   const body=el('div');body.className='edu-admin__disclosure-body';panel.append(body);
   const release=el('p','Načítám oznámení změn…');release.setAttribute('role','status');body.append(release);
-  const base=new URL('.',document.currentScript?.src||'https://pborovicka72-dotcom.github.io/eduvize-styly/design-system/link-compatibility.js');
+  const base=new URL('.',document.currentScript?.src||(location.origin+"/eduvize-styly/design-system/link-compatibility.js"));
   fetch(new URL('link-releases.json',base),{cache:'no-store'}).then(response=>{if(!response.ok)throw Error();return response.json();}).then(data=>{
    if(!data||typeof data.message!=='string'||typeof data.id!=='string')throw Error();
    release.textContent=data.message;
@@ -22,7 +22,7 @@
    async function shared(method='GET'){
     const scope=auth?.getToken('configurations')?'configurations':auth?.getToken('documents')?'documents':'';
     if(!scope)throw Error('Pro společné potvrzení se přihlaste do Eduvize.');
-    const response=await auth.fetch('https://eduvize-dokumenty-api.onrender.com/api/admin/notices/'+encodeURIComponent(data.id),{method},scope);
+    const response=await auth.fetch((location.origin+"/api/admin/notices/")+encodeURIComponent(data.id),{method},scope);
     const result=await response.json();if(!response.ok)throw Error();return result.acknowledged===true;
    }
    async function sync(){
