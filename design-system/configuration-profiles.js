@@ -182,7 +182,8 @@
   });
   function publicationFailureMessage(error){
     const cause=error?.cause?.code==='OUTPUT_UPDATE_FAILED'?error.cause.cause:error?.cause;
-    const temporary=[408,425,429,500,502,503,504].includes(Number(cause?.status))||cause?.code==='REQUEST_ABORTED'||cause?.name==='AbortError'||cause?.name==='TypeError';
+    const temporary=[408,425,429,500,502,503,504].includes(Number(cause?.status))||cause?.code==='REQUEST_ABORTED'||cause?.name==='AbortError'||
+      cause?.name==='TypeError'&&/^(?:Failed to fetch|Load failed|NetworkError|Network request failed)/i.test(cause.message||'');
     const detail=temporary?'Spojení se serverem selhalo i při opakování. Zkuste uložení znovu.':
       typeof cause?.code==='string'&&typeof cause?.message==='string'?cause.message.replace(/\s+/g,' ').slice(0,180):
       'Zkuste uložení znovu; nastavení zůstalo uložené.';

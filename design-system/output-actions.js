@@ -18,7 +18,8 @@
 
  function fail(code,message){const e=new Error(message);e.code=code;throw e;}
  function transientPublicationError(error){
-  return [408,425,429,500,502,503,504].includes(Number(error?.status))||error?.code==='REQUEST_ABORTED'||error?.name==='AbortError';
+  return [408,425,429,500,502,503,504].includes(Number(error?.status))||error?.code==='REQUEST_ABORTED'||error?.name==='AbortError'||
+   error?.name==='TypeError'&&/^(?:Failed to fetch|Load failed|NetworkError|Network request failed)/i.test(error.message||'');
  }
  function interactionOf(p){
   if(!['display','interactive'].includes(p?.interaction))fail('INVALID_INTERACTION','Vyberte dotykovou nebo nedotykovou verzi výstupu.');
