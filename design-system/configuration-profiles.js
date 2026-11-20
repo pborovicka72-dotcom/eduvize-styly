@@ -699,10 +699,15 @@
     if(schoolConfigurationPromise)return schoolConfigurationPromise;
     schoolConfigurationPromise=(async()=>{
       const data=await request('');
-      const active=root.EduvizeAdminAuth.status().profileId,query=new URL(location.href).searchParams.get('edu-profile');
-      let item=data.items.find(p=>p.id===active)||data.items.find(p=>p.id===query)||data.items[0];
-      if(!item)item=await request('',{method:'POST',body:JSON.stringify({name:'Nastavení školy'})});
-      if(root.EduvizeAdminAuth.status().profileId!==item.id)await root.EduvizeAdminAuth.selectProfile(item.id);
+      const active=root.EduvizeAdminAuth.status().profileId;
+      // Loading a tab must never switch the shared school session. An older
+      // edu-profile URL may still be open when another tab selects a profile.
+      let item=data.items.find(p=>p.id===active);
+      if(!item&&data.items.length===0){
+        item=await request('',{method:'POST',body:JSON.stringify({name:'Nastavení školy'})});
+        await root.EduvizeAdminAuth.selectProfile(item.id);
+      }
+      if(!item){select('');return '';}
       select(item.id);return item.id;
     })();
     try{return await schoolConfigurationPromise;}finally{schoolConfigurationPromise=null;}
