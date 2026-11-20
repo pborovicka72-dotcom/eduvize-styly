@@ -60,3 +60,11 @@ html[data-kiosk-app="kiosk"][data-output-mode] #home svg{display:block;width:60%
 html[data-kiosk-app="kiosk"][data-output-mode] #back{
  min-height:var(--edu-navigation-size)!important;font-size:max(16px,calc(var(--edu-navigation-size)*.4))!important;
 }
+
+/* Every dark kiosk header uses the foreground supplied with its primary theme color. */
+html[data-kiosk-header="dark"].kiosk-output .edu-output-header{
+ color:var(--ev-primary-text)!important;
+}
+html[data-kiosk-header="dark"].kiosk-output .edu-output-header :is(.edu-header-title,.edu-header-meta,.hero-details,.condition-label){
+ color:inherit!important;
+}
