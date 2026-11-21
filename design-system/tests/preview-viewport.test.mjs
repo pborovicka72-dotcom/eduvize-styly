@@ -9,4 +9,16 @@ assert.equal(styles.width,'3840px');assert.equal(styles.height,'2160px');assert.
 host.clientWidth=600;host.clientHeight=337.5;resize();assert.equal(styles.width,'3840px');assert.equal(styles.height,'2160px');assert.equal(styles.transform,'scale(0.15625)');
 view.setSize(2160,3840);assert.equal(styles.width,'2160px');assert.equal(styles.height,'3840px');
 view.setSize(1200,2160);assert.equal(styles.width,'1200px');assert.equal(styles.height,'2160px');
-assert.throws(()=>view.setSize(0,2160));console.log('Physical preview resolution remains fixed across resize, portrait and exact segment dimensions.');
+assert.throws(()=>view.setSize(0,2160));
+scope.window.matchMedia=()=>({matches:true});
+const mobileStyles={},attributes={},listeners=new Set();
+const mobileHost={clientWidth:360,clientHeight:202.5,style:{setProperty(){}},dataset:{},classList:{add(){}}};
+const mobileFrame={style:{setProperty:(k,v)=>mobileStyles[k]=v},classList:{add(){}},setAttribute:(k,v)=>attributes[k]=v,addEventListener:(k,fn)=>listeners.add(fn),removeEventListener:(k,fn)=>listeners.delete(fn)};
+const mobile=scope.window.EduvizePreviewViewport.mount(mobileFrame,{host:mobileHost,width:3840,height:2160});
+assert.equal(mobileStyles.width,'960px');assert.equal(mobileStyles.height,'540px');
+assert.equal(mobileStyles.transform,'scale(0.375)');
+assert.equal(mobile.getSize().width,3840);assert.equal(mobile.getSize().height,2160);
+assert.equal(attributes['data-preview-width'],'3840');assert.equal(attributes['data-preview-height'],'2160');
+mobile.setSize(2160,3840);assert.equal(mobileStyles.width,'540px');assert.equal(mobileStyles.height,'960px');
+assert.equal(listeners.size,1);scope.window.EduvizePreviewViewport.unmount(mobileFrame);assert.equal(listeners.size,0);
+console.log('Desktop keeps exact geometry; phone preview bounds the iframe while preserving output dimensions.');
