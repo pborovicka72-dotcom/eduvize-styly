@@ -1,0 +1,57 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import vm from 'node:vm';
+const source=fs.readFileSync(new URL('../nsp-segments.js',import.meta.url),'utf8');
+const match=source.match(/function kioskGeometry\(\)(\{.*?\})\n/);
+assert.ok(match,'public kioskGeometry API must exist');
+let mode={value:'kiosk'},frame={isConnected:true,getAttribute:key=>attrs[key]},attrs={'data-preview-width':'3840','data-preview-height':'2160'};
+const root={querySelector:selector=>{assert.equal(selector,'#ev-preview.kiosk-preview iframe');return frame;}};
+const geometry=vm.runInNewContext('(function()'+match[1]+')',{get outputMode(){return mode.value},host:root});
+const read=()=>JSON.parse(JSON.stringify(geometry()));
+assert.deepEqual(read(),{width:3840,height:2160,orientation:'landscape'});
+attrs={'data-preview-width':'2160','data-preview-height':'3840'};
+assert.deepEqual(read(),{width:2160,height:3840,orientation:'portrait'});
+attrs={'data-preview-width':'1280','data-preview-height':'720'};
+assert.equal(read().width,1280,'read actual selection, never assume 1920');
+for(const bad of [null,'','0','-1','NaN','Infinity']){attrs['data-preview-width']=bad;assert.equal(read(),null);}
+attrs={'data-preview-width':'3840','data-preview-height':'2160'};
+mode.value='web';assert.equal(read(),null);mode.value='nsp';assert.equal(read(),null);mode.value='kiosk';
+frame.isConnected=false;assert.equal(read(),null);frame=null;assert.equal(read(),null);
+console.log('Selected kiosk geometry: landscape, portrait, non-default, unavailable and non-kiosk PASS');
+
+const setterMatch=source.match(/function setKioskGeometry\(next\)\{[\s\S]*?\n(?=function choose)/);
+assert.ok(setterMatch,'picker restores geometry through state');
+attrs={'data-preview-width':'2160','data-preview-height':'3840'};
+frame={isConnected:true,getAttribute:key=>attrs[key]};
+mode.value='kiosk';
+const savedPresentation=read();
+attrs={'data-preview-width':'3840','data-preview-height':'2160'};
+const sameFrame=frame,pressed=[];
+const preview={querySelector:()=>frame,style:{setProperty(){},marginInline:''}};
+const context={kioskViewport:null,outputMode:'kiosk',q:()=>preview,host:{querySelectorAll:()=>[0,1].map(i=>({setAttribute:(k,v)=>pressed[i]=v}))},window:{EduvizePreviewViewport:{mount:(f,o)=>{assert.equal(f,sameFrame,'restore must not replace browsing context');attrs={'data-preview-width':String(o.width),'data-preview-height':String(o.height)};}}}};
+const restore=vm.runInNewContext(setterMatch[0]+';setKioskGeometry',context);
+assert.equal(restore(savedPresentation),true);
+assert.deepEqual(read(),savedPresentation,'Save portrait -> apply -> getter preserves geometry');
+assert.deepEqual(pressed,['false','true']);
+const before=read();
+for(const bad of [{width:2160,height:3840,orientation:'landscape'},{width:0,height:1,orientation:'portrait'},{width:1.5,height:2,orientation:'portrait'},null])assert.equal(restore(bad),false);
+assert.deepEqual(read(),before,'invalid restore leaves geometry unchanged');
+context.outputMode='nsp';assert.equal(restore(savedPresentation),true);
+assert.equal(context.kioskViewport.orientation,'portrait','restore before mode switch retains selected state');
+assert.ok(source.includes('setKioskGeometry:next=>picker.setKioskGeometry(next)'),'public API delegates native picker state');
+console.log('Save portrait -> apply -> getter PASS; iframe preserved, invalid restore rejected');
+
+const editorial=fs.readFileSync(new URL('../editorial-admin.js',import.meta.url),'utf8');
+for(const app of ['menu','wisdom','holidays']){
+ let geometry=null,sets=0;
+ const picker={get:()=>({orientation:'landscape',style:1,block:1}),set(){},setMode(){},kioskGeometry:()=>geometry,setKioskGeometry:value=>{sets++;geometry=value;return true;}};
+ const scope={window:{EduvizeNSPPicker:{defaultSelection:{orientation:'landscape',style:1,block:1}}},EduvizeNSPPicker:{mount:()=>picker},localStorage:{getItem:()=>null,setItem(){}},location:{search:''},URL,URLSearchParams,document:{createElement:()=>({}),addEventListener(){}},clearTimeout(){},setTimeout(){}};
+ vm.runInNewContext(editorial,scope);
+ scope.window.EduvizeEditorialAdmin.mount({mode:{value:'kiosk',addEventListener(){}},url:()=> 'https://test.example/output',key:app,host:{querySelector:()=>({before(){}})}});
+ const api=scope.window.EduvizeSegmentSelection,saved={width:2160,height:3840,orientation:'portrait'};
+ assert.equal(api.kioskGeometry(),null);
+ assert.equal(api.setKioskGeometry(saved),true);
+ assert.equal(api.kioskGeometry(),saved,'wrapper delegates exact existing picker state');
+ assert.equal(sets,1);
+}
+console.log('Editorial menu/wisdom/holidays wrapper delegates getter and restore to single picker authority PASS');

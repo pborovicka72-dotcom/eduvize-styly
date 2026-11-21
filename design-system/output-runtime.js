@@ -28,7 +28,7 @@
   if(!/^[a-f0-9]{32}$/.test(outputId||''))throw new TypeError('Published output ID required');
   if(typeof options.render!=='function'||typeof options.clear!=='function')throw new TypeError('render and clear hooks required');
   const origin=root.location.origin;
-  if(!['https://test.skola.eduvize.cz','https://skola.eduvize.cz'].includes(origin))throw new TypeError('Eduvize origin required');
+  if(!['https://test.skola.eduvize.cz',(location.origin+"")].includes(origin))throw new TypeError('Eduvize origin required');
   const controller=new AbortController(),client=root.EduvizeOutputClient.create({origin,signal:controller.signal});
   let stopped=false,running=false,revision=null,lastSuccess=Date.now(),renderAbort=null;
   async function bounded(callback){let timer;try{return await Promise.race([Promise.resolve().then(callback),new Promise((_,reject)=>{timer=root.setTimeout(()=>reject(Error("Renderer deadline exceeded")),10000);})]);}finally{root.clearTimeout(timer);}}

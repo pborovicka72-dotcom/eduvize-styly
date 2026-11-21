@@ -23,3 +23,13 @@ The account page selects the single active profile for the root administration s
 Administrations show a read-only profile name and one shared **Uložit na OneDrive** action immediately before their native local-save button. They load the selected module settings on opening and save only on an explicit click. A save refreshes the session first; a different active profile or a stale module revision requires an explicit reload of settings before saving. The reload/undo controls appear only for recovery. The existing nonce-bound session draft preserves work across sign-in and OneDrive reconnection.
 
 The account manager has profile selection, a collapsed new-profile form and a link to applications. Copying and backup restoration are under **Další možnosti**; backup selection is hidden when none exist. The legacy kiosk importer is removed from ordinary UI; old files and backend import endpoints remain intact.
+
+## Aktuální rozhodnutí a stav obnovy
+
+Historické části výše popisující ukládání lokálních konceptů a automatickou
+obnovu byly překonány rozhodnutím z 9. 11. 2026. Zachovat upozornění na skutečně
+neuložené změny a potvrzenou cloudovou baseline; nevracet místní koncepty.
+Stavová typografie a pořadí výsledků jsou v [ADMIN-STATUS-CONTRACT.md](ADMIN-STATUS-CONTRACT.md).
+Obnovovaný runtime dosud obsahuje starý draft flow: tato dokumentace není
+potvrzením jeho odstranění. Zapojení společného stavu a NoDraft musí proběhnout
+nad odpovídající ověřenou verzí controlleru, nikoli přepsáním historickým souborem.

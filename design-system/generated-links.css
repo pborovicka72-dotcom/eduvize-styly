@@ -36,3 +36,74 @@
 /* Clipboard feedback never participates in document flow or scroll anchoring. */
 body>.edu-link-feedback{position:fixed;inset-inline-end:20px;bottom:20px;z-index:1000;max-width:min(460px,calc(100vw - 40px));margin:0!important;padding:14px 18px;border:1px solid var(--ev-border);border-radius:var(--ev-control-radius,10px);background:var(--ev-surface);color:var(--ev-text);box-shadow:0 4px 20px #0002;line-height:1.5;pointer-events:none}
 body>.edu-link-feedback[hidden]{display:none!important}
+
+/* User-approved compact lifecycle rows only; application navigation unchanged. */
+.edu-link-card__top{grid-template-columns:72px minmax(0,1fr) auto;gap:12px}.edu-link-segment{width:72px;height:44px}.edu-link-segment[role=img]{height:44px;max-width:72px}.edu-link-card__identity>p{white-space:normal}.edu-link-quick{gap:10px;flex-wrap:wrap;justify-content:flex-end}.edu-link-quick>.edu-admin__button{min-height:34px;padding:6px 10px;font-size:.88em}.edu-link-open{font-size:.88em;white-space:nowrap;text-decoration:underline}.edu-link-more>.edu-link-card__actions{margin:8px 0 0;display:grid;padding:12px}.edu-link-more:not([open])>.edu-link-card__actions{display:none}.edu-link-rename form{display:grid;padding:8px 0;gap:8px}.edu-link-card [disabled]{opacity:.55}@media(max-width:700px){.edu-link-card__top{grid-template-columns:56px minmax(0,1fr)}.edu-link-quick{grid-column:2;justify-content:flex-start}.edu-link-segment[role=img]{max-width:56px}.edu-link-quick>.edu-admin__button{width:auto}}
+
+/* Canonical links: consistent action controls and an in-flow expanded panel. */
+.edu-link-quick{gap:8px}
+.edu-link-quick>.edu-admin__button,.edu-link-quick>.edu-link-open{display:inline-flex;align-items:center;justify-content:center;min-height:40px;padding:8px 12px;border-radius:var(--ev-control-radius,10px);font:inherit;font-size:.88em;font-weight:650;line-height:1.25;text-decoration:none;white-space:nowrap}
+.edu-link-more{position:static;grid-column:1/-1;width:100%;margin-top:12px;border-top:1px solid var(--ev-border,var(--edu-admin-input-border))}
+.edu-link-more[hidden]{display:none!important}
+.edu-link-more.is-above{top:auto;bottom:calc(100% + 8px)}
+.edu-link-more>.edu-link-card__actions{position:static;display:flex;flex-wrap:wrap;align-items:flex-start;gap:16px;width:100%;max-width:none;margin:0;padding:16px 0 4px;border:0;border-radius:0;box-shadow:none;background:transparent}
+.edu-link-rename{min-width:min(100%,280px)}
+.edu-link-rename form{display:grid;gap:10px;padding:12px 0}
+.edu-link-quick>[aria-expanded=true]{background:var(--ev-secondary,var(--edu-admin-secondary))}
+@media(max-width:700px){.edu-link-quick{grid-column:2;justify-content:flex-start}.edu-link-quick>.edu-admin__button,.edu-link-quick>.edu-link-open{min-height:44px;padding:9px 12px;font-size:.88em}}
+
+.edu-link-more:not([open])>.edu-link-card__actions{display:flex}
+
+/* Keep the active school profile explicit above the link filters. */
+.edu-link-profile-field{display:grid;gap:8px;max-width:420px;font-weight:650}
+.edu-link-profile-field select{width:100%;min-height:44px;padding:10px 12px;border:1px solid var(--ev-border,var(--edu-admin-input-border));border-radius:var(--ev-control-radius,10px);background:var(--ev-surface,var(--edu-admin-surface));color:var(--ev-text,var(--edu-admin-ink));font:inherit}
+.edu-link-library>[data-link-profile-status]:empty{display:none}
+
+/* Readable records: output and segment first, details below, actions on their own row. */
+.edu-link-group>summary{padding:14px 18px}
+.edu-link-group .edu-item-editor__heading{display:flex;align-items:baseline;flex-wrap:wrap;gap:8px 14px}
+.edu-link-group__items{gap:10px;padding:0 14px 14px}
+.edu-link-card{padding:16px 18px}
+.edu-link-card__top{grid-template-columns:96px minmax(0,1fr);column-gap:16px;row-gap:12px;align-items:start}
+.edu-link-segment[role=img]{height:56px;max-width:96px;justify-self:start}
+.edu-link-segment__cell{font-size:9px;line-height:1}
+.edu-link-card__identity{grid-column:2}
+.edu-link-card h3{white-space:normal;overflow:visible;text-overflow:clip;margin:0 0 4px}
+.edu-link-card__identity>p{white-space:normal;overflow:visible;text-overflow:clip;line-height:1.35}
+.edu-link-quick{grid-column:2;justify-content:flex-start;gap:8px 10px}
+.edu-link-more>.edu-link-card__actions{justify-content:flex-start;align-items:center;gap:12px 24px}
+@media(max-width:700px){.edu-link-card{padding:14px}.edu-link-card__top{grid-template-columns:64px minmax(0,1fr);column-gap:12px}.edu-link-segment[role=img]{max-width:64px}.edu-link-quick{grid-column:1/-1}.edu-link-group__items{padding:0 10px 10px}}
+
+/* Keep primary actions beside the text; More opens an anchored menu. */
+.edu-link-card{position:relative}
+.edu-link-card.is-more-open{z-index:30}
+.edu-link-card__top{grid-template-columns:96px minmax(0,1fr) auto;align-items:center}
+.edu-link-quick{grid-column:3;flex-wrap:nowrap;justify-content:flex-end}
+.edu-link-more-anchor{position:relative;flex:none}
+.edu-link-more-anchor>.edu-admin__button{display:inline-flex;align-items:center;justify-content:center;min-height:40px;padding:8px 12px;border-radius:var(--ev-control-radius,10px);font:inherit;font-size:.88em;font-weight:650;line-height:1.25;white-space:nowrap}
+.edu-link-more-anchor>[aria-expanded=true]{background:var(--ev-secondary,var(--edu-admin-secondary))}
+.edu-link-more{position:absolute;inset-inline-end:0;top:calc(100% + 8px);z-index:40;width:min(320px,calc(100vw - 32px));margin:0;padding:8px;border:1px solid var(--ev-border,var(--edu-admin-input-border));border-radius:var(--ev-control-radius,10px);background:var(--ev-surface,var(--edu-admin-surface));box-shadow:0 12px 28px #0002}
+.edu-link-more[hidden]{display:none!important}
+.edu-link-more:not([open])>.edu-link-card__actions{display:grid;justify-content:stretch;align-items:stretch;gap:6px;width:100%;margin:0;padding:0;border:0;box-shadow:none;background:transparent}
+.edu-link-rename{min-width:0;width:100%}
+.edu-link-rename summary{padding:10px 12px;border-radius:var(--ev-control-radius,10px)}
+.edu-link-rename form{padding:8px 4px 12px}
+.edu-link-more .edu-admin__button{width:100%;min-height:40px;justify-content:flex-start;text-align:left;padding:10px 12px}
+@media(max-width:1200px){.edu-link-card__top{grid-template-columns:96px minmax(0,1fr)}.edu-link-quick{grid-column:2;justify-content:flex-start;flex-wrap:wrap}}
+@media(max-width:700px){.edu-link-card__top{grid-template-columns:64px minmax(0,1fr)}.edu-link-quick{grid-column:1/-1}.edu-link-more-anchor>.edu-admin__button{min-height:44px}}
+
+/* The interaction mark belongs to the existing output preview. */
+.edu-link-preview{position:relative;grid-column:1;width:96px;min-height:56px;display:grid;align-items:center;justify-items:start}
+.edu-link-preview .edu-link-segment{max-width:100%}
+.edu-link-preview .edu-link-interaction{position:absolute;right:-5px;bottom:-5px;display:grid;place-items:center;width:26px;height:26px;box-sizing:border-box;margin:0;padding:3px;border:2px solid var(--ev-surface,#fff);border-radius:50%;background:var(--ev-primary,#132c50);color:var(--ev-primary-text,#fff);box-shadow:0 1px 4px #0003}
+.edu-link-preview .edu-link-interaction[data-interaction=display]{background:var(--ev-muted,#536781);color:#fff}
+.edu-link-preview .edu-link-interaction svg{width:17px;height:17px}
+.edu-link-preview .edu-link-interaction span{display:none}
+@media(max-width:700px){.edu-link-preview{width:64px;min-height:44px}.edu-link-preview .edu-link-interaction{right:-4px;bottom:-4px;width:24px;height:24px}}
+
+/* Fixed-size outputs show their screen orientation beside the interaction mark. */
+.edu-link-preview[data-orientation=portrait]{width:56px;justify-items:center}
+.edu-link-kiosk[data-orientation=portrait] .edu-link-kiosk__screen{width:36px;height:50px}
+.edu-link-preview .edu-link-orientation{position:absolute;right:-5px;top:-5px;display:grid;place-items:center;width:26px;height:26px;box-sizing:border-box;border:2px solid var(--ev-surface,#fff);border-radius:50%;background:var(--ev-secondary,#f8d344);color:var(--ev-text,#132c50);box-shadow:0 1px 4px #0003}
+.edu-link-preview .edu-link-orientation svg{width:17px;height:17px}
+@media(max-width:700px){.edu-link-preview[data-orientation=portrait]{width:50px}.edu-link-preview .edu-link-orientation{right:-4px;top:-4px;width:24px;height:24px}.edu-link-preview .edu-link-orientation svg{width:16px;height:16px}.edu-link-kiosk[data-orientation=portrait] .edu-link-kiosk__screen{width:30px;height:40px}}

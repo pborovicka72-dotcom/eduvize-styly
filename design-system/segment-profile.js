@@ -15,7 +15,9 @@
  }
  function header(geometry,mode='nsp'){
   if(mode==='kiosk'){const {height}=kiosk(geometry);return Object.freeze({height,icon:height*.6,title:height*.34,meta:height*.18,padding:height*.1,gap:height*.15});}
-  const height=mode==='web'?96:geometry.short<=720?192:geometry.short<=1200?288:Math.round(geometry.short*.22/32)*32;
+  // Tall NSP panels in the same row use their shared physical height for the header.
+  const pairedTall=mode==='nsp'&&geometry.height>=1600&&geometry.height<=1800&&geometry.width>=800&&geometry.width<=3200;
+  const height=mode==='web'?96:pairedTall?Math.round(geometry.height*.2/16)*16:geometry.short<=720?192:geometry.short<=1200?288:Math.round(geometry.short*.22/32)*32;
   return Object.freeze({height,icon:height*.64,title:height*.36,meta:height*.18,padding:height*.05,gap:height*.08});
  }
  function text(geometry,mode='nsp'){
@@ -39,8 +41,9 @@
  function documentCatalog(width,height,{heading=64,count=1,folder=true}={}){
   const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
   const touch=root.EduvizeOutputModes?.mode?.()==='kiosk';
-  const body=touch?kiosk(resolve(root.innerWidth,root.innerHeight)).body:0;
-  const title=touch?body:clamp(heading*.48,22,68),label=touch?Math.max(14,body*.7):clamp(title*.55,16,38);
+  // Full-viewport Documents tiles share the NSP style1 scale in both orientations.
+  const referenceHeading=touch?header(resolve(root.innerWidth,root.innerHeight),'nsp').title:heading;
+  const title=clamp(referenceHeading*.48,22,68),label=clamp(title*.55,16,38);
   const gap=clamp(title*.4,12,28),maxWidth=clamp(title*12,300,720);
   let columns=Math.max(1,Math.ceil((width+gap)/(maxWidth+gap))||1);
   const cardWidth=(width-gap*(columns-1))/columns;

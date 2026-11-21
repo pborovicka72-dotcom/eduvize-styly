@@ -21,8 +21,9 @@
  function inspect(value,{layouts}={}){
   let u;try{u=new URL(value);}catch{return {status:'unknown',app:null,issues:['Neplatná úplná adresa.']};}
   const app=identify(u),issues=[];if(!app)return {status:'unknown',app:null,issues:['Adresa nepatří mezi podporované adresy aplikací Eduvize.']};
-  if(!/\/(?:index\.html|signage\.html|display)?$/.test(u.pathname))return {status:'unknown',app,issues:['Tato cesta není evidována jako výstup aplikace.']};
+  if(!(app==='menu'&&/\/output\.html$/.test(u.pathname))&&!/\/(?:index\.html|signage\.html|display)?$/.test(u.pathname))return {status:'unknown',app,issues:['Tato cesta není evidována jako výstup aplikace.']};
   const p=u.searchParams,raw=p.get('edu-link'),legacy=raw===null;
+  if(app==='menu'&&/\/output\.html$/.test(u.pathname)&&(p.getAll('edu-menu').length!==1||!(/^[a-f0-9]{32}$/.test(p.get('edu-menu')||''))))issues.push('Chybí platný jednoznačný identifikátor publikovaného jídelníčku.');
   if(!legacy&&(!/^\d+$/.test(raw)||Number(raw)!==version))issues.push('Formát odkazu tato verze kontroly nezná. Odkaz neměňte automaticky; ověřte jej v aktuální administraci.');
   for(const key of ['edu-link','viewMode','output','layout','segment_orientation','segment_style','segment_block','orientation','style','block','interaction','kiosk_layout'])if(p.getAll(key).length>1)issues.push('Parametr '+key+' je uveden vícekrát.');
   const selected=p.get('viewMode'),output=p.get('output'),layout=p.get('layout');
@@ -53,14 +54,15 @@
  const layoutPreferenceKey='eduvize-output-kiosk-layout:'+root.location.pathname;
  const preferenceKey='eduvize-output-interaction:'+root.location.pathname;
  function kioskApp(){return document.documentElement.dataset?.kioskApp==='kiosk'||!!document.getElementById?.('kiosk-output-type');}
- function interaction(value=root.location.href){const u=value instanceof URL?value:new URL(value,root.location.href);if(mode(u)==='kiosk'||kioskApp())return 'interactive';const v=u.searchParams.get('interaction');return ['interactive','display'].includes(v)?v:mode(u)==='web'?'interactive':'display';}
+ function defaultInteraction(web=false){return document.documentElement.dataset?.eduDefaultInteraction==='interactive'||web?'interactive':'display';}
+ function interaction(value=root.location.href){const u=value instanceof URL?value:new URL(value,root.location.href);if(mode(u)==='kiosk'||kioskApp())return 'interactive';const v=u.searchParams.get('interaction');return ['interactive','display'].includes(v)?v:defaultInteraction(mode(u)==='web');}
  function isInteractive(value=root.location.href){return interaction(value)==='interactive';}
  function selection(){if(kioskApp()||outputSelect?.value==='kiosk')return 'interactive';return interactionPicker?.value||chosen||interaction();}
  function setInteraction(value,{notify=true}={}){if(!['interactive','display'].includes(value))return;chosen=value;try{localStorage.setItem(preferenceKey,value);}catch{}syncInteraction();if(notify&&outputSelect)outputSelect.dispatchEvent(new Event('change',{bubbles:true}));}
  function kioskLayout(value=root.location.href){const u=value instanceof URL?value:new URL(value,root.location.href),layout=u.searchParams.get('kiosk_layout');return ['menu','tiles'].includes(layout)?layout:u.searchParams.get('kiosk_header')==='light'?'menu':'tiles';}
  function layoutSelection(){const native=kioskApp()&&document.getElementById('menuLayout');return native?(native.value==='tiles'?'tiles':'menu'):layoutPicker?.value||layoutChosen||kioskLayout();}
  function setKioskLayout(value,{notify=true}={}){if(!['menu','tiles'].includes(value))return;layoutChosen=value;try{localStorage.setItem(layoutPreferenceKey,value);}catch{}if(layoutPicker)layoutPicker.value=value;if(notify&&outputSelect)outputSelect.dispatchEvent(new Event('change',{bubbles:true}));}
- function syncInteraction(){if(!interactionPicker)return;const locked=kioskApp()||outputSelect.value==='kiosk';const policy=locked?'interactive':chosen||(['web','off','normal'].includes(outputSelect.value)?'interactive':'display');interactionPicker.value=policy;interactionPicker.checked=policy==='interactive';interactionPicker.disabled=locked;for(const id of ['seconds','pageSeconds','setting-page-seconds']){const control=document.getElementById(id);if(control)control.closest('label').hidden=interactionPicker.checked;}const oldPaging=document.getElementById('paging');if(oldPaging)oldPaging.closest('label').hidden=true;document.getElementById('edu-output-interaction-hint').textContent=locked?'V kiosku je ovládání vždy zapnuté.':interactionPicker.checked?'Zapnuto: návštěvník může stránku ovládat.':'Vypnuto: obsah se pouze zobrazuje a automaticky střídá.';if(layoutField)layoutField.hidden=outputSelect.value!=='kiosk';}
+ function syncInteraction(){if(!interactionPicker)return;const locked=kioskApp()||outputSelect.value==='kiosk';const policy=locked?'interactive':chosen||defaultInteraction(['web','off','normal'].includes(outputSelect.value));interactionPicker.value=policy;interactionPicker.checked=policy==='interactive';interactionPicker.disabled=locked;for(const id of ['seconds','pageSeconds','setting-page-seconds']){const control=document.getElementById(id);if(control)control.closest('label').hidden=interactionPicker.checked;}const oldPaging=document.getElementById('paging');if(oldPaging)oldPaging.closest('label').hidden=true;document.getElementById('edu-output-interaction-hint').textContent=locked?'V kiosku je ovládání vždy zapnuté.':interactionPicker.checked?'Zapnuto: návštěvník může stránku ovládat.':'Vypnuto: obsah se pouze zobrazuje a automaticky střídá.';if(layoutField)layoutField.hidden=outputSelect.value!=='kiosk';}
  function installInteraction(select){
   if(outputSelect)return;outputSelect=select;
   const spacing=document.createElement('style');spacing.textContent='.ev-admin .edu-output-section .edu-output-controls{display:flex;flex-direction:column;gap:20px;min-width:0}.ev-admin .edu-output-section .edu-output-controls>label{margin:0}.ev-admin .edu-output-section .edu-output-controls>[hidden]{display:none!important}.ev-admin .edu-output-section .edu-output-interaction.edu-admin__field{display:flex;flex-direction:column;gap:12px;min-width:0}.edu-output-interaction>small{margin:0}.edu-output-interaction .edu-switch{margin:0}';document.head.append(spacing);
@@ -111,7 +113,7 @@
  root.EduvizeOutputModes=Object.freeze({modes,mode,isKiosk,url,install,segmentKeys,defaultMode,initialMode,interaction,isInteractive,selection,setInteraction,kioskLayout,layoutSelection,setKioskLayout,autoplay,pager});
  if(isKiosk())document.documentElement.classList.add('kiosk-output');
  const policy=interaction();document.documentElement.dataset.eduInteraction=policy;
- const controlsStyle=document.createElement('link');controlsStyle.rel='stylesheet';controlsStyle.href=new URL('output-controls.css?v=20261103-output-controls-1',document.currentScript?.src||new URL('design-system/output-modes.js',root.location.href)).href;document.head.append(controlsStyle);
+ const controlsStyle=document.createElement('link');controlsStyle.rel='stylesheet';controlsStyle.href=new URL('output-controls.css?v=71d22a46bba8006dd932',document.currentScript?.src||new URL('design-system/output-modes.js',root.location.href)).href;document.head.append(controlsStyle);
  const policyStyle=document.createElement('style');policyStyle.textContent=`html[data-edu-interaction=display][data-edu-output-surface] body:not(.ev-admin):not(.edu-admin) button,html[data-edu-interaction=display][data-edu-output-surface] body:not(.ev-admin):not(.edu-admin) input,html[data-edu-interaction=display][data-edu-output-surface] body:not(.ev-admin):not(.edu-admin) select,html[data-edu-interaction=display][data-edu-output-surface] body:not(.ev-admin):not(.edu-admin) textarea,html[data-edu-interaction=display][data-edu-output-surface] body:not(.ev-admin):not(.edu-admin) summary,html[data-edu-interaction=display][data-edu-output-surface] [data-edu-interactive-only]{display:none!important}html[data-edu-interaction=display][data-edu-output-surface] body:not(.ev-admin):not(.edu-admin) a{pointer-events:none!important;cursor:default!important}html[data-edu-interaction=interactive] .edu-auto-pagination button:not([hidden]),html[data-edu-interaction=interactive] .menu-auto-pagination button:not([hidden]){display:inline-flex!important}`;document.head.append(policyStyle);
  function start(){document.querySelectorAll('#setting-output,#viewMode,#layout,#outputType,#kiosk-output-type').forEach(s=>{if(s.tagName==='SELECT'&&Array.from(s.options).some(o=>/Newline Signage Pro/.test(o.text)))install(s);});if(outputSelect||document.body.matches('.ev-admin,.edu-admin')||/\/(config(?:\.html)?|editor\.html|ucet\.html)(\/|$)/.test(location.pathname))return;document.documentElement.dataset.eduOutputSurface='output';if(isInteractive())return;
  function disableLinks(){for(const a of document.querySelectorAll('a[href]')){a.tabIndex=-1;a.dataset.eduReadonlyHref=a.getAttribute('href');a.removeAttribute('href');a.removeAttribute('target');a.setAttribute('aria-disabled','true');}for(const detail of document.querySelectorAll('details'))if(!detail.open)detail.open=true;for(const media of document.querySelectorAll('video,audio'))media.controls=false;}
@@ -143,7 +145,7 @@
  root.clearInterval=function(handle){const t=timers.get(handle);if(t){if(t.actual)stop(t.actual);timers.delete(handle);emit();}else stop(handle);};
  function configure(value){if(value!==null&&(!Number.isInteger(value)||![0,30,60,120,300,600,900,1800,3600].includes(value)))throw Error('Neplatný interval');if(value===seconds)return;seconds=value;for(const t of timers.values())arm(t);emit();}
  root.EduvizeRefreshClock=Object.freeze({configure,status,nativeInterval:start});
- const script=document.createElement('script');script.src='https://pborovicka72-dotcom.github.io/eduvize-styly/design-system/update-runtime.js?v=20261103-1';script.async=true;document.head.append(script);
+ const script=document.createElement('script');script.src=(location.origin+"/eduvize-styly/design-system/update-runtime.js?v=71d22a46bba8006dd932");script.async=true;document.head.append(script);
 })(window);
 
 /* Every output checks its school entitlement independently of the notice job. */
@@ -154,7 +156,7 @@
  const html=document.documentElement,profile=new URL(location.href).searchParams.get('edu-profile')||'';
  const nativeInterval=root.setInterval.bind(root),nativeTimeout=root.setTimeout.bind(root);
  const pausedMedia=new Set(),pausedFrames=new Map();
- let state='checking',screen,title,detail,checking=false,lease=0,expiry=null,wasSuspended=false;
+ let state='checking',screen,title,detail,checking=false,lease=0,expiry=null,wasSuspended=false,retryTimer=null,failures=0;
  html.dataset.eduLicense=state;
  const css=document.createElement('style');css.textContent='html[data-edu-license]:not([data-edu-license="active"]) body>:not(#edu-license-screen),html[data-edu-license]:not([data-edu-license="active"]) body>:not(#edu-license-screen) *{visibility:hidden!important}#edu-license-screen{position:fixed!important;inset:0!important;z-index:2147483647!important;display:flex!important;box-sizing:border-box!important;align-items:center!important;justify-content:center!important;padding:clamp(20px,5vmin,100px)!important;background:var(--ev-bg,#eaf3f6)!important;color:var(--ev-text,#18394b)!important;text-align:center!important;font-family:Arial,sans-serif!important}#edu-license-screen[hidden]{display:none!important}#edu-license-screen>div{max-width:1000px}#edu-license-screen h1{margin:0 0 .6em!important;font-size:clamp(28px,5vmin,80px)!important;line-height:1.2!important}#edu-license-screen p{margin:0!important;font-size:clamp(18px,3vmin,44px)!important;line-height:1.5!important}';document.head.append(css);
  function panel(){
@@ -172,17 +174,22 @@
  function set(value){const old=state;state=value;html.dataset.eduLicense=value;panel();stopMedia();if(value==='suspended'||value==='unavailable')wasSuspended=true;if(value==='active'){for(const [frame,src] of pausedFrames)if(frame.isConnected&&src)frame.src=src;pausedFrames.clear();for(const media of pausedMedia)if(media.isConnected)media.play()?.catch(()=>{});pausedMedia.clear();}root.dispatchEvent(new CustomEvent('eduvize-broadcast-state',{detail:{state:value}}));}
  async function check(){
   if(checking)return;checking=true;
+  if(retryTimer){clearTimeout(retryTimer);retryTimer=null;}
   try{
-   const response=await fetch('https://eduvize-admin.onrender.com/api/public/broadcast-status'+(profile?'?profile='+encodeURIComponent(profile):''),{cache:'no-store',redirect:'error',signal:AbortSignal.timeout(25000)});
+   const response=await fetch((location.origin+"/api/public/broadcast-status")+(profile?'?profile='+encodeURIComponent(profile):''),{cache:'no-store',redirect:'error',signal:AbortSignal.timeout(25000)});
    if(!response.ok)throw Error('License unavailable');const data=await response.json();
    if(typeof data.active!=='boolean'||!Number.isFinite(data.serverTime)||(data.expiresAt!==null&&!Number.isFinite(data.expiresAt)))throw Error('Invalid license');
    if(expiry)clearTimeout(expiry);
    if(!data.active){lease=0;set('suspended');return;}
    const remaining=data.expiresAt===null?Infinity:(data.expiresAt-data.serverTime)*1000;
    if(remaining<=0){lease=0;set('suspended');return;}
-   lease=performance.now()+Math.min(90000,remaining);set('active');
+   failures=0;lease=performance.now()+Math.min(90000,remaining);set('active');
    if(Number.isFinite(remaining))expiry=nativeTimeout(()=>{lease=0;set('suspended');check();},Math.min(remaining,2147483647));
-  }catch{if(performance.now()>=lease)set('unavailable');}
+  }catch{
+   if(performance.now()>=lease)set('unavailable');
+   const delay=[3000,8000,20000,60000][Math.min(failures++,3)];
+   retryTimer=nativeTimeout(()=>{retryTimer=null;check();},delay);
+  }
   finally{checking=false;}
  }
  root.EduvizeBroadcastLicense=Object.freeze({check,status:()=>state});

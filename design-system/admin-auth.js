@@ -1,15 +1,37 @@
 /* Shared short-lived administration session. Never stores Microsoft/admin keys. */
 (function(root){
+  // Keep app defaults out of view until the selected school's profile is applied.
+  const profilePaths=new Set([
+    '/eduvize-skolni-kalendar/config','/eduvize-kiosek/config',
+    '/config','/pocasi/config','/eduvize-svatky/config','/eduvize-aktuality/config','/eduvize-dokumenty/config',
+    '/jidelnicek/config','/eduvize-jizdni-rady/config',
+    '/eduvize-moudrost-dne/config','/aktuality/config',
+    '/eduvize-fotogalerie/config','/eduvize-styly/fotogalerie/config','/fotogalerie/config',
+    '/prubeh-dne/config','/skolni-systemy/config'
+  ]);
+  if(!profilePaths.has(location.pathname.replace(/\.html$/,''))||root.EduvizeProfileHydration)return;
+  const html=document.documentElement;
+  const style=document.createElement('style');
+  style.textContent='html[data-edu-profile-hydration]::after{content:"Načítám nastavení profilu…";position:fixed;inset:0;z-index:2147483647;display:grid;place-items:center;background:var(--ev-bg,var(--edu-admin-bg,#eaf2f8));color:var(--ev-text,var(--edu-admin-ink,#142c46));font:600 clamp(18px,2vw,28px) system-ui,sans-serif;text-align:center;padding:24px}html[data-edu-profile-hydration="error"]::after{content:"Nastavení profilu se nepodařilo načíst. Obnovte stránku."}';
+  document.head.append(style);
+  let timer;
+  function begin(){html.dataset.eduProfileHydration='loading';clearTimeout(timer);timer=setTimeout(()=>finish(Error('Načtení profilu trvá neobvykle dlouho. Obnovte stránku.')),180000);}
+  function finish(error){clearTimeout(timer);if(error)html.dataset.eduProfileHydration='error';else delete html.dataset.eduProfileHydration;}
+  root.EduvizeProfileHydration=Object.freeze({begin,finish});
+  begin();
+})(window);
+(function(root){
  if(location.protocol==='https:'&&location.hostname==='pborovicka72-dotcom.github.io'){
-  location.replace('https://skola.eduvize.cz'+location.pathname+location.search+location.hash);
+  location.replace((location.origin+"")+location.pathname+location.search+location.hash);
   return;
  }
  if(root.EduvizeAdminAuth)return;
- const CENTRAL='https://eduvize-design-system-api.onrender.com',DOCS='https://eduvize-dokumenty-api.onrender.com';
- const HUB='https://pborovicka72-dotcom.github.io/eduvize-styly/aplikace.html',KEY='eduvize-admin-session-v1';
- const ACCOUNT='https://pborovicka72-dotcom.github.io/eduvize-styly/ucet.html';
- const isAccount=location.origin==='https://pborovicka72-dotcom.github.io'&&location.pathname==='/eduvize-styly/ucet.html';
- const isHub=location.origin==='https://pborovicka72-dotcom.github.io'&&location.pathname==='/eduvize-styly/aplikace.html';
+ const CENTRAL=(location.origin+""),DOCS=(location.origin+"");
+ const HUB=(location.origin+"/eduvize-styly/aplikace.html"),KEY='eduvize-admin-session-v1';
+ const ACCOUNT=(location.origin+"/eduvize-styly/ucet.html");
+ const isAccount=location.origin===(location.origin+"")&&location.pathname==='/eduvize-styly/ucet.html';
+ const outputAuthOnly=document.currentScript?.dataset.eduAuthUi==='none';
+ const isHub=location.origin===(location.origin+"")&&location.pathname==='/eduvize-styly/aplikace.html';
  let session=null,validated=false,message='',expiryTimer,banner,refreshVersion=0,lastState='';
 
  let nextRequestId=0;
@@ -42,7 +64,7 @@
  }
 
  function read(storage){try{const s=JSON.parse(storage.getItem(KEY)||'null');return s&&typeof s.token==='string'&&s.token.startsWith('edu_')&&Number.isFinite(s.expiresAt)&&s.expiresAt*1000>Date.now()?s:null;}catch{return null}}
- function stored(){try{return location.origin==='https://pborovicka72-dotcom.github.io'?(sessionStorage.getItem('eduvize-admin-session-fallback')==='1'?read(sessionStorage)||read(localStorage):read(localStorage)||read(sessionStorage)):read(sessionStorage)}catch{return null}}
+ function stored(){try{return location.origin===(location.origin+"")?(sessionStorage.getItem('eduvize-admin-session-fallback')==='1'?read(sessionStorage)||read(localStorage):read(localStorage)||read(sessionStorage)):read(sessionStorage)}catch{return null}}
  function save(s,central=false){refreshVersion++;session=s;validated=true;try{(central?localStorage:sessionStorage).setItem(KEY,JSON.stringify(s));if(central){try{sessionStorage.setItem(KEY,JSON.stringify(s));}catch{}sessionStorage.removeItem('eduvize-admin-session-fallback');}}catch{try{sessionStorage.setItem(KEY,JSON.stringify(s));sessionStorage.setItem('eduvize-admin-session-fallback','1');message='Prohlížeč nepovolil trvalé zapamatování. Přihlášení platí v této kartě.';}catch{message='Prohlížeč nepovolil zapamatování přihlášení.';}}changed();}
  function clear(all=false){refreshVersion++;const previous=session?.token;session=null;validated=false;try{if(all||read(sessionStorage)?.token===previous)sessionStorage.removeItem(KEY);if(all||read(localStorage)?.token===previous)localStorage.removeItem(KEY);}catch{}changed();}
  function getToken(scope){return validated&&session?.expiresAt*1000>Date.now()&&(!scope||session.scopes.includes(scope))?session.token:''}
@@ -87,7 +109,7 @@
   }
   if(code){
    u.hash=hash.get('edu-return-hash')||'';history.replaceState(null,'',u.href);
-   try{save(await json(await sessionFetch(CENTRAL+'/api/admin-session/redeem',{method:'POST',cache:'no-store',headers:{'Content-Type':'application/json'},body:JSON.stringify({code})})));if(location.origin==='https://pborovicka72-dotcom.github.io'&&read(localStorage))await refresh();return;}
+   try{save(await json(await sessionFetch(CENTRAL+'/api/admin-session/redeem',{method:'POST',cache:'no-store',headers:{'Content-Type':'application/json'},body:JSON.stringify({code})})));if(location.origin===(location.origin+"")&&read(localStorage))await refresh();return;}
    catch(error){message=error.message;clear();return;}
   }
   await refresh();
@@ -101,9 +123,13 @@
  async function authorizedFetch(value,options={},scope='documents'){
   await ready;const token=getToken(scope);if(!token)throw Error(need(scope));
   const u=new URL(value,location.href);
-  const kioskOutput=scope==='configurations'&&u.origin==='https://eduvize-admin.onrender.com'&&u.pathname==='/api/account/kiosk-outputs'&&(options.method||'GET').toUpperCase()==='POST'&&!u.username&&!u.password;
+  const kioskOutput=scope==='configurations'&&u.origin===(location.origin+"")&&u.pathname==='/api/account/kiosk-outputs'&&(options.method||'GET').toUpperCase()==='POST'&&!u.username&&!u.password;
   const profileTheme=scope==='configurations'&&u.origin===CENTRAL&&u.pathname==='/api/design-system/profile-theme'&&(options.method||'GET').toUpperCase()==='POST'&&!u.username&&!u.password;
-  const allowed=profileTheme||kioskOutput||(scope==='styles'?u.origin===CENTRAL&&u.pathname.startsWith('/api/design-system/'):u.origin===DOCS&&u.pathname.startsWith('/api/admin/'));
+  const method=(options.method||'GET').toUpperCase();
+  const schoolThemes=scope==='configurations'&&u.origin===CENTRAL&&!u.username&&!u.password&&((u.pathname==='/api/design-system/themes'&&['GET','POST'].includes(method))||(/^\/api\/design-system\/themes\/[A-Za-z0-9_-]{1,80}$/.test(u.pathname)&&['PUT','DELETE'].includes(method)));
+  const schoolPreview=scope==='configurations'&&u.origin===CENTRAL&&u.pathname==='/skolni-systemy/api/admin/preview'&&method==='GET'&&!u.username&&!u.password&&[...u.searchParams.keys()].every(k=>['provider','date','target','entity'].includes(k));
+  const kioskExternalPolicy=scope==='configurations'&&u.origin===CENTRAL&&u.pathname==='/api/v1/kiosk-external-policy/resolve'&&method==='POST'&&!u.username&&!u.password&&!u.search;
+  const allowed=kioskExternalPolicy||schoolPreview||schoolThemes||profileTheme||kioskOutput||(scope==='styles'?u.origin===CENTRAL&&u.pathname.startsWith('/api/design-system/'):u.origin===DOCS&&u.pathname.startsWith('/api/admin/'));
   if(!allowed)throw Error('Nepovolená adresa administračního požadavku.');
   const response=await sessionFetch(u.href,{...options,cache:'no-store',redirect:'error',headers:{...(options.headers||{}),Authorization:'Bearer '+token}});
   if(!response.ok){const data=await response.clone().json().catch(()=>({}));if(session?.token===token&&stored()?.token===token)failure(response.status,typeof data.detail==='string'?data.detail:'');}
@@ -133,7 +159,7 @@
   location.replace(account.href);return false;
  }
  function renderBanner(){
-  if(isAccount||isHub||!document.body)return;
+  if(outputAuthOnly||isAccount||isHub||!document.body)return;
   if(!document.getElementById('edu-admin-session-style')){
    const style=document.createElement('style');style.id='edu-admin-session-style';
    style.textContent=`
@@ -149,10 +175,12 @@
  }
  const ready=initialize();
  root.EduvizeAdminAuth=Object.freeze({ready,refresh,ensureConnection,operatorProfile,getToken,fetch:authorizedFetch,login,loginMicrosoft,logout,handoff,selectProfile,loginUrl,need,failure,status:()=>({connected:!!getToken(),profileId:validated?session?.profileId||'':'',schoolId:validated?session?.schoolId||'':'',scopes:validated?[...session.scopes]:[],expiresAt:session?.expiresAt||0,message}),CENTRAL,DOCS,HUB,ACCOUNT});
- const navigation=document.createElement('script');navigation.src='https://pborovicka72-dotcom.github.io/eduvize-styly/design-system/admin-navigation.js?v=20261104-output-tabs-1';navigation.dataset.eduAdminNavigation='';document.head.append(navigation);
- const cloudModule=document.createElement('script');cloudModule.src='https://pborovicka72-dotcom.github.io/eduvize-styly/design-system/cloud-storage.js?v=20261105-cloud-3';document.head.append(cloudModule);
- const linkLibrary=document.createElement('script');linkLibrary.src='https://pborovicka72-dotcom.github.io/eduvize-styly/design-system/generated-links.js?v=20261104-school-views-1';document.head.append(linkLibrary);
+ if(!outputAuthOnly){
+ const navigation=document.createElement('script');navigation.src=(location.origin+"/eduvize-styly/design-system/admin-navigation.js?v=92ec10e6057ac4c39eba");navigation.dataset.eduAdminNavigation='';document.head.append(navigation);
+ const cloudModule=document.createElement('script');cloudModule.src=(location.origin+"/eduvize-styly/design-system/cloud-storage.js?v=92ec10e6057ac4c39eba");document.head.append(cloudModule);
+ const linkLibrary=document.createElement('script');linkLibrary.src=(location.origin+"/eduvize-styly/design-system/generated-links.js?v=92ec10e6057ac4c39eba");document.head.append(linkLibrary);
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',renderBanner,{once:true});else renderBanner();
+ }
  root.addEventListener('storage',e=>{if(e.key===KEY){refresh();}});
 })(window);
 

@@ -20,3 +20,17 @@ assert.equal(writes,applied,'Duplicate kiosk messages must not trigger repaint-p
 message.data.headerHeight=110;listeners.message(message);flush();assert(writes>applied,'Real height changes must still apply');
 assert.equal(header.dataset.eduHeader,'shared');
 console.log('100 unchanged updates and 100 duplicate kiosk messages cause zero CSS writes; real changes still apply.');
+
+ // Regression: centered/scaled forecast text must not move the common current-weather header.
+ let anchorLeft=12,anchorScale=1;
+ const anchor={offsetWidth:100,getBoundingClientRect:()=>({width:100*anchorScale,left:anchorLeft})};
+ const originalQuery=context.document.querySelectorAll;
+ context.getComputedStyle=()=>({borderLeftWidth:'0',paddingLeft:'0'});
+ context.document.querySelectorAll=selector=>selector==='.metric-value'?[anchor]:originalQuery(selector);
+ for(const [left,scale] of [[12,1],[130,1],[101,.4],[30,.25],[0,1],[260,.1]]){
+  anchorLeft=left;anchorScale=scale;
+  context.window.EduvizeOutputHeader.update();flush();
+  assert.equal(header.style.getPropertyValue('padding'),'11px 22px','Forecast text geometry must not alter the shared header inset');
+  assert.equal(header.style.getPropertyValue('height'),'110px');
+ }
+ console.log('Weather forecast anchor changes preserve the shared header inset and height.');
