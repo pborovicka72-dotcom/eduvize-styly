@@ -10,7 +10,7 @@
   host.style.setProperty('overflow','hidden','important');
   for(const [name,value] of Object.entries({position:'absolute',left:'0',top:'0','max-width':'none','max-height':'none','min-width':'0','min-height':'0','transform-origin':'top left',border:'0',display:'block',margin:'0'}))frame.style.setProperty(name,value,'important');
   let width=3840,height=2160,renderWidth=width,renderHeight=height;
-  function mobilePreview(){return root.matchMedia?.('(max-width: 800px) and (pointer: coarse)').matches===true;}
+  function mobilePreview(){return root.matchMedia?.('(max-width: 1100px) and (pointer: coarse)').matches===true;}
   function fit(){const scale=Math.min(host.clientWidth/renderWidth,host.clientHeight/renderHeight);if(scale>0)frame.style.setProperty('transform','scale('+scale+')','important');}
   function setSize(w,h){
    if(!(Number.isFinite(w)&&Number.isFinite(h)&&w>0&&h>0))throw new Error('Neplatné rozlišení náhledu');
