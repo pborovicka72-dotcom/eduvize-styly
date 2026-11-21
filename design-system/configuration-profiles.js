@@ -667,7 +667,14 @@
           if(!confirm('Přepnout profil a zahodit rozpracované změny?'))return false;
           clearLegacyIncompleteCommit();userChanged=false;return true;
         }
-        approvedDeparture=null;if(busy||needsLogin||needsReload)return false;if(!recoveryDirty())return true;
+        approvedDeparture=null;if(busy||needsLogin)return false;
+        // A failed SIS profile load must not trap the administrator on this page.
+        // Discarding is explicit and changes no server data.
+        if(needsReload&&adapter.app==='school-systems'){
+          if(await departureChoice()!=='discard')return false;
+          clearLegacyIncompleteCommit();userChanged=false;baseline='';editBaseline='';needsReload=false;return true;
+        }
+        if(needsReload)return false;if(!recoveryDirty())return true;
         const beforeContent=legacyRecoveryContent(),beforeRevision=revision,session=await captureLegacyDepartureSession();
         if(busy||needsLogin||needsReload||!session.valid()||beforeRevision!==revision||beforeContent!==legacyRecoveryContent())return false;
         const before=recoveryContext(),choice=await departureChoice();if(busy||needsLogin||needsReload||!session.valid()||before!==recoveryContext())return false;
