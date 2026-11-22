@@ -8,14 +8,14 @@
 @supports(color:color-mix(in srgb,black,white)){
  :root{--edu-card-border-color:color-mix(in srgb,var(--ev-border,var(--edu-admin-border)) 55%,var(--ev-text,var(--edu-admin-ink)) 45%)}
 }
-html body :is(.edu-admin__card,.calendar-card,.upcoming-day,.forecast-card:not(.station-text .forecast-card),.station-hero,.station-card,.station-day,.hourly-panel,.daily-forecast-panel,.hour-cell,.daily-hour-cell,.metric,.school-card,.page-section,.page-image-box,.sis-item,.sis-week,#edu-card-item),
+html body:not(.ev-admin) :is(.edu-admin__card,.calendar-card,.upcoming-day,.forecast-card:not(.station-text .forecast-card),.station-hero,.station-card,.station-day,.hourly-panel,.daily-forecast-panel,.hour-cell,.daily-hour-cell,.metric,.school-card,.page-section,.page-image-box,.sis-item,.sis-week,#edu-card-item),
 html body.edu-news-output #news>.card,
 html body.edu-wisdom-output .content,
 html[data-kiosk-app="documents"] body #browse .tile{
  border:var(--edu-card-border-width) solid var(--edu-card-border-color)!important;
  box-sizing:border-box;
 }
-html body :is(.edu-admin__card,.calendar-card,.upcoming-day,.forecast-card,.hour-cell,.daily-hour-cell,#edu-card-item){
+html body:not(.ev-admin) :is(.edu-admin__card,.calendar-card,.upcoming-day,.forecast-card,.hour-cell,.daily-hour-cell,#edu-card-item){
  box-sizing:border-box;
  padding:max(var(--edu-card-safe-inset),var(--ev-card-pad,16px),calc(var(--ev-card-radius,20px)*.4))!important;
 }
