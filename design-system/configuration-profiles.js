@@ -719,11 +719,9 @@
       // Loading a tab must never switch the shared school session. An older
       // edu-profile URL may still be open when another tab selects a profile.
       let item=data.items.find(p=>p.id===active);
-      if(!item&&data.items.length===0){
-        item=await request('',{method:'POST',body:JSON.stringify({name:'Nastavení školy'})});
-        await root.EduvizeAdminAuth.selectProfile(item.id);
-      }
-      if(!item){select('');return '';}
+      // A read can temporarily return an empty list. Opening or refreshing an
+      // editor must never create a profile as a side effect.
+      if(!item){if(!data.items.length)throw Error('Seznam profilů je prázdný. Založte profil ve správě školy nebo obnovte seznam.');select('');return '';}
       select(item.id);return item.id;
     })();
     try{return await schoolConfigurationPromise;}finally{schoolConfigurationPromise=null;}
