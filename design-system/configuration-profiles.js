@@ -293,7 +293,7 @@
     watchAuth(refresh);await refresh();
   }
   function schoolSuggestion(adapter){
-    if(!['weather','transport'].includes(adapter?.app)||document.getElementById('edu-school-suggestion'))return;
+    if(adapter?.app!=='weather'||document.getElementById('edu-school-suggestion'))return;
     const input=document.getElementById(adapter.app==='weather'?'address-search-input':'search');
     if(!input)return;
     const panel=make('section',null,'edu-admin__card edu-admin__flow');panel.id='edu-school-suggestion';panel.hidden=true;
