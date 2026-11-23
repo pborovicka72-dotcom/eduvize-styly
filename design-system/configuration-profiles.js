@@ -261,7 +261,7 @@
       const data=await request('');
       const active=root.EduvizeAdminAuth.status().profileId,query=new URL(location.href).searchParams.get('edu-profile');
       let item=data.items.find(p=>p.id===query)||data.items.find(p=>p.id===active)||data.items[0];
-      if(!item)item=await request('',{method:'POST',body:JSON.stringify({name:'Nastavení školy'})});
+      if(!item)throw Error('Seznam profilů je prázdný. Založte profil ve správě školy nebo obnovte seznam.');
       if(root.EduvizeAdminAuth.status().profileId!==item.id)await root.EduvizeAdminAuth.selectProfile(item.id);
       select(item.id);return item.id;
     })();
