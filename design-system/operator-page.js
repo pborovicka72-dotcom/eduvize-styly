@@ -24,7 +24,7 @@
    if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>auth.refresh(),{once:true});else auth.refresh();
   }catch(error){message.textContent=error.message;login.hidden=false;}finally{loading=false;}
  }
- if(!['styles','licenses'].includes(name))return;
+ if(!['styles','licenses','schools'].includes(name))return;
  root.addEventListener('eduvize-admin-auth-change',open);
  Promise.resolve(auth?.ready).then(open,()=>{message.textContent='Přihlášení nelze ověřit. Zkuste stránku obnovit.';login.hidden=false;});
 })(window);
