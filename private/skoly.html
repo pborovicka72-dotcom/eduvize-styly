@@ -1,0 +1,13 @@
+<!doctype html>
+<html lang="cs"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow"><title>Eduvize | Školy</title>
+<link rel="stylesheet" href="./design-system/admin-tokens.css"><link rel="stylesheet" href="./design-system/admin-components.css">
+<link rel="stylesheet" href="./design-system/admin-shell.css"><link rel="stylesheet" href="./design-system/school-registry.css?v=20261124-1">
+<script src="./design-system/admin-auth.js"></script><script defer src="./design-system/active-theme.js"></script>
+</head><body class="ev-admin" data-edu-auth-banner="signed-in"><main class="edu-admin-page">
+<header class="edu-page-header"><div class="edu-page-header__identity"><span class="edu-app-icon"><img src="./design-system/assets/eduvize-symbol-white.svg" alt="" width="32" height="32"></span><div class="edu-page-header__titles"><div class="edu-page-header__eyebrow">EDUVIZE · SPRÁVA</div><h1 class="edu-page-header__title">Školy</h1></div></div><p class="edu-page-header__description">Účty škol, jejich licence, profily a kapacita úložiště na jednom místě.</p></header>
+<nav class="edu-school-nav" aria-label="Správa Eduvize"><a href="./licence.html">Licence a balíčky</a><a href="./editor.html">Společné styly</a></nav>
+<section class="edu-admin__card edu-admin__flow" aria-labelledby="school-registry-heading"><div class="edu-school-toolbar"><div><h2 id="school-registry-heading">Registr škol</h2><p class="edu-admin__hint">Údaje o obrazovkách jsou evidenční. Dostupnost přehrávače se zde neověřuje.</p></div><button id="school-reload" type="button" class="edu-admin__button edu-admin__button--secondary">Obnovit</button></div>
+<label class="edu-admin__field">Vyhledat školu<input id="school-filter" type="search" autocomplete="off" placeholder="Název, e-mail, RED IZO nebo ID školy"></label>
+<p id="school-status" role="status" aria-live="polite">Načítám školy…</p><div id="school-summary" class="edu-school-summary"></div><div id="school-items" class="edu-school-list"></div></section>
+</main><script src="./design-system/school-registry.js?v=20261124-1"></script></body></html>
