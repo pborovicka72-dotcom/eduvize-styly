@@ -62,14 +62,17 @@
    if(school.license){line(licensing,'Aktivace',date(school.license.activatedAt));line(licensing,'Platnost',school.license.expiresAt?'Do '+date(school.license.expiresAt):school.license.months===null?'Trvalá':'Od aktivace');line(licensing,'Přiřazené balíčky',school.license.packages?.join(', ')||'Bez balíčku');}
    line(licensing,'Připojení školního systému','Zde nelze ověřit. Licence k integraci nepotvrzuje funkční připojení.');columns.append(licensing);
    const publishing=el('section','');publishing.append(el('h4','Profily a výstupy'));
-   for(const p of school.profiles)line(publishing,p.name,(p.archived?'Archivovaný':'Aktivní')+' · publikované výstupy '+p.publishedOutputs);
+   const sourceNames={interface:'Bakaláři',edupage:'EduPage',skolaonline:'Škola OnLine',edookit:'Edookit'};
+   const sourceStates={not_set:'Nenastaveno',configured:'Nastaveno, nezveřejněno',published:'Zveřejněno',unverified:'Nelze ověřit uložený stav'};
+   for(const p of school.profiles){const source=p.schoolSystem||{};line(publishing,p.name,(p.archived?'Archivovaný':'Aktivní')+' · publikované výstupy '+p.publishedOutputs+' · školní systém: '+(sourceStates[source.configuration]||'Stav neznámý')+(source.provider?' ('+(sourceNames[source.provider]||source.provider)+')':''));}
    line(publishing,'Veřejné výstupy',String(school.outputs?.published||0));line(publishing,'Rozpracované',String(school.outputs?.draft||0));
    const byApp=Object.entries(school.outputs?.byApp||{}).sort((a,b)=>(apps[a[0]]||a[0]).localeCompare(apps[b[0]]||b[0],'cs')).map(([app,count])=>(apps[app]||app)+' '+count).join(' · ');
    line(publishing,'Podle aplikace',byApp||'Žádné');columns.append(publishing);
    const operations=el('section','');operations.append(el('h4','Úložiště a provoz'));
    line(operations,'Soubory',String(school.storage.fileCount));line(operations,'Převod úložiště',({pending:'Nezahájen',copying:'Probíhá',verified:'Ověřen',archived:'Archivován',failed:'Chyba'}[school.storage.migrationState]||school.storage.migrationState));
    line(operations,'Obrazovky',school.declaredScreens+' evidovaných · '+school.pairedDevices+' spárovaných instalací');
-   line(operations,'Dostupnost a chyby','Centrálně se zatím nemonitorují.');columns.append(operations);
+   if(school.publicationIncidents?.length){const heading=el('h4','Poslední chyby zveřejnění');operations.append(heading);for(const incident of school.publicationIncidents){const profile=school.profiles.find(p=>p.id===incident.profileId);line(operations,date(incident.createdAt),((apps[incident.appId]||incident.appId)||'Výstup')+' · '+(profile?.name||'profil nezjištěn')+' · '+incident.code+' · ID požadavku '+incident.requestId);}}
+   line(operations,'Rozsah dohledu','Zachycují se chyby zveřejnění přes společné API. Živá dostupnost zdrojů a obrazovek se zatím neměří.');columns.append(operations);
    details.append(columns);card.append(details);
    const footer=el('div','');footer.append(el('small','ID školy: '+school.id+' · Soubory: '+school.storage.fileCount+' · Úložiště: '+(school.storageProvider==='onedrive'?'OneDrive a Eduvize':school.storageProvider)));
    if(school.license){footer.append(el('span',' · '));const link=el('a','Spravovat licenci →');link.href='./licence.html';footer.append(link);}card.append(footer);items.append(card);
