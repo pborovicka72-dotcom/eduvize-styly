@@ -226,10 +226,10 @@
     watchAuth(()=>{state();if(ready&&initialized&&!busy)work('Ověřuji aktivní profil…',()=>list(false));void refreshPicker();});
     root.addEventListener('eduvize-profiles-changed',()=>{void refreshPicker();});
     document.addEventListener('visibilitychange',()=>{if(!document.hidden&&ready&&!busy)auth()?.refresh();});
-    const picker=make('section',null,'edu-profile-panel edu-admin__card');picker.setAttribute('aria-label','Aktivní profil školy');
+    const picker=make('section',null,'edu-profile-panel edu-admin__card');picker.setAttribute('aria-label','Aktivní profil školy');const globalPicker=!!document.getElementById('workflow-profile-select');
     const header=main.querySelector('.edu-page-header');if(header)header.after(picker);else main.prepend(picker);
     profilePicker=controls(picker);profilePicker.reload.textContent='Správa profilů';profilePicker.reload.onclick=()=>{if(root.EduvizeAdminNavigation)void root.EduvizeAdminNavigation.navigate(manageUrl(profileId));else location.assign(manageUrl(profileId));};
-    async function refreshPicker(){try{await auth()?.ready;if(!canSave()){picker.hidden=true;return;}const result=await request('');options(profilePicker.select,result.items,auth().status().profileId||profileId);picker.hidden=false;}catch{picker.hidden=true;}}
+    async function refreshPicker(){try{await auth()?.ready;if(!canSave()){picker.hidden=true;return;}const result=await request('');options(profilePicker.select,result.items,auth().status().profileId||profileId);picker.hidden=globalPicker;}catch{picker.hidden=true;}}
     root.EduvizeProfileBeforeSwitch=async()=>{
       if(!dirty())return true;
       if(confirm('Před přepnutím profilu uložit rozpracované změny do Eduvize?')){await save.onclick();return !dirty()&&!errorText;}
@@ -261,7 +261,7 @@
       const data=await request('');
       const active=root.EduvizeAdminAuth.status().profileId,query=new URL(location.href).searchParams.get('edu-profile');
       let item=data.items.find(p=>p.id===query)||data.items.find(p=>p.id===active)||data.items[0];
-      if(!item)item=await request('',{method:'POST',body:JSON.stringify({name:'Nastavení školy'})});
+      if(!item)throw Error('Seznam profilů je prázdný. Založte profil ve správě školy nebo obnovte seznam.');
       if(root.EduvizeAdminAuth.status().profileId!==item.id)await root.EduvizeAdminAuth.selectProfile(item.id);
       select(item.id);return item.id;
     })();
@@ -271,12 +271,12 @@
     if(!host||host.dataset.mounted)return;host.dataset.mounted='1';host.hidden=true;host.classList.add('edu-admin__flow');
     host.replaceChildren(make('h2','Profily školy'));
     const intro=make('p','Každá budova nebo pracoviště může mít vlastní nastavení aplikací, barvy a odkazy. Dokumenty a fotografie sdílí celá škola.','edu-admin__hint');host.append(intro);
-    const ui=controls(host),row=make('div',null,'edu-admin__actions'),name=make('input');name.type='text';name.maxLength=80;name.placeholder='Např. ZŠ – hlavní budova';name.setAttribute('aria-label','Název nového profilu');
+    const ui=controls(host),profileList=make('div',null,'workflow-profile-list'),row=make('div',null,'edu-admin__actions'),name=make('input');host.querySelector('.edu-profile-panel__row').after(profileList);name.type='text';name.maxLength=80;name.placeholder='Např. ZŠ – hlavní budova';name.setAttribute('aria-label','Název nového profilu');
     const copyLabel=make('label','Zkopírovat nastavení vybraného profilu'),copy=make('input');copy.type='checkbox';copy.checked=true;copyLabel.prepend(copy);
     const create=button('Vytvořit profil',false),rename=button('Přejmenovat profil'),history=button('Historie a obnova');row.append(create,rename,history);host.append(name,copyLabel,row);
     const versions=make('div');host.append(versions);
     let items=[];
-    async function refresh(){try{await root.EduvizeAdminAuth?.ready;host.hidden=!root.EduvizeAdminAuth?.status().connected;if(host.hidden)return;const result=await request('',{fresh:true});items=result.items;const editing=host.contains(document.activeElement),scrollY=root.scrollY;options(ui.select,items,root.EduvizeAdminAuth.status().profileId);const count=items.length+' '+(items.length===1?'profil školy':items.length<5?'profily školy':'profilů školy');if(ui.status.textContent!==count)ui.status.textContent=count;if(editing)requestAnimationFrame(()=>{if(host.contains(document.activeElement)&&root.scrollY!==scrollY)root.scrollTo(root.scrollX,scrollY);});}catch(e){ui.status.textContent=e.message;}}
+    async function refresh(){try{await root.EduvizeAdminAuth?.ready;host.hidden=!root.EduvizeAdminAuth?.status().connected;if(host.hidden)return;const result=await request('',{fresh:true});items=result.items;const editing=host.contains(document.activeElement),scrollY=root.scrollY;options(ui.select,items,root.EduvizeAdminAuth.status().profileId);profileList.replaceChildren(...items.map(item=>{const button=make('button',null,'workflow-profile-row'),content=make('span'),title=make('strong',item.name),subtitle=make('small','Profil školy nebo budovy'),badge=make('span',item.id===ui.select.value?'Aktivní':'Profil');button.type='button';button.setAttribute('aria-current',String(item.id===ui.select.value));content.append(title,subtitle);button.append(content,badge);button.onclick=()=>{ui.select.value=item.id;ui.select.dispatchEvent(new Event('change',{bubbles:true}))};return button;}));const count=items.length+' '+(items.length===1?'profil školy':items.length<5?'profily školy':'profilů školy');if(ui.status.textContent!==count)ui.status.textContent=count;if(editing)requestAnimationFrame(()=>{if(host.contains(document.activeElement)&&root.scrollY!==scrollY)root.scrollTo(root.scrollX,scrollY);});}catch(e){ui.status.textContent=e.message;}}
     async function act(fn){for(const c of [create,rename,history,ui.select,ui.reload])c.disabled=true;try{await fn();}catch(e){ui.status.textContent=e.message;}finally{for(const c of [create,rename,history,ui.select,ui.reload])c.disabled=false;}}
     ui.reload.onclick=refresh;
     ui.select.onchange=()=>act(async()=>{if(!ui.select.value)return;if(root.EduvizeProfileBeforeSwitch&&!await root.EduvizeProfileBeforeSwitch()){ui.select.value=root.EduvizeAdminAuth.status().profileId;return;}await root.EduvizeAdminAuth.selectProfile(ui.select.value);select(ui.select.value);ui.status.textContent='Aktivní profil: '+items.find(p=>p.id===ui.select.value)?.name;root.dispatchEvent(new Event('eduvize-profile-selected'));});
