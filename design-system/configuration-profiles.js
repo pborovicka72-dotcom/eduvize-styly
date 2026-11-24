@@ -428,7 +428,7 @@
     async function list(initial=false){
       if(adapter.app==='school-identity'&&!auth()?.status().schoolId){profileId='';return;}
       if(!canSave()){const state=auth()?.status();say(!state?.connected&&state?.expiresAt?(state.message||'Ověřuji přihlášení…'):'Pro uložení do Eduvize se přihlaste. Rozpracované změny zůstanou zachované.');return;}
-      const active=await schoolConfiguration();
+      const active=adapter.app==='school-identity'?auth()?.status().profileId:await schoolConfiguration();
       if(!active){profileId='';profileTitle='';say('Přihlaste se k účtu školy.');return;}
       if(tracked&&active!==profileId&&!restored){if(dirty()){needsReload=true;say('Změnil se vybraný profil. Uložte rozpracované změny před načtením jiného profilu.','error');return;}profileId=active;revision=0;tracked='';select(profileId);manualLoad=true;try{await readProfile(true);}finally{manualLoad=false;}backup=null;undo.hidden=true;return;}
       if(active!==profileId){profileId=active;revision=0;tracked='';}
