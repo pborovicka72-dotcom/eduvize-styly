@@ -27,6 +27,19 @@
    line(identity,'RED IZO',school.license?.school?.red_izo||school.license?.schoolKey||'Není evidováno');
    line(identity,'IČO',school.license?.school?.ico||'Není evidováno');
    line(identity,'Adresa',[school.license?.school?.address,school.license?.school?.municipality].filter(Boolean).join(', ')||'Není evidována');columns.append(identity);
+   const support=el('section','');support.append(el('h4','Interní kontakt a poznámka'));
+   const form=el('form','');form.className='edu-school-note-form';
+   for(const [key,label,max] of [['contactName','Kontaktní osoba',160],['contactPhone','Telefon',60],['supportNote','Poznámka pro správce',2000]]){
+    const wrap=el('label',label),input=document.createElement(key==='supportNote'?'textarea':'input');input.name=key;input.maxLength=max;input.value=school.operatorNotes?.[key]||'';input.autocomplete='off';wrap.append(input);form.append(wrap);
+   }
+   const save=el('button','Uložit interní údaje');save.type='submit';save.className='edu-admin__button edu-admin__button--secondary';const message=el('p','');message.setAttribute('role','status');form.append(save,message);
+   form.addEventListener('submit',async event=>{event.preventDefault();const token=auth?.getToken('styles');if(!token){message.textContent='Přihlášení správce vypršelo.';return;}save.disabled=true;message.textContent='Ukládám…';try{
+    const payload={revision:school.operatorNotes?.revision||0};for(const input of form.elements)if(input.name)payload[input.name]=input.value;
+    const response=await fetch(location.origin+'/api/operator/schools/'+encodeURIComponent(school.id)+'/notes',{method:'PUT',headers:{Authorization:'Bearer '+token,'Content-Type':'application/json'},body:JSON.stringify(payload),cache:'no-store',redirect:'error',signal:AbortSignal.timeout(30000)});
+    if(!response.ok){const detail=await response.json().catch(()=>({}));throw Error(typeof detail.detail==='string'?detail.detail:'Uložení se nezdařilo ('+response.status+').');}
+    if(token!==auth.getToken('styles'))throw Error('Přihlášení se změnilo. Načtěte údaje znovu.');school.operatorNotes=await response.json();message.textContent='Interní údaje uloženy. Záznam změny se zobrazí po obnovení seznamu.';
+   }catch(error){message.textContent=error.message;}finally{save.disabled=false;}});support.append(form);columns.append(support);
+   if(school.operatorAudit?.length){const history=el('section','');history.append(el('h4','Historie změn interních údajů'));for(const change of school.operatorAudit)line(history,'Revize '+change.revision,date(change.createdAt)+' · '+change.actor);columns.append(history);}
    const licensing=el('section','');licensing.append(el('h4','Licence a rozsah'));
    line(licensing,'Stav',school.license?(names[school.license.status]||school.license.status):'Nevydána');
    if(school.license){line(licensing,'Aktivace',date(school.license.activatedAt));line(licensing,'Platnost',school.license.expiresAt?'Do '+date(school.license.expiresAt):school.license.months===null?'Trvalá':'Od aktivace');line(licensing,'Přiřazené balíčky',school.license.packages?.join(', ')||'Bez balíčku');}
