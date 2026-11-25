@@ -8,7 +8,7 @@
  <form class="edu-branding-form" novalidate><label class="edu-admin__field">Adresa nového loga (HTTPS)<input type="url" name="logoUrl" placeholder="Prázdné = výchozí animované logo Eduvize" aria-describedby="edu-branding-hint"></label>
  <p class="edu-admin__hint" id="edu-branding-hint">Odkaz na veřejně dostupný obrázek je druhotná možnost. Vybraný soubor má přednost.</p>
  <div style="display:grid;gap:12px"><label class="edu-admin__field">Nahrát logo Eduvize · doporučeno<input type="file" name="logoFile" accept="image/png,image/gif,image/webp,image/svg+xml" aria-describedby="edu-branding-upload-hint"></label>
- <p class="edu-admin__hint" id="edu-branding-upload-hint" style="margin:0">PNG, GIF, WebP nebo statické SVG, nejvýše 2 MB. Pro animované logo použijte GIF nebo WebP. Soubor se uloží do Eduvize po potvrzení.</p></div>
+ <p class="edu-admin__hint" id="edu-branding-upload-hint" style="margin:0">PNG, GIF, WebP nebo SVG včetně bezpečné animace CSS, nejvýše 2 MB. SVG nesmí obsahovat skripty ani externí zdroje. Soubor se uloží do Eduvize po potvrzení.</p></div>
  <div style="background:white;border:1px solid var(--ev-border);border-radius:var(--ev-card-radius);padding:24px;max-width:560px"><img data-edu-brand-preview alt="Náhled loga Eduvize" width="440" height="115" style="display:block;width:100%;height:auto;max-height:150px;object-fit:contain"></div>
  <div class="edu-admin__actions"><button class="edu-admin__button" type="submit">Použít logo ve všech aplikacích</button><button class="edu-admin__button edu-admin__button--secondary" type="button" data-default>Výchozí animované logo</button></div><p role="status" aria-live="polite" style="margin:0;min-height:1.5em"></p></form>`;
  main.querySelector('.edu-page-header').after(host);
