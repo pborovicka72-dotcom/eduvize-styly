@@ -52,7 +52,7 @@
   const gap=clamp(Math.min(width,height)*.014,10,28);
   const cardWidth=(width-gap*(columns-1))/columns;
   const cardHeight=(height-gap*(rows-1))/rows;
-  const font=root.EduvizeOutputModes?.mode?.()==='kiosk'?root.EduvizeSegmentProfile.text(root.EduvizeSegmentProfile.resolve(width,height),'kiosk').body:signage?clamp(Math.min(cardWidth/24,cardHeight/15),20,58):(root.EduvizeOutputModes?.mode?.()==='kiosk'?clamp(width/100,20,32):16);
+  const font=(root.EduvizeOutputModes?.mode?.()||document.documentElement.dataset.outputMode)==='kiosk'?root.EduvizeSegmentProfile.text(root.EduvizeSegmentProfile.resolve(width,height),'kiosk').body:signage?clamp(Math.min(cardWidth/24,cardHeight/15),20,58):((root.EduvizeOutputModes?.mode?.()||document.documentElement.dataset.outputMode)==='kiosk'?clamp(width/100,20,32):16);
   return {columns,rows,capacity,side:images,font,pad:clamp(font*.65,14,32),gap,cardHeight,cardWidth};
  }
  function apply(body,grid,options){
