@@ -149,3 +149,18 @@ body.ev-admin .workflow-nav [data-operator-nav][hidden],body.ev-admin .workflow-
 .edu-workflow-topbar strong,.edu-workflow-topbar small{display:block}
 .edu-workflow-topbar small{font-size:12px;color:var(--edu-admin-muted);margin-top:4px}
 @media(max-width:780px){.edu-workflow-topbar{min-height:62px;padding:10px 16px}}
+@media(max-width:780px){
+  body.ev-admin .workflow-sidebar{min-width:0}
+  body.ev-admin .workflow-nav{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));overflow:visible;gap:6px}
+  body.ev-admin .workflow-nav a{min-width:0;white-space:normal;line-height:1.25;overflow-wrap:anywhere}
+  body.ev-admin .workflow-nav a span{flex:none}
+  body.ev-admin .workflow-topbar.edu-workflow-topbar{display:grid;grid-template-columns:minmax(0,1fr);align-items:start;gap:12px;padding:14px 16px}
+  body.ev-admin .workflow-topbar>div:first-child{min-width:0;overflow-wrap:anywhere}
+  body.ev-admin .workflow-topbar-controls{display:grid;grid-template-columns:minmax(0,1fr) auto;width:100%;gap:10px;justify-content:stretch}
+  body.ev-admin .workflow-profile-select{display:block;width:100%;min-width:0;max-width:none;min-height:44px;font-size:14px}
+  body.ev-admin .workflow-account-link{width:44px;height:44px}
+}
+
+/* Explanatory copy needs the same breathing room as other form blocks. */
+.ev-admin .edu-admin__card :is(.edu-admin__field-grid,.edu-admin__control-row,form,fieldset,label)+p.edu-admin__hint:not([role]){margin-block-start:var(--edu-admin-flow-gap)}
+.ev-admin .edu-admin__card p.edu-admin__hint:not([role])+:is(label,.edu-admin__field-grid,.edu-admin__control-row,form,fieldset){margin-block-start:var(--edu-admin-flow-gap)}
