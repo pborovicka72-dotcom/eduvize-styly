@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import vm from 'node:vm';
 
-const source = fs.readFileSync(new URL('./editorial-output.js', import.meta.url), 'utf8');
+const source = fs.readFileSync(new URL('../editorial-output.js', import.meta.url), 'utf8');
 const document = { readyState: 'loading', addEventListener() {}, documentElement: { dataset: { outputMode: 'kiosk' } } };
 const root = { innerHeight: 2160, innerWidth: 3840, EduvizeSegmentProfile: { resolve(width, height) { return { width, height }; }, text(_geometry, mode) { assert.equal(mode, 'kiosk'); return { body: 40 }; } } };
 vm.runInNewContext(source, { window: root, document });
