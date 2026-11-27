@@ -374,7 +374,7 @@
     function say(text,state=''){text=contextualStatus(text);if(recoveryStatus){changeStatus.hidden=true;recoveryStatus.settings(text,state);return;}status.textContent=text;status.dataset.state=state;changeStatus.hidden=state==='saved'&&text.startsWith('Nastavení uloženo do Eduvize');}
     let segmentEdited=false,profilePicker=null;
     function dirty(){
-      if(!baseline||(!userChanged&&adapter.app!=='news'))return false;
+      if(!baseline||(!userChanged&&adapter.app==='documents'))return false;
       const current=adapter.read(),saved=JSON.parse(baseline);
       if(!userChanged&&fingerprint(current.segment)===fingerprint(saved.segment))return false;
       if(adapter.app==='documents'&&!segmentEdited){
@@ -385,7 +385,7 @@
       return fingerprint(current)!==baseline;
     }
     if(adapter.app==='documents'){
-      document.addEventListener('click',event=>{if(event.isTrusted&&event.target.closest('.ev-segments button'))segmentEdited=true;},true);
+      document.addEventListener('click',event=>{if(event.isTrusted&&event.target.closest('.ev-segments button,#ev-segments button,#ev-segments .ev-box'))segmentEdited=true;},true);
       document.addEventListener('change',event=>{if(event.isTrusted&&event.target.closest('.ev-segments'))segmentEdited=true;},true);
     }
     // Choosing a preview segment is persisted, but is not a reason to block navigation.
