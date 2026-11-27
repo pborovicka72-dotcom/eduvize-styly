@@ -2,7 +2,8 @@
 (function(root){
  'use strict';
  function mount(host){
-  if(!host||host.querySelector('[data-edu-link-audit]'))return;
+  // The link audit is a support tool; keep ordinary administration pages focused on outputs.
+  if(new URLSearchParams(location.search).get('diagnostika')!=='odkazy'||!host||host.querySelector('[data-edu-link-audit]'))return;
   const el=(tag,text)=>{const node=document.createElement(tag);if(text)node.textContent=text;return node;};
   const panel=el('details');panel.dataset.eduLinkAudit='';panel.className='edu-admin__card edu-admin__disclosure';
   const heading=el('summary','Aktualizace a kompatibilita odkazů');panel.append(heading);
