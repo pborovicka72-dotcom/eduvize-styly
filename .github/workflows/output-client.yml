@@ -16,6 +16,7 @@ jobs:
       - run: node tests/link-contract.test.cjs
       - run: node --test tests/admin-navigation.test.mjs tests/admin-exit-dialog.test.mjs
       - run: node design-system/tests/broadcast-license.test.cjs
+      - run: node --test design-system/tests/transport-published-layout.test.mjs design-system/tests/editorial-published-layout.test.mjs
 
       - name: Global brand upload controls and logo replacement
         run: node --test design-system/tests/branding-upload.test.cjs design-system/tests/branding-runtime.test.cjs
