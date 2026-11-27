@@ -281,7 +281,28 @@
     ui.reload.onclick=refresh;
     ui.select.onchange=()=>act(async()=>{if(!ui.select.value)return;if(root.EduvizeProfileBeforeSwitch&&!await root.EduvizeProfileBeforeSwitch()){ui.select.value=root.EduvizeAdminAuth.status().profileId;return;}await root.EduvizeAdminAuth.selectProfile(ui.select.value);select(ui.select.value);ui.status.textContent='Aktivní profil: '+items.find(p=>p.id===ui.select.value)?.name;root.dispatchEvent(new Event('eduvize-profile-selected'));});
     create.onclick=()=>act(async()=>{const title=name.value.trim();if(!title)throw Error('Vyplňte název profilu.');await request('',{method:'POST',body:JSON.stringify({name:title,...(copy.checked&&ui.select.value?{copyFrom:ui.select.value}:{})})});name.value='';await refresh();root.dispatchEvent(new Event('eduvize-profiles-changed'));ui.status.textContent='Profil vytvořen. Aktivní profil zůstal beze změny.';});
-    rename.onclick=()=>act(async()=>{const selected=items.find(p=>p.id===ui.select.value);if(!selected)throw Error('Vyberte profil.');const title=prompt('Nový název profilu',selected.name);if(title===null)return;await request('/'+selected.id,{method:'PATCH',body:JSON.stringify({name:title,expectedRevision:selected.revision})});await refresh();root.dispatchEvent(new Event('eduvize-profiles-changed'));});
+    rename.onclick=()=>act(async()=>{
+      const selected=items.find(p=>p.id===ui.select.value);
+      if(!selected)throw Error('Vyberte profil.');
+      const title=prompt('Nový název profilu',selected.name);
+      if(title===null)return;
+      const current=await request('/'+selected.id,{fresh:true});
+      if(current.name!==selected.name){
+        await refresh();
+        throw Error('Název profilu se mezitím změnil. Zkontrolujte nový název a zkuste přejmenování znovu.');
+      }
+      try{
+        await request('/'+selected.id,{method:'PATCH',body:JSON.stringify({name:title,expectedRevision:current.revision})});
+      }catch(e){
+        if(e.status===409){
+          await refresh();
+          throw Error('Profil se mezitím změnil. Zkontrolujte jeho aktuální stav a zkuste přejmenování znovu.');
+        }
+        throw e;
+      }
+      await refresh();
+      root.dispatchEvent(new Event('eduvize-profiles-changed'));
+    });
     history.onclick=()=>act(async()=>{if(!ui.select.value)throw Error('Vyberte profil.');const id=ui.select.value,result=await request('/'+id+'/history');versions.replaceChildren();for(const entry of result.items){const restore=button('Obnovit verzi '+entry.revision+' · '+entry.updatedAt);restore.onclick=()=>act(async()=>{if(!confirm('Obnovit uloženou verzi profilu? Současná verze zůstane v historii.'))return;const current=await request('/'+id,{fresh:true});await request('/'+id+'/restore',{method:'POST',body:JSON.stringify({revision:entry.revision,expectedRevision:current.revision})});versions.replaceChildren();await refresh();});versions.append(restore);}if(!result.items.length)versions.textContent='Historie je zatím prázdná.';});
     watchAuth(refresh);await refresh();
   }
