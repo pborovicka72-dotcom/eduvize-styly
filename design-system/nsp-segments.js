@@ -80,7 +80,7 @@ function syncMode(){root.hidden=false;picker?.setMode(mode.value==='kiosk'?'kios
 picker=window.EduvizeNSPPicker.mount(root,{initial,interactivePreview:true,preservePreview:isWeather,allowed:(w,h,o,st,b)=>!isWeather||document.getElementById('setting-weather-style')?.value!=='station'||isWeb()||(window.EduvizeNSPLayouts.kioskAllowed?.(w,h,o,st,b)??false),previewUrl:state=>{const u=new URL(output(state));u.searchParams.set('preview','1');return u.href},onChange:state=>{try{localStorage.setItem(key,JSON.stringify(state))}catch{}if(isWeather&&mode.value!=='kiosk'&&mode.value!=='off'){mode.value='signage';mode.dispatchEvent(new Event('change',{bubbles:true}))}else if(!isDocuments&&!isWeather){mode.value='nsp'}syncMode()}});
 mode.addEventListener('change',syncMode);syncMode();
 let previewRefresh;document.addEventListener('input',refreshPreview);document.addEventListener('change',refreshPreview);function refreshPreview(event){if(root.contains(event.target)||!event.target.matches('input:not([type=password]):not([type=file]),select,textarea'))return;clearTimeout(previewRefresh);previewRefresh=setTimeout(()=>{picker.set(picker.get());syncMode()},250)}
-window.EduvizeSegmentSelection={params:()=>picker.get(),url:()=>output(picker.get()),set:next=>{picker.set(next);try{localStorage.setItem(key,JSON.stringify(picker.get()))}catch{}syncMode();}};
+window.EduvizeSegmentSelection={params:()=>picker.get(),url:()=>output(picker.get()),set:next=>{syncMode();picker.set(next);try{localStorage.setItem(key,JSON.stringify(picker.get()))}catch{}}};
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',autoMount,{once:true});else autoMount();
 })();
