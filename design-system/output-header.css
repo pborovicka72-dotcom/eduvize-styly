@@ -40,15 +40,15 @@ html[data-kiosk-app][data-output-mode] .edu-output-header :is(.brand,.edu-header
 html[data-kiosk-app].kiosk-output.edu-menu-app-header .edu-output-header .edu-app-icon{display:none!important}
 
 /* Shared touch target follows the metric-icon scale (nameday, weather details). */
-html[data-kiosk-app][data-output-mode]{--edu-navigation-size:max(44px,calc(var(--edu-text-label,24px)*1.5))}
+html[data-kiosk-app][data-output-mode]{--edu-navigation-size:clamp(44px,calc(var(--edu-text-label,24px)*1.1),56px)}
 html[data-kiosk-app][data-output-mode] :is(.edu-pagination-button,.edu-kiosk-pagination:not(.edu-auto-pagination) button,.news-page-controls button){
  box-sizing:border-box!important;min-height:var(--edu-navigation-size)!important;
  padding:.2em .8em!important;font-family:inherit!important;
- font-size:max(16px,calc(var(--edu-navigation-size)*.4))!important;line-height:1.2!important;
+ font-size:clamp(16px,calc(var(--edu-navigation-size)*.34),20px)!important;line-height:1.2!important;
  display:inline-flex;align-items:center;justify-content:center;gap:.4em;touch-action:manipulation;
 }
 html[data-kiosk-app][data-output-mode] :is(.edu-pagination-status,.edu-kiosk-pagination>span){
- font:inherit!important;font-size:max(16px,calc(var(--edu-navigation-size)*.36))!important;line-height:1.2!important;
+ font:inherit!important;font-size:clamp(16px,calc(var(--edu-navigation-size)*.34),20px)!important;line-height:1.2!important;
 }
 html[data-kiosk-app="kiosk"][data-output-mode] #home{
  box-sizing:border-box!important;display:inline-grid;place-items:center;
@@ -58,5 +58,5 @@ html[data-kiosk-app="kiosk"][data-output-mode] #home{
 }
 html[data-kiosk-app="kiosk"][data-output-mode] #home svg{display:block;width:60%;height:60%}
 html[data-kiosk-app="kiosk"][data-output-mode] #back{
- min-height:var(--edu-navigation-size)!important;font-size:max(16px,calc(var(--edu-navigation-size)*.4))!important;
+ min-height:var(--edu-navigation-size)!important;font-size:clamp(16px,calc(var(--edu-navigation-size)*.34),20px)!important;
 }
