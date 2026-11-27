@@ -374,8 +374,9 @@
     function say(text,state=''){text=contextualStatus(text);if(recoveryStatus){changeStatus.hidden=true;recoveryStatus.settings(text,state);return;}status.textContent=text;status.dataset.state=state;changeStatus.hidden=state==='saved'&&text.startsWith('Nastavení uloženo do Eduvize');}
     let segmentEdited=false,profilePicker=null;
     function dirty(){
-      if(!baseline||!userChanged)return false;
+      if(!baseline||(!userChanged&&adapter.app!=='news'))return false;
       const current=adapter.read(),saved=JSON.parse(baseline);
+      if(!userChanged&&fingerprint(current.segment)===fingerprint(saved.segment))return false;
       if(adapter.app==='documents'&&!segmentEdited){
         const {segment:currentSegment,...currentValues}=current;
         const {segment:savedSegment,...savedValues}=saved;
@@ -598,7 +599,8 @@
       if(!panel.contains(event.target)&&event.target!==save&&event.target!==local){
         const field=['input','change'].includes(event.type)&&event.target.matches?.('input,select,textarea,[contenteditable]')&&!event.target.readOnly&&!event.target.disabled;
         const action=event.type==='click'&&event.target.closest?.('button')&&!event.target.closest('.edu-output-actions,.toolbar,.theme-action-buttons,.sis-admin-actions,.day-actions');
-        if((event.isTrusted&&(field||action))||event.type==='eduvize-profile-change'){userChanged=true;recoveryStatus?.edit();}
+        const segment=event.type==='click'&&!!event.target.closest?.('#ev-segments .ev-box');
+        if((event.isTrusted&&(field||action||segment))||event.type==='eduvize-profile-change'){userChanged=true;recoveryStatus?.edit();}
         if(!userChanged&&editBaseline&&!event.isTrusted&&event.type!=='click')editBaseline=fingerprint(adapter.read());
         showEditState();
       }
